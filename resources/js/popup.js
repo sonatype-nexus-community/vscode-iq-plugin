@@ -123,7 +123,7 @@ selectHandler = async function(e, tab) {
         $("<p></p>", {
             text: "Please wait while we load the Version History...", 
             "class": "status-message ui-corner-all"
-          }).appendTo(".ui-tabs-nav", "#remediation").css('color', 'white').fadeOut(2500, function() {
+          }).appendTo(".ui-tabs-nav", "#pleasewait").css('color', 'white').fadeOut(2500, function() {
             $(this).remove();
           });
         // let remediation
@@ -158,9 +158,6 @@ function showRemediationPopup(respData){
         advice = ''
     }
     
-    let el = $("#remediation");
-    console.log('#remediation', el);
-    el.html(advice).css('color', 'white');
     return newVersion;
 }
 function beginEvaluation(nexusArtifact){

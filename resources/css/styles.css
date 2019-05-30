@@ -134,7 +134,7 @@ table{
     border-spacing: 0px;
 }  
 #remediation{
-    color: white;
+    color: grey;
     font-size: 1em;
 }
 .optionstable td, .optionstable th {
@@ -442,7 +442,7 @@ div.slick-cell.l0.r0 {
     color: burlywood;
 }
 .remediation-version{
-    color: white;
+    color: grey;
     background: lawngreen;
 }
 

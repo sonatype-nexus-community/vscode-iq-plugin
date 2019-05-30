@@ -45,9 +45,14 @@ The plugin will create a new panel in your IDE called "Nexus IQ". It will aitoma
 
 Follow the instructions above on how to debug the extension
 
-## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+## Extension Settings
+* Configuration is done in the VSCode settings
+<img src="media/Settings.png" alt="VSCode Settings" width="300"/>
+
+* Search for NexusIQ and the make your changes
+<img src="media/nexusiq_settings.png" alt="NexusIQ Settings" width="300"/>
+
 
 For example:
 
