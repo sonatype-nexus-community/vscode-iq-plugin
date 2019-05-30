@@ -1,0 +1,144 @@
+{
+	"name": "vscode-extension-nexus-iq",
+	"displayName": "Sonatype Nexus IQ Extension for VSCode",
+	"description": "Sonatype Nexus IQ Extension for VSCode",
+	"version": "0.0.1",
+	"publisher": "ctownshend",
+	"enableProposedApi": true,
+	"engines": {
+		"vscode": "^1.32.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onView:nodeDependencies",
+		"onView:nexusExplorer",
+		"onView:testView",
+		"onLanguage:json",
+		"onLanguage:jsonc",
+		"onCommand:sample.reveal"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"views": {
+			"explorer": [
+				{
+					"id": "nexusExplorer",
+					"name": "Nexus IQ"
+				}
+			]
+		},
+		"commands": [
+			{
+				"command": "nexusExplorer.refresh",
+				"title": "Nexus Refresh",
+				"icon": {
+					"light": "resources/light/refresh.svg",
+					"dark": "resources/dark/refresh.svg"
+				}
+			},
+			{
+				"command": "nexusExplorer.refreshNode",
+				"title": "Nexus Refresh",
+				"icon": {
+					"light": "resources/light/refresh.svg",
+					"dark": "resources/dark/refresh.svg"
+				}
+			},
+			{
+				"command": "nexusExplorer.viewNode",
+				"title": "View Details",
+				"icon": {
+					"light": "resources/light/edit.svg",
+					"dark": "resources/dark/edit.svg"
+				}
+			}
+		],
+		"menus": {
+			"view/title": [
+				{
+					"command": "nexusExplorer.refresh",
+					"when": "view == nexusExplorer",
+					"group": "navigation"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "nexusExplorer.viewNode",
+					"when": "view == nexusExplorer",
+					"group": "inline"
+				}
+			]
+		},
+		"configuration": [
+			{
+				"title": "Nexus IQ Explorer",
+				"properties": {
+					"nexusExplorer.autorefresh": {
+						"type": "boolean",
+						"default": false
+					}
+				}
+			},
+			{
+				"type": "object",
+				"title": "Nexus IQ configuration",
+				"properties": {
+					"nexusiq.npm.url": {
+						"type": "string",
+						"default": "http://127.0.0.1:8070",
+						"description": "URL including port of the Nexus IQ server"
+					},
+					"nexusiq.npm.username": {
+						"type": "string",
+						"default": "admin",
+						"description": "Your Nexus IQ user name"
+					},
+					"nexusiq.npm.password": {
+						"type": "string",
+						"default": "admin123",
+						"description": "Your Nexus IQ Internal ApplicationId"
+					},
+					"nexusiq.npm.applicationId": {
+						"type": "string",
+						"default": "a6e65ec70f4a478f8e2198612917cd38",
+						"description": "Your Nexus IQ Internal ApplicationId"
+					},
+					"nexusiq.npm.applicationPublicId": {
+						"type": "string",
+						"default": "sandbox-application",
+						"description": "Your Nexus IQ Application Public Id"
+					}
+					 
+				
+				}
+			}			
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc  -p ./",
+		"lint": "tslint -p ./",
+		"watch": "tsc -watch -p ./"
+	},
+	"devDependencies": {
+		"@types/mkdirp": "^0.5.2",
+		"@types/node": "*",
+		"@types/rimraf": "^2.0.2",
+		"tslint": "^5.16.0",
+		"typescript": "^3.4.5",
+		"@types/vscode": "^1.32.0"
+	},
+	"dependencies": {
+		"@types/lodash": "^4.14.73",
+		"dependency-tree": "^7.0.2",
+		"jsonc-parser": "^0.4.2",
+		"lodash": "^4.17.4",
+		"md5": "^2.2.1",
+		"mkdirp": "^0.5.1",
+		"pluralize": "^7.0.0",
+		"request": "^2.81.0",
+		"rimraf": "^2.6.2"
+	}
+}
