@@ -32,8 +32,7 @@ export class ComponentEntry {
 		return `${this.name} @ ${this.version}`;
 	}
 
-	public iconName(): string {
-		console.log('iconName', this);
+	public iconName(): string {		
 		if (!(this.policyViolations)) {
 			return 'loading.gif';
 		}
@@ -54,7 +53,6 @@ export class ComponentEntry {
 				return `threat-none.png`;
 			}
 		}
-		console.log('returning none');
 		return 'threat-none.png';
 	}
 }
@@ -168,7 +166,7 @@ export class ComponentInfoPanel {
 		// Handle messages from the webview
 		this._panel.webview.onDidReceiveMessage(
 			message => {
-				console.log('message', message)
+				console.log('message', message);
 				switch (message.command) {
 					case 'alert':
 						vscode.window.showErrorMessage(message.text);
@@ -256,7 +254,7 @@ export class ComponentInfoPanel {
 				}
 			);
 		});
-	};
+	}
 
 	
 
@@ -303,7 +301,7 @@ export class ComponentInfoPanel {
 				}
 			);
 		});
-	};
+	}
 
 
 
@@ -364,39 +362,7 @@ private async getRemediation(nexusArtifact){//, settings) {
 	});
 }
 
-
-	private async GetComponentDetails(nexusArtifact){//, settings) {
-		return new Promise((resolve, reject) => {
-			console.log('begin GetComponentDetails', nexusArtifact);
-			let timestamp = Date.now();
-			
-			var requestdata = this.NexusFormat(nexusArtifact);
-			let inputStr = JSON.stringify(requestdata);
-			//servername has a slash
-		
-			let url=`${ComponentInfoPanel.iqUrl}/api/v2/components/details`;
-	
-			request.post(
-				{
-					method:'post',
-					data: inputStr,
-					url: url,
-					'auth':{'user':ComponentInfoPanel.iqUser, 'pass':ComponentInfoPanel.iqPassword}
-				},
-				(err, response, body) => {
-					if (err) {
-						reject(`Unable to retrieve Component details: ${err}`);
-						return;
-					}
-					console.log('response', response);
-					console.log('body', body);
-					let cvedetails = response;										
-					resolve(body);
-					// return body;
-				}
-			);
-		});
-	}
+ 
 
 	public dispose() {
 		ComponentInfoPanel.currentPanel = undefined;
@@ -437,12 +403,12 @@ private async getRemediation(nexusArtifact){//, settings) {
 		let actual =  encodeURIComponent(JSON.stringify(componentIdentifier));
 		console.log('actual', actual);
 		return actual;
-	};
+	}
 	private loadHtmlForWebview() {
 		console.log('loadHtmlForWebview', this.component);
 		const componentString = JSON.stringify(this.component);
 		const settingsString = JSON.stringify(ComponentInfoPanel._settings);
-		console.log('hidden variables', componentString, settingsString)
+		
 		const onDiskPath = vscode.Uri.file(path.join(this._extensionPath, 'resources'));
 		const resourceSrc = onDiskPath.with({scheme: 'vscode-resource'});
 		let htmlBody = `<!DOCTYPE html>

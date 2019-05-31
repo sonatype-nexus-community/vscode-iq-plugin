@@ -1,5 +1,5 @@
 {
-	"name": "custom-view-samples",
+	"name": "vscode-extension-nexus-iq",
 	"version": "0.0.1",
 	"lockfileVersion": 1,
 	"requires": true,
@@ -29,11 +29,26 @@
 			"resolved": "https://registry.npmjs.org/@babel/parser/-/parser-7.4.5.tgz",
 			"integrity": "sha512-9mUqkL1FF5T7f0WDFfAoDdiMVPWsdD1gZYzSnaXsxUCUqzuch/8of9G3VUSNiZmMBoRxT3neyVsqeiL/ZPcjew=="
 		},
+		"@types/caseless": {
+			"version": "0.12.2",
+			"resolved": "http://nexus:8081/repository/npm-proxy/@types/caseless/-/caseless-0.12.2.tgz",
+			"integrity": "sha512-6ckxMjBBD8URvjB6J3NcnuAn5Pkl7t3TizAg+xdlzzQGSPSmBcXf8KoIH0ua/i+tio+ZRUHEXp0HEmvaR4kt0w==",
+			"dev": true
+		},
 		"@types/events": {
 			"version": "1.2.0",
 			"resolved": "https://registry.npmjs.org/@types/events/-/events-1.2.0.tgz",
 			"integrity": "sha512-KEIlhXnIutzKwRbQkGWb/I4HFqBuUykAdHgDED6xqwXJfONCjF5VoE0cXEiurh3XauygxzeDzgtXUqvLkxFzzA==",
 			"dev": true
+		},
+		"@types/form-data": {
+			"version": "2.2.1",
+			"resolved": "http://nexus:8081/repository/npm-proxy/@types/form-data/-/form-data-2.2.1.tgz",
+			"integrity": "sha512-JAMFhOaHIciYVh8fb5/83nmuO/AHwmto+Hq7a9y8FzLDcC1KCU344XDOMEmahnrTFlHjgh4L0WJFczNIX2GxnQ==",
+			"dev": true,
+			"requires": {
+				"@types/node": "*"
+			}
 		},
 		"@types/glob": {
 			"version": "7.1.1",
@@ -72,6 +87,18 @@
 			"integrity": "sha1-zWfyfT3Az7dG8L3V4IbExdVb4XM=",
 			"dev": true
 		},
+		"@types/request": {
+			"version": "2.48.1",
+			"resolved": "http://nexus:8081/repository/npm-proxy/@types/request/-/request-2.48.1.tgz",
+			"integrity": "sha512-ZgEZ1TiD+KGA9LiAAPPJL68Id2UWfeSO62ijSXZjFJArVV+2pKcsVHmrcu+1oiE3q6eDGiFiSolRc4JHoerBBg==",
+			"dev": true,
+			"requires": {
+				"@types/caseless": "*",
+				"@types/form-data": "*",
+				"@types/node": "*",
+				"@types/tough-cookie": "*"
+			}
+		},
 		"@types/rimraf": {
 			"version": "2.0.2",
 			"resolved": "https://registry.npmjs.org/@types/rimraf/-/rimraf-2.0.2.tgz",
@@ -81,6 +108,12 @@
 				"@types/glob": "*",
 				"@types/node": "*"
 			}
+		},
+		"@types/tough-cookie": {
+			"version": "2.3.5",
+			"resolved": "http://nexus:8081/repository/npm-proxy/@types/tough-cookie/-/tough-cookie-2.3.5.tgz",
+			"integrity": "sha512-SCcK7mvGi3+ZNz833RRjFIxrn4gI1PPR3NtuIS+6vMkvmsGjosqTJwRt5bAEFLRz+wtJMWv8+uOnZf2hi2QXTg==",
+			"dev": true
 		},
 		"@types/vscode": {
 			"version": "1.33.0",

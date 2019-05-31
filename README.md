@@ -1,44 +1,42 @@
 # vscode-iq-plugin README
-
-This is the README for your extension "vscode-iq-plugin". After writing up a brief description, we recommend including the following sections.
-
 To run:
-```
-code ./vscode-iq-plugin
-```
+The plugin will create a new panel in your IDE called "NexusIQ". It will automatically evaluate your components.
 
-From within the IDE, to launch a VS Code instance in debug mode
-with the extension: `F5`
+Currently it is limited to analyzing NPM projects.
 
-The plugin will create a new panel in your IDE called "Nexus IQ". It will aitomatically evaluate your components.
-
+Under the covers it does
+1) Looks for a package.json
+2) Performs a npm shrinkwrap
+3) Submits an evaluation report to NexusIQ for the identified components
+4) Creates a new panel called Nexus IQ in your VS Code Explorer.
+5) Displays the components in the Nexus IQ PANEL
 
 
 
 ## Features
 * NexusIQ Panel
-<img src="media/NexusIQPanel.png" alt="NexusIQ Panel" width="300"/>
+![NexusIQ Panel](media/NexusIQPanel.png)
 
 * View Details
-<img src="media/ViewDetails.png" alt="View Details" width="300"/>
-
+![View Details](media/ViewDetails.png)
 
 * Component Info Panel
-<img src="media/ComponentInfoPanel.png" alt="Component Info Panel" width="300"/>
+![Component Info Panel](media/ComponentInfoPanel.png)
+
 * Security List
-<img src="media/SecurityList.png" alt="Security List" width="300"/>
+![Security List](media/SecurityList.png)
 
 * Security Detail
-<img src="media/SecurityDetail.png" alt="Security Detail" width="300"/>
+![Security Detail](media/SecurityDetail.png)
 
 * Remediation
-<img src="media/Remediation.png" alt="Remediation" width="300"/>
+![Remediation](media/Remediation.png)
 
 * Licensing
-<img src="media/Licensing.png" alt="Licensing" width="300"/>
+![Licensing](media/Licensing.png)
 
 * License Detail
-<img src="media/LicenseLink.png" alt="LicenseLink" width="300"/>
+![LicenseLink](media/LicenseLink.png)
 
 
 ## Requirements
@@ -47,16 +45,13 @@ Follow the instructions above on how to debug the extension
 
 
 ## Extension Settings
-* Configuration is done in the VSCode settings
-<img src="media/Settings.png" alt="VSCode Settings" width="300"/>
+* Configuration is done in the VSCode Preferences > Settings
+![VSCode Settings](media/Settings.png)
 
-* Search for NexusIQ and the make your changes
-<img src="media/nexusiq_settings.png" alt="NexusIQ Settings" width="300"/>
+* Filter for NexusIQ and then make your changes
+![NexusIQ Settings](media/nexusiq_settings.png)
 
-
-For example:
-
-This extension contributes the following settings:
+This extension contributes the following settings, all are required:
 
 * `nexusiq.npm.url`: URL including port of the Nexus IQ server
 * `nexusiq.npm.username`: Your Nexus IQ user name
@@ -65,14 +60,7 @@ This extension contributes the following settings:
 * `nexusiq.npm.applicationPublicId`: Your Nexus IQ Application Public Id
 
 ## Known Issues
-* You have to specify the Application Public Id and Application Internal UUID, this is a pain. I will create a GUI for this when I get to it. For now you have to work out your UUID. The Sonatype Online Help explains how to do this via the RestAPI.
-
+* You have to specify the Application Public Id and Application Internal UUID, this is a pain. I will create a GUI for this when I get to it. For now you have to work out your UUID. Call this end point to find the UUID - /api/v2/applications.
 * Password is stored in plain text
 * Styling of the Info panel needs some work
 
-## Release Notes
-
-### 0.0.1
-
-Initial release of NexusIQ VS-Code Extension with GUI
-  

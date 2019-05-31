@@ -1,9 +1,19 @@
 # Change Log
+## Unreleased
+- GUI for configuring Application
+- Other ecosystems besides NPM
+- Improved look and feel to GUI
+- Display remediation advice version
+- Link to License obligation review tool
 
-All notable changes to the "vscode-iq-plugin" extension will be documented in this file.
+## [0.0.1] - 2019-05-31
+### Initial Release
+- Initial release of Sonatype Nexus IQ VS Code Extension with GUI
+- NPM scanning
+- Security details
+- Version history
+- License Id
+- link to Wikipedia license article
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [Unreleased]
-
-- Initial release
+  
