@@ -60,14 +60,7 @@
 					"dark": "resources/dark/refresh.svg"
 				}
 			},
-			// {
-			// 	"command": "nexusExplorer.sortByVulnerability",
-			// 	"title": "Sort by Vulnerability",
-			// 	"icon": {
-			// 		"light": "resources/light/sort.svg",
-			// 		"dark": "resources/dark/sort.svg"
-			// 	}
-			// },			
+					
 			{
 				"command": "nexusExplorer.refreshNode",
 				"title": "Nexus Refresh",
