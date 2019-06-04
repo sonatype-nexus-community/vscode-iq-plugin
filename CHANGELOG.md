@@ -6,6 +6,10 @@
 - Display remediation advice version
 - Link to License obligation review tool
 
+## [0.0.2] - 2019-06-01
+- Changed view details to link to TreeView Item
+- Changed TreeView item to show item details
+
 ## [0.0.1] - 2019-05-31
 ### Initial Release
 - Initial release of Sonatype Nexus IQ VS Code Extension with GUI

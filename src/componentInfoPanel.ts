@@ -31,29 +31,37 @@ export class ComponentEntry {
 	public toString():string {
 		return `${this.name} @ ${this.version}`;
 	}
-
+	public maxPolicy(): number{
+		let maxThreatLevel = 0 ;
+		if (!(this.policyViolations)) {
+			return maxThreatLevel;
+		}
+		if (this.policyViolations && this.policyViolations.length > 0) {
+			maxThreatLevel = this.policyViolations.reduce((prevMax: number, a: PolicyViolation) => {
+					return a.threatLevel > prevMax ? a.threatLevel : prevMax;
+				}, 0);
+			
+		}
+		return maxThreatLevel;
+	}
 	public iconName(): string {		
 		if (!(this.policyViolations)) {
 			return 'loading.gif';
 		}
-		if (this.policyViolations && this.policyViolations.length > 0) {
-			let maxThreatLevel = this.policyViolations.reduce((prevMax: number, a: PolicyViolation) => {
-					return a.threatLevel > prevMax ? a.threatLevel : prevMax;
-				}, 0);
-			// TODO what is the right way to display threat level graphically?
-			if (maxThreatLevel >= 8) {
-				return `threat-critical.png`;
-			} else if (maxThreatLevel >= 7) {
-				return `threat-severe.png`;
-			} else if (maxThreatLevel >= 5) {
-				return `threat-moderate.png`;
-			} else if (maxThreatLevel >= 1) {
-				return `threat-low.png`;
-			} else {
-				return `threat-none.png`;
-			}
+		let maxThreatLevel = this.maxPolicy();
+	
+		// TODO what is the right way to display threat level graphically?
+		if (maxThreatLevel >= 8) {
+			return `threat-critical.png`;
+		} else if (maxThreatLevel >= 7) {
+			return `threat-severe.png`;
+		} else if (maxThreatLevel >= 5) {
+			return `threat-moderate.png`;
+		} else if (maxThreatLevel >= 1) {
+			return `threat-low.png`;
+		} else {
+			return `threat-none.png`;
 		}
-		return 'threat-none.png';
 	}
 }
 
@@ -209,7 +217,7 @@ export class ComponentInfoPanel {
 	private async showAllVersions(nexusArtifact){
 		console.log('showAllVersions', nexusArtifact);
 		let allversions = await this.GetAllVersions(nexusArtifact);		
-		console.log('allversions', allversions);
+		// console.log('allversions', allversions);
 		this._panel.webview.postMessage({ command: 'allversions', 'allversions': allversions });
 		// vscode.window.showInformationMessage(message.cve);
 

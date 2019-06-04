@@ -152,12 +152,13 @@ function showRemediationPopup(respData){
     let newVersion
     let advice
     if (respData.remediation.versionChanges.length > 0){
-        newVersion = respData.remediation.versionChanges[0].data.component.componentIdentifier.coordinates.version
+        newVersion = respData.remediation.versionChanges[0].data.component.componentIdentifier.coordinates.version;
+        console.log('newVersion', newVersion);
         advice = `<span id="remediation">Remediation advice Upgrade to the new version:<strong> ${newVersion}</strong></span>`
     }else{
-        advice = ''
+        advice = `<span id="remediation">No Remediation advice</span>`
     }
-    
+    $("#remediation").html(advice); 
     return newVersion;
 }
 function beginEvaluation(nexusArtifact){
@@ -281,8 +282,7 @@ function gotMessage(respMessage, sender, sendResponse){
     console.log('gotMessage-respMessage', respMessage)
     // const respMessage = JSON.parse(message)
     // const respMessage = message
-    //this is the callback handler for a message received
-    console.log('popup got message', respMessage);
+    //this is the callback handler for a message received    
     let hasError = false;
     // ?let promise =  await GetSettings(['url', 'username', 'password', 'appId', 'appInternalId'])
     // settings = BuildSettings(promise.url, promise.username, promise.password, promise.appId, promise.appInternalId)
@@ -294,17 +294,17 @@ function gotMessage(respMessage, sender, sendResponse){
             if (respMessage.message.error){
                 showError(respMessage.message.response);
             }else{
-                console.log('coming in here really late.-respMessage', respMessage);
+                // console.log('coming in here really late.-respMessage', respMessage);
                 //need to set the artifact
                 artifact = respMessage.artifact;
-                console.log('after content parsed artifact', artifact);
+                // console.log('after content parsed artifact', artifact);
  
                 var componentDetails = respMessage.message.response;
-                console.log('componentDetails', componentDetails);
+                // console.log('componentDetails', componentDetails);
     
                 if (artifact.datasource === dataSources.NEXUSIQ){
                     nexusArtifact = componentDetails.componentDetails[0];
-                    console.log('nexusArtifact', nexusArtifact);
+                    // console.log('nexusArtifact', nexusArtifact);
                 }
                 let htmlCreated =  createHTML(respMessage, settings);
 
@@ -388,8 +388,8 @@ function createAllversionsHTML(data, remediation, currentVersion){
         // d["popularity"] =  popularity        
         rowId++;
     });
-    console.log('strData', strData)
-    console.table(slickData)
+    // console.log('strData', strData)
+    // console.table(slickData)
 
 
     grid = new Slick.Grid("#myGrid", slickData, columns, options);
@@ -426,7 +426,7 @@ function paintRow (currentVersion, color){
     // let currentVersionCellParent = $(currentVersionCell).parent;
     currentVersionCellParent.css("background-color", color)
 }
- function createHTML(message, settings)
+function createHTML(message, settings)
 {
     console.log('createHTML(message)', message, settings);
 

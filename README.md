@@ -1,6 +1,6 @@
-# vscode-iq-plugin README
+# vscode-iq-plugin
 To run:
-The plugin will create a new panel in your IDE called "NexusIQ". It will automatically evaluate your components.
+The plugin will create a new panel in your IDE called "Nexus IQ". It will automatically evaluate your components.
 
 Currently it is limited to analyzing NPM projects.
 
@@ -17,7 +17,7 @@ Under the covers it does
 * NexusIQ Panel
 ![NexusIQ Panel](media/NexusIQPanel.png)
 
-* View Details
+* View Details by clicking on the pencil.
 ![View Details](media/ViewDetails.png)
 
 * Component Info Panel
@@ -40,8 +40,7 @@ Under the covers it does
 
 
 ## Requirements
-
-Follow the instructions above on how to debug the extension
+You will need a Sonatype Nexus IQ Lifecycle License to be able to use this extension.
 
 
 ## Extension Settings

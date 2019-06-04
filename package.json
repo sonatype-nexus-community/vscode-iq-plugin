@@ -2,7 +2,7 @@
 	"name": "vscode-extension-nexus-iq",
 	"displayName": "Sonatype Nexus IQ Extension for VSCode",
 	"description": "Sonatype Nexus IQ Extension for VSCode",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"author": {
 		"name": "ctownshend"
 	},
@@ -60,6 +60,14 @@
 					"dark": "resources/dark/refresh.svg"
 				}
 			},
+			// {
+			// 	"command": "nexusExplorer.sortByVulnerability",
+			// 	"title": "Sort by Vulnerability",
+			// 	"icon": {
+			// 		"light": "resources/light/sort.svg",
+			// 		"dark": "resources/dark/sort.svg"
+			// 	}
+			// },			
 			{
 				"command": "nexusExplorer.refreshNode",
 				"title": "Nexus Refresh",
@@ -83,14 +91,13 @@
 					"command": "nexusExplorer.refresh",
 					"when": "view == nexusExplorer",
 					"group": "navigation"
-				}
-			],
-			"view/item/context": [
+				},
 				{
-					"command": "nexusExplorer.viewNode",
+					"command": "nexusExplorer.sortByVulnerability",
 					"when": "view == nexusExplorer",
-					"group": "inline"
+					"group": "navigation"
 				}
+				
 			]
 		},
 		"configuration": [
@@ -121,11 +128,6 @@
 						"type": "string",
 						"default": "admin123",
 						"description": "Your Nexus IQ password"
-					},
-					"nexusiq.npm.applicationId": {
-						"type": "string",
-						"default": "a6e65ec70f4a478f8e2198612917cd38",
-						"description": "Your Nexus IQ Internal ApplicationId"
 					},
 					"nexusiq.npm.applicationPublicId": {
 						"type": "string",

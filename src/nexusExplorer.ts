@@ -53,10 +53,10 @@ export class IqComponentModel {
 	coordsToComponent: Map<string, ComponentEntry> = new Map<string, ComponentEntry>();
 
 	// TODO make these configurable???
-	readonly maximumEvaluationPollAttempts = 30;
+	readonly maximumEvaluationPollAttempts = 300;
 	readonly evaluationPollDelayMs = 2000;
 
-	constructor(readonly url: string, private user: string, private password: string, private applicationInternalId) {
+	constructor(readonly url: string, private user: string, private password: string, private applicationPublicId: string) {
 	}
 
 	public getContent(resource: vscode.Uri): Thenable<string> {
@@ -142,15 +142,19 @@ export class IqComponentModel {
 			for (let entry of data.components) {
 				let componentEntry = new ComponentEntry(
 					entry.componentIdentifier.coordinates.packageId,
-					entry.componentIdentifier.coordinates.version);
-					
-				
+					entry.componentIdentifier.coordinates.version);									
 				this.components.push(componentEntry);
 				let coordinates = entry.componentIdentifier.coordinates as Coordinates;
 				this.coordsToComponent.set(this.toCoordValueType(coordinates), componentEntry);
 			}
-			let resultId = await this.submitToIqForEvaluation(data);
-			let resultDataString = await this.asyncPollForEvaluationResults(resultId as string);
+			console.log('getting applicationInternalId', this.applicationPublicId);
+			let response  = await this.getApplicationId(this.applicationPublicId);
+			let appRep = JSON.parse(response as string);
+			console.log('appRep', appRep);
+			let applicationInternalId = appRep.applications[0].id;//'a6e65ec70f4a478f8e2198612917cd38';
+			console.log('applicationInternalId', applicationInternalId);
+			let resultId = await this.submitToIqForEvaluation(data, applicationInternalId as string);
+			let resultDataString = await this.asyncPollForEvaluationResults(applicationInternalId as string, resultId as string);
 			let resultData = JSON.parse(resultDataString as string);
 			// TODO parse result data
 			// vscode.window.showInformationMessage(`Received scan results: ${resultData}`);
@@ -168,13 +172,39 @@ export class IqComponentModel {
 			return;
 		}
 	}
+	private async getApplicationId(applicationPublicId: string) {
+		console.log('getApplicationId', applicationPublicId);
+		return new Promise((resolve, reject) => {
+			request.get(
+				{
+					method:'GET',
+					url: `${this.url}/api/v2/applications?publicId=${applicationPublicId}`,					
+					'auth':{'user':this.user, 'pass':this.password}
+				},
+				(err, response, body) => {
+					if (err) {
+						reject(`Unable to retireve Application ID: ${err}`);
+						return;
+					}
+					// let myResp = body;
+					// console.log('body', myResp);
+					// console.log('body.applications', myResp.applications.length);
+					// let resultId = myResp.applications[0].id;
+					// console.log('resultId', resultId);
+					// let resultsName = myResp.applications[0].name;
+					resolve(body);
+					return;
+				}
+			);
+		});
+	}
 
-	private async submitToIqForEvaluation(data) {
+	private async submitToIqForEvaluation(data, applicationInternalId: string) {
 		return new Promise((resolve, reject) => {
 			request.post(
 				{
 					method:'POST',
-					url: `${this.url}/api/v2/evaluation/applications/${this.applicationInternalId}`,
+					url: `${this.url}/api/v2/evaluation/applications/${applicationInternalId}`,
 					'json': data,
 					'auth':{'user':this.user, 'pass':this.password}
 				},
@@ -192,14 +222,14 @@ export class IqComponentModel {
 		});
 	}
 
-	private async asyncPollForEvaluationResults(resultId: string) {
+	private async asyncPollForEvaluationResults(applicationInternalId: string, resultId: string) {
 		return new Promise((resolve, reject) => {
-			this.pollForEvaluationResults(resultId, (body) => resolve(body),
+			this.pollForEvaluationResults(applicationInternalId, resultId, (body) => resolve(body),
 				(statusCode, message) => reject(`Could not fetch evaluation result, code ${statusCode}, message ${message}`));
 		});
 	}
 
-	private pollForEvaluationResults(resultId: string, 
+	private pollForEvaluationResults(applicationInternalId: string, resultId: string, 
 			success: (body: string) => any, failed: (statusCode: number, message: string) => any) {
 		let _this = this;
 		let pollAttempts = 0;
@@ -216,22 +246,22 @@ export class IqComponentModel {
 					failed(statusCode, "Poll limit exceeded, try again later");
 				} else {
 					setTimeout(() => {
-						_this.getEvaluationResults(resultId, successHandler, errorHandler);
+						_this.getEvaluationResults(applicationInternalId, resultId, successHandler, errorHandler);
 					}, _this.evaluationPollDelayMs);
 				}
 			} else {
 				failed(statusCode, message);
 			}
 		};
-		this.getEvaluationResults(resultId, successHandler, errorHandler);
+		this.getEvaluationResults(applicationInternalId, resultId, successHandler, errorHandler);
 	}
 
-	private getEvaluationResults(resultId: string, 
+	private getEvaluationResults(applicationInternalId: string, resultId: string, 
 		resolve: (body: string) => any, reject: (statusCode: number, message: string) => any) {
 		request.get(
 			{
 				method:'GET',
-				url: `${this.url}/api/v2/evaluation/applications/${this.applicationInternalId}/results/${resultId}`,
+				url: `${this.url}/api/v2/evaluation/applications/${applicationInternalId}/results/${resultId}`,
 				'auth':{'user':this.user, 'pass':this.password}
 			},
 			(error, response, body) => {
@@ -289,7 +319,7 @@ export class IqComponentModel {
 }
 
 
-export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentEntry>, vscode.TextDocumentContentProvider {
+export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentEntry> {
 
 	private editor: vscode.TextEditor;
 
@@ -304,6 +334,17 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
 		// 	this.autoRefresh = vscode.workspace.getConfiguration('nexusExplorer').get('autorefresh');
 		// });
 	}
+	
+	sortByVulnerability(offset?: number): void {
+		this.reloadComponentModel().then(v => {
+			if (this.componentModel.components.length > 0) {
+				console.log('Sort By Vulnerability');
+				//make a copy of the nodes and then sort the items
+				//using the policy provider
+			}
+		});
+	}
+
 
 	refresh(offset?: number): void {
 		this.reloadComponentModel().then(v => {
@@ -322,12 +363,17 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
 		// TODO use collapsible state to handle transitive dependencies as a tree
 		let treeItem: vscode.TreeItem = new vscode.TreeItem(entry.toString(), vscode.TreeItemCollapsibleState.None);
 		treeItem.iconPath = this.context.asAbsolutePath(path.join('resources', entry.iconName()));
+		treeItem.command = {
+			command: "nexusExplorer.viewNode",
+			title: "Select Node",
+			arguments: [entry]
+		};
+		let maxThreat = entry.maxPolicy();
 		// TODO flesh out more details in the tooltip?
 		treeItem.tooltip = `Name: ${entry.name}
 Version: ${entry.version}
 Hash: ${entry.hash}
-Scope: ${entry.scope}
-Failure: ${entry.failure}
+Policy: ${maxThreat}
 `;
 		return treeItem;
 	}
@@ -343,11 +389,6 @@ Failure: ${entry.failure}
 
 	select(range: vscode.Range) {
 		this.editor.selection = new vscode.Selection(range.start, range.end);
-	}
-
-	public provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): vscode.ProviderResult<string> {
-		return this.componentModel.getContent(uri).then(content => content);
-		//return this.componentModel.components[0].then(content => content);
 	}
 
 
@@ -368,14 +409,16 @@ export class NexusExplorer {
 		let url = config.get("url")  + '';
 		let username = config.get("username") + '';
 		let password = config.get("password") + '';
-		let applicationId = config.get("applicationId") + '';//.toString();
 		let applicationPublicId = config.get("applicationPublicId") + '';//.toString();
 		/////////////////////////
+		//let applicationId = config.get("applicationId") + '';//.toString();
+		// let applicationId = "XXXXXX";//await this.getApplicationId(applicationPublicId);
+
 		/* Please note that login information is hardcoded only for this example purpose and recommended not to do it in general. */
-		this.componentModel = new IqComponentModel(url, username, password, applicationId);
+		this.componentModel = new IqComponentModel(url, username, password, applicationPublicId);
 		//this.componentModel = new IqStaticComponentModel();
 		this.nexusExplorerProvider = new NexusExplorerProvider(context, this.componentModel);
-		// context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('nexus', this.nexusExplorerProvider));
+		
 
 		this.nexusViewer = vscode.window.createTreeView('nexusExplorer', { 
 			'treeDataProvider': this.nexusExplorerProvider 
@@ -385,12 +428,11 @@ export class NexusExplorer {
 
 		//vscode.window.registerTreeDataProvider('nexusExplorer', this.nexusExplorerProvider);
 		vscode.commands.registerCommand('nexusExplorer.refresh', () => this.nexusExplorerProvider.refresh());
+		vscode.commands.registerCommand('nexusExplorer.sortByVulnerability', () => this.nexusExplorerProvider.sortByVulnerability());
+		
+
 		vscode.commands.registerCommand('nexusExplorer.revealResource', () => this.reveal());
 		vscode.commands.registerCommand('nexusExplorer.viewNode', (node: ComponentEntry) => this.viewNode(node));
-	}
-
-	private openResource(resource: vscode.Uri): void {
-		vscode.window.showTextDocument(resource);
 	}
 
 	private reveal(): Thenable<void> {
@@ -408,13 +450,8 @@ export class NexusExplorer {
 		return null;
 	}
 
+	
 	private viewNode(entry: ComponentEntry) {
 		ComponentInfoPanel.createOrShow(this.context.extensionPath, entry);
-		// const panel = vscode.window.createWebviewPanel(
-		// 	'catCoding', // Identifies the type of the webview. Used internally
-		// 	'Cat Coding', // Title of the panel displayed to the user
-		// 	vscode.ViewColumn.One, // Editor column to show the new webview panel in.
-		// 	{} // Webview options. More on these later.
-		// );
 	}
 }
