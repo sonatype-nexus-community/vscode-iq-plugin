@@ -53,10 +53,13 @@ export class IqComponentModel {
 	coordsToComponent: Map<string, ComponentEntry> = new Map<string, ComponentEntry>();
 
 	// TODO make these configurable???
-	readonly maximumEvaluationPollAttempts = 300;
+	// 
+	getmaximumEvaluationPollAttempts: number;
+	// readonly maximumEvaluationPollAttempts = 300;
 	readonly evaluationPollDelayMs = 2000;
 
-	constructor(readonly url: string, private user: string, private password: string, private applicationPublicId: string) {
+	constructor(readonly url: string, private user: string, private password: string, private applicationPublicId: string, private maximumEvaluationPollAttempts: number) {
+		this.getmaximumEvaluationPollAttempts = maximumEvaluationPollAttempts;
 	}
 
 	public getContent(resource: vscode.Uri): Thenable<string> {
@@ -242,7 +245,7 @@ export class IqComponentModel {
 				// report still being worked on, continue to poll
 				pollAttempts += 1;
 				// TODO use the top-level class constant, but references are failing
-				if (pollAttempts >= _this.maximumEvaluationPollAttempts) {
+				if (pollAttempts >= _this.getmaximumEvaluationPollAttempts) {
 					failed(statusCode, "Poll limit exceeded, try again later");
 				} else {
 					setTimeout(() => {
@@ -335,15 +338,15 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
 		// });
 	}
 	
-	sortByVulnerability(offset?: number): void {
-		this.reloadComponentModel().then(v => {
-			if (this.componentModel.components.length > 0) {
-				console.log('Sort By Vulnerability');
-				//make a copy of the nodes and then sort the items
-				//using the policy provider
-			}
-		});
-	}
+	// sortByVulnerability(offset?: number): void {
+	// 	this.reloadComponentModel().then(v => {
+	// 		if (this.componentModel.components.length > 0) {
+	// 			console.log('Sort By Vulnerability');
+	// 			//make a copy of the nodes and then sort the items
+	// 			//using the policy provider
+	// 		}
+	// 	});
+	// }
 
 
 	refresh(offset?: number): void {
@@ -409,13 +412,15 @@ export class NexusExplorer {
 		let url = config.get("url")  + '';
 		let username = config.get("username") + '';
 		let password = config.get("password") + '';
-		let applicationPublicId = config.get("applicationPublicId") + '';//.toString();
+		let applicationPublicId = config.get("applicationPublicId") + '';
+		let maximumEvaluationPollAttempts = parseInt(config.get("maximumEvaluationPollAttempts"),10);//.toString();
+		
 		/////////////////////////
 		//let applicationId = config.get("applicationId") + '';//.toString();
 		// let applicationId = "XXXXXX";//await this.getApplicationId(applicationPublicId);
 
 		/* Please note that login information is hardcoded only for this example purpose and recommended not to do it in general. */
-		this.componentModel = new IqComponentModel(url, username, password, applicationPublicId);
+		this.componentModel = new IqComponentModel(url, username, password, applicationPublicId, maximumEvaluationPollAttempts);
 		//this.componentModel = new IqStaticComponentModel();
 		this.nexusExplorerProvider = new NexusExplorerProvider(context, this.componentModel);
 		
@@ -428,7 +433,7 @@ export class NexusExplorer {
 
 		//vscode.window.registerTreeDataProvider('nexusExplorer', this.nexusExplorerProvider);
 		vscode.commands.registerCommand('nexusExplorer.refresh', () => this.nexusExplorerProvider.refresh());
-		vscode.commands.registerCommand('nexusExplorer.sortByVulnerability', () => this.nexusExplorerProvider.sortByVulnerability());
+		// vscode.commands.registerCommand('nexusExplorer.sortByVulnerability', () => this.nexusExplorerProvider.sortByVulnerability());
 		
 
 		vscode.commands.registerCommand('nexusExplorer.revealResource', () => this.reveal());

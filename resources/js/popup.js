@@ -403,6 +403,8 @@ function createAllversionsHTML(data, remediation, currentVersion){
 
         paintRow (remediation, "lawngreen")
         paintRow (currentVersion, "#85B6D5")
+    }else{
+        grid.scrollRowIntoView(currentVersionRow);
     }
 
     grid.onViewportChanged.subscribe(function(e, args){
@@ -745,7 +747,7 @@ function renderSecurityData(message){
             
          
             let strDialog = `<div id="info_${strVulnerability}"><a href="#">${strVulnerability}<img  src="${resourceSrc}/icons8-info-filled-50.png" class="info" alt="Info"></a></div>`
-            strAccordion += '<td class="label">Reference:</td><td class="data">' + strDialog + '</td>';
+            strAccordion += '<td class="label">Reference:</td><td class="data reference">' + strDialog + '</td>';
             strAccordion += '</tr><tr>'
             strAccordion += '<td class="label">Severity:</td><td class="data">' + securityIssue.severity + '</td>';
             strAccordion += '</tr><tr>'

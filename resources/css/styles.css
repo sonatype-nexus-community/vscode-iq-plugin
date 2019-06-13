@@ -140,6 +140,8 @@ table{
 .optionstable td, .optionstable th {
     /* border: 1px solid #ddd; */
     padding: 4px;
+    /* height: 100px !important; */
+
 }
 .optionstable tr{
     background-color: white;
@@ -147,7 +149,7 @@ table{
 
 
 .optionstable tr:nth-child(even){
-    background-color: rgb(216, 228, 250);
+    background-color: white;
 }
 
 .optionstable tr:nth-child(odd){
@@ -251,9 +253,14 @@ div .optionstable {
 .data{
     font-weight:bold;
     text-align: left;
-    overflow: scroll;
+    /* overflow: scroll; */
     font-size: small;
 }
+.reference{
+    padding-bottom: 8px !important;
+    padding-top: 0px !important;
+}
+
 
 .headingseverity{
     float:right;
@@ -263,6 +270,7 @@ div .optionstable {
     font-size: 1em;
     border-radius: 2px; 
     font-weight:700;
+    
 }
 
 h3 {
@@ -272,6 +280,7 @@ h3 {
 .headingreference{
     float: left;
     font-size: 1.2em;
+    text-transform: uppercase;
 }
 
 

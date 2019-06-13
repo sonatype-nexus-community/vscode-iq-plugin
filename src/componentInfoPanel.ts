@@ -475,11 +475,11 @@ private async getRemediation(nexusArtifact){//, settings) {
 										<td class="data"><span id="matchstate"></span></td>
 									</tr>
 									<tr id="CatalogDate_Row">
-										<td class="label">CatalogDate:</td>
+										<td class="label">Catalog Date:</td>
 										<td class="data"><span id="catalogdate"></span></td>
 									</tr>
 									<tr id="RelativePopularity_Row">
-										<td class="label">RelativePopularity:</td>                
+										<td class="label">Relative Popularity:</td>                
 										<td class="data"><span id="relativepopularity"></span></td>
 									</tr>
 									<tr>

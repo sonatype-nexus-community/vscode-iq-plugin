@@ -84,11 +84,6 @@
 					"command": "nexusExplorer.refresh",
 					"when": "view == nexusExplorer",
 					"group": "navigation"
-				},
-				{
-					"command": "nexusExplorer.sortByVulnerability",
-					"when": "view == nexusExplorer",
-					"group": "navigation"
 				}
 				
 			]
@@ -126,7 +121,12 @@
 						"type": "string",
 						"default": "sandbox-application",
 						"description": "Your Nexus IQ Application Public Id"
-					}
+					},					 
+					"nexusiq.npm.maximumEvaluationPollAttempts": {
+						"type": "number",
+						"default": "300",
+						"description": "Number of retries (every 2secs) to wait for the Evaluation report. "
+					}					
 				}
 			}
 		]
