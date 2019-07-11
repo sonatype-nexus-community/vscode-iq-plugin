@@ -469,13 +469,13 @@ export class NexusExplorerProvider
       arguments: [entry]
     };
     let maxThreat = entry.maxPolicy();
-    let tree = this.getDependencies(entry);
+    // let tree = this.getDependencies(entry);
     // TODO flesh out more details in the tooltip?
     treeItem.tooltip = `Name: ${entry.name}
 Version: ${entry.version}
 Hash: ${entry.hash}
 Policy: ${maxThreat}
-Tree: ${tree}
+
 `;
     return treeItem;
   }
