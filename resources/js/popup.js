@@ -1,5 +1,5 @@
 
-
+'use strict';
 console.log ('popup.js');
 
 var artifact
@@ -10,13 +10,40 @@ var settings
 var hasLoadedHistory
 var vscode
 var resourceSrc
-var remediation =  "undefined"
+var remediation =  "undefined";
 if (typeof chrome !== "undefined"){
     chrome.runtime.onMessage.addListener(gotMessage);
 }
 resourceSrc  =  document.getElementById('resourceSrc').value;
 console.log('resourceSrc', resourceSrc);
-
+const selectHandler = async function(e, tab) {
+    //lazy loading of history
+    //only do it if the user clicks on the tab
+    showLoader();
+    const remediationTab  = 2;
+    console.log('selectHandler', nexusArtifact, artifact)
+    if (tab.newTab.index() === remediationTab && !hasLoadedHistory && artifact.datasource === dataSources.NEXUSIQ){
+        $("<p></p>", {
+            text: "Please wait while we load the Version History...", 
+            "class": "status-message ui-corner-all"
+          }).appendTo(".ui-tabs-nav", "#pleasewait").css('color', 'white').fadeOut(2500, function() {
+            $(this).remove();
+          });
+        // let remediation
+        if (hasVulns) {
+            // remediation = await showRemediation(nexusArtifact, settings)
+            console.log('showRemediationViaMessage', nexusArtifact);
+            await showRemediationViaMessage(nexusArtifact);
+            // let allVersions = await GetAllVersions(nexusArtifact, settings, remediation)
+        }else{
+            // let allVersions = await GetAllVersions(nexusArtifact, settings, remediation)
+            console.log('GetAllVersionsViaMessage', nexusArtifact);
+            await GetAllVersionsViaMessage(nexusArtifact);
+        }
+        hasLoadedHistory = true;
+    }
+    hideLoader();
+};
 // Handle the message inside the webview
 window.addEventListener('message', event =>  {
     console.log('event', event);
@@ -113,34 +140,7 @@ $(function () {
     
 });
 
-selectHandler = async function(e, tab) {
-    //lazy loading of history
-    //only do it if the user clicks on the tab
-    showLoader();
-    const remediationTab  = 2;
-    console.log('selectHandler', nexusArtifact, artifact)
-    if (tab.newTab.index() === remediationTab && !hasLoadedHistory && artifact.datasource === dataSources.NEXUSIQ){
-        $("<p></p>", {
-            text: "Please wait while we load the Version History...", 
-            "class": "status-message ui-corner-all"
-          }).appendTo(".ui-tabs-nav", "#pleasewait").css('color', 'white').fadeOut(2500, function() {
-            $(this).remove();
-          });
-        // let remediation
-        if (hasVulns) {
-            // remediation = await showRemediation(nexusArtifact, settings)
-            console.log('showRemediationViaMessage', nexusArtifact);
-            await showRemediationViaMessage(nexusArtifact);
-            // let allVersions = await GetAllVersions(nexusArtifact, settings, remediation)
-        }else{
-            // let allVersions = await GetAllVersions(nexusArtifact, settings, remediation)
-            console.log('GetAllVersionsViaMessage', nexusArtifact);
-            await GetAllVersionsViaMessage(nexusArtifact);
-        }
-        hasLoadedHistory = true;
-    }
-    hideLoader();
-}
+
 
 function showAllVersionsPopup(data, remediation, currentVersion){
     console.log('showAllVersionsPopup', data, remediation, currentVersion)
@@ -507,7 +507,7 @@ function renderSecurityDataOSSIndex(message){
         return  securityIssues2.cvssScore - securityIssues1.cvssScore;
     });
     if(securityIssues.length > 0){
-        for(i=0; i < securityIssues.length; i++){
+        for(var i=0; i < securityIssues.length; i++){
             let securityIssue = securityIssues[i];
 
             //console.log(securityIssue.reference);
@@ -732,7 +732,7 @@ function renderSecurityData(message){
     if(securityIssues.length > 0){
         retVal = true;
         console.log(securityIssues);
-        for(i=0; i < securityIssues.length; i++){
+        for(var i=0; i < securityIssues.length; i++){
             let securityIssue = securityIssues[i];
             console.log(securityIssue);
 

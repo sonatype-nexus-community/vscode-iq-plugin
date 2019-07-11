@@ -335,17 +335,10 @@ private async getRemediation(nexusArtifact){//, settings) {
 	return new Promise((resolve, reject) => {
 		console.log('begin getRemediation', nexusArtifact);
 		let timestamp = Date.now();
-		
-		//var requestdata = this.NexusFormat(nexusArtifact);
-		
-		// var requestdata = {
-		// 	"components":[{
-		// 		"componentIdentifier":nexusArtifact.component.componentIdentifier}
-		// 		]
-		// 	};
 		var requestdata = nexusArtifact.component;
-		let inputStr = JSON.stringify(requestdata);
-		console.log('inputStr', inputStr);
+		console.log('requestdata', requestdata);
+		// let inputStr = JSON.stringify(requestdata);
+		// console.log('inputStr', inputStr);
 		//servername has a slash
 		let url = `${ComponentInfoPanel.iqUrl}/api/v2/components/remediation/application/${ComponentInfoPanel.iqApplicationId}`;
 		
