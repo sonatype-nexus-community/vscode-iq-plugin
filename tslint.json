@@ -1,13 +1,9 @@
 {
-	"rules": {
-		"indent": [
-			true,
-			"tabs",
-			2
-		],
-		"semicolon": [
-			true,
-			"always"
-		]
-	}
+  "linterOptions": {
+    "exclude": [
+      "config/**/*.js",
+	  "node_modules/**/*.ts",
+	  "ext-src/**/*.ts"
+    ]
+  }
 }

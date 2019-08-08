@@ -23,11 +23,11 @@ export class ComponentEntry {
 	{
 
 	}
-	scope: string;
-	failure: string;
-	policyViolations: Array<PolicyViolation>;	
-	hash:string;
-	nexusIQData: any;
+	scope: string = "";
+	failure: string = "";
+	policyViolations: Array<PolicyViolation> = [];	
+	hash:string = "";
+	nexusIQData: any = "";
 	public toString():string {
 		return `${this.name} @ ${this.version}`;
 	}
@@ -74,14 +74,14 @@ export class ComponentInfoPanel {
 
 	
 	// TODO get this from configuration or constructor
-	public static iqUrl;
-	public static iqUser;
-	public static iqPassword;
-	public static iqApplicationId;
-	public static iqApplicationPublicId;
+	public static iqUrl: string;
+	public static iqUser: string;
+	public static iqPassword: string;
+	public static iqApplicationId: string;
+	public static iqApplicationPublicId: string;
 	private static  _settings: any;
 
-	component: ComponentEntry;
+	component?: ComponentEntry;
 
 	public static readonly viewType = 'iqComponentInfoPanel';
 
@@ -197,7 +197,7 @@ export class ComponentInfoPanel {
 			this._disposables
 		);
 	}
-	private async showRemediation(nexusArtifact){
+	private async showRemediation(nexusArtifact: any){
 		console.log('showRemediation', nexusArtifact);
 		let remediation = await this.getRemediation(nexusArtifact);
 		console.log('remediation', remediation);
@@ -205,7 +205,7 @@ export class ComponentInfoPanel {
 		// vscode.window.showInformationMessage(message.cve);
 
 	}
-	private async showCVE(cve, nexusArtifact){
+	private async showCVE(cve: any, nexusArtifact: any){
 		console.log('showCVE',cve,  nexusArtifact);
 		let cvedetails = await this.GetCVEDetails(cve, nexusArtifact);
 		// let cvedetails = JSON.stringify(cvePromise);
@@ -214,7 +214,7 @@ export class ComponentInfoPanel {
 		// vscode.window.showInformationMessage(message.cve);
 
 	}
-	private async showAllVersions(nexusArtifact){
+	private async showAllVersions(nexusArtifact: any){
 		console.log('showAllVersions', nexusArtifact);
 		let allversions = await this.GetAllVersions(nexusArtifact);		
 		// console.log('allversions', allversions);
@@ -228,7 +228,7 @@ export class ComponentInfoPanel {
 		
 		
 		
-	private async GetAllVersions(nexusArtifact){//, settings) {
+	private async GetAllVersions(nexusArtifact: any){//, settings) {
 		return new Promise((resolve, reject) => {
 			console.log('begin GetAllVersions', nexusArtifact);
 			// let url="http://iq-server:8070/rest/vulnerability/details/cve/CVE-2018-3721?componentIdentifier=%7B%22format%22%3A%22maven%22%2C%22coordinates%22%3A%7B%22artifactId%22%3A%22springfox-swagger-ui%22%2C%22classifier%22%3A%22%22%2C%22extension%22%3A%22jar%22%2C%22groupId%22%3A%22io.springfox%22%2C%22version%22%3A%222.6.1%22%7D%7D&hash=4c854c86c91ab36c86fc&timestamp=1553676800618"
@@ -266,7 +266,7 @@ export class ComponentInfoPanel {
 
 	
 
-	private async GetCVEDetails(cve, nexusArtifact){//, settings) {
+	private async GetCVEDetails(cve: any, nexusArtifact: any){//, settings) {
 		return new Promise((resolve, reject) => {
 			console.log('begin GetCVEDetails', cve, nexusArtifact);
 			// let url="http://iq-server:8070/rest/vulnerability/details/cve/CVE-2018-3721?componentIdentifier=%7B%22format%22%3A%22maven%22%2C%22coordinates%22%3A%7B%22artifactId%22%3A%22springfox-swagger-ui%22%2C%22classifier%22%3A%22%22%2C%22extension%22%3A%22jar%22%2C%22groupId%22%3A%22io.springfox%22%2C%22version%22%3A%222.6.1%22%7D%7D&hash=4c854c86c91ab36c86fc&timestamp=1553676800618"
@@ -301,7 +301,7 @@ export class ComponentInfoPanel {
 					}
 					console.log('response', response);
 					console.log('body', body);
-					let cvedetails = response;
+					//let cvedetails = response;
 					
 					
 					resolve(body);
@@ -313,28 +313,10 @@ export class ComponentInfoPanel {
 
 
 
-	private NexusFormat(artifact){
-		return {
-			"components": [{
-				"component" : {
-					"hash": artifact.hash,
-					"componentIdentifier":{
-						"format":"npm",
-						"coordinates":{
-							"packageId": artifact.name,
-							"version": artifact.version
-						}
-					}
-				}
-			}]
-		};
-	}
 
-
-private async getRemediation(nexusArtifact){//, settings) {
+private async getRemediation(nexusArtifact: any){//, settings) {
 	return new Promise((resolve, reject) => {
 		console.log('begin getRemediation', nexusArtifact);
-		let timestamp = Date.now();
 		var requestdata = nexusArtifact.component;
 		console.log('requestdata', requestdata);
 		// let inputStr = JSON.stringify(requestdata);
@@ -400,14 +382,13 @@ private async getRemediation(nexusArtifact){//, settings) {
 			this._panel.webview.postMessage({ command: 'artifact', 'component': this.component });
 		}
 	}
-	private encodeComponentIdentifier(componentIdentifier){
+	private encodeComponentIdentifier(componentIdentifier: string){
 		let actual =  encodeURIComponent(JSON.stringify(componentIdentifier));
 		console.log('actual', actual);
 		return actual;
 	}
 	private loadHtmlForWebview() {
 		console.log('loadHtmlForWebview', this.component);
-		const componentString = JSON.stringify(this.component);
 		const settingsString = JSON.stringify(ComponentInfoPanel._settings);
 		
 		const onDiskPath = vscode.Uri.file(path.join(this._extensionPath, 'resources'));
@@ -452,11 +433,11 @@ private async getRemediation(nexusArtifact){//, settings) {
 									<div id="component_identifier">
 										<tr>
 											<td class="label">Package:</td>
-											<td class="data"><span id="package">${this.component.name}</span></td>
+											<td class="data"><span id="package">${this.component!.name}</span></td>
 										</tr>
 										<tr>
 											<td class="label">Version:</td>
-											<td class="data"><span id="version">${this.component.version}</span></td>
+											<td class="data"><span id="version">${this.component!.version}</span></td>
 										</tr>
 									</div>
 									<tr>

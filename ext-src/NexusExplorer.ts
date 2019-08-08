@@ -1,40 +1,22 @@
 import * as vscode from "vscode";
-import * as json from "jsonc-parser";
+//import * as json from "jsonc-parser";
 import * as path from "path";
 import * as fs from "fs";
 import { exec } from "./exec";
 import * as _ from "lodash";
-import { timingSafeEqual } from "crypto";
-import * as md5 from "md5";
+//import { timingSafeEqual } from "crypto";
+//import * as md5 from "md5";
 import * as request from "request";
-import { removeAllListeners } from "cluster";
-import { deflateSync } from "zlib";
+//import { removeAllListeners } from "cluster";
+//import { deflateSync } from "zlib";
+import * as dependencyTree from "dependency-tree";
 import {
   ComponentInfoPanel,
   ComponentEntry,
   PolicyViolation
-} from "./componentInfoPanel";
-import * as dependencyTree from "dependency-tree";
+} from "./ComponentInfoPanel";
 
-// class SecurityIssue {
-// 	constructor (readonly source: string, readonly reference: string,
-// 		readonly severity: number, readonly status: string, readonly url: string, readonly threatCategory: string) {}
-// }
-
-// class NpmCoordinates{
-// 	constructor(readonly packageId:string, readonly version:string){}
-// }
-// class NpmComponentIdentifier{
-// 	constructor(readonly format:string, readonly coordinates:NpmCoordinates){}
-// }
-// class NpmComponent{
-// 	constructor(readonly hash:string, readonly componentIdentifier:NpmComponentIdentifier, proprietary: boolean){}
-// }
-// class NexusComponent{
-// 	constructor(readonly component:NpmComponent, readonly matchState:string, catalogDate: boolean, relativePopularity: string, licenseData: any, securityData any, policyData any){}
-// }
-
-class NpmPackage {
+export class NpmPackage {
   constructor(
     readonly name: string,
     readonly version: string,
@@ -47,8 +29,8 @@ class NpmPackage {
 }
 
 class Coordinates {
-  packageId: string;
-  version: string;
+  packageId?: string;
+  version?: string;
 }
 
 export class IqComponentModel {
@@ -60,8 +42,6 @@ export class IqComponentModel {
 
   // TODO make these configurable???
   //
-  getmaximumEvaluationPollAttempts: number;
-  // readonly maximumEvaluationPollAttempts = 300;
   readonly evaluationPollDelayMs = 2000;
 
   constructor(
@@ -69,9 +49,9 @@ export class IqComponentModel {
     private user: string,
     private password: string,
     private applicationPublicId: string,
-    private maximumEvaluationPollAttempts: number
+    private getmaximumEvaluationPollAttempts: number
   ) {
-    this.getmaximumEvaluationPollAttempts = maximumEvaluationPollAttempts;
+    
   }
 
   public getContent(resource: vscode.Uri): Thenable<string> {
@@ -199,10 +179,10 @@ export class IqComponentModel {
         let componentEntry = this.coordsToComponent.get(
           this.toCoordValueType(coordinates)
         );
-        componentEntry.policyViolations = resultEntry.policyData
+        componentEntry!.policyViolations = resultEntry.policyData
           .policyViolations as Array<PolicyViolation>;
-        componentEntry.hash = resultEntry.component.hash;
-        componentEntry.nexusIQData = resultEntry;
+        componentEntry!.hash = resultEntry.component.hash;
+        componentEntry!.nexusIQData = resultEntry;
       }
     } catch (e) {
       vscode.window.showErrorMessage("Nexus IQ extension: " + e);
@@ -220,7 +200,7 @@ export class IqComponentModel {
           }/api/v2/applications?publicId=${applicationPublicId}`,
           auth: { user: this.user, pass: this.password }
         },
-        (err, response, body) => {
+        (err:any, response:any, body:any) => {
           if (err) {
             reject(`Unable to retrieve Application ID: ${err}`);
             return;
@@ -238,7 +218,7 @@ export class IqComponentModel {
     });
   }
 
-  private async submitToIqForEvaluation(data, applicationInternalId: string) {
+  private async submitToIqForEvaluation(data: any, applicationInternalId: string) {
     return new Promise((resolve, reject) => {
       request.post(
         {
@@ -249,13 +229,12 @@ export class IqComponentModel {
           json: data,
           auth: { user: this.user, pass: this.password }
         },
-        (err, response, body) => {
+        (err:any, response:any, body:any) => {
           if (err) {
             reject(`Unable to perform IQ scan: ${err}`);
             return;
           }
           let resultId = body.resultId;
-          let resultsUrl = body.resultsUrl;
           resolve(resultId);
           return;
         }
@@ -335,7 +314,7 @@ export class IqComponentModel {
         }/api/v2/evaluation/applications/${applicationInternalId}/results/${resultId}`,
         auth: { user: this.user, pass: this.password }
       },
-      (error, response, body) => {
+      (error:any, response:any, body:any) => {
         if (response && response.statusCode != 200) {
           reject(response.statusCode, error);
           return;
@@ -349,12 +328,12 @@ export class IqComponentModel {
     );
   }
 
-  private flattenAndUniqDependencies(npmShrinkwrapContents): NpmPackage[] {
+  private flattenAndUniqDependencies(npmShrinkwrapContents: any): NpmPackage[] {
     console.log("flattenAndUniqDependencies");
     //first level in npm-shrinkwrap is our project package, we go a level deeper not to include it in the results
     // TODO: handle case where npmShrinkwrapContents does not have a 'dependencies' element defined (eg: simple projects)
     if (npmShrinkwrapContents.dependencies === undefined) {
-      return NpmPackage[0];
+      return new Array();
     }
     let flatDependencies = this.flattenDependencies(
       this.extractInfo(npmShrinkwrapContents.dependencies)
@@ -379,7 +358,7 @@ export class IqComponentModel {
     );
   }
 
-  private flattenDependencies(dependencies): NpmPackage[] {
+  private flattenDependencies(dependencies: any): NpmPackage[] {
     let result = new Array<NpmPackage>();
     for (let dependency of dependencies) {
       result.push(dependency);
@@ -395,7 +374,7 @@ export class IqComponentModel {
 
 export class NexusExplorerProvider
   implements vscode.TreeDataProvider<ComponentEntry> {
-  private editor: vscode.TextEditor;
+  private editor?: vscode.TextEditor;
 
   private _onDidChangeTreeData: vscode.EventEmitter<
     any
@@ -480,7 +459,7 @@ Policy: ${maxThreat}
     return treeItem;
   }
 
-  getChildren(entry?: ComponentEntry): ComponentEntry[] {
+  getChildren(entry?: ComponentEntry): ComponentEntry[] | null {
     if (entry === undefined) {
       return this.componentModel.components;
     } else {
@@ -490,7 +469,7 @@ Policy: ${maxThreat}
   }
 
   select(range: vscode.Range) {
-    this.editor.selection = new vscode.Selection(range.start, range.end);
+    this.editor!.selection = new vscode.Selection(range.start, range.end);
   }
 }
 
@@ -508,9 +487,7 @@ export class NexusExplorer {
     let password = config.get("password") + "";
     let applicationPublicId = config.get("applicationPublicId") + "";
     let maximumEvaluationPollAttempts = parseInt(
-      config.get("maximumEvaluationPollAttempts"),
-      10
-    ); //.toString();
+      config.get("maximumEvaluationPollAttempts") + "", 10);
 
     /////////////////////////
     //let applicationId = config.get("applicationId") + '';//.toString();
@@ -551,19 +528,19 @@ export class NexusExplorer {
     );
   }
 
-  private reveal(): Thenable<void> {
+  private reveal(): Thenable<void> | undefined {
     const node = this.getNode();
     if (node) {
       return this.nexusViewer.reveal(node);
     }
-    return null;
+    return undefined;
   }
 
-  private getNode(): ComponentEntry {
+  private getNode(): ComponentEntry | undefined {
     if (this.componentModel.components.length > 0) {
       return this.componentModel.components[0];
     }
-    return null;
+    return undefined;
   }
 
   private viewNode(entry: ComponentEntry) {
