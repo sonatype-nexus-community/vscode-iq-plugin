@@ -328,11 +328,20 @@ function gotMessage(respMessage, sender, sendResponse){
         default:
             //do nothing for now    
     }
-        
-
 }
+
 function createAllversionsHTML(data, remediation, currentVersion){
     console.log('createAllversionsHTML', data, remediation, currentVersion);
+
+    // set:
+    // <VersionGraph versionData={data} />
+    // to #versionGraph
+    //$("#versionGraph").html("<VersionGraph versionData={data} />");
+}
+
+
+function createAllversionsHTMLJQuery(data, remediation, currentVersion){
+    console.log('createAllversionsHTMLJQuery', data, remediation, currentVersion);
     let strData = ""
     var grid;
 

@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as request from 'request';
 
+
 export class ConstraintReason {
 	constructor(readonly reason: string) {}
 }
@@ -111,8 +112,10 @@ export class ComponentInfoPanel {
 				// Enable javascript in the webview
 				enableScripts: true,
 				
-				// And restrict the webview to only loading content from our extension's `media` directory.
-				localResourceRoots: [vscode.Uri.file(path.join(extensionPath, 'resources'))]
+				localResourceRoots: [
+					vscode.Uri.file(path.join(extensionPath, 'resources')),
+					vscode.Uri.file(path.join(extensionPath, 'build'))
+				]
 			}
 		);
 
@@ -131,8 +134,8 @@ export class ComponentInfoPanel {
 		ComponentInfoPanel.iqUrl = config.get("url")  + '';
 		ComponentInfoPanel.iqUser = config.get("username") + '';
 		ComponentInfoPanel.iqPassword = config.get("password") + '';
-		ComponentInfoPanel.iqApplicationId = config.get("applicationId") + '';//.toString();
-		ComponentInfoPanel.iqApplicationPublicId = config.get("applicationPublicId") + '';//.toString();
+		ComponentInfoPanel.iqApplicationId = config.get("applicationId") + '';
+		ComponentInfoPanel.iqApplicationPublicId = config.get("applicationPublicId") + '';
 		ComponentInfoPanel._settings = {
 			'iqUrl': ComponentInfoPanel.iqUrl, 
 			'iqUser': ComponentInfoPanel.iqUser, 
@@ -140,13 +143,6 @@ export class ComponentInfoPanel {
 			'iqApplicationId': ComponentInfoPanel.iqApplicationId, 
 			'iqApplicationPublicId': ComponentInfoPanel.iqApplicationPublicId
 		};
-		// public static iqUrl = 'http://iq-server:8070';
-		// public static iqUser = 'admin';
-		// public static iqPassword = 'admin123';
-		// public static iqApplicationId = 'a6e65ec70f4a478f8e2198612917cd38';
-		// public static iqApplicationPublicId = 'sandbox-application';
-	
-
 	}
 
 	private constructor(panel: vscode.WebviewPanel, extensionPath: string) {
@@ -231,13 +227,8 @@ export class ComponentInfoPanel {
 	private async GetAllVersions(nexusArtifact: any){//, settings) {
 		return new Promise((resolve, reject) => {
 			console.log('begin GetAllVersions', nexusArtifact);
-			// let url="http://iq-server:8070/rest/vulnerability/details/cve/CVE-2018-3721?componentIdentifier=%7B%22format%22%3A%22maven%22%2C%22coordinates%22%3A%7B%22artifactId%22%3A%22springfox-swagger-ui%22%2C%22classifier%22%3A%22%22%2C%22extension%22%3A%22jar%22%2C%22groupId%22%3A%22io.springfox%22%2C%22version%22%3A%222.6.1%22%7D%7D&hash=4c854c86c91ab36c86fc&timestamp=1553676800618"
-			// let servername = settings.baseURL;// + (settings.baseURL[settings.baseURL.length-1]=='/' ? '' : '/') ;//'http://iq-server:8070'
-			//let CVE = 'CVE-2018-3721'
 			
-			let hash = nexusArtifact.component.hash;//'4c854c86c91ab36c86fc'
-			// let componentIdentifier = '%7B%22format%22%3A%22maven%22%2C%22coordinates%22%3A%7B%22artifactId%22%3A%22springfox-swagger-ui%22%2C%22classifier%22%3A%22%22%2C%22extension%22%3A%22jar%22%2C%22groupId%22%3A%22io.springfox%22%2C%22version%22%3A%222.6.1%22%7D%7D'
-			//let comp = encodeURI(JSON.stringify(nexusArtifact.component.componentIdentifier));
+			let hash = nexusArtifact.component.hash;
 			let comp  = this.encodeComponentIdentifier(nexusArtifact.component.componentIdentifier);
 			let d = new Date();
 			let timestamp = d.getDate();
@@ -255,10 +246,7 @@ export class ComponentInfoPanel {
 						reject(`Unable to retrieve GetAllVersions: ${err}`);
 						return;
 					}
-					// console.log('response', response);
-					// console.log('body', body);					
 					resolve(body);
-					// return body;
 				}
 			);
 		});
@@ -269,12 +257,8 @@ export class ComponentInfoPanel {
 	private async GetCVEDetails(cve: any, nexusArtifact: any){//, settings) {
 		return new Promise((resolve, reject) => {
 			console.log('begin GetCVEDetails', cve, nexusArtifact);
-			// let url="http://iq-server:8070/rest/vulnerability/details/cve/CVE-2018-3721?componentIdentifier=%7B%22format%22%3A%22maven%22%2C%22coordinates%22%3A%7B%22artifactId%22%3A%22springfox-swagger-ui%22%2C%22classifier%22%3A%22%22%2C%22extension%22%3A%22jar%22%2C%22groupId%22%3A%22io.springfox%22%2C%22version%22%3A%222.6.1%22%7D%7D&hash=4c854c86c91ab36c86fc&timestamp=1553676800618"
-			// let servername = settings.baseURL;// + (settings.baseURL[settings.baseURL.length-1]=='/' ? '' : '/') ;//'http://iq-server:8070'
-			//let CVE = 'CVE-2018-3721'
 			let timestamp = Date.now();
-			let hash = nexusArtifact.components[0].hash;//'4c854c86c91ab36c86fc'
-			// let componentIdentifier = '%7B%22format%22%3A%22maven%22%2C%22coordinates%22%3A%7B%22artifactId%22%3A%22springfox-swagger-ui%22%2C%22classifier%22%3A%22%22%2C%22extension%22%3A%22jar%22%2C%22groupId%22%3A%22io.springfox%22%2C%22version%22%3A%222.6.1%22%7D%7D'
+			let hash = nexusArtifact.components[0].hash;
 			let componentIdentifier = this.encodeComponentIdentifier(nexusArtifact.components[0].componentIdentifier);
 			let vulnerability_source;
 			if (cve.search('sonatype')>=0){
@@ -301,8 +285,6 @@ export class ComponentInfoPanel {
 					}
 					console.log('response', response);
 					console.log('body', body);
-					//let cvedetails = response;
-					
 					
 					resolve(body);
 					// return body;
@@ -319,8 +301,6 @@ private async getRemediation(nexusArtifact: any){//, settings) {
 		console.log('begin getRemediation', nexusArtifact);
 		var requestdata = nexusArtifact.component;
 		console.log('requestdata', requestdata);
-		// let inputStr = JSON.stringify(requestdata);
-		// console.log('inputStr', inputStr);
 		//servername has a slash
 		let url = `${ComponentInfoPanel.iqUrl}/api/v2/components/remediation/application/${ComponentInfoPanel.iqApplicationId}`;
 		
@@ -387,12 +367,23 @@ private async getRemediation(nexusArtifact: any){//, settings) {
 		console.log('actual', actual);
 		return actual;
 	}
+
 	private loadHtmlForWebview() {
 		console.log('loadHtmlForWebview', this.component);
 		const settingsString = JSON.stringify(ComponentInfoPanel._settings);
 		
 		const onDiskPath = vscode.Uri.file(path.join(this._extensionPath, 'resources'));
 		const resourceSrc = onDiskPath.with({scheme: 'vscode-resource'});
+
+		const manifest = require(path.join(this._extensionPath, 'build', 'asset-manifest.json'));
+		const mainScript = manifest['main.js'];
+		//const mainStyle = manifest['main.css'];
+		const scriptPathOnDisk = vscode.Uri.file(path.join(this._extensionPath, 'build', mainScript));
+		const scriptUri = scriptPathOnDisk.with({ scheme: 'vscode-resource' });
+
+		// Use a nonce to whitelist which scripts can be run
+		const nonce = this.getNonce();
+
 		let htmlBody = `<!DOCTYPE html>
 				<head>
 						<meta charset="utf-8">
@@ -403,8 +394,6 @@ private async getRemediation(nexusArtifact: any){//, settings) {
 						<link rel="stylesheet" href="${resourceSrc}/js/jquery-ui-themes-1.12.1/themes/base/jquery-ui.min.css">        
 						<link rel="stylesheet" href="${resourceSrc}/js/slick.grid.css" type="text/css"/>
 
-						
-		
 						<title>Component Info</title>
 				</head>
 				<body>
@@ -424,6 +413,8 @@ private async getRemediation(nexusArtifact: any){//, settings) {
 							</ul>
 							<!-- Remediation -->
 							<div id="tabs-3">
+							  <div id="versionGraph"></div>
+							  <div id="root"></div>
 								<div id="remediation"></div>
 								<div id="myGrid" class="slick-grid" ></div>
 							</div>
@@ -518,8 +509,18 @@ private async getRemediation(nexusArtifact: any){//, settings) {
 						<script src="${resourceSrc}/js/utils.js"></script>
 						<script src="${resourceSrc}/js/popup.js"></script>   
 								
+						<script nonce="${nonce}" src="${scriptUri}"></script>
 				</body>
 		</html>`;
 		this._panel.webview.html = htmlBody;
+	}
+
+	private getNonce() {
+		let text = "";
+		const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		for (let i = 0; i < 32; i++) {
+			text += possible.charAt(Math.floor(Math.random() * possible.length));
+		}
+		return text;
 	}
 }
