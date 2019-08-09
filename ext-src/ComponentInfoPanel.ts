@@ -391,8 +391,7 @@ private async getRemediation(nexusArtifact: any){//, settings) {
 						<meta name="description" content="">
 						<meta name="viewport" content="width=device-width, initial-scale=1">
 						<link rel="stylesheet" href="${resourceSrc}/css/styles.css">
-						<link rel="stylesheet" href="${resourceSrc}/js/jquery-ui-themes-1.12.1/themes/base/jquery-ui.min.css">        
-						<link rel="stylesheet" href="${resourceSrc}/js/slick.grid.css" type="text/css"/>
+						<link rel="stylesheet" href="${resourceSrc}/css/react-tabs.css">
 
 						<title>Component Info</title>
 				</head>
@@ -401,114 +400,7 @@ private async getRemediation(nexusArtifact: any){//, settings) {
 						<input type="hidden" id="settings" name="settings" value='${settingsString}'>
 						<input type="hidden" id="resourceSrc" name="resourceSrc" value='${resourceSrc}'>
 						
-						<div class="loader" id="loader"><img src="${resourceSrc}/SON_logo_favicon.png"></div>
-		
-				
-						<div id="tabs" class="optionstable animate-bottom" >
-							<ul>
-								<li><a href="#tabs-1">Component Info</a></li>
-								<li><a href="#tabs-2">Security</a></li>
-								<li><a href="#tabs-3">Remediation</a></li>
-								<li><a href="#tabs-4">Licensing</a></li>
-							</ul>
-							<!-- Remediation -->
-							<div id="tabs-3">
-							  <div id="versionGraph"></div>
-							  <div id="root"></div>
-								<div id="remediation"></div>
-								<div id="myGrid" class="slick-grid" ></div>
-							</div>
-							<div id="tabs-1" class="component-tab">
-								<div class="info-display">
-								<table class="optionstable">
-									<div id="component_identifier">
-										<tr>
-											<td class="label">Package:</td>
-											<td class="data"><span id="package">${this.component!.name}</span></td>
-										</tr>
-										<tr>
-											<td class="label">Version:</td>
-											<td class="data"><span id="version">${this.component!.version}</span></td>
-										</tr>
-									</div>
-									<tr>
-										<td class="label"><span id="hash_label">Hash:</span></td>
-										<td class="data"><span id="hash"></span></td>
-									</tr>
-									<tr>    
-										<td class="label">Match State:</td>
-										<td class="data"><span id="matchstate"></span></td>
-									</tr>
-									<tr id="CatalogDate_Row">
-										<td class="label">Catalog Date:</td>
-										<td class="data"><span id="catalogdate"></span></td>
-									</tr>
-									<tr id="RelativePopularity_Row">
-										<td class="label">Relative Popularity:</td>                
-										<td class="data"><span id="relativepopularity"></span></td>
-									</tr>
-									<tr>
-										<td class="label">Highest CVSS Score:</td>                
-										<td class="data"><span id="Highest_CVSS_Score" class="maxIssue"></span><span id="Num_CVSS_Issues" class="numissues"></span></td>
-									</tr>							
-									<tr>
-										<td class="label">Data Source:</td>                
-										<td class="data"><span id="datasource"></span></td>
-									</tr>
-								</table>									
-								</div>
-							</div>
-							<!-- end of tabs-1 -->
-							<!-- Security -->
-							<div id="tabs-2">
-								<div id="accordion"></div>
-								<div id="dialog" title="Security Details" class="dialog"></div>
-							</div>
-
-							<!-- License -->
-							<div id="tabs-4">
-								<table class="optionstable" id="licensetable">
-									<tr>
-										<td colspan="2"><strong>DeclaredLicenses</strong></td>
-										<td></td>
-									</tr>            
-										
-									<div id="declaredlicenses">
-									<tr>
-										<td>License Id: <a id="declaredlicenses_licenseLink" href="test.html" target="_blank">LicenseLink</a></td>
-										<td>License Name: <span id="declaredlicenses_licenseName"></span></td>
-									</tr>  
-									</div>
-									<tr>
-										<td colspan="2">
-												<p><strong>Observed Licenses</strong></p>
-										</td>
-									</tr>                
-									<div id="observedlicenses">                     
-									<tr>
-										<td>License Id: <span id="observedLicenses_licenseId"></span></td>
-										<td><div id="observedLicenses_licenseLink"></div>License Name: <span id="observedLicenses_licenseName"></span></td>
-									</tr>
-									</div>
-								</table>            
-							</div>    							                     
-						</div>
-						<div id="error"  class="error"><p >Some error occurred</p></div>
-		
-								<!--First cut of this code will only handle a single npm component-->
-						<script src="${resourceSrc}/js/jquery-3.3.1.min.js"></script>
-						<script src="${resourceSrc}/js/jquery-ui-1.12.1/jquery-ui.min.js"></script>  
-						<script src="${resourceSrc}/js/jquery.event.drag-2.3.0.js"></script>  
-		
-						<script src="${resourceSrc}/js/slick.core.js"></script>
-						<script src="${resourceSrc}/js/slick.cellselectionmodel.js"></script>
-						<script src="${resourceSrc}/js/slick.rowmovemanager.js"></script>
-						<script src="${resourceSrc}/js/slick.grid.js"></script>
-						<script src="${resourceSrc}/js/axios.min.js"></script>  
-				
-						<script src="${resourceSrc}/js/utils.js"></script>
-						<script src="${resourceSrc}/js/popup.js"></script>   
-								
+						<div id="root" />
 						<script nonce="${nonce}" src="${scriptUri}"></script>
 				</body>
 		</html>`;
