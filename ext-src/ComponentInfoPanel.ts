@@ -150,7 +150,9 @@ export class ComponentInfoPanel {
 		this._extensionPath = extensionPath;
 		ComponentInfoPanel.getSettings();
 		// Set the webview's initial html content
-		this._update();
+		//this._update();
+		this.loadHtmlForWebview();
+
 
 		// Listen for when the panel is disposed
 		// This happens when the user closes the panel or when the panel is closed programatically
@@ -357,7 +359,6 @@ private async getRemediation(nexusArtifact: any){//, settings) {
 		if (this.component) {
 			this._panel.title = `IQ Scan: ${this.component.name}@${this.component.version}`;
 			// TODO update HTML with the new selection
-			this.loadHtmlForWebview();
 			console.log('posting message _update', this.component);
 			this._panel.webview.postMessage({ command: 'artifact', 'component': this.component });
 		}

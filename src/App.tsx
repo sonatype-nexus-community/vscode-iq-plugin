@@ -8,7 +8,16 @@ import LicensingPage from './LicensingPage';
 
 //import logo from './logo.svg';
 
-class App extends React.Component {
+type AppProps = {};
+// todo declare more details on component
+type AppState = { component: any};
+class App extends React.Component<AppProps, AppState> {
+  private cipPage = React.createRef<ComponentInfoPage>();
+
+  constructor(props: AppProps) {
+    super(props);
+    this.state = {component: {}}
+  }
   public render() {
     return (
       <Tabs id="remediation-tab">
@@ -24,7 +33,7 @@ class App extends React.Component {
         </TabPanel>
         <TabPanel>
           <h1>Component Info</h1>
-          <ComponentInfoPage></ComponentInfoPage>
+          <ComponentInfoPage ref={this.cipPage}></ComponentInfoPage>
         </TabPanel>
         <TabPanel>
           <h1>Security</h1>
@@ -36,6 +45,27 @@ class App extends React.Component {
         </TabPanel>
       </Tabs>
     );
+  }
+
+  public componentDidMount() {
+    window.addEventListener('message', event => {
+      const message = event.data;
+      console.log("received message", message);
+      switch (message.command) {
+        case 'artifact':
+          console.log("Artifact received, updating state & children");
+          const component = message.component;
+          this.setState(component);
+          // TODO why doesn't data propagate fully???
+          const cipPageRef = this.cipPage.current;
+          if (cipPageRef == null) {
+            console.log("CIP Page not initialized");
+          } else {
+            cipPageRef.changeComponent(component);
+          }
+          break;
+      }
+    });
   }
 }
 

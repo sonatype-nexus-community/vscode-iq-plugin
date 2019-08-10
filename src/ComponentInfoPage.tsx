@@ -1,6 +1,20 @@
 import * as React from 'react';
 
-class ComponentInfoPage extends React.Component {
+type CipProps = {};
+// todo declare more details on component
+type CipState = {component: any};
+
+class ComponentInfoPage extends React.Component<CipProps, CipState> {
+  constructor(props: CipProps) {
+    super(props);
+    this.state = {component: {name: "", version: ""}}
+  }
+
+  public changeComponent(component: any) {
+    console.log("CIP changing component", component);
+    this.setState({component: component})
+  }
+
   public render() {
     return (
       <div className="info-display">
@@ -8,11 +22,11 @@ class ComponentInfoPage extends React.Component {
               <div id="component_identifier">
                 <tr>
                   <td className="label">Package:</td>
-                  <td className="data"><span id="package">Component name</span></td>
+                  <td className="data"><span id="package">{this.state.component.name}</span></td>
                 </tr>
                 <tr>
                   <td className="label">Version:</td>
-                  <td className="data"><span id="version">1.2.3.4</span></td>
+                  <td className="data"><span id="version">{this.state.component.version}</span></td>
                 </tr>
               </div>
               <tr>
