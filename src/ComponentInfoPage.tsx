@@ -1,13 +1,12 @@
 import * as React from 'react';
 
-type CipProps = {};
+type CipProps = {component: any};
 // todo declare more details on component
-type CipState = {component: any};
+type CipState = {};
 
 class ComponentInfoPage extends React.Component<CipProps, CipState> {
   constructor(props: CipProps) {
     super(props);
-    this.state = {component: {name: "", version: ""}}
   }
 
   public changeComponent(component: any) {
@@ -22,11 +21,11 @@ class ComponentInfoPage extends React.Component<CipProps, CipState> {
               <div id="component_identifier">
                 <tr>
                   <td className="label">Package:</td>
-                  <td className="data"><span id="package">{this.state.component.name}</span></td>
+                  <td className="data"><span id="package">{this.props.component.name}</span></td>
                 </tr>
                 <tr>
                   <td className="label">Version:</td>
-                  <td className="data"><span id="version">{this.state.component.version}</span></td>
+                  <td className="data"><span id="version">{this.props.component.version}</span></td>
                 </tr>
               </div>
               <tr>

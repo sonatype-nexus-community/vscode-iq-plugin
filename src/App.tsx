@@ -12,7 +12,6 @@ type AppProps = {};
 // todo declare more details on component
 type AppState = { component: any};
 class App extends React.Component<AppProps, AppState> {
-  private cipPage = React.createRef<ComponentInfoPage>();
 
   constructor(props: AppProps) {
     super(props);
@@ -33,7 +32,7 @@ class App extends React.Component<AppProps, AppState> {
         </TabPanel>
         <TabPanel>
           <h1>Component Info</h1>
-          <ComponentInfoPage ref={this.cipPage}></ComponentInfoPage>
+          <ComponentInfoPage component={this.state.component}></ComponentInfoPage>
         </TabPanel>
         <TabPanel>
           <h1>Security</h1>
@@ -55,14 +54,14 @@ class App extends React.Component<AppProps, AppState> {
         case 'artifact':
           console.log("Artifact received, updating state & children");
           const component = message.component;
-          this.setState(component);
+          this.setState({component: component});
           // TODO why doesn't data propagate fully???
-          const cipPageRef = this.cipPage.current;
-          if (cipPageRef == null) {
-            console.log("CIP Page not initialized");
-          } else {
-            cipPageRef.changeComponent(component);
-          }
+          // const cipPageRef = this.cipPage.current;
+          // if (cipPageRef == null) {
+          //   console.log("CIP Page not initialized");
+          // } else {
+          //   cipPageRef.changeComponent(component);
+          // }
           break;
       }
     });
