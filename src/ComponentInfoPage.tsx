@@ -1,4 +1,5 @@
 import * as React from 'react';
+import './styles.css';
 
 type CipProps = {component: any};
 // todo declare more details on component
@@ -30,7 +31,7 @@ class ComponentInfoPage extends React.Component<CipProps, CipState> {
               </div>
               <tr>
                 <td className="label"><span id="hash_label">Hash:</span></td>
-                <td className="data"><span id="hash"></span></td>
+                <td className="data"><span id="hash">{this.props.component.hash}</span></td>
               </tr>
               <tr>    
                 <td className="label">Match State:</td>
@@ -38,11 +39,11 @@ class ComponentInfoPage extends React.Component<CipProps, CipState> {
               </tr>
               <tr id="CatalogDate_Row">
                 <td className="label">Catalog Date:</td>
-                <td className="data"><span id="catalogdate"></span></td>
+                <td className="data"><span id="catalogdate">{this.props.component.nexusIQData.catalogDate}</span></td>
               </tr>
               <tr id="RelativePopularity_Row">
                 <td className="label">Relative Popularity:</td>                
-                <td className="data"><span id="relativepopularity"></span></td>
+                <td className="data"><span id="relativepopularity">{this.props.component.nexusIQData.relativepopularity}</span></td>
               </tr>
               <tr>
                 <td className="label">Highest CVSS Score:</td>                

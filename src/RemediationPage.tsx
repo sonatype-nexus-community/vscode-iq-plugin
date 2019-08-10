@@ -9,6 +9,9 @@ class RemediationPage extends React.Component {
       <VersionGraph></VersionGraph>
     );
   }
+
+  public componentDidMount() {
+  }
 }
 
 export default RemediationPage;

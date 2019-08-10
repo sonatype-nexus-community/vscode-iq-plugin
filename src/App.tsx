@@ -55,13 +55,6 @@ class App extends React.Component<AppProps, AppState> {
           console.log("Artifact received, updating state & children");
           const component = message.component;
           this.setState({component: component});
-          // TODO why doesn't data propagate fully???
-          // const cipPageRef = this.cipPage.current;
-          // if (cipPageRef == null) {
-          //   console.log("CIP Page not initialized");
-          // } else {
-          //   cipPageRef.changeComponent(component);
-          // }
           break;
       }
     });
