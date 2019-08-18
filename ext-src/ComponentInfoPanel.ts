@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as request from 'request';
+import { VersionInfo, DisplayName } from './VersionInfo';
 
 
 export class ConstraintReason {
@@ -153,6 +154,17 @@ export class ComponentInfoPanel {
 		//this._update();
 		this.loadHtmlForWebview();
 
+		// send the settings
+		console.log('posting settings', this.component);
+		const pageSettings = {
+			serverName: ComponentInfoPanel._settings.iqUrl,
+			appInternalId: ComponentInfoPanel._settings.iqApplicationId,
+			username: ComponentInfoPanel._settings.iqUser,
+			password: ComponentInfoPanel._settings.iqPassword
+		}
+		this._panel.webview.postMessage({ command: 'settings', 'settings': pageSettings });
+
+
 
 		// Listen for when the panel is disposed
 		// This happens when the user closes the panel or when the panel is closed programatically
@@ -162,7 +174,7 @@ export class ComponentInfoPanel {
 		this._panel.onDidChangeViewState(
 			e => {
 				if (this._panel.visible) {
-					this._update();
+					this.updateViewForThisComponent();
 				}
 			},
 			null,
@@ -186,9 +198,6 @@ export class ComponentInfoPanel {
 					case 'GetRemediation':
 						this.showRemediation(message.nexusArtifact);
 						return;
-					case 'GetAllVersions':
-						this.showAllVersions(message.nexusArtifact);
-						return;								
 				}
 			},
 			null,
@@ -212,31 +221,49 @@ export class ComponentInfoPanel {
 		// vscode.window.showInformationMessage(message.cve);
 
 	}
-	private async showAllVersions(nexusArtifact: any){
-		console.log('showAllVersions', nexusArtifact);
-		let allversions = await this.GetAllVersions(nexusArtifact);		
-		// console.log('allversions', allversions);
-		this._panel.webview.postMessage({ command: 'allversions', 'allversions': allversions });
-		// vscode.window.showInformationMessage(message.cve);
-
-	}
 	
 
 	
 		
 		
 		
-	private async GetAllVersions(nexusArtifact: any){//, settings) {
-		return new Promise((resolve, reject) => {
-			console.log('begin GetAllVersions', nexusArtifact);
-			
-			let hash = nexusArtifact.component.hash;
-			let comp  = this.encodeComponentIdentifier(nexusArtifact.component.componentIdentifier);
+	private async getAllVersions(): Promise<VersionInfo[]> {//, settings) {
+		let nexusArtifact = this.component!.nexusIQData.component;
+		if (!nexusArtifact || !nexusArtifact.hash) {
+			return [];
+		}
+		return new Promise<VersionInfo[]>((resolve, reject) => {
+			console.log('begin GetAllVersions', this.component);
+
+			// const allVersionUrl = `http://localhost:8070/api/v2/components/versions`
+			// console.log("Getting all versions from ", allVersionUrl)
+			// xhr.open('POST', allVersionUrl)
+			// xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+			// xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.username + ":" + this.props.password))
+			// xhr.setRequestHeader("Origin", 'http://localhost:8070')
+			// // xhr.setRequestHeader("Access-Control-Allow-Origin", "*")
+			// // xhr.setRequestHeader('Access-Control-Allow-Credentials', 'true')
+			// xhr.withCredentials = true
+			// xhr.send(JSON.stringify({ 
+			// 	"format": "maven", 
+			// 	"coordinates": { 
+			// 		"artifactId": "tomcat-util", 
+			// 		"groupId": "tomcat"
+			// 	} 
+			// }));
+				
+			let hash = nexusArtifact.hash;
+			let comp  = this.encodeComponentIdentifier(nexusArtifact.componentIdentifier);
 			let d = new Date();
 			let timestamp = d.getDate();
 			let matchstate = "exact";
-			let url=`${ComponentInfoPanel.iqUrl}/rest/ide/componentDetails/application/${ComponentInfoPanel.iqApplicationPublicId}/allVersions?componentIdentifier=${comp}&hash=${hash}&matchState=${matchstate}&timestamp=${timestamp}&proprietary=false`;
+			let url=`${ComponentInfoPanel.iqUrl}/rest/ide/componentDetails/application/` +
+					`${ComponentInfoPanel.iqApplicationPublicId}/allVersions?` +
+					`componentIdentifier=${comp}&` +
+					`hash=${hash}&matchState=${matchstate}&` +
+					`timestamp=${timestamp}&proprietary=false`;
 	
+
 			request.get(
 				{
 					method:'GET',
@@ -248,7 +275,14 @@ export class ComponentInfoPanel {
 						reject(`Unable to retrieve GetAllVersions: ${err}`);
 						return;
 					}
-					resolve(body);
+					const versionArray = JSON.parse(body) as any[];
+					var allVersions = versionArray.map((entry: any) => <VersionInfo>{
+						displayName: new DisplayName(entry.componentIdentifier.coordinates.packageId, entry.componentIdentifier.coordinates.version),
+						threatLevl: entry.higestSecurityVulerabilitySeverity,
+						popularity: entry.relativePopularity || 1
+					});
+
+					resolve(allVersions);
 				}
 			);
 		});
@@ -349,20 +383,31 @@ private async getRemediation(nexusArtifact: any){//, settings) {
 			// a new component has been sent, refresh the view
 			this.component = newComponent;
 			// TODO refresh the screen
-			this._update();
+			this.updateViewForThisComponent();
 		}
 	}
 
 
-	private _update() {
+	private updateViewForThisComponent() {
 		console.log(`Update called`);
 		if (this.component) {
 			this._panel.title = `IQ Scan: ${this.component.name}@${this.component.version}`;
-			// TODO update HTML with the new selection
 			console.log('posting message _update', this.component);
 			this._panel.webview.postMessage({ command: 'artifact', 'component': this.component });
+
+			this.showAllVersions();
 		}
 	}
+
+	private async showAllVersions(){
+		console.log('showAllVersions', this.component);
+		let allversions = await this.getAllVersions();		
+		console.log('allversions', allversions);
+		this._panel.webview.postMessage({ command: 'allversions', 'allversions': allversions });
+		// vscode.window.showInformationMessage(message.cve);
+
+	}
+
 	private encodeComponentIdentifier(componentIdentifier: string){
 		let actual =  encodeURIComponent(JSON.stringify(componentIdentifier));
 		console.log('actual', actual);

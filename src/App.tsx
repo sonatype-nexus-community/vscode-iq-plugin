@@ -4,18 +4,24 @@ import RemediationPage from './RemediationPage';
 import ComponentInfoPage from './ComponentInfoPage';
 import SecurityPage from './SecurityPage';
 import LicensingPage from './LicensingPage';
+import { VersionInfo } from './VersionInfo';
 
 
-//import logo from './logo.svg';
-
-type AppProps = {};
+type AppProps = {
+};
 // todo declare more details on component
-type AppState = { component: any};
+type AppState = { 
+  component: any,
+  allVersions: VersionInfo[]
+};
 class App extends React.Component<AppProps, AppState> {
 
   constructor(props: AppProps) {
     super(props);
-    this.state = {component: {}}
+    this.state = {
+      component: {},
+      allVersions: []
+    }
   }
   public render() {
     return (
@@ -28,7 +34,9 @@ class App extends React.Component<AppProps, AppState> {
         </TabList>
         <TabPanel>
           <h1>Remediation</h1>
-          <RemediationPage></RemediationPage>
+          <RemediationPage
+            component={this.state.component}
+            allVersions={this.state.allVersions}></RemediationPage>
         </TabPanel>
         <TabPanel>
           <h1>Component Info</h1>
@@ -52,11 +60,26 @@ class App extends React.Component<AppProps, AppState> {
       console.log("received message", message);
       switch (message.command) {
         case 'artifact':
-          console.log("Artifact received, updating state & children");
+          console.log("Artifact received, updating state & children", message.component);
           const component = message.component;
           this.setState({component: component});
           break;
-      }
+        // case 'settings':
+        //     console.log("Settings received, updating state & children");
+        //     const settings = message.settings;
+        //     this.setState({settings: {
+        //       serverName: settings.serverName,
+        //       appInternalId: settings.appInternalId,
+        //       username: settings.username,
+        //       password: settings.password
+        //     }});
+        //     break;
+        case 'allversions':
+          console.log("AllVersions received, showing version graph", message.allversions);
+          let versionArray = message.allversions as VersionInfo[];
+          this.setState({allVersions: versionArray})
+          break;
+        }
     });
   }
 }

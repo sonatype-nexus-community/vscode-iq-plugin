@@ -1,36 +1,34 @@
 import * as React from 'react';
-import { VictoryChart, VictoryTheme, VictoryBar } from 'victory';
+import { VictoryChart, VictoryTheme, VictoryBar, VictoryContainer, VictoryTooltip } from 'victory';
+import { VersionInfo } from './VersionInfo';
 
-class VersionGraph extends React.Component {
-  // constructor() {
-  //   super({}});
-  //   this.state = {
-  //     data: [
-  //       {version: "1.1.0", popularity: 19, policyThreat: 0},
-  //       {version: "1.1.1", popularity: 50, policyThreat: 0},
-  //       {version: "1.1.2", popularity: 3, policyThreat: 1}
-  //     ]
-  //   };
-  // }
+type Props = {
+  allVersions: VersionInfo[]
+};
+// todo declare more details on component
+type State = {};
+
+class VersionGraph extends React.Component<Props, State> {
   public render() {
     return (
   <VictoryChart
     theme={VictoryTheme.material}
     domainPadding={{ x: 15 }}
+    height={400}
+    width={Math.max(this.props.allVersions.length * 10, 300) + 100}
+    containerComponent={<VictoryContainer responsive={false}/>}
   >
     <VictoryBar
       barRatio={0.8}
       style={{
-        data: { fill: "#c43a31" }
+        data: { fill: "#c43a31", strokeWidth: 2 }
       }}
       // data = { this.state.versionData }
-      data={[
-        {version: "1.1.0", popularity: 19, policyThreat: 0},
-        {version: "1.1.1", popularity: 50, policyThreat: 0},
-        {version: "1.1.2", popularity: 3, policyThreat: 1}
-      ]}
-      x="version"
+      data = {this.props.allVersions}
+      x="displayName.version"
       y="popularity"
+      labels={(d) => `label: ${d}`}
+      labelComponent={<VictoryTooltip/>}
     />
   </VictoryChart>
     );

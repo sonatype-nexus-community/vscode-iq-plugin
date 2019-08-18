@@ -1,7 +1,9 @@
 import * as React from 'react';
 import './styles.css';
 
-type CipProps = {component: any};
+type CipProps = {
+  component: any
+};
 // todo declare more details on component
 type CipState = {};
 
