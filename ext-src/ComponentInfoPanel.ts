@@ -421,6 +421,7 @@ private async getRemediation(nexusArtifact: any){//, settings) {
 						<meta name="description" content="">
 						<meta name="viewport" content="width=device-width, initial-scale=1">
 						<link rel="stylesheet" href="${resourceSrc}/css/react-tabs.css">
+						<link rel="stylesheet" href="${resourceSrc}/css/styles.css">
 
 						<title>Component Info</title>
 				</head>

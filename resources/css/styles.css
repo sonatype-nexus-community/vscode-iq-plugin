@@ -143,29 +143,10 @@ table{
     /* height: 100px !important; */
 
 }
-.optionstable tr{
-    background-color: white;
-}
-
-
-.optionstable tr:nth-child(even){
-    background-color: white;
-}
-
-.optionstable tr:nth-child(odd){
-    background-color: white;
-}
-
-/* .optionstable tr:hover {
-    background-color: white;
-} */
-
 .optionstable th {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;
-    background-color: #4CAF50;
-    color: white;
 }
 
 #password{

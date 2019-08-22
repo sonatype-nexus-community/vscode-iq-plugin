@@ -1,5 +1,6 @@
 import * as React from 'react';
-import './styles.css';
+//import './styles.css';
+//import styles from './ComponentInfoPage.css';
 
 type CipProps = {
   component: any
@@ -21,7 +22,6 @@ class ComponentInfoPage extends React.Component<CipProps, CipState> {
     return (
       <div className="info-display">
             <table className="optionstable">
-              <div id="component_identifier">
                 <tr>
                   <td className="label">Package:</td>
                   <td className="data"><span id="package">{this.props.component.name}</span></td>
@@ -30,7 +30,6 @@ class ComponentInfoPage extends React.Component<CipProps, CipState> {
                   <td className="label">Version:</td>
                   <td className="data"><span id="version">{this.props.component.version}</span></td>
                 </tr>
-              </div>
               <tr>
                 <td className="label"><span id="hash_label">Hash:</span></td>
                 <td className="data"><span id="hash">{this.props.component.hash}</span></td>
