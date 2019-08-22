@@ -1,6 +1,4 @@
 import * as React from 'react';
-//import './styles.css';
-//import styles from './ComponentInfoPage.css';
 
 type CipProps = {
   component: any
