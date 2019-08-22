@@ -62,22 +62,6 @@ export class IqComponentModel {
   public async evaluateComponents() {
     console.log("evaluateComponents");
     await this.performIqScan();
-    // try{
-    // 	let items = await this.packageForIq();
-    // 	let data = this.convertToNexusFormat(items);
-    // 	// TODO in refresh?
-    // 	this.components = [];
-    // 	for (let entry of data.components) {
-    // 		let componentEntry = new ComponentEntry(entry.componentIdentifier.coordinates.packageId,
-    // 			entry.componentIdentifier.coordinates.version);
-    // 		this.components.push(componentEntry);
-    // 	}
-    // 	await this.submitDataToComponentDetailsApi(data);
-    // }
-    // catch(e){
-    // 	vscode.window.showErrorMessage("Nexus IQ extension: "+e);
-    // 	return;
-    // }
   }
 
   private async packageForIq(): Promise<Array<NpmPackage>> {
@@ -170,8 +154,7 @@ export class IqComponentModel {
         resultId as string
       );
       let resultData = JSON.parse(resultDataString as string);
-      // TODO parse result data
-      // vscode.window.showInformationMessage(`Received scan results: ${resultData}`);
+      // parse result data
       console.log(`Received results from IQ scan:`, resultData);
       for (let resultEntry of resultData.results) {
         let coordinates = resultEntry.component.componentIdentifier
@@ -205,12 +188,6 @@ export class IqComponentModel {
             reject(`Unable to retrieve Application ID: ${err}`);
             return;
           }
-          // let myResp = body;
-          // console.log('body', myResp);
-          // console.log('body.applications', myResp.applications.length);
-          // let resultId = myResp.applications[0].id;
-          // console.log('resultId', resultId);
-          // let resultsName = myResp.applications[0].name;
           resolve(body);
           return;
         }

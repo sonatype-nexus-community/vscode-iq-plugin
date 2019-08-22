@@ -29,7 +29,7 @@ export class ComponentEntry {
 	failure: string = "";
 	policyViolations: Array<PolicyViolation> = [];	
 	hash:string = "";
-	nexusIQData: any = "";
+	nexusIQData: any = undefined;
 	public toString():string {
 		return `${this.name} @ ${this.version}`;
 	}
@@ -47,7 +47,7 @@ export class ComponentEntry {
 		return maxThreatLevel;
 	}
 	public iconName(): string {		
-		if (!(this.policyViolations)) {
+		if (!this.policyViolations || !this.nexusIQData) {
 			return 'loading.gif';
 		}
 		let maxThreatLevel = this.maxPolicy();
@@ -378,9 +378,8 @@ private async getRemediation(nexusArtifact: any){//, settings) {
 		if (this.component) {
 			this._panel.title = `IQ Scan: ${this.component.name}@${this.component.version}`;
 			console.log('posting message _update', this.component);
-			this._panel.webview.postMessage({ command: 'artifact', 'component': this.component });
-
 			this.showAllVersions();
+			this._panel.webview.postMessage({ command: 'artifact', 'component': this.component });
 		}
 	}
 
