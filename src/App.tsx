@@ -4,7 +4,7 @@ import RemediationPage from './RemediationPage';
 import ComponentInfoPage from './ComponentInfoPage';
 import SecurityPage from './SecurityPage';
 import LicensingPage from './LicensingPage';
-import { VersionInfo } from './VersionInfo';
+import { VersionInfo } from 'ext-src/VersionInfo';
 
 
 type AppProps = {

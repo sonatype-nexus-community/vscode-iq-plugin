@@ -1,6 +1,8 @@
 
 export class VersionInfo {
-  constructor(public displayName: DisplayName, public threatLevel: number, public popularity: number){}
+  public displayName: DisplayName = new DisplayName();
+  public threatLevel: number = 0;
+  public popularity: number = 0;
 
   public toString = () : string => {
     return `VersionInfo (displayName: ${this.displayName}, popularity: ${this.popularity})`;
@@ -8,7 +10,9 @@ export class VersionInfo {
 }
 
 export class DisplayName {
-  constructor(public packageId: string, public version: string){}
+  public packageId: string = "";
+  public version: string = "";
+
   public toString = () : string => {
     return `DisplayName (packageId: ${this.packageId}, version: ${this.version})`;
   }

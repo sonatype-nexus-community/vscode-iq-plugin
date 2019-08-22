@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { VersionInfo } from 'ext-src/VersionInfo';
 import VersionGraph from './VersionGraph';
-import { VersionInfo } from './VersionInfo';
 
 //import logo from './logo.svg';
 type Props = {
@@ -11,9 +11,14 @@ type Props = {
 type State = {};
 
 class RemediationPage extends React.Component<Props, State> {
+  private containerStyle = {
+    overflowX: 'scroll' as 'scroll'
+  }
   public render() {
     return (
-      <VersionGraph allVersions={this.props.allVersions}></VersionGraph>
+      <div style={this.containerStyle}>
+        <VersionGraph allVersions={this.props.allVersions}></VersionGraph>
+      </div>
     );
   }
 }

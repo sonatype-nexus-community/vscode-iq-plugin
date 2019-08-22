@@ -234,24 +234,6 @@ export class ComponentInfoPanel {
 		}
 		return new Promise<VersionInfo[]>((resolve, reject) => {
 			console.log('begin GetAllVersions', this.component);
-
-			// const allVersionUrl = `http://localhost:8070/api/v2/components/versions`
-			// console.log("Getting all versions from ", allVersionUrl)
-			// xhr.open('POST', allVersionUrl)
-			// xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-			// xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.username + ":" + this.props.password))
-			// xhr.setRequestHeader("Origin", 'http://localhost:8070')
-			// // xhr.setRequestHeader("Access-Control-Allow-Origin", "*")
-			// // xhr.setRequestHeader('Access-Control-Allow-Credentials', 'true')
-			// xhr.withCredentials = true
-			// xhr.send(JSON.stringify({ 
-			// 	"format": "maven", 
-			// 	"coordinates": { 
-			// 		"artifactId": "tomcat-util", 
-			// 		"groupId": "tomcat"
-			// 	} 
-			// }));
-				
 			let hash = nexusArtifact.hash;
 			let comp  = this.encodeComponentIdentifier(nexusArtifact.componentIdentifier);
 			let d = new Date();
@@ -277,9 +259,12 @@ export class ComponentInfoPanel {
 					}
 					const versionArray = JSON.parse(body) as any[];
 					var allVersions = versionArray.map((entry: any) => <VersionInfo>{
-						displayName: new DisplayName(entry.componentIdentifier.coordinates.packageId, entry.componentIdentifier.coordinates.version),
-						threatLevl: entry.higestSecurityVulerabilitySeverity,
-						popularity: entry.relativePopularity || 1
+						displayName: {
+							packageId: entry.componentIdentifier.coordinates.packageId as string,
+							version: entry.componentIdentifier.coordinates.version as string
+						} as DisplayName,
+						threatLevel: entry.higestSecurityVulerabilitySeverity as number,
+						popularity: entry.relativePopularity as number || 1
 					});
 
 					resolve(allVersions);
