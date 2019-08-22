@@ -17,7 +17,7 @@ class VersionGraph extends React.Component<Props, State> {
   <VictoryChart
     theme={VictoryTheme.material}
     height={200}
-    width={Math.max(this.props.allVersions.length * 40, 300) + 100}
+    width={Math.max(this.props.allVersions.length * 20, 300) + 100}
     domainPadding={{x: [5, 5], y:5}}
     containerComponent={<VictoryContainer responsive={false}/>}
   >

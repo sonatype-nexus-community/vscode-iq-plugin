@@ -5,7 +5,7 @@ import ComponentInfoPage from './ComponentInfoPage';
 import SecurityPage from './SecurityPage';
 import LicensingPage from './LicensingPage';
 import { VersionInfo } from 'ext-src/VersionInfo';
-
+import Loader from 'react-loader-spinner';
 
 type AppProps = {
 };
@@ -24,10 +24,19 @@ class App extends React.Component<AppProps, AppState> {
     }
   }
   public render() {
+    if (!this.state.component || !this.state.component.nexusIQData) {
+      return (
+        <Loader
+          type="Puff"
+          color="#00BFFF"
+          height="100"
+          width="100"
+        />
+      );
+    }
     return (
       <Tabs id="remediation-tab">
         <TabList>
-          <Tab>Remediation</Tab>
           <Tab>Component Info</Tab>
           <Tab>Security</Tab>
           <Tab>Licensing</Tab>
@@ -37,8 +46,6 @@ class App extends React.Component<AppProps, AppState> {
           <RemediationPage
             component={this.state.component}
             allVersions={this.state.allVersions}></RemediationPage>
-        </TabPanel>
-        <TabPanel>
           <h1>Component Info</h1>
           <ComponentInfoPage component={this.state.component}></ComponentInfoPage>
         </TabPanel>
