@@ -2,7 +2,12 @@
 export class VersionInfo {
   public displayName: DisplayName = new DisplayName();
   public threatLevel: number = 0;
-  public popularity: number = 0;
+  public popularity?: number;
+  public hash?: string;
+  public matchState?: any;
+  public catalogDate?: any;
+  public higestCvssScore?: number;
+  public dataSource?: string;
 
   public toString = () : string => {
     return `VersionInfo (displayName: ${this.displayName}, popularity: ${this.popularity})`;

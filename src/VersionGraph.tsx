@@ -3,7 +3,8 @@ import { VictoryChart, VictoryTheme, VictoryBar, VictoryContainer, VictoryToolti
 import { VersionInfo } from 'ext-src/VersionInfo';
 
 type Props = {
-  allVersions: VersionInfo[]
+  allVersions: VersionInfo[],
+  versionChangeHandler: (version: VersionInfo) => void
 };
 // todo declare more details on component
 type State = {};
@@ -35,6 +36,7 @@ class VersionGraph extends React.Component<Props, State> {
         target: "data",
         eventHandlers: {
           onClick: () => {
+            console.log("click event sent")
             return [
               {
                 target: "data",

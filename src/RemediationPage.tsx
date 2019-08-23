@@ -5,10 +5,13 @@ import VersionGraph from './VersionGraph';
 //import logo from './logo.svg';
 type Props = {
   component: any,
-  allVersions: VersionInfo[]
+  allVersions: VersionInfo[],
+  versionChangeHandler: (version: VersionInfo) => void
 };
 // todo declare more details on component
-type State = {};
+type State = {
+  selectedVersion: VersionInfo
+};
 
 class RemediationPage extends React.Component<Props, State> {
   private containerStyle = {
@@ -17,7 +20,10 @@ class RemediationPage extends React.Component<Props, State> {
   public render() {
     return (
       <div style={this.containerStyle}>
-        <VersionGraph allVersions={this.props.allVersions}></VersionGraph>
+        <VersionGraph
+          allVersions={this.props.allVersions} 
+          versionChangeHandler={this.props.versionChangeHandler}
+        />
       </div>
     );
   }
