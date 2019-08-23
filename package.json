@@ -1,8 +1,8 @@
 {
-	"name": "vscode-extension-nexus-iq",
+	"name": "vscode-iq-plugin",
 	"displayName": "Sonatype Nexus IQ Extension for VSCode",
 	"description": "Sonatype Nexus IQ Extension for VSCode",
-	"version": "0.0.2",
+	"version": "0.1.0",
 	"author": {
 		"name": "ctownshend"
 	},
@@ -25,15 +25,11 @@
 		"Component",
 		"Vulnerability"
 	],
-	"enableProposedApi": false,
-	"preview": true,
 	"engines": {
-		"vscode": "^1.32.0"
+		"vscode": "^1.23.0"
 	},
-	"categories": [
-		"Other"
-	],
 	"activationEvents": [
+		"onCommand:react-webview.start",
 		"onView:nodeDependencies",
 		"onView:nexusExplorer",
 		"onView:testView",
@@ -41,7 +37,7 @@
 		"onLanguage:jsonc",
 		"onCommand:sample.reveal"
 	],
-	"main": "./out/extension.js",
+	"main": "./build/ext-src/extension.js",
 	"contributes": {
 		"views": {
 			"explorer": [
@@ -53,6 +49,11 @@
 		},
 		"commands": [
 			{
+				"command": "react-webview.start",
+				"title": "Start React Webview",
+				"category": "React"
+			},
+			{
 				"command": "nexusExplorer.refresh",
 				"title": "Nexus Refresh",
 				"icon": {
@@ -60,7 +61,6 @@
 					"dark": "resources/dark/refresh.svg"
 				}
 			},
-					
 			{
 				"command": "nexusExplorer.refreshNode",
 				"title": "Nexus Refresh",
@@ -85,7 +85,6 @@
 					"when": "view == nexusExplorer",
 					"group": "navigation"
 				}
-				
 			]
 		},
 		"configuration": [
@@ -121,40 +120,47 @@
 						"type": "string",
 						"default": "sandbox-application",
 						"description": "Your Nexus IQ Application Public Id"
-					},					 
+					},
 					"nexusiq.npm.maximumEvaluationPollAttempts": {
 						"type": "number",
 						"default": "300",
 						"description": "Number of retries (every 2secs) to wait for the Evaluation report. "
-					}					
+					}
 				}
 			}
 		]
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc  -p ./",
-		"lint": "tslint -p ./",
-		"watch": "tsc -watch -p ./"
-	},
-	"devDependencies": {
-		"@types/mkdirp": "^0.5.2",
-		"@types/node": "*",
-		"@types/request": "^2.48.1",
-		"@types/rimraf": "^2.0.2",
-		"@types/vscode": "^1.32.0",
-		"tslint": "^5.16.0",
-		"typescript": "^3.4.5"
+		"vscode:prepublish": "react-scripts-ts build && tsc -p tsconfig.extension.json",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"start": "react-scripts-ts start",
+		"build": "react-scripts-ts build && tsc -p tsconfig.extension.json",
+		"test": "react-scripts-ts test --env=jsdom",
+		"eject": "react-scripts-ts eject"
 	},
 	"dependencies": {
-		"@types/lodash": "^4.14.73",
+		"ansi-colors": "^4.1.1",
 		"dependency-tree": "^7.0.2",
-		"jsonc-parser": "^0.4.2",
-		"lodash": "^4.17.4",
-		"md5": "^2.2.1",
-		"mkdirp": "^0.5.1",
-		"pluralize": "^7.0.0",
-		"request": "^2.81.0",
-		"rimraf": "^2.6.2"
+		"lodash": "^4.17.15",
+		"react": "^16.3.2",
+		"react-dom": "^16.3.2",
+		"react-loader-spinner": "^3.1.2",
+		"react-scripts-ts": "2.16.0",
+		"react-tabs": "^3.0.0",
+		"request": "^2.88.0",
+		"victory": "^32.3.5",
+		"vscode": "^1.1.17"
+	},
+	"devDependencies": {
+		"@types/react-tabs": "^2.3.1",
+		"@types/victory": "^31.0.20",
+		"@types/request": "^2.48.2",
+		"@types/lodash": "^4.14.136",
+		"@types/dependency-tree": "^6.1.0",
+		"@types/jest": "^22.2.3",
+		"@types/node": "^10.1.2",
+		"typescript": "^2.8.3",
+		"@types/react": "^16.3.14",
+		"@types/react-dom": "^16.0.5"
 	}
 }
