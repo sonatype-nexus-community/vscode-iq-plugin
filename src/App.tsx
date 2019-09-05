@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import RemediationPage from './RemediationPage';
 import ComponentInfoPage from './ComponentInfoPage';
 import SecurityPage from './SecurityPage';
 import LicensingPage from './LicensingPage';
 import Loader from 'react-loader-spinner';
 import { VersionInfo } from 'ext-src/VersionInfo';
+import AllVersionsPage from './AllVersionsPage';
 
 type AppProps = {
 };
@@ -42,31 +41,24 @@ class App extends React.Component<AppProps, AppState> {
       );
     }
     return (
-      <Tabs id="remediation-tab">
-        <TabList>
-          <Tab>Component Info</Tab>
-          <Tab>Security</Tab>
-          <Tab>Licensing</Tab>
-        </TabList>
-        <TabPanel>
-          <h1>Remediation</h1>
-          <RemediationPage
-            component={this.state.component}
-            allVersions={this.state.allVersions}
-            versionChangeHandler={this.handleVersionSelection}></RemediationPage>
-          <h1>Component Info</h1>
-          <ComponentInfoPage component={this.state.component}
-            version={this.state.selectedVersion!}></ComponentInfoPage>
-        </TabPanel>
-        <TabPanel>
-          <h1>Security</h1>
-          <SecurityPage securityData={this.state.component.nexusIQData.securityData}></SecurityPage>
-        </TabPanel>
-        <TabPanel>
-          <h1>Licensing</h1>
-          <LicensingPage licenseData={this.state.component.nexusIQData.licenseData}></LicensingPage>
-        </TabPanel>
-      </Tabs>
+      <div>
+        <div className="sidenav">
+          <h1>Versions</h1>
+          <AllVersionsPage
+              component={this.state.component}
+              allVersions={this.state.allVersions}
+              versionChangeHandler={this.handleVersionSelection}></AllVersionsPage>
+        </div>
+        <div className="main">
+            <h1>Component Info</h1>
+            <ComponentInfoPage component={this.state.component}
+              version={this.state.selectedVersion!}></ComponentInfoPage>
+            <h1>Security</h1>
+            <SecurityPage securityData={this.state.component.nexusIQData.securityData}></SecurityPage>
+            <h1>Licensing</h1>
+            <LicensingPage licenseData={this.state.component.nexusIQData.licenseData}></LicensingPage>
+        </div>
+      </div>
     );
   }
 

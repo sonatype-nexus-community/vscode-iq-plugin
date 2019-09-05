@@ -61,7 +61,7 @@ class ComponentInfoPage extends React.Component<CipProps, CipState> {
               </tr>
               <tr>
                 <td className="label">Highest CVSS Score:</td>                
-                <td className="data"><span id="Highest_CVSS_Score" className="maxIssue"></span>{this.props.version.higestCvssScore}<span id="Num_CVSS_Issues" className="numissues"></span></td>
+                <td className="data"><span id="Highest_CVSS_Score" className="maxIssue"></span>{this.props.version.highestCvssScore}<span id="Num_CVSS_Issues" className="numissues"></span></td>
               </tr>							
               <tr>
                 <td className="label">Data Source:</td>                
