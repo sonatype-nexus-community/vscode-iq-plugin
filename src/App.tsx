@@ -60,7 +60,7 @@ class App extends React.Component<AppProps, AppState> {
         </TabPanel>
         <TabPanel>
           <h1>Security</h1>
-          <SecurityPage></SecurityPage>
+          <SecurityPage securityData={this.state.component.nexusIQData.securityData}></SecurityPage>
         </TabPanel>
         <TabPanel>
           <h1>Licensing</h1>
