@@ -64,7 +64,7 @@ class App extends React.Component<AppProps, AppState> {
         </TabPanel>
         <TabPanel>
           <h1>Licensing</h1>
-          <LicensingPage></LicensingPage>
+          <LicensingPage licenseData={this.state.component.nexusIQData.licenseData}></LicensingPage>
         </TabPanel>
       </Tabs>
     );
