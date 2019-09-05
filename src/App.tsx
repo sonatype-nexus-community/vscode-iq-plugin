@@ -25,8 +25,10 @@ class App extends React.Component<AppProps, AppState> {
     }
   }
 
-  public handleVersionSelection(newSelection: VersionInfo) {
-    this.setState({selectedVersion: newSelection})
+  public handleVersionSelection(newSelection: string) {
+    console.log("App received version change", newSelection);
+    // TODO query for version data to populate details
+    // this.setState({selectedVersion: newSelection})
   }
 
   public render() {

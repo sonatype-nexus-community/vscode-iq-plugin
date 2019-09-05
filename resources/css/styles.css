@@ -391,32 +391,6 @@ h3 {
     to{ bottom:0; opacity:1 }
 }
   
-#tabs  {
-    display: none;
-    text-align: center;
-
-    padding: 0px; 
-    background: none; 
-    border-width: 0px; 
-} 
-#tabs .ui-tabs-nav { 
-    padding-left: 0px; 
-    background: transparent; 
-    border-width: 0px 0px 1px 0px; 
-    -moz-border-radius: 0px; 
-    -webkit-border-radius: 0px; 
-    border-radius: 0px; 
-} 
-#tabs .ui-tabs-panel { 
-    background: white;
-    border-width: 0px 1px 1px 1px; 
-    border-color: rgb(39, 102, 173);
-    border-radius: 5px;
-    border-width: 2px;
-    margin: 10px 0px 0px 0px;
-}
-
-
 a img {
     width:16px;
     height:16px;
@@ -453,6 +427,9 @@ div.slick-cell.l0.r0 {
 
 .current-version{
     color: burlywood;
+}
+.selected-version{
+    color: rgb(63, 155, 67);
 }
 .remediation-version{
     color: grey;
