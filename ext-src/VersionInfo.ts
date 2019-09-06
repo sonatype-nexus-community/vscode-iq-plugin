@@ -6,7 +6,7 @@ export class VersionInfo {
   public hash?: string;
   public matchState?: any;
   public catalogDate?: any;
-  public higestCvssScore?: number;
+  public highestCvssScore?: number;
   public dataSource?: string;
 
   public toString = () : string => {

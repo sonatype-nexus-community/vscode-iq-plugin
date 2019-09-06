@@ -207,7 +207,7 @@ export class ComponentInfoPanel {
 	private async showRemediation(nexusArtifact: any){
 		console.log('showRemediation', nexusArtifact);
 		let remediation = await this.getRemediation(nexusArtifact);
-		console.log('remediation', remediation);
+		console.log('posting message: remediation', remediation);
 		this._panel.webview.postMessage({ command: 'remediation', 'remediation': remediation });
 		// vscode.window.showInformationMessage(message.cve);
 
@@ -216,7 +216,7 @@ export class ComponentInfoPanel {
 		console.log('showCVE',cve,  nexusArtifact);
 		let cvedetails = await this.GetCVEDetails(cve, nexusArtifact);
 		// let cvedetails = JSON.stringify(cvePromise);
-		console.log('cvedetails', cvedetails);
+		console.log('posting message: cvedetails', cvedetails);
 		this._panel.webview.postMessage({ command: 'cvedetails', 'cvedetails': cvedetails });
 		// vscode.window.showInformationMessage(message.cve);
 
@@ -367,8 +367,9 @@ private async getRemediation(nexusArtifact: any){//, settings) {
 			!(this.component.name === newComponent.name && this.component.version === newComponent.version)) {
 			// a new component has been sent, refresh the view
 			this.component = newComponent;
-			// TODO refresh the screen
 			this.updateViewForThisComponent();
+
+			// TODO CVE, remediation, security
 		}
 	}
 
@@ -377,7 +378,7 @@ private async getRemediation(nexusArtifact: any){//, settings) {
 		console.log(`Update called`);
 		if (this.component) {
 			this._panel.title = `IQ Scan: ${this.component.name}@${this.component.version}`;
-			console.log('posting message _update', this.component);
+			console.log('posting message: artifact', this.component);
 			this.showAllVersions();
 			this._panel.webview.postMessage({ command: 'artifact', 'component': this.component });
 		}
@@ -386,7 +387,7 @@ private async getRemediation(nexusArtifact: any){//, settings) {
 	private async showAllVersions(){
 		console.log('showAllVersions', this.component);
 		let allversions = await this.getAllVersions();		
-		console.log('allversions', allversions);
+		console.log('posting message: allversions', allversions);
 		this._panel.webview.postMessage({ command: 'allversions', 'allversions': allversions });
 		// vscode.window.showInformationMessage(message.cve);
 
