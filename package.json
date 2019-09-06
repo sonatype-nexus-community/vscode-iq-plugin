@@ -146,14 +146,10 @@
 		"react-dom": "^16.3.2",
 		"react-loader-spinner": "^3.1.2",
 		"react-scripts-ts": "2.16.0",
-		"react-tabs": "^3.0.0",
 		"request": "^2.88.0",
-		"victory": "^32.3.5",
 		"vscode": "^1.1.17"
 	},
 	"devDependencies": {
-		"@types/react-tabs": "^2.3.1",
-		"@types/victory": "^31.0.20",
 		"@types/request": "^2.48.2",
 		"@types/lodash": "^4.14.136",
 		"@types/dependency-tree": "^6.1.0",

@@ -9,7 +9,7 @@ import AllVersionsPage from './AllVersionsPage';
 type AppProps = {
 };
 // todo declare more details on component
-type AppState = { 
+type AppState = {
   component: any,
   allVersions: VersionInfo[],
   selectedVersion?: VersionInfo
