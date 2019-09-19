@@ -6,9 +6,6 @@ import SelectedVersionDetails from './SelectedVersionDetails';
 
 // add workarounds to call VSCode
 declare var acquireVsCodeApi: any;
-// interface VScode {
-//   postMessage(message: any): void;
-// }
 const vscode: any = acquireVsCodeApi();
 
 
@@ -18,23 +15,23 @@ type AppProps = {
 type AppState = {
   component: any,
   allVersions: VersionInfo[],
-  selectedVersion?: VersionInfo,
-  selectedVersionNumber?: string
+  selectedVersionDetails?: any
 };
 class App extends React.Component<AppProps, AppState> {
   constructor(props: AppProps) {
     super(props);
+    console.log("App constructing, props:", props);
     this.state = {
       component: {},
       allVersions: [],
-      selectedVersion: undefined
+      selectedVersionDetails: undefined
     }
   }
 
   public handleVersionSelection(newSelection: string) {
     console.log("App received version change", newSelection);
     // TODO query for version data to populate details
-    //this.setState({selectedVersionNumber: newSelection, selectedVersion: undefined})
+    this.setState({selectedVersionDetails: undefined})
 
     vscode.postMessage({
       command: 'selectVersion',
@@ -66,8 +63,7 @@ class App extends React.Component<AppProps, AppState> {
         </div>
         <div className="main">
           <SelectedVersionDetails
-            selectedVersion={this.state.selectedVersion}
-            component={this.state.component}
+            selectedVersionDetails={this.state.selectedVersionDetails}
           />
         </div>
       </div>
@@ -77,21 +73,20 @@ class App extends React.Component<AppProps, AppState> {
   public componentDidMount() {
     window.addEventListener('message', event => {
       const message = event.data;
-      console.log("received message", message);
+      console.log("App received VS message", message);
       switch (message.command) {
         case 'artifact':
           console.log("Artifact received, updating state & children", message.component);
           const component = message.component;
-          const versionInfo = {
-            popularity: component.nexusIQData.popularity,
-            threatLevel: 0,
-            displayName: {
-              packageId: component.name,
-              version: component.version
-            }
-          };
-          this.setState({component: component, selectedVersion: versionInfo});
+          //this.setState({component: component, selectedVersionDetails: component.nexusIQData});
+          this.setState({component: component, selectedVersionDetails: undefined});
+          this.handleVersionSelection(message.component.version)
           break;
+        case 'versionDetails':
+          console.log("Selected version details received", message.componentDetails);
+          this.setState({selectedVersionDetails: message.componentDetails})
+          break;
+
         // case 'settings':
         //     console.log("Settings received, updating state & children");
         //     const settings = message.settings;
@@ -103,9 +98,9 @@ class App extends React.Component<AppProps, AppState> {
         //     }});
         //     break;
         case 'allversions':
-          console.log("AllVersions received, showing version graph", message.allversions);
+          console.log("App handling allVersions message", message);
           let versionArray = message.allversions as VersionInfo[];
-          this.setState({allVersions: versionArray, selectedVersion: versionArray[0]});
+          this.setState({allVersions: versionArray});
           break;
         }
     });

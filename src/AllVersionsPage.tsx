@@ -15,6 +15,7 @@ type State = {
 class AllVersionsPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    console.log("AllVersionPage created with properties", props);
     this.state = {
       selectedVersion: props.component.version
     }
@@ -28,12 +29,13 @@ class AllVersionsPage extends React.Component<Props, State> {
 
   public render() {
     var _this = this;
-    console.log("AllVersionsPage rendering", this.props.allVersions)
     if (!this.props.allVersions || this.props.allVersions.length <= 0) {
+      console.log("AllVersions page showing no data available", this.props);
       return(
         <h3>No data available</h3>
       );
     }
+    console.log("AllVersionsPage rendering", this.props.allVersions)
     var versionRows = this.props.allVersions.map(function(row: VersionInfo) {
       return (
         <VersionRow version={row.displayName.version}

@@ -188,6 +188,7 @@ export class ComponentInfoPanel {
 				switch (message.command) {
 					case 'selectVersion':
 						console.log("selectVersion received, message:", message);
+						this.showSelectedVersion(message.package.nexusIQData.component.componentIdentifier, message.version);
 						return;
 					case 'alert':
 						vscode.window.showErrorMessage(message.text);
@@ -207,6 +208,47 @@ export class ComponentInfoPanel {
 			this._disposables
 		);
 	}
+
+	private async showSelectedVersion(componentIdentifier: any, version: string) {
+
+		return new Promise((resolve, reject) => {
+			console.log('begin showSelectedVersion', componentIdentifier, version);
+			var transmittingComponentIdentifier = {...componentIdentifier};
+			transmittingComponentIdentifier.coordinates = {...componentIdentifier.coordinates};
+			transmittingComponentIdentifier.coordinates.version = version;
+			var detailsRequest = {
+				'components': [
+					{
+						'hash': null,
+						'componentIdentifier': transmittingComponentIdentifier
+					}
+				]
+			}
+				//servername has a slash
+			let url = `${ComponentInfoPanel.iqUrl}/api/v2/components/details`;
+	
+			request.post(
+				{
+					method:'post',
+					'json': detailsRequest,
+					url: url,
+					'auth':{'user':ComponentInfoPanel.iqUser, 'pass':ComponentInfoPanel.iqPassword}
+				},
+				(err, response, body) => {
+					if (err) {
+						reject(`Unable to retrieve selected version details: ${err}`);
+						return;
+					}
+					console.log('showSelectedVersion response', response);
+					console.log('showSelectedVersion body', body);				
+					
+					this._panel.webview.postMessage({ command: 'versionDetails', 'componentDetails': body.componentDetails[0]});
+				}
+			);
+		});
+	}
+
+
 	private async showRemediation(nexusArtifact: any){
 		console.log('showRemediation', nexusArtifact);
 		let remediation = await this.getRemediation(nexusArtifact);
