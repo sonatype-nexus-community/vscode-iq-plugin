@@ -1,10 +1,16 @@
 import * as React from 'react';
-import ComponentInfoPage from './ComponentInfoPage';
-import SecurityPage from './SecurityPage';
-import LicensingPage from './LicensingPage';
 import Loader from 'react-loader-spinner';
 import { VersionInfo } from 'ext-src/VersionInfo';
 import AllVersionsPage from './AllVersionsPage';
+import SelectedVersionDetails from './SelectedVersionDetails';
+
+// add workarounds to call VSCode
+declare var acquireVsCodeApi: any;
+// interface VScode {
+//   postMessage(message: any): void;
+// }
+const vscode: any = acquireVsCodeApi();
+
 
 type AppProps = {
 };
@@ -12,10 +18,10 @@ type AppProps = {
 type AppState = {
   component: any,
   allVersions: VersionInfo[],
-  selectedVersion?: VersionInfo
+  selectedVersion?: VersionInfo,
+  selectedVersionNumber?: string
 };
 class App extends React.Component<AppProps, AppState> {
-
   constructor(props: AppProps) {
     super(props);
     this.state = {
@@ -28,10 +34,17 @@ class App extends React.Component<AppProps, AppState> {
   public handleVersionSelection(newSelection: string) {
     console.log("App received version change", newSelection);
     // TODO query for version data to populate details
-    // this.setState({selectedVersion: newSelection})
+    //this.setState({selectedVersionNumber: newSelection, selectedVersion: undefined})
+
+    vscode.postMessage({
+      command: 'selectVersion',
+      version: newSelection,
+      package: this.state.component
+    });
   }
 
   public render() {
+    var _this = this;
     if (!this.state.component || !this.state.component.nexusIQData) {
       return (
         <Loader
@@ -49,16 +62,13 @@ class App extends React.Component<AppProps, AppState> {
           <AllVersionsPage
               component={this.state.component}
               allVersions={this.state.allVersions}
-              versionChangeHandler={this.handleVersionSelection}></AllVersionsPage>
+              versionChangeHandler={_this.handleVersionSelection.bind(_this)}></AllVersionsPage>
         </div>
         <div className="main">
-            <h1>Component Info</h1>
-            <ComponentInfoPage component={this.state.component}
-              version={this.state.selectedVersion!}></ComponentInfoPage>
-            <h1>Security</h1>
-            <SecurityPage securityData={this.state.component.nexusIQData.securityData}></SecurityPage>
-            <h1>Licensing</h1>
-            <LicensingPage licenseData={this.state.component.nexusIQData.licenseData}></LicensingPage>
+          <SelectedVersionDetails
+            selectedVersion={this.state.selectedVersion}
+            component={this.state.component}
+          />
         </div>
       </div>
     );

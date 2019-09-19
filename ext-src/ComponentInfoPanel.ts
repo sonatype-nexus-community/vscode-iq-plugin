@@ -184,8 +184,11 @@ export class ComponentInfoPanel {
 		// Handle messages from the webview
 		this._panel.webview.onDidReceiveMessage(
 			message => {
-				console.log('message', message);
+				console.log('onDidReceiveMessage', message);
 				switch (message.command) {
+					case 'selectVersion':
+						console.log("selectVersion received, message:", message);
+						return;
 					case 'alert':
 						vscode.window.showErrorMessage(message.text);
 						return;

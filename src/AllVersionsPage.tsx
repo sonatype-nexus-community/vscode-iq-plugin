@@ -23,6 +23,7 @@ class AllVersionsPage extends React.Component<Props, State> {
   private versionChanged(newVersion: string) {
     console.log("AllVersionsPage version change received: ", newVersion);
     this.setState({selectedVersion: newVersion});
+    this.props.versionChangeHandler(newVersion);
   }
 
   public render() {
@@ -34,7 +35,6 @@ class AllVersionsPage extends React.Component<Props, State> {
       );
     }
     var versionRows = this.props.allVersions.map(function(row: VersionInfo) {
-      console.log("AllVersions row: ", row);
       return (
         <VersionRow version={row.displayName.version}
           selectedVersion={_this.state.selectedVersion}
@@ -65,6 +65,7 @@ type RowState = {}
 class VersionRow extends React.Component<RowProps, RowState> {
   private handleClick(e: any) {
     console.log("row clicked, event:", e);
+    console.log("row clicked, AllVersionsPage props: ", this.props);
     this.props.versionChangeHandler(this.props.version);
   }
   public render() {
