@@ -3,8 +3,9 @@ import { VersionInfo } from 'ext-src/VersionInfo';
 
 //import logo from './logo.svg';
 type Props = {
-  component: any,
   allVersions: VersionInfo[],
+  initialVersion: string,
+  selectedVersion: string,
   versionChangeHandler: (version: string) => void
 };
 // todo declare more details on component
@@ -17,7 +18,7 @@ class AllVersionsPage extends React.Component<Props, State> {
     super(props);
     console.log("AllVersionPage created with properties", props);
     this.state = {
-      selectedVersion: props.component.version
+      selectedVersion: props.selectedVersion
     }
   }
 
@@ -40,7 +41,7 @@ class AllVersionsPage extends React.Component<Props, State> {
       return (
         <VersionRow version={row.displayName.version}
           selectedVersion={_this.state.selectedVersion}
-          initialVersion={""}
+          initialVersion={_this.props.initialVersion}
           versionChangeHandler={_this.versionChanged.bind(_this)}
           />
       );

@@ -57,8 +57,9 @@ class App extends React.Component<AppProps, AppState> {
         <div className="sidenav">
           <h1>Versions</h1>
           <AllVersionsPage
-              component={this.state.component}
               allVersions={this.state.allVersions}
+              initialVersion={this.state.component.version}
+              selectedVersion={this.state.component.version}
               versionChangeHandler={_this.handleVersionSelection.bind(_this)}></AllVersionsPage>
         </div>
         <div className="main">
@@ -78,25 +79,13 @@ class App extends React.Component<AppProps, AppState> {
         case 'artifact':
           console.log("Artifact received, updating state & children", message.component);
           const component = message.component;
-          //this.setState({component: component, selectedVersionDetails: component.nexusIQData});
-          this.setState({component: component, selectedVersionDetails: undefined});
+          this.setState({component: component, allVersions: [], selectedVersionDetails: undefined});
           this.handleVersionSelection(message.component.version)
           break;
         case 'versionDetails':
           console.log("Selected version details received", message.componentDetails);
           this.setState({selectedVersionDetails: message.componentDetails})
           break;
-
-        // case 'settings':
-        //     console.log("Settings received, updating state & children");
-        //     const settings = message.settings;
-        //     this.setState({settings: {
-        //       serverName: settings.serverName,
-        //       appInternalId: settings.appInternalId,
-        //       username: settings.username,
-        //       password: settings.password
-        //     }});
-        //     break;
         case 'allversions':
           console.log("App handling allVersions message", message);
           let versionArray = message.allversions as VersionInfo[];
