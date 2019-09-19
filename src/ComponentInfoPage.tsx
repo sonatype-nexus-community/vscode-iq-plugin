@@ -1,10 +1,8 @@
 import * as React from 'react';
 import Loader from 'react-loader-spinner';
-import { VersionInfo } from 'ext-src/VersionInfo';
 
 type CipProps = {
-  component: any,
-  version: VersionInfo
+  selectedVersionDetails: any
 };
 // todo declare more details on component
 type CipState = {};
@@ -20,7 +18,7 @@ class ComponentInfoPage extends React.Component<CipProps, CipState> {
   }
 
   public render() {
-    if (!this.props.component || !this.props.component.nexusIQData) {
+    if (!this.props.selectedVersionDetails) {
       return (
         <Loader
           type="Puff"
@@ -30,22 +28,25 @@ class ComponentInfoPage extends React.Component<CipProps, CipState> {
         />
       );
     }
+    console.log("ComponentInfoPage rendering, props: ", this.props);
+    var coordinates = this.props.selectedVersionDetails.component.componentIdentifier.coordinates;
+    console.log("ComponentInfoPage coordinates: ", coordinates);
 
     return (
       <div className="info-display">
-        <h2>{this.props.component.name} @ {this.props.component.version}</h2>
+        <h2>{this.props.selectedVersionDetails.component.packageUrl}</h2>
             <table className="optionstable">
                 <tr>
                   <td className="label">Package:</td>
-                  <td className="data"><span id="package">{this.props.version.displayName.packageId}</span></td>
+                  <td className="data"><span id="package">{coordinates.packageId}</span></td>
                 </tr>
                 <tr>
                   <td className="label">Version:</td>
-                  <td className="data"><span id="version">{this.props.version.displayName.version}</span></td>
+                  <td className="data"><span id="version">{coordinates.version}</span></td>
                 </tr>
               <tr>
                 <td className="label"><span id="hash_label">Hash:</span></td>
-                <td className="data"><span id="hash">{this.props.version.hash}</span></td>
+                <td className="data"><span id="hash">{this.props.selectedVersionDetails.hash}</span></td>
               </tr>
               <tr>    
                 <td className="label">Match State:</td>
@@ -53,20 +54,20 @@ class ComponentInfoPage extends React.Component<CipProps, CipState> {
               </tr>
               <tr id="CatalogDate_Row">
                 <td className="label">Catalog Date:</td>
-                <td className="data"><span id="catalogdate">{this.props.version.catalogDate}</span></td>
+                <td className="data"><span id="catalogdate">{this.props.selectedVersionDetails.catalogDate}</span></td>
               </tr>
               <tr id="RelativePopularity_Row">
                 <td className="label">Relative Popularity:</td>                
-                <td className="data"><span id="relativepopularity">{this.props.version.popularity}</span></td>
+                <td className="data"><span id="relativepopularity">{this.props.selectedVersionDetails.rlativePopularity}</span></td>
               </tr>
-              <tr>
+              {/* <tr>
                 <td className="label">Highest CVSS Score:</td>                
                 <td className="data"><span id="Highest_CVSS_Score" className="maxIssue"></span>{this.props.version.highestCvssScore}<span id="Num_CVSS_Issues" className="numissues"></span></td>
               </tr>							
               <tr>
                 <td className="label">Data Source:</td>                
                 <td className="data"><span id="datasource">{this.props.version.dataSource}</span></td>
-              </tr>
+              </tr> */}
             </table>									
       </div>
     );
