@@ -1,10 +1,13 @@
 import * as React from 'react';
-import ComponentInfoPage from './ComponentInfoPage';
-import SecurityPage from './SecurityPage';
-import LicensingPage from './LicensingPage';
 import Loader from 'react-loader-spinner';
 import { VersionInfo } from 'ext-src/VersionInfo';
 import AllVersionsPage from './AllVersionsPage';
+import SelectedVersionDetails from './SelectedVersionDetails';
+
+// add workarounds to call VSCode
+declare var acquireVsCodeApi: any;
+const vscode: any = acquireVsCodeApi();
+
 
 type AppProps = {
 };
@@ -12,26 +15,33 @@ type AppProps = {
 type AppState = {
   component: any,
   allVersions: VersionInfo[],
-  selectedVersion?: VersionInfo
+  selectedVersionDetails?: any
 };
 class App extends React.Component<AppProps, AppState> {
-
   constructor(props: AppProps) {
     super(props);
+    console.log("App constructing, props:", props);
     this.state = {
       component: {},
       allVersions: [],
-      selectedVersion: undefined
+      selectedVersionDetails: undefined
     }
   }
 
   public handleVersionSelection(newSelection: string) {
     console.log("App received version change", newSelection);
     // TODO query for version data to populate details
-    // this.setState({selectedVersion: newSelection})
+    this.setState({selectedVersionDetails: undefined})
+
+    vscode.postMessage({
+      command: 'selectVersion',
+      version: newSelection,
+      package: this.state.component
+    });
   }
 
   public render() {
+    var _this = this;
     if (!this.state.component || !this.state.component.nexusIQData) {
       return (
         <Loader
@@ -47,18 +57,15 @@ class App extends React.Component<AppProps, AppState> {
         <div className="sidenav">
           <h1>Versions</h1>
           <AllVersionsPage
-              component={this.state.component}
               allVersions={this.state.allVersions}
-              versionChangeHandler={this.handleVersionSelection}></AllVersionsPage>
+              initialVersion={this.state.component.version}
+              selectedVersion={this.state.component.version}
+              versionChangeHandler={_this.handleVersionSelection.bind(_this)}></AllVersionsPage>
         </div>
         <div className="main">
-            <h1>Component Info</h1>
-            <ComponentInfoPage component={this.state.component}
-              version={this.state.selectedVersion!}></ComponentInfoPage>
-            <h1>Security</h1>
-            <SecurityPage securityData={this.state.component.nexusIQData.securityData}></SecurityPage>
-            <h1>Licensing</h1>
-            <LicensingPage licenseData={this.state.component.nexusIQData.licenseData}></LicensingPage>
+          <SelectedVersionDetails
+            selectedVersionDetails={this.state.selectedVersionDetails}
+          />
         </div>
       </div>
     );
@@ -67,35 +74,22 @@ class App extends React.Component<AppProps, AppState> {
   public componentDidMount() {
     window.addEventListener('message', event => {
       const message = event.data;
-      console.log("received message", message);
+      console.log("App received VS message", message);
       switch (message.command) {
         case 'artifact':
           console.log("Artifact received, updating state & children", message.component);
           const component = message.component;
-          const versionInfo = {
-            popularity: component.nexusIQData.popularity,
-            threatLevel: 0,
-            displayName: {
-              packageId: component.name,
-              version: component.version
-            }
-          };
-          this.setState({component: component, selectedVersion: versionInfo});
+          this.setState({component: component, allVersions: [], selectedVersionDetails: undefined});
+          this.handleVersionSelection(message.component.version)
           break;
-        // case 'settings':
-        //     console.log("Settings received, updating state & children");
-        //     const settings = message.settings;
-        //     this.setState({settings: {
-        //       serverName: settings.serverName,
-        //       appInternalId: settings.appInternalId,
-        //       username: settings.username,
-        //       password: settings.password
-        //     }});
-        //     break;
+        case 'versionDetails':
+          console.log("Selected version details received", message.componentDetails);
+          this.setState({selectedVersionDetails: message.componentDetails})
+          break;
         case 'allversions':
-          console.log("AllVersions received, showing version graph", message.allversions);
+          console.log("App handling allVersions message", message);
           let versionArray = message.allversions as VersionInfo[];
-          this.setState({allVersions: versionArray, selectedVersion: versionArray[0]});
+          this.setState({allVersions: versionArray});
           break;
         }
     });
