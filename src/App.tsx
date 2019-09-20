@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Loader from 'react-loader-spinner';
-import { VersionInfo } from 'ext-src/VersionInfo';
 import AllVersionsPage from './AllVersionsPage';
 import SelectedVersionDetails from './SelectedVersionDetails';
 
@@ -14,7 +13,7 @@ type AppProps = {
 // todo declare more details on component
 type AppState = {
   component: any,
-  allVersions: VersionInfo[],
+  allVersions: any[],
   selectedVersionDetails?: any
 };
 class App extends React.Component<AppProps, AppState> {
@@ -88,8 +87,7 @@ class App extends React.Component<AppProps, AppState> {
           break;
         case 'allversions':
           console.log("App handling allVersions message", message);
-          let versionArray = message.allversions as VersionInfo[];
-          this.setState({allVersions: versionArray});
+          this.setState({allVersions: message.allversions});
           break;
         }
     });

@@ -288,30 +288,41 @@ h3 {
 }
 
 
-.criticalSeverity{
+.criticalSeverity, .threat-critical{
     /* color: red; */
     /* font-weight:bold; */
     background-color: red;
+    color: black;
 }
-.highSeverity{
-    background-color: #fb2525;
-    
+.highSeverity, .threat-high{
+    background-color: #962c2c;
+    color: black;
 }
 
-.mediumSeverity{
+.mediumSeverity, .threat-mid{
     background-color: rgb(243, 134, 45);
-    
+    color: black;
 }
 
-.lowSeverity{
+.lowSeverity, .threat-low{
     background-color: rgb(240, 210, 76);
-    
+    color: black;
 }
 
-.noneSeverity{
+.noneSeverity, .threat-none{
     background-color: silver;
-    
+    color: black;
 }
+
+.current-version{
+    color: burlywood;
+}
+.selected-version{
+    color: rgb(63, 155, 67);
+}
+
+
+
 .numissues{
     padding: 1px;
     margin: 1px;
@@ -425,12 +436,6 @@ div.slick-cell.l0.r0 {
     font-family: Consolas,monaco,monospace;
 }
 
-.current-version{
-    color: burlywood;
-}
-.selected-version{
-    color: rgb(63, 155, 67);
-}
 .remediation-version{
     color: grey;
     background: lawngreen;
