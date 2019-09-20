@@ -1,24 +1,21 @@
 import * as React from 'react';
 
 type State = {
+}
+
+type Props = {
   securityIssue: any
 }
 
-type Props = {}
-
-class SecurityItemDisplay extends React.Component<State, Props> {
+class SecurityItemDisplay extends React.Component<Props, State> {
   public render() {
     return (
       <div>
         <div>
-          <h1>{this.props.securityIssue.reference}</h1>
+          <h2>Issue: {this.props.securityIssue.reference}</h2>
           <h2>CVSS:{this.props.securityIssue.severity}</h2>
         </div>
         <table>
-          <tr>
-            <td className="label">Reference:</td>
-            <td className="data">{this.props.securityIssue.reference}</td>
-          </tr>
           <tr>
             <td className="label">Severity:</td>
             <td className="data">{this.props.securityIssue.severity}</td>

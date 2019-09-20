@@ -140,9 +140,11 @@
 	},
 	"dependencies": {
 		"ansi-colors": "^4.1.1",
+		"bootstrap": "^4.3.1",
 		"dependency-tree": "^7.0.2",
 		"lodash": "^4.17.15",
 		"react": "^16.3.2",
+		"react-bootstrap": "^1.0.0-beta.12",
 		"react-dom": "^16.3.2",
 		"react-loader-spinner": "^3.1.2",
 		"react-scripts-ts": "2.16.0",
@@ -150,12 +152,13 @@
 		"vscode": "^1.1.17"
 	},
 	"devDependencies": {
+		"@types/bootstrap": "^4.3.1",
 		"@types/request": "^2.48.2",
 		"@types/lodash": "^4.14.136",
 		"@types/dependency-tree": "^6.1.0",
 		"@types/jest": "^22.2.3",
 		"@types/node": "^10.1.2",
-		"typescript": "^2.8.3",
+		"typescript": "^3.6.3",
 		"@types/react": "^16.3.14",
 		"@types/react-dom": "^16.0.5"
 	}
