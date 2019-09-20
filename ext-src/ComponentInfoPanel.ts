@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as request from 'request';
-import { VersionInfo, DisplayName } from './VersionInfo';
 
 
 export class ConstraintReason {
@@ -272,12 +271,12 @@ export class ComponentInfoPanel {
 		
 		
 		
-	private async getAllVersions(): Promise<VersionInfo[]> {//, settings) {
+	private async getAllVersions(): Promise<any[]> {//, settings) {
 		let nexusArtifact = this.component!.nexusIQData.component;
 		if (!nexusArtifact || !nexusArtifact.hash) {
 			return [];
 		}
-		return new Promise<VersionInfo[]>((resolve, reject) => {
+		return new Promise<any[]>((resolve, reject) => {
 			console.log('begin GetAllVersions', this.component);
 			let hash = nexusArtifact.hash;
 			let comp  = this.encodeComponentIdentifier(nexusArtifact.componentIdentifier);
@@ -303,16 +302,8 @@ export class ComponentInfoPanel {
 						return;
 					}
 					const versionArray = JSON.parse(body) as any[];
-					var allVersions = versionArray.map((entry: any) => <VersionInfo>{
-						displayName: {
-							packageId: entry.componentIdentifier.coordinates.packageId as string,
-							version: entry.componentIdentifier.coordinates.version as string
-						} as DisplayName,
-						threatLevel: entry.higestSecurityVulerabilitySeverity as number,
-						popularity: entry.relativePopularity as number || 1
-					});
-
-					resolve(allVersions);
+					console.log("getAllVersions retrieved body", versionArray);
+					resolve(versionArray);
 				}
 			);
 		});
@@ -468,14 +459,13 @@ private async getRemediation(nexusArtifact: any){//, settings) {
 						<meta name="viewport" content="width=device-width, initial-scale=1">
 						<link rel="stylesheet" href="${resourceSrc}/css/react-tabs.css">
 						<link rel="stylesheet" href="${resourceSrc}/css/styles.css">
-
 						<title>Component Info</title>
 				</head>
 				<body>
 						
 						<input type="hidden" id="settings" name="settings" value='${settingsString}'>
 						<input type="hidden" id="resourceSrc" name="resourceSrc" value='${resourceSrc}'>
-						
+						<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 						<div id="root" />
 						<script nonce="${nonce}" src="${scriptUri}"></script>
 				</body>
