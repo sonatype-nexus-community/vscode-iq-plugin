@@ -10,7 +10,7 @@ import * as request from "request";
 //import { removeAllListeners } from "cluster";
 //import { deflateSync } from "zlib";
 import * as dependencyTree from "dependency-tree";
-import * as child_process from "child_process";
+
 import {
   ComponentInfoPanel,
   ComponentEntry,
@@ -151,7 +151,6 @@ export class IqComponentModel {
 
   private async packageMavenForIq(workspaceRoot: string): Promise<Array<MavenDependency>>{
     try {
-      //read pom.xml
       const pomFile = path.join(workspaceRoot, "pom.xml");
 
       /*
@@ -160,17 +159,41 @@ export class IqComponentModel {
        * 2. Standard POM does not include transitive dependencies
        * 3. Effective POM may contain unused dependencies
        */
-      const dependencyTree: string = await this.getDependencyTree(pomFile, workspaceRoot);
+      const outputPath: string = path.join(workspaceRoot, "dependency_tree.txt");
 
-      // For example output, see: https://maven.apache.org/plugins/maven-dependency-plugin/examples/resolving-conflicts-using-the-dependency-tree.html
-      const dependencies: string =  dependencyTree.replace(/[\| ]*[\\+][\\-]/g, "");  // cleanup each line to remove the "|", "+-", "\-" tree syntax
-      console.debug(dependencies)
-      console.debug("------------------------------------------------------------------------------")
-      let dependencyList: MavenDependency[] = [];
+      await exec(`mvn dependency:tree -Dverbose -DoutputFile="${outputPath}" -f "${pomFile}"`, {
+        cwd: workspaceRoot,
+        env: {
+          PATH: process.env.PATH
+        }
+      });
 
-      // Dependencies are returned from the above operation as newline-separated strings of the format group:artifact:extension:version:scope
-      // Example: org.springframework.boot:spring-boot-starter:jar:2.0.3.RELEASE:compile
-      for (let dep of dependencies.split("\n")){
+      if (!fs.existsSync(outputPath)){
+        return Promise.reject(new Error('Error occurred in generating dependency tree. Please check that maven is on your PATH.'));
+      }
+      const dependencyTree: string = fs.readFileSync(outputPath).toString();
+
+      return this.parseMavenDependencyTree(dependencyTree);
+    } catch (e) {
+      return Promise.reject(
+        "mvn dependency:tree failed, try running it manually to see what went wrong:" +
+          e.message
+      );
+    }
+  }
+
+  private parseMavenDependencyTree(dependencyTree: string): MavenDependency[]{
+    // For example output, see: https://maven.apache.org/plugins/maven-dependency-plugin/examples/resolving-conflicts-using-the-dependency-tree.html
+    const dependencies: string =  dependencyTree.replace(/[\| ]*[\\+][\\-]/g, "");  // cleanup each line to remove the "|", "+-", "\-" tree syntax
+    console.debug(dependencies)
+    console.debug("------------------------------------------------------------------------------")
+    let dependencyList: MavenDependency[] = [];
+
+    // Dependencies are returned from the above operation as newline-separated strings of the format group:artifact:extension:version:scope
+    // Example: org.springframework.boot:spring-boot-starter:jar:2.0.3.RELEASE:compile
+    const dependencyLines = dependencies.split("\n");
+    dependencyLines.forEach((dep, index) => {
+      if (index > 0){ //skip the first element, which is the application's artifact itself
         console.debug(dep)
         if (dep.trim()) {  //ignore empty lines
           const dependencyParts: string[] = dep.trim().split(":");
@@ -192,15 +215,9 @@ export class IqComponentModel {
           }
         }
       }
+    });
 
-      return dependencyList;
-    } catch (e) {
-      return Promise.reject(
-        "mvn dependency:tree failed, try running it manually to see what went wrong:" +
-          e.message
-      );
-      throw e;
-    }
+    return dependencyList;
   }
 
   private convertToNexusNpmFormat(dependencies: Array<any>) {
@@ -290,7 +307,6 @@ export class IqComponentModel {
           );
           this.components.push(componentEntry);
           let coordinates = entry.componentIdentifier.coordinates as MavenCoordinates;
-          // coordinates.packageId = packageId;
           this.coordsToComponent.set(
             this.toCoordValueTypeMaven(coordinates),
             componentEntry
@@ -524,47 +540,6 @@ export class IqComponentModel {
     return result;
   }
 
-  private async getDependencyTree(pomPath: string, workspaceRoot: string): Promise<string> {
-    const outputPath: string = path.join(workspaceRoot, "dependency_tree.txt");
-    await this.generateDependecyTree(pomPath, outputPath, workspaceRoot);
-    const dependencyTree: string = fs.readFileSync(outputPath).toString();
-    return dependencyTree;
-  }
-
-  private async generateDependecyTree(pomPath: string, outputPath: string, workspaceRoot: string): Promise<any> {
-    return new Promise<{}>((
-      resolve: (value: any) => void, 
-      reject: (e: Error) => void): void => {
-        console.log("Generating dependency tree");
-        const proc = child_process.spawn('mvn', ['dependency:tree', '-Dverbose', `-DoutputFile="${outputPath}"`, `-f "${pomPath}"`], {
-          cwd: workspaceRoot,
-          env: {
-            PATH: process.env.PATH
-          },
-          shell: true   
-        });
-        proc.on("error", (err: Error) => {
-            reject(new Error(`Error occurred in generating dependency tree. Please check that maven is on your PATH. ${err.message}`));
-        });
-        proc.on("exit", (code: number, signal: string) => {
-            if (code !== null) {
-                if (code === 0) {
-                    resolve(code);
-                } else {
-                    reject(new Error(`Dependency tree process terminated with code ${code}.`));
-                }
-            } else {
-                reject(new Error(`Dependency tree process killed by signal ${signal}.`));
-            }
-        });
-        proc.stdout.on("data", (chunk: Buffer) => {
-          console.debug(chunk.toString());
-        });
-        proc.stderr.on("data", (chunk: Buffer) => {
-          console.error(chunk.toString());
-        });
-    });
-  }
 }
 
 export class NexusExplorerProvider
