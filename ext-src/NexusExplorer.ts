@@ -10,6 +10,7 @@ import * as request from "request";
 //import { removeAllListeners } from "cluster";
 //import { deflateSync } from "zlib";
 import * as dependencyTree from "dependency-tree";
+
 import {
   ComponentInfoPanel,
   ComponentEntry,
@@ -28,9 +29,47 @@ export class NpmPackage {
   }
 }
 
+export class MavenDependency {
+  constructor(
+    readonly artifactId: string,
+    readonly groupId: string,
+    readonly version: string,
+    readonly extension: string,
+    readonly hash?: string
+  ) {}
+
+  public toString() {
+    return `${this.groupId}:${this.artifactId}.${this.extension}:${this.version}`;
+  }
+}
+
+enum DependencyType {
+  NPM = "NPM",
+  Maven = "Maven",
+}
+
 class Coordinates {
   packageId?: string;
   version?: string;
+  constructor (packageId: string, version: string){
+    this.packageId = packageId;
+    this.version = version;
+  }
+}
+
+class MavenCoordinates extends Coordinates {
+  artifactId: string;
+  groupId: string;
+  version: string;
+  extension: string;
+
+  constructor (artifactId: string, groupId: string, version: string, extension: string){
+    super(groupId + ":" + artifactId, version);
+    this.artifactId = artifactId;
+    this.groupId = groupId;
+    this.version = version;
+    this.extension = extension;
+  }
 }
 
 export class IqComponentModel {
@@ -64,16 +103,25 @@ export class IqComponentModel {
     await this.performIqScan();
   }
 
-  private async packageForIq(): Promise<Array<NpmPackage>> {
-    const workspaceRoot = vscode.workspace.rootPath;
-    if (workspaceRoot === undefined) {
-      return Promise.reject("No workspace opened");
-    }
-
+  private determineWorkspaceDependencyType(workspaceRoot: string): DependencyType {
     const packageJsonPath = path.join(workspaceRoot, "package.json");
-    if (this.pathExists(packageJsonPath) == false) {
-      return Promise.reject("Workspace has no package.json");
+    const pomFilePath = path.join(workspaceRoot, "pom.xml");
+
+    const packageJsonExists: boolean = this.pathExists(packageJsonPath);
+    const pomFileExists: boolean =  this.pathExists(pomFilePath); 
+
+    if (packageJsonExists){
+      return DependencyType.NPM;
     }
+    else if (pomFileExists) {
+      return DependencyType.Maven;
+    }
+    else{
+      throw new TypeError("Workspace has no package.json or pom.xml");
+    }
+  }
+
+  private async packageNpmForIq(workspaceRoot: string): Promise<Array<NpmPackage>> {
     try {
       const npmShrinkwrapFilename = path.join(
         workspaceRoot,
@@ -101,7 +149,78 @@ export class IqComponentModel {
     }
   }
 
-  private convertToNexusFormat(dependencies: Array<any>) {
+  private async packageMavenForIq(workspaceRoot: string): Promise<Array<MavenDependency>>{
+    try {
+      const pomFile = path.join(workspaceRoot, "pom.xml");
+
+      /*
+       * Need to use dependency tree operation because:
+       * 1. Standard POM may lack dependency versions due to usage of property variables or inherited versions from parent POM
+       * 2. Standard POM does not include transitive dependencies
+       * 3. Effective POM may contain unused dependencies
+       */
+      const outputPath: string = path.join(workspaceRoot, "dependency_tree.txt");
+
+      await exec(`mvn dependency:tree -Dverbose -DoutputFile="${outputPath}" -f "${pomFile}"`, {
+        cwd: workspaceRoot,
+        env: {
+          PATH: process.env.PATH
+        }
+      });
+
+      if (!fs.existsSync(outputPath)){
+        return Promise.reject(new Error('Error occurred in generating dependency tree. Please check that maven is on your PATH.'));
+      }
+      const dependencyTree: string = fs.readFileSync(outputPath).toString();
+
+      return this.parseMavenDependencyTree(dependencyTree);
+    } catch (e) {
+      return Promise.reject(
+        "mvn dependency:tree failed, try running it manually to see what went wrong:" +
+          e.message
+      );
+    }
+  }
+
+  private parseMavenDependencyTree(dependencyTree: string): MavenDependency[]{
+    // For example output, see: https://maven.apache.org/plugins/maven-dependency-plugin/examples/resolving-conflicts-using-the-dependency-tree.html
+    const dependencies: string =  dependencyTree.replace(/[\| ]*[\\+][\\-]/g, "");  // cleanup each line to remove the "|", "+-", "\-" tree syntax
+    console.debug(dependencies)
+    console.debug("------------------------------------------------------------------------------")
+    let dependencyList: MavenDependency[] = [];
+
+    // Dependencies are returned from the above operation as newline-separated strings of the format group:artifact:extension:version:scope
+    // Example: org.springframework.boot:spring-boot-starter:jar:2.0.3.RELEASE:compile
+    const dependencyLines = dependencies.split("\n");
+    dependencyLines.forEach((dep, index) => {
+      if (index > 0){ //skip the first element, which is the application's artifact itself
+        console.debug(dep)
+        if (dep.trim()) {  //ignore empty lines
+          const dependencyParts: string[] = dep.trim().split(":");
+          const group: string = dependencyParts[0];
+          const artifact: string = dependencyParts[1];
+          const extension: string = dependencyParts[2];
+          const version: string = dependencyParts[3];
+          const scope: string = dependencyParts[4];
+
+          if ("test" != scope) {  //dependencies used only during unit testing are generally ignored since they aren't included in the runtime artifact
+            // artifactId, extension, and version are required fields. If a single dependency is missing any of the three, IQ will return a 400 response for the whole list
+            if (artifact && extension && version) {
+              const dependencyObject: MavenDependency = new MavenDependency(artifact, group, version, extension);
+              dependencyList.push(dependencyObject);
+            }
+            else {
+              console.warn("Skipping dependency: " + dep + " due to missing data (artifact, version, and/or extension)")
+            }
+          }
+        }
+      }
+    });
+
+    return dependencyList;
+  }
+
+  private convertToNexusNpmFormat(dependencies: Array<any>) {
     return {
       components: _.map(dependencies, d => ({
         hash: d.hash,
@@ -116,34 +235,96 @@ export class IqComponentModel {
     };
   }
 
-  private toCoordValueType(coordinate: Coordinates): string {
+  
+  private convertToNexusMavenFormat(dependencies: Array<MavenDependency>) {
+    return {
+      components: _.map(dependencies, d => ({
+        hash: d.hash,
+        componentIdentifier: {
+          format: "maven",
+          coordinates: {
+            artifactId: d.artifactId,
+            groupId: d.groupId,
+            version: d.version,
+            extension: d.extension
+          }
+        }
+      }))
+    };
+  }
+
+  private toCoordValueTypeNpm(coordinate: Coordinates): string {
     return `${coordinate.packageId} - ${coordinate.version}`;
+  }
+
+  private toCoordValueTypeMaven(coordinate: MavenCoordinates): string {
+    return `${coordinate.groupId}:${coordinate.artifactId} - ${coordinate.version}`;
   }
 
   private async performIqScan() {
     try {
-      let items = await this.packageForIq();
-      let data = this.convertToNexusFormat(items);
-      // TODO in refresh?
-      this.components = [];
-      for (let entry of data.components) {
-        let componentEntry = new ComponentEntry(
-          entry.componentIdentifier.coordinates.packageId,
-          entry.componentIdentifier.coordinates.version
-        );
-        this.components.push(componentEntry);
-        let coordinates = entry.componentIdentifier.coordinates as Coordinates;
-        this.coordsToComponent.set(
-          this.toCoordValueType(coordinates),
-          componentEntry
-        );
+      const workspaceRoot = vscode.workspace.rootPath;
+      if (workspaceRoot === undefined) {
+        throw new TypeError("No workspace opened");
       }
+
+      const dependencyType = this.determineWorkspaceDependencyType(workspaceRoot);
+
+      console.log("Project dependency type:" + dependencyType)
+
+      let data = undefined;
+      if (dependencyType === DependencyType.NPM) {
+        let items = await this.packageNpmForIq(workspaceRoot);
+        data = this.convertToNexusNpmFormat(items);
+        // TODO in refresh?
+        this.components = [];
+        for (let entry of data.components) {
+          let componentEntry = new ComponentEntry(
+            entry.componentIdentifier.coordinates.packageId,
+            entry.componentIdentifier.coordinates.version
+          );
+          this.components.push(componentEntry);
+          let coordinates = entry.componentIdentifier.coordinates as Coordinates;
+          this.coordsToComponent.set(
+            this.toCoordValueTypeNpm(coordinates),
+            componentEntry
+          );
+        }
+
+      }
+      else if(dependencyType === DependencyType.Maven){
+        let items = await this.packageMavenForIq(workspaceRoot);
+        data = this.convertToNexusMavenFormat(items);
+        console.debug(data)
+
+        this.components = [];
+        for (let entry of data.components) {
+          const packageId = entry.componentIdentifier.coordinates.groupId +":"+ entry.componentIdentifier.coordinates.artifactId;
+
+          let componentEntry = new ComponentEntry(
+            packageId,
+            entry.componentIdentifier.coordinates.version
+          );
+          this.components.push(componentEntry);
+          let coordinates = entry.componentIdentifier.coordinates as MavenCoordinates;
+          this.coordsToComponent.set(
+            this.toCoordValueTypeMaven(coordinates),
+            componentEntry
+          );
+        }
+      }
+
+      if (undefined == data) {
+        throw new RangeError("Attempted to generated dependency list but received an empty collection. NexusIQ will not be invoked for this project.");
+      }
+
       console.log("getting applicationInternalId", this.applicationPublicId);
       let response = await this.getApplicationId(this.applicationPublicId);
       let appRep = JSON.parse(response as string);
       console.log("appRep", appRep);
       let applicationInternalId = appRep.applications[0].id; //'a6e65ec70f4a478f8e2198612917cd38';
       console.log("applicationInternalId", applicationInternalId);
+
       let resultId = await this.submitToIqForEvaluation(
         data,
         applicationInternalId as string
@@ -157,11 +338,22 @@ export class IqComponentModel {
       // parse result data
       console.log(`Received results from IQ scan:`, resultData);
       for (let resultEntry of resultData.results) {
-        let coordinates = resultEntry.component.componentIdentifier
-          .coordinates as Coordinates;
-        let componentEntry = this.coordsToComponent.get(
-          this.toCoordValueType(coordinates)
-        );
+
+        let componentEntry: ComponentEntry | undefined = undefined;
+        if (dependencyType === DependencyType.NPM) {
+          let coordinates = resultEntry.component.componentIdentifier
+            .coordinates as Coordinates;
+          componentEntry = this.coordsToComponent.get(
+            this.toCoordValueTypeNpm(coordinates)
+          );
+        }
+        else if (dependencyType === DependencyType.Maven){
+          let coordinates = resultEntry.component.componentIdentifier
+            .coordinates as MavenCoordinates;
+          componentEntry = this.coordsToComponent.get(
+            this.toCoordValueTypeMaven(coordinates)
+          );
+        }
         componentEntry!.policyViolations = resultEntry.policyData
           .policyViolations as Array<PolicyViolation>;
         componentEntry!.hash = resultEntry.component.hash;
@@ -347,6 +539,7 @@ export class IqComponentModel {
     }
     return result;
   }
+
 }
 
 export class NexusExplorerProvider
