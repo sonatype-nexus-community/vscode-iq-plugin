@@ -651,7 +651,7 @@ export class NexusExplorer {
 
   constructor(readonly context: vscode.ExtensionContext) {
     /////////CPT/////////////
-    let config = vscode.workspace.getConfiguration("nexusiq.npm");
+    let config = vscode.workspace.getConfiguration("nexusiq");
     let url = config.get("url") + "";
     let username = config.get("username") + "";
     let password = config.get("password") + "";
