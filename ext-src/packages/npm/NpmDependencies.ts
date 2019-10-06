@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 import * as _ from "lodash";
+import * as path from "path";
+import * as fs from "fs";
+
+import { exec } from "../../exec";
 import { NpmPackage } from "./NpmPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "ext-src/ComponentInfoPanel";
-import * as path from "path";
-import * as fs from "fs";
-import { exec } from "../../exec";
-import { NpmCoordinate } from "ext-src/coordinates/NpmCoordinate";
+import { NpmCoordinate } from "ext-src/packages/npm/NpmCoordinate";
 
 export class NpmDependencies implements PackageDependencies {
   Dependencies: Array<NpmPackage>;
@@ -54,7 +55,7 @@ export class NpmDependencies implements PackageDependencies {
     }
   }
 
-  private flattenAndUniqDependencies(npmShrinkwrapContents: any): NpmPackage[] {
+  private flattenAndUniqDependencies(npmShrinkwrapContents: any): Array<NpmPackage> {
     console.debug("flattenAndUniqDependencies");
     //first level in npm-shrinkwrap is our project package, we go a level deeper not to include it in the results
     // TODO: handle case where npmShrinkwrapContents does not have a 'dependencies' element defined (eg: simple projects)
@@ -68,7 +69,7 @@ export class NpmDependencies implements PackageDependencies {
     return flatDependencies;
   }
 
-  private flattenDependencies(dependencies: any): NpmPackage[] {
+  private flattenDependencies(dependencies: any): Array<NpmPackage> {
     let result = new Array<NpmPackage>();
     for (let dependency of dependencies) {
       result.push(dependency);
@@ -82,7 +83,7 @@ export class NpmDependencies implements PackageDependencies {
   }
 
   //extracts array with name, version, dependencies from a dictionary
-  private extractInfo(array: any): NpmPackage[] {
+  private extractInfo(array: any): Array<NpmPackage> {
     return Object.keys(array).map(
       k => new NpmPackage(k, array[k].version, array[k].dependencies)
     );

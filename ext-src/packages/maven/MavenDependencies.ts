@@ -15,13 +15,14 @@
  */
 
 import * as _ from "lodash";
+import * as path from "path";
+import * as fs from "fs";
+
+import { exec } from "../../exec";
 import { MavenPackage } from "./MavenPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "ext-src/ComponentInfoPanel";
-import * as path from "path";
-import * as fs from "fs";
-import { exec } from "../../exec";
-import { MavenCoordinate } from "ext-src/coordinates/MavenCoordinate";
+import { MavenCoordinate } from "ext-src/packages/maven/MavenCoordinate";
 
 export class MavenDependencies implements PackageDependencies {
   Dependencies: Array<MavenPackage>;
