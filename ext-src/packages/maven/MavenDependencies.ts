@@ -21,12 +21,12 @@ import * as fs from "fs";
 import { exec } from "../../exec";
 import { MavenPackage } from "./MavenPackage";
 import { PackageDependencies } from "../PackageDependencies";
-import { ComponentEntry } from "ext-src/ComponentInfoPanel";
-import { MavenCoordinate } from "ext-src/packages/maven/MavenCoordinate";
+import { ComponentEntry } from "../../ComponentInfoPanel";
+import { MavenCoordinate } from "./MavenCoordinate";
 
 export class MavenDependencies implements PackageDependencies {
-  Dependencies: Array<MavenPackage>;
-  CoordinatesToComponents: Map<String, ComponentEntry>;
+  Dependencies: Array<MavenPackage> = [];
+  CoordinatesToComponents: Map<String, ComponentEntry> = new Map<String, ComponentEntry>();
 
   public convertToNexusFormat() {
     return {
@@ -64,7 +64,7 @@ export class MavenDependencies implements PackageDependencies {
     return components;
   }
 
-  public async packageForIq(workspaceRoot: string) {
+  public async packageForIq(workspaceRoot: string): Promise<any> {
     try {
       const pomFile = path.join(workspaceRoot, "pom.xml");
 
@@ -89,6 +89,8 @@ export class MavenDependencies implements PackageDependencies {
       const dependencyTree: string = fs.readFileSync(outputPath).toString();
 
       this.parseMavenDependencyTree(dependencyTree);
+
+      return Promise.resolve();
     } catch (e) {
       return Promise.reject(
         "mvn dependency:tree failed, try running it manually to see what went wrong:" +
@@ -97,7 +99,7 @@ export class MavenDependencies implements PackageDependencies {
     }
   }
 
-  private parseMavenDependencyTree(dependencyTree: string){
+  private parseMavenDependencyTree(dependencyTree: string) {
     // For example output, see: https://maven.apache.org/plugins/maven-dependency-plugin/examples/resolving-conflicts-using-the-dependency-tree.html
     const dependencies: string =  dependencyTree.replace(/[\| ]*[\\+][\\-]/g, "");  // cleanup each line to remove the "|", "+-", "\-" tree syntax
     console.debug(dependencies)

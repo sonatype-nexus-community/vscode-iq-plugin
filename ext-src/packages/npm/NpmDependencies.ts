@@ -20,14 +20,14 @@ import * as fs from "fs";
 import { exec } from "../../exec";
 import { NpmPackage } from "./NpmPackage";
 import { PackageDependencies } from "../PackageDependencies";
-import { ComponentEntry } from "ext-src/ComponentInfoPanel";
-import { NpmCoordinate } from "ext-src/packages/npm/NpmCoordinate";
+import { ComponentEntry } from "../../ComponentInfoPanel";
+import { NpmCoordinate } from "./NpmCoordinate";
 
 export class NpmDependencies implements PackageDependencies {
-  Dependencies: Array<NpmPackage>;
-  CoordinatesToComponents: Map<String, ComponentEntry>;
+  Dependencies: Array<NpmPackage> = [];
+  CoordinatesToComponents: Map<String, ComponentEntry> = new Map<String, ComponentEntry>();
 
-  public async packageForIq(workspaceRoot: string) {
+  public async packageForIq(workspaceRoot: string): Promise<any> {
     try {
       const npmShrinkwrapFilename = path.join(
         workspaceRoot,
@@ -47,6 +47,8 @@ export class NpmDependencies implements PackageDependencies {
       //read npm-shrinkwrap.json
       let obj = JSON.parse(fs.readFileSync(npmShrinkwrapFilename, "utf8"));
       this.Dependencies = this.flattenAndUniqDependencies(obj);
+
+      return Promise.resolve();
     } catch (e) {
       return Promise.reject(
         "npm shrinkwrap failed, try running it manually to see what went wrong:" +

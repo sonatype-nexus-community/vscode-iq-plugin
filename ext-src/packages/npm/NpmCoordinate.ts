@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 export class NpmCoordinate implements CoordinateType {
-    Name: string;
-    Version: string;
-  
-    constructor (name: string, version: string){
-      this.Name = name;
-      this.Version = version;
-    }
+  Name: string;
+  Version: string;
 
-    public asCoordinates(): string {
-        return `${this.Name} - ${this.Version}`;
-    }
+  constructor (name: string, version: string){
+    this.Name = name;
+    this.Version = version;
+  }
+
+  public asCoordinates(): string {
+    return `${this.Name} - ${this.Version}`;
+  }
 }

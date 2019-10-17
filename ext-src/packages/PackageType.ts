@@ -15,11 +15,11 @@
  */
 
 export interface PackageType {
-    Name: string;
-    Version: string;
-    Group?: string;
-    Hash?: string;
-    Extension?: string;
-    toCoordinates(): string;
-    toCoordValueType(coordinate: CoordinateType): string;
+  Name: string;
+  Version: string;
+  Group?: string;
+  Hash?: string;
+  Extension?: string;
+  toCoordinates(): string;
+  toCoordValueType(coordinate: CoordinateType): string;
 }

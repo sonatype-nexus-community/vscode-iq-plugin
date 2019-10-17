@@ -13,26 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import PackageType from '../PackageType';
+import { PackageType } from '../PackageType';
 
 export class NpmPackage implements PackageType {
-    Hash: string;
-    Name: string;
-    Version: string;
+  Hash: string;
+  Name: string;
+  Version: string;
     
-    constructor(name: string, version: string, hash: string
-    ) {
-        this.Hash = hash;
-        this.Name = name;
-        this.Version = version;
-    }
-  
-    public toCoordinates() {
-      return `${this.Name}@${this.Version}`;
-    }
+  constructor(name: string, version: string, hash: string
+  ) {
+    this.Hash = hash;
+    this.Name = name;
+    this.Version = version;
+  }
 
-    public toCoordValueType(): string {
-        return `${this.Name} - ${this.Version}`;
-    }
+  public toCoordinates() {
+    return `${this.Name}@${this.Version}`;
+  }
+
+  public toCoordValueType(): string {
+    return `${this.Name} - ${this.Version}`;
+  }
 }

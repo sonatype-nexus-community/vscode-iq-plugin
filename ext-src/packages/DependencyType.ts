@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 export enum DependencyType {
-    NPM = "NPM",
-    Maven = "Maven",
+  NPM = "NPM",
+  Maven = "Maven",
 }
-  

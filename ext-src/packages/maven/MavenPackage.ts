@@ -17,19 +17,19 @@
 import { PackageType } from "../PackageType";
 
 export class MavenPackage implements PackageType {
-    constructor(
-        readonly Name: string,
-        readonly Group: string,
-        readonly Version: string,
-        readonly Extension: string,
-        readonly Hash?: string
-    ) {}
+  constructor(
+    readonly Name: string,
+    readonly Group: string,
+    readonly Version: string,
+    readonly Extension: string,
+    readonly Hash?: string
+  ) {}
 
-    public toCoordinates() {
-        return `${this.Group}:${this.Name}.${this.Extension}:${this.Version}`;
-    }
+  public toCoordinates() {
+    return `${this.Group}:${this.Name}.${this.Extension}:${this.Version}`;
+  }
 
-    public toCoordValueType(): string {
-        return `${this.Group}:${this.Name} - ${this.Version}`;
-    }
+  public toCoordValueType(): string {
+    return `${this.Group}:${this.Name} - ${this.Version}`;
+  }
 }

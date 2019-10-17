@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 export class MavenCoordinate implements CoordinateType {
-    Name: string;
-    Group: string;
-    Version: string;
-    Extension: string;
-  
-    constructor (artifactId: string, groupId: string, version: string, extension: string){
-      this.Name = artifactId;
-      this.Group = groupId;
-      this.Version = version;
-      this.Extension = extension;
-    }
+  Name: string;
+  Group: string;
+  Version: string;
+  Extension: string;
 
-    public asCoordinates(): string {
-        return `${this.Group}:${this.Name} - ${this.Version}`;
-    }
+  constructor (artifactId: string, groupId: string, version: string, extension: string){
+    this.Name = artifactId;
+    this.Group = groupId;
+    this.Version = version;
+    this.Extension = extension;
+  }
+
+  public asCoordinates(): string {
+    return `${this.Group}:${this.Name} - ${this.Version}`;
+  }
 }

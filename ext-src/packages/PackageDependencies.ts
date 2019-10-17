@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 import { PackageType } from "./PackageType";
-import { ComponentEntry } from "ext-src/ComponentInfoPanel";
+import { ComponentEntry } from "../ComponentInfoPanel";
 
 export interface PackageDependencies {
-    Dependencies: Array<PackageType>;
-    CoordinatesToComponents: Map<String, ComponentEntry>;
-    convertToNexusFormat(): any;
-    toComponentEntries(data: any): Array<ComponentEntry>;
-    packageForIq(workspaceRoot: string): Promise<undefined>;
+  Dependencies: Array<PackageType>;
+  CoordinatesToComponents: Map<String, ComponentEntry>;
+  convertToNexusFormat(): any;
+  toComponentEntries(data: any): Array<ComponentEntry>;
+  packageForIq(workspaceRoot: string): Promise<undefined>;
 }

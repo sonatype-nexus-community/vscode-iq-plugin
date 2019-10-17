@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 interface CoordinateType {
-    Name: string;
-    Version: string;
-    Group?: string;
-    Extension?: string;
-    asCoordinates(): string;
+  Name: string;
+  Version: string;
+  Group?: string;
+  Extension?: string;
+  asCoordinates(): string;
 }
