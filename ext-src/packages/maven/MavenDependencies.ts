@@ -55,7 +55,10 @@ export class MavenDependencies implements PackageDependencies {
         entry.componentIdentifier.coordinates.version
       );
       components.push(componentEntry);
-      let coordinates = entry.componentIdentifier.coordinates as MavenCoordinate;
+      let coordinates = new MavenCoordinate(entry.componentIdentifier.coordinates.artifactId, 
+        entry.componentIdentifier.coordinates.groupId, 
+        entry.componentIdentifier.coordinates.version, 
+        entry.componentIdentifier.coordinates.extension);
       this.CoordinatesToComponents.set(
         coordinates.asCoordinates(),
         componentEntry

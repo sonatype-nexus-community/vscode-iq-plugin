@@ -67,7 +67,11 @@ export class NpmDependencies implements PackageDependencies {
     let flatDependencies = this.flattenDependencies(
       this.extractInfo(npmShrinkwrapContents.dependencies)
     );
-    flatDependencies = _.uniqBy(flatDependencies, x => x.toString());
+    let newflatDependencies = _.uniqBy(flatDependencies, function(x) {
+      return x.Name;
+    });
+
+    console.log(newflatDependencies);
     return flatDependencies;
   }
 
@@ -92,7 +96,7 @@ export class NpmDependencies implements PackageDependencies {
   }
 
   public convertToNexusFormat() {
-    return { components: _.map(this.Dependencies.entries, (d: { Hash: any; Name: any; Group: any; Version: any; Extension: any; }) => ({
+    return { components: _.map(this.Dependencies, (d: { Hash: any; Name: any; Group: any; Version: any; Extension: any; }) => ({
         hash: d.Hash,
         componentIdentifier: {
           format: "npm",
@@ -113,7 +117,7 @@ export class NpmDependencies implements PackageDependencies {
         entry.componentIdentifier.coordinates.version
       );
       components.push(componentEntry);
-      let coordinates = entry.componentIdentifier.coordinates as NpmCoordinate;
+      let coordinates = new NpmCoordinate(entry.componentIdentifier.coordinates.packageId, entry.componentIdentifier.coordinates.version);
       this.CoordinatesToComponents.set(
         coordinates.asCoordinates(),
         componentEntry
