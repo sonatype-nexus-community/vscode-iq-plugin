@@ -13,8 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export enum DependencyType {
-  NPM = "NPM",
-  Maven = "Maven",
-  Golang = "Golang",
+export class GolangCoordinate implements CoordinateType {
+  Name: string;
+  Version: string;
+
+  constructor (name: string, version: string){
+    this.Name = name;
+    this.Version = version;
+  }
+
+  public asCoordinates(): string {
+    return `${this.Name} - ${this.Version}`;
+  }
 }

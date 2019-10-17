@@ -28,6 +28,7 @@ import {
     ComponentEntry,
     PolicyViolation
   } from "./ComponentInfoPanel";
+import { GolangDependencies } from "./packages/golang/GolangDependencies";
 
 
 export class IqComponentModel {
@@ -64,6 +65,8 @@ export class IqComponentModel {
       }
       else if (this.doesPathExist(workspaceRoot, "pom.xml")) {
         return DependencyType.Maven;
+      } else if (this.doesPathExist(workspaceRoot, "go.sum")) {
+        return DependencyType.Golang;
       }
       else{
         throw new TypeError("Workspace has no package.json or pom.xml");
@@ -93,6 +96,10 @@ export class IqComponentModel {
           let npmDependencies = new NpmDependencies();
           npmDependencies.packageForIq(workspaceRoot);
           return npmDependencies;
+        case DependencyType.Golang:
+          let golangDependencies = new GolangDependencies();
+          golangDependencies.packageForIq(workspaceRoot);
+          return golangDependencies;
         default:
           throw new TypeError("Functionality not implemented");
       }
