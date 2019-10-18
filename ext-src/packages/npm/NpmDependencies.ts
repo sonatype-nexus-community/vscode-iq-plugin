@@ -112,9 +112,9 @@ export class NpmDependencies implements PackageDependencies {
           Version: any;
           Extension: any;
         }) => ({
-          hash: "null",
+          hash: null,
           componentIdentifier: {
-            format: DependencyType.NPM,
+            format: DependencyType.NPM.toLowerCase(),
             coordinates: {
               packageId: d.Name,
               version: d.Version
