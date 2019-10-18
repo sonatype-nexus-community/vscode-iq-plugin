@@ -148,24 +148,32 @@ export class IqComponentModel {
         let resultData = JSON.parse(resultDataString as string);
   
         console.debug(`Received results from IQ scan:`, resultData);
+
+        // TODO: All of this could be refactored so you don't need to add a case for each
         for (let resultEntry of resultData.results) {
           let componentEntry: ComponentEntry | undefined;
   
           if (dependencyType === DependencyType.NPM) {
-            let coordinates = resultEntry.component.componentIdentifier
-              .coordinates as NpmCoordinate;
+            let coordinates = new NpmCoordinate(resultEntry.component.componentIdentifier.coordinates.name, 
+              resultEntry.component.componentIdentifier.coordinates.version);
+            
             componentEntry = this.coordsToComponent.get(
               coordinates.asCoordinates()
             );
           }
           else if (dependencyType === DependencyType.Maven){
-            let coordinates = resultEntry.component.componentIdentifier
-              .coordinates as MavenCoordinate;
+            let coordinates = new MavenCoordinate(resultEntry.component.componentIdentifier.coordinates.artifactId, 
+              resultEntry.component.componentIdentifier.coordinates.groupId, 
+              resultEntry.component.componentIdentifier.coordinates.version, 
+              resultEntry.component.componentIdentifier.coordinates.extension);
+
             componentEntry = this.coordsToComponent.get(
               coordinates.asCoordinates()
             );
           } else if (dependencyType === DependencyType.Golang) {
-            let coordinates = new GolangCoordinate(resultEntry.component.componentIdentifier.coordinates.name, resultEntry.component.componentIdentifier.coordinates.version);
+            let coordinates = new GolangCoordinate(resultEntry.component.componentIdentifier.coordinates.name, 
+              resultEntry.component.componentIdentifier.coordinates.version);
+
             componentEntry = this.coordsToComponent.get(
               coordinates.asCoordinates()
             );
