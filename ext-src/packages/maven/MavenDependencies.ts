@@ -23,42 +23,60 @@ import { MavenPackage } from "./MavenPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../ComponentInfoPanel";
 import { MavenCoordinate } from "./MavenCoordinate";
+import { DependencyType } from "../DependencyType";
 
 export class MavenDependencies implements PackageDependencies {
   Dependencies: Array<MavenPackage> = [];
-  CoordinatesToComponents: Map<string, ComponentEntry> = new Map<string, ComponentEntry>();
+  CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
+    string,
+    ComponentEntry
+  >();
 
   public convertToNexusFormat() {
     return {
-      components: _.map(this.Dependencies.entries, (d: { Hash: any; Name: any; Group: any; Version: any; Extension: any; }) => ({
-        hash: d.Hash,
-        componentIdentifier: {
-          format: "maven",
-          coordinates: {
-            artifactId: d.Name,
-            groupId: d.Group,
-            version: d.Version,
-            extension: d.Extension
+      components: _.map(
+        this.Dependencies.entries,
+        (d: {
+          Hash: any;
+          Name: any;
+          Group: any;
+          Version: any;
+          Extension: any;
+        }) => ({
+          hash: null,
+          componentIdentifier: {
+            format: DependencyType.Maven.toLowerCase(),
+            coordinates: {
+              artifactId: d.Name,
+              groupId: d.Group,
+              version: d.Version,
+              extension: d.Extension
+            }
           }
-        }
-      }))
+        })
+      )
     };
   }
 
   public toComponentEntries(data: any): Array<ComponentEntry> {
     let components = new Array<ComponentEntry>();
     for (let entry of data.components) {
-      const packageId = entry.componentIdentifier.coordinates.groupId +":"+ entry.componentIdentifier.coordinates.artifactId;
+      const packageId =
+        entry.componentIdentifier.coordinates.groupId +
+        ":" +
+        entry.componentIdentifier.coordinates.artifactId;
 
       let componentEntry = new ComponentEntry(
         packageId,
         entry.componentIdentifier.coordinates.version
       );
       components.push(componentEntry);
-      let coordinates = new MavenCoordinate(entry.componentIdentifier.coordinates.artifactId, 
-        entry.componentIdentifier.coordinates.groupId, 
-        entry.componentIdentifier.coordinates.version, 
-        entry.componentIdentifier.coordinates.extension);
+      let coordinates = new MavenCoordinate(
+        entry.componentIdentifier.coordinates.artifactId,
+        entry.componentIdentifier.coordinates.groupId,
+        entry.componentIdentifier.coordinates.version,
+        entry.componentIdentifier.coordinates.extension
+      );
       this.CoordinatesToComponents.set(
         coordinates.asCoordinates(),
         componentEntry
@@ -68,6 +86,7 @@ export class MavenDependencies implements PackageDependencies {
   }
 
   public async packageForIq(workspaceRoot: string): Promise<any> {
+    let mvnCommand;
     try {
       const pomFile = path.join(workspaceRoot, "pom.xml");
 
@@ -77,17 +96,24 @@ export class MavenDependencies implements PackageDependencies {
        * 2. Standard POM does not include transitive dependmavenDependenciesencies
        * 3. Effective POM may contain unused dependencies
        */
-      const outputPath: string = path.join(workspaceRoot, "dependency_tree.txt");
-
-      await exec(`mvn dependency:tree -Dverbose -packageForIqDoutputFile="${outputPath}" -f "${pomFile}"`, {
+      const outputPath: string = path.join(
+        workspaceRoot,
+        "dependency_tree.txt"
+      );
+      mvnCommand = `mvn dependency:tree -Dverbose -DoutputFile="${outputPath}" -f "${pomFile}"`;
+      await exec(mvnCommand, {
         cwd: workspaceRoot,
         env: {
           PATH: process.env.PATH
         }
       });
 
-      if (!fs.existsSync(outputPath)){
-        return Promise.reject(new Error('Error occurred in generating dependency tree. Please check that maven is on your PATH.'));
+      if (!fs.existsSync(outputPath)) {
+        return Promise.reject(
+          new Error(
+            "Error occurred in generating dependency tree. Please check that maven is on your PATH."
+          )
+        );
       }
       const dependencyTree: string = fs.readFileSync(outputPath).toString();
 
@@ -97,25 +123,33 @@ export class MavenDependencies implements PackageDependencies {
     } catch (e) {
       return Promise.reject(
         "mvn dependency:tree failed, try running it manually to see what went wrong:" +
-          e.message
+          mvnCommand +
+          e.error
       );
     }
   }
 
   private parseMavenDependencyTree(dependencyTree: string) {
     // For example output, see: https://maven.apache.org/plugins/maven-dependency-plugin/examples/resolving-conflicts-using-the-dependency-tree.html
-    const dependencies: string =  dependencyTree.replace(/[\| ]*[\\+][\\-]/g, "");  // cleanup each line to remove the "|", "+-", "\-" tree syntax
-    console.debug(dependencies)
-    console.debug("------------------------------------------------------------------------------")
+    const dependencies: string = dependencyTree.replace(
+      /[\| ]*[\\+][\\-]/g,
+      ""
+    ); // cleanup each line to remove the "|", "+-", "\-" tree syntax
+    console.debug(dependencies);
+    console.debug(
+      "------------------------------------------------------------------------------"
+    );
     let dependencyList: MavenPackage[] = [];
 
     // Dependencies are returned from the above operation as newline-separated strings of the format group:artifact:extension:version:scope
     // Example: org.springframework.boot:spring-boot-starter:jar:2.0.3.RELEASE:compile
     const dependencyLines = dependencies.split("\n");
     dependencyLines.forEach((dep, index) => {
-      if (index > 0){ //skip the first element, which is the application's artifact itself
-        console.debug(dep)
-        if (dep.trim()) {  //ignore empty lines
+      if (index > 0) {
+        //skip the first element, which is the application's artifact itself
+        console.debug(dep);
+        if (dep.trim()) {
+          //ignore empty lines
           const dependencyParts: string[] = dep.trim().split(":");
           const group: string = dependencyParts[0];
           const artifact: string = dependencyParts[1];
@@ -123,14 +157,23 @@ export class MavenDependencies implements PackageDependencies {
           const version: string = dependencyParts[3];
           const scope: string = dependencyParts[4];
 
-          if ("test" != scope) {  //dependencies used only during unit testing are generally ignored since they aren't included in the runtime artifact
+          if ("test" != scope) {
+            //dependencies used only during unit testing are generally ignored since they aren't included in the runtime artifact
             // artifactId, extension, and version are required fields. If a single dependency is missing any of the three, IQ will return a 400 response for the whole list
             if (artifact && extension && version) {
-              const dependencyObject: MavenPackage = new MavenPackage(artifact, group, version, extension);
+              const dependencyObject: MavenPackage = new MavenPackage(
+                artifact,
+                group,
+                version,
+                extension
+              );
               dependencyList.push(dependencyObject);
-            }
-            else {
-              console.warn("Skipping dependency: " + dep + " due to missing data (artifact, version, and/or extension)")
+            } else {
+              console.warn(
+                "Skipping dependency: " +
+                  dep +
+                  " due to missing data (artifact, version, and/or extension)"
+              );
             }
           }
         }

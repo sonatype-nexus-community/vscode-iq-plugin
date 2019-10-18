@@ -23,23 +23,30 @@ import { GolangPackage } from "./GolangPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../ComponentInfoPanel";
 import { GolangCoordinate } from "./GolangCoordinate";
+import { DependencyType } from "../DependencyType";
 
 export class GolangDependencies implements PackageDependencies {
   Dependencies: Array<GolangPackage> = [];
-  CoordinatesToComponents: Map<string, ComponentEntry> = new Map<string, ComponentEntry>();
+  CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
+    string,
+    ComponentEntry
+  >();
 
   public convertToNexusFormat() {
     return {
-      components: _.map(this.Dependencies, (d: { Hash: any; Name: any; Version: any; }) => ({
-        hash: d.Hash,
-        componentIdentifier: {
-          format: "golang",
-          coordinates: {
-            name: d.Name,
-            version: d.Version
+      components: _.map(
+        this.Dependencies,
+        (d: { Hash: any; Name: any; Version: any }) => ({
+          hash: null,
+          componentIdentifier: {
+            format: DependencyType.Golang.toLowerCase(),
+            coordinates: {
+              name: d.Name,
+              version: d.Version
+            }
           }
-        }
-      }))
+        })
+      )
     };
   }
 
@@ -53,8 +60,10 @@ export class GolangDependencies implements PackageDependencies {
         entry.componentIdentifier.coordinates.version
       );
       components.push(componentEntry);
-      let coordinates = new GolangCoordinate(entry.componentIdentifier.coordinates.name, 
-        entry.componentIdentifier.coordinates.version);
+      let coordinates = new GolangCoordinate(
+        entry.componentIdentifier.coordinates.name,
+        entry.componentIdentifier.coordinates.version
+      );
       this.CoordinatesToComponents.set(
         coordinates.asCoordinates(),
         componentEntry
@@ -66,10 +75,7 @@ export class GolangDependencies implements PackageDependencies {
   public async packageForIq(workspaceRoot: string): Promise<any> {
     try {
       // TODO: Probably should output to somewhere else on disk, or maybe just capture the stdout to a string
-      const outputPath = path.join(
-        workspaceRoot,
-        "golistresults.txt"
-      );
+      const outputPath = path.join(workspaceRoot, "golistresults.txt");
 
       // TODO: When running this command, Golang is now using the workspace root to establish a GOCACHE, we should use some other temporary area or try and suss out the real one
       await exec(`go list -m all > ${outputPath}`, {
@@ -80,8 +86,12 @@ export class GolangDependencies implements PackageDependencies {
         }
       });
 
-      if (!fs.existsSync(outputPath)){
-        return Promise.reject(new Error('Error occurred in generating dependency tree. Please check that golang is on your PATH.'));
+      if (!fs.existsSync(outputPath)) {
+        return Promise.reject(
+          new Error(
+            "Error occurred in generating dependency tree. Please check that golang is on your PATH."
+          )
+        );
       }
       const dependencyTree: string = fs.readFileSync(outputPath).toString();
 
@@ -107,9 +117,9 @@ export class GolangDependencies implements PackageDependencies {
         const name: string = dependencyParts[0];
         const version: string = dependencyParts[1];
 
-        dependencyList.push(new GolangPackage(name, version))
+        dependencyList.push(new GolangPackage(name, version));
       }
-    })
+    });
 
     this.Dependencies = dependencyList;
   }
