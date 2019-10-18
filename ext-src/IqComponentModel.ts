@@ -154,7 +154,7 @@ export class IqComponentModel {
           let componentEntry: ComponentEntry | undefined;
   
           if (dependencyType === DependencyType.NPM) {
-            let coordinates = new NpmCoordinate(resultEntry.component.componentIdentifier.coordinates.name, 
+            let coordinates = new NpmCoordinate(resultEntry.component.componentIdentifier.coordinates.packageId, 
               resultEntry.component.componentIdentifier.coordinates.version);
             
             componentEntry = this.coordsToComponent.get(
