@@ -65,11 +65,13 @@ export class GolangDependencies implements PackageDependencies {
 
   public async packageForIq(workspaceRoot: string): Promise<any> {
     try {
+      // TODO: Probably should output to somewhere else on disk, or maybe just capture the stdout to a string
       const outputPath = path.join(
         workspaceRoot,
         "golistresults.txt"
       );
 
+      // TODO: When running this command, Golang is now using the workspace root to establish a GOCACHE, we should use some other temporary area or try and suss out the real one
       await exec(`go list -m all > ${outputPath}`, {
         cwd: workspaceRoot,
         env: {
