@@ -90,16 +90,16 @@ export class IqComponentModel {
       switch (type) {
         case DependencyType.Maven:
           let mavenDependencies = new MavenDependencies();
-          mavenDependencies.packageForIq(workspaceRoot);
-          return mavenDependencies;
+          await mavenDependencies.packageForIq(workspaceRoot);
+          return Promise.resolve(mavenDependencies);
         case DependencyType.NPM:
           let npmDependencies = new NpmDependencies();
-          npmDependencies.packageForIq(workspaceRoot);
-          return npmDependencies;
+          await npmDependencies.packageForIq(workspaceRoot);
+          return Promise.resolve(npmDependencies);
         case DependencyType.Golang:
           let golangDependencies = new GolangDependencies();
-          golangDependencies.packageForIq(workspaceRoot);
-          return golangDependencies;
+          await golangDependencies.packageForIq(workspaceRoot);
+          return Promise.resolve(golangDependencies);
         default:
           throw new TypeError("Functionality not implemented");
       }
@@ -124,7 +124,7 @@ export class IqComponentModel {
   
         console.debug("Project dependency type:" + dependencyType)
   
-        let data = this.packageAndConvertToNexusFormat(dependencyType, workspaceRoot);
+        let data = await this.packageAndConvertToNexusFormat(dependencyType, workspaceRoot);
   
         if (undefined == data) {
           throw new RangeError("Attempted to generated dependency list but received an empty collection. NexusIQ will not be invoked for this project.");

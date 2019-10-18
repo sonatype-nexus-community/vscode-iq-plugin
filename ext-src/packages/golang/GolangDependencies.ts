@@ -70,7 +70,7 @@ export class GolangDependencies implements PackageDependencies {
         "golistresults.txt"
       );
 
-      await exec(`go list -m all > ${outputPath}`, {
+      await exec(`HOME=${workspaceRoot} go list -m all > ${outputPath}`, {
         cwd: workspaceRoot,
         env: {
           PATH: process.env.PATH
@@ -82,54 +82,32 @@ export class GolangDependencies implements PackageDependencies {
       }
       const dependencyTree: string = fs.readFileSync(outputPath).toString();
 
-      console.log(dependencyTree);
-
-      // this.parseMavenDependencyTree(dependencyTree);
+      this.parseGolangDependencies(dependencyTree);
 
       return Promise.resolve();
     } catch (e) {
       return Promise.reject(
-        "mvn dependency:tree failed, try running it manually to see what went wrong:" +
+        "go list -m all failed, please try running locally to see why: " +
           e.message
       );
     }
   }
 
-  // private parseMavenDependencyTree(dependencyTree: string) {
-  //   // For example output, see: https://maven.apache.org/plugins/maven-dependency-plugin/examples/resolving-conflicts-using-the-dependency-tree.html
-  //   const dependencies: string =  dependencyTree.replace(/[\| ]*[\\+][\\-]/g, "");  // cleanup each line to remove the "|", "+-", "\-" tree syntax
-  //   console.debug(dependencies)
-  //   console.debug("------------------------------------------------------------------------------")
-  //   let dependencyList: MavenPackage[] = [];
+  private parseGolangDependencies(dependencyTree: string) {
+    let dependencyList: GolangPackage[] = [];
 
-  //   // Dependencies are returned from the above operation as newline-separated strings of the format group:artifact:extension:version:scope
-  //   // Example: org.springframework.boot:spring-boot-starter:jar:2.0.3.RELEASE:compile
-  //   const dependencyLines = dependencies.split("\n");
-  //   dependencyLines.forEach((dep, index) => {
-  //     if (index > 0){ //skip the first element, which is the application's artifact itself
-  //       console.debug(dep)
-  //       if (dep.trim()) {  //ignore empty lines
-  //         const dependencyParts: string[] = dep.trim().split(":");
-  //         const group: string = dependencyParts[0];
-  //         const artifact: string = dependencyParts[1];
-  //         const extension: string = dependencyParts[2];
-  //         const version: string = dependencyParts[3];
-  //         const scope: string = dependencyParts[4];
+    const dependencyLines = dependencyTree.split("\n");
 
-  //         if ("test" != scope) {  //dependencies used only during unit testing are generally ignored since they aren't included in the runtime artifact
-  //           // artifactId, extension, and version are required fields. If a single dependency is missing any of the three, IQ will return a 400 response for the whole list
-  //           if (artifact && extension && version) {
-  //             const dependencyObject: MavenPackage = new MavenPackage(artifact, group, version, extension);
-  //             dependencyList.push(dependencyObject);
-  //           }
-  //           else {
-  //             console.warn("Skipping dependency: " + dep + " due to missing data (artifact, version, and/or extension)")
-  //           }
-  //         }
-  //       }
-  //     }
-  //   });
+    dependencyLines.forEach((dep, index) => {
+      if (index > 0) {
+        const dependencyParts: string[] = dep.trim().split(" ");
+        const name: string = dependencyParts[0];
+        const version: string = dependencyParts[1];
 
-  //   this.Dependencies = dependencyList;
-  // }
+        dependencyList.push(new GolangPackage(name, version))
+      }
+    })
+
+    this.Dependencies = dependencyList;
+  }
 }
