@@ -26,14 +26,14 @@ import { GolangCoordinate } from "./GolangCoordinate";
 
 export class GolangDependencies implements PackageDependencies {
   Dependencies: Array<GolangPackage> = [];
-  CoordinatesToComponents: Map<String, ComponentEntry> = new Map<String, ComponentEntry>();
+  CoordinatesToComponents: Map<string, ComponentEntry> = new Map<string, ComponentEntry>();
 
   public convertToNexusFormat() {
     return {
       components: _.map(this.Dependencies, (d: { Hash: any; Name: any; Version: any; }) => ({
         hash: d.Hash,
         componentIdentifier: {
-          format: "maven",
+          format: "golang",
           coordinates: {
             name: d.Name,
             version: d.Version
@@ -46,7 +46,7 @@ export class GolangDependencies implements PackageDependencies {
   public toComponentEntries(data: any): Array<ComponentEntry> {
     let components = new Array<ComponentEntry>();
     for (let entry of data.components) {
-      const packageId = entry.componentIdentifier.coordinates.groupId +":"+ entry.componentIdentifier.coordinates.artifactId;
+      const packageId = entry.componentIdentifier.coordinates.name;
 
       let componentEntry = new ComponentEntry(
         packageId,
@@ -70,10 +70,11 @@ export class GolangDependencies implements PackageDependencies {
         "golistresults.txt"
       );
 
-      await exec(`HOME=${workspaceRoot} go list -m all > ${outputPath}`, {
+      await exec(`go list -m all > ${outputPath}`, {
         cwd: workspaceRoot,
         env: {
-          PATH: process.env.PATH
+          PATH: process.env.PATH,
+          HOME: workspaceRoot
         }
       });
 
@@ -99,7 +100,7 @@ export class GolangDependencies implements PackageDependencies {
     const dependencyLines = dependencyTree.split("\n");
 
     dependencyLines.forEach((dep, index) => {
-      if (index > 0) {
+      if (index > 0 && dep != "") {
         const dependencyParts: string[] = dep.trim().split(" ");
         const name: string = dependencyParts[0];
         const version: string = dependencyParts[1];

@@ -26,7 +26,7 @@ import { MavenCoordinate } from "./MavenCoordinate";
 
 export class MavenDependencies implements PackageDependencies {
   Dependencies: Array<MavenPackage> = [];
-  CoordinatesToComponents: Map<String, ComponentEntry> = new Map<String, ComponentEntry>();
+  CoordinatesToComponents: Map<string, ComponentEntry> = new Map<string, ComponentEntry>();
 
   public convertToNexusFormat() {
     return {

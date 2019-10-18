@@ -25,7 +25,7 @@ import { NpmCoordinate } from "./NpmCoordinate";
 
 export class NpmDependencies implements PackageDependencies {
   Dependencies: Array<NpmPackage> = [];
-  CoordinatesToComponents: Map<String, ComponentEntry> = new Map<String, ComponentEntry>();
+  CoordinatesToComponents: Map<string, ComponentEntry> = new Map<string, ComponentEntry>();
 
   public async packageForIq(workspaceRoot: string): Promise<any> {
     try {

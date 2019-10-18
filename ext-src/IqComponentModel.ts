@@ -29,6 +29,7 @@ import {
     PolicyViolation
   } from "./ComponentInfoPanel";
 import { GolangDependencies } from "./packages/golang/GolangDependencies";
+import { GolangCoordinate } from "./packages/golang/GolangCoordinate";
 
 
 export class IqComponentModel {
@@ -109,6 +110,7 @@ export class IqComponentModel {
       let items = await this.packageForIQ(workspaceRoot, dependencyType);
       let data = items.convertToNexusFormat();
       this.components = items.toComponentEntries(data);
+      this.coordsToComponent = items.CoordinatesToComponents;
   
       return data;
     }
@@ -147,7 +149,7 @@ export class IqComponentModel {
   
         console.debug(`Received results from IQ scan:`, resultData);
         for (let resultEntry of resultData.results) {
-          let componentEntry: ComponentEntry | undefined = undefined;
+          let componentEntry: ComponentEntry | undefined;
   
           if (dependencyType === DependencyType.NPM) {
             let coordinates = resultEntry.component.componentIdentifier
@@ -162,9 +164,13 @@ export class IqComponentModel {
             componentEntry = this.coordsToComponent.get(
               coordinates.asCoordinates()
             );
+          } else if (dependencyType === DependencyType.Golang) {
+            let coordinates = new GolangCoordinate(resultEntry.component.componentIdentifier.coordinates.name, resultEntry.component.componentIdentifier.coordinates.version);
+            componentEntry = this.coordsToComponent.get(
+              coordinates.asCoordinates()
+            );
           }
-          componentEntry!.policyViolations = resultEntry.policyData
-            .policyViolations as Array<PolicyViolation>;
+          componentEntry!.policyViolations = new Array<PolicyViolation>(resultEntry.policyData.policyViolations);
           componentEntry!.hash = resultEntry.component.hash;
           componentEntry!.nexusIQData = resultEntry;
         }
