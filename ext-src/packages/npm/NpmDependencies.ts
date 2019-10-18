@@ -22,10 +22,14 @@ import { NpmPackage } from "./NpmPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../ComponentInfoPanel";
 import { NpmCoordinate } from "./NpmCoordinate";
+import { DependencyType } from "../DependencyType";
 
 export class NpmDependencies implements PackageDependencies {
   Dependencies: Array<NpmPackage> = [];
-  CoordinatesToComponents: Map<string, ComponentEntry> = new Map<string, ComponentEntry>();
+  CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
+    string,
+    ComponentEntry
+  >();
 
   public async packageForIq(workspaceRoot: string): Promise<any> {
     try {
@@ -57,7 +61,9 @@ export class NpmDependencies implements PackageDependencies {
     }
   }
 
-  private flattenAndUniqDependencies(npmShrinkwrapContents: any): Array<NpmPackage> {
+  private flattenAndUniqDependencies(
+    npmShrinkwrapContents: any
+  ): Array<NpmPackage> {
     console.debug("flattenAndUniqDependencies");
     //first level in npm-shrinkwrap is our project package, we go a level deeper not to include it in the results
     // TODO: handle case where npmShrinkwrapContents does not have a 'dependencies' element defined (eg: simple projects)
@@ -96,16 +102,26 @@ export class NpmDependencies implements PackageDependencies {
   }
 
   public convertToNexusFormat() {
-    return { components: _.map(this.Dependencies, (d: { Hash: any; Name: any; Group: any; Version: any; Extension: any; }) => ({
-        hash: d.Hash,
-        componentIdentifier: {
-          format: "npm",
-          coordinates: {
-            packageId: d.Name,
-            version: d.Version
+    return {
+      components: _.map(
+        this.Dependencies,
+        (d: {
+          Hash: any;
+          Name: any;
+          Group: any;
+          Version: any;
+          Extension: any;
+        }) => ({
+          hash: "null",
+          componentIdentifier: {
+            format: DependencyType.NPM,
+            coordinates: {
+              packageId: d.Name,
+              version: d.Version
+            }
           }
-        }
-    }))
+        })
+      )
     };
   }
 
@@ -117,7 +133,10 @@ export class NpmDependencies implements PackageDependencies {
         entry.componentIdentifier.coordinates.version
       );
       components.push(componentEntry);
-      let coordinates = new NpmCoordinate(entry.componentIdentifier.coordinates.packageId, entry.componentIdentifier.coordinates.version);
+      let coordinates = new NpmCoordinate(
+        entry.componentIdentifier.coordinates.packageId,
+        entry.componentIdentifier.coordinates.version
+      );
       this.CoordinatesToComponents.set(
         coordinates.asCoordinates(),
         componentEntry
