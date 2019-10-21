@@ -23,23 +23,39 @@ import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../ComponentInfoPanel";
 import { NpmCoordinate } from "./NpmCoordinate";
 import { DependencyType } from "../DependencyType";
+import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 
-export class NpmDependencies implements PackageDependencies {
+export class NpmDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<NpmPackage> = [];
   CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
     string,
     ComponentEntry
   >();
 
-  public async packageForIq(workspaceRoot: string): Promise<any> {
+  public CheckIfValid(): boolean {
+    if (this.doesPathExist(this.getWorkspaceRoot(), "package.json")) {
+      console.debug("Valid for NPM");
+      return true;
+    }
+    return false;
+  }
+
+  public ConvertToComponentEntry(resultEntry: any): string {
+    let coordinates = new NpmCoordinate(resultEntry.component.componentIdentifier.coordinates.packageId, 
+      resultEntry.component.componentIdentifier.coordinates.version);
+    
+    return coordinates.asCoordinates();
+  }
+
+  public async packageForIq(): Promise<any> {
     try {
       const npmShrinkwrapFilename = path.join(
-        workspaceRoot,
+        this.getWorkspaceRoot(),
         "npm-shrinkwrap.json"
       );
       if (!fs.existsSync(npmShrinkwrapFilename)) {
         let { stdout, stderr } = await exec("npm shrinkwrap", {
-          cwd: workspaceRoot
+          cwd: this.getWorkspaceRoot()
         });
         let npmShrinkWrapFile = "npm-shrinkwrap.json";
         let shrinkWrapSucceeded =

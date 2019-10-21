@@ -19,7 +19,9 @@ import { ComponentEntry } from "../ComponentInfoPanel";
 export interface PackageDependencies {
   Dependencies: Array<PackageType>;
   CoordinatesToComponents: Map<string, ComponentEntry>;
+  CheckIfValid(): boolean;
+  ConvertToComponentEntry(resultEntry: any): string;
   convertToNexusFormat(): any;
   toComponentEntries(data: any): Array<ComponentEntry>;
-  packageForIq(workspaceRoot: string): Promise<undefined>;
+  packageForIq(): Promise<undefined>;
 }

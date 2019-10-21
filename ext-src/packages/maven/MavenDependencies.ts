@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import * as _ from "lodash";
 import * as path from "path";
 import * as fs from "fs";
@@ -21,16 +20,34 @@ import * as fs from "fs";
 import { exec } from "../../exec";
 import { MavenPackage } from "./MavenPackage";
 import { PackageDependencies } from "../PackageDependencies";
+import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { ComponentEntry } from "../../ComponentInfoPanel";
 import { MavenCoordinate } from "./MavenCoordinate";
 import { DependencyType } from "../DependencyType";
 
-export class MavenDependencies implements PackageDependencies {
+export class MavenDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<MavenPackage> = [];
   CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
     string,
     ComponentEntry
   >();
+
+  public CheckIfValid(): boolean {
+    if (this.doesPathExist(this.getWorkspaceRoot(), "pom.xml")) {
+      console.debug("Valid for Maven");
+      return true;
+    }
+    return false;
+  }
+
+  public ConvertToComponentEntry(resultEntry: any): string {
+    let coordinates = new MavenCoordinate(resultEntry.component.componentIdentifier.coordinates.artifactId, 
+      resultEntry.component.componentIdentifier.coordinates.groupId, 
+      resultEntry.component.componentIdentifier.coordinates.version, 
+      resultEntry.component.componentIdentifier.coordinates.extension);
+
+    return coordinates.asCoordinates();
+  }
 
   public convertToNexusFormat() {
     return {
@@ -85,10 +102,10 @@ export class MavenDependencies implements PackageDependencies {
     return components;
   }
 
-  public async packageForIq(workspaceRoot: string): Promise<any> {
+  public async packageForIq(): Promise<any> {
     let mvnCommand;
     try {
-      const pomFile = path.join(workspaceRoot, "pom.xml");
+      const pomFile = path.join(this.getWorkspaceRoot(), "pom.xml");
 
       /*
        * Need to use dependency tree operation because:
@@ -97,12 +114,12 @@ export class MavenDependencies implements PackageDependencies {
        * 3. Effective POM may contain unused dependencies
        */
       const outputPath: string = path.join(
-        workspaceRoot,
+        this.getWorkspaceRoot(),
         "dependency_tree.txt"
       );
       mvnCommand = `mvn dependency:tree -Dverbose -DoutputFile="${outputPath}" -f "${pomFile}"`;
       await exec(mvnCommand, {
-        cwd: workspaceRoot,
+        cwd: this.getWorkspaceRoot(),
         env: {
           PATH: process.env.PATH
         }

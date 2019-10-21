@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import * as _ from "lodash";
 import * as fs from "fs";
 import * as path from "path";
@@ -24,13 +23,29 @@ import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../ComponentInfoPanel";
 import { GolangCoordinate } from "./GolangCoordinate";
 import { DependencyType } from "../DependencyType";
+import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 
-export class GolangDependencies implements PackageDependencies {
+export class GolangDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<GolangPackage> = [];
   CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
     string,
     ComponentEntry
   >();
+
+  public CheckIfValid(): boolean {
+    if (this.doesPathExist(this.getWorkspaceRoot(), "go.sum")) {
+      console.debug("Valid for Golang");
+      return true;
+    }
+    return false;
+  }
+
+  public ConvertToComponentEntry(resultEntry: any): string {
+    let coordinates = new GolangCoordinate(resultEntry.component.componentIdentifier.coordinates.name, 
+      resultEntry.component.componentIdentifier.coordinates.version);
+
+    return coordinates.asCoordinates();
+  }
 
   public convertToNexusFormat() {
     return {
@@ -72,17 +87,17 @@ export class GolangDependencies implements PackageDependencies {
     return components;
   }
 
-  public async packageForIq(workspaceRoot: string): Promise<any> {
+  public async packageForIq(): Promise<any> {
     try {
       // TODO: Probably should output to somewhere else on disk, or maybe just capture the stdout to a string
-      const outputPath = path.join(workspaceRoot, "golistresults.txt");
+      const outputPath = path.join(this.getWorkspaceRoot(), "golistresults.txt");
 
       // TODO: When running this command, Golang is now using the workspace root to establish a GOCACHE, we should use some other temporary area or try and suss out the real one
       await exec(`go list -m all > ${outputPath}`, {
-        cwd: workspaceRoot,
+        cwd: this.getWorkspaceRoot(),
         env: {
           PATH: process.env.PATH,
-          HOME: workspaceRoot
+          HOME: this.getWorkspaceRoot()
         }
       });
 
