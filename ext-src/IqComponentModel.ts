@@ -227,8 +227,12 @@ export class IqComponentModel {
           auth: { user: this.user, pass: this.password }
         },
         (err: any, response: any, body: any) => {
-          if (err) {
+          if (err) {            
             reject(`Unable to retrieve Application ID: ${err}`);
+            return;
+          }
+          if (response.statusCode != HttpStatus.OK) {            
+            reject(`Unable to retrieve Application ID. Could not communicate with server. Server error: ${response.statusCode}`);
             return;
           }
           resolve(body);
