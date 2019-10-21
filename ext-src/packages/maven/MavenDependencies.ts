@@ -35,7 +35,7 @@ export class MavenDependencies implements PackageDependencies {
   public convertToNexusFormat() {
     return {
       components: _.map(
-        this.Dependencies.entries,
+        this.Dependencies,
         (d: {
           Hash: any;
           Name: any;
@@ -101,6 +101,7 @@ export class MavenDependencies implements PackageDependencies {
         "dependency_tree.txt"
       );
       mvnCommand = `mvn dependency:tree -Dverbose -DoutputFile="${outputPath}" -f "${pomFile}"`;
+      // mvnCommand = `echo $PATH > ~/testoutputpath.txt`;
       await exec(mvnCommand, {
         cwd: workspaceRoot,
         env: {
@@ -124,6 +125,7 @@ export class MavenDependencies implements PackageDependencies {
       return Promise.reject(
         "mvn dependency:tree failed, try running it manually to see what went wrong:" +
           mvnCommand +
+          ", " +
           e.error
       );
     }
