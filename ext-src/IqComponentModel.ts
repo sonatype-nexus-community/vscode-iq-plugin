@@ -15,6 +15,7 @@
  */
 import * as request from "request";
 import { Uri, window } from "vscode";
+import * as HttpStatus from 'http-status-codes';
 
 import { ComponentEntry, PolicyViolation } from "./ComponentInfoPanel";
 import { ComponentContainer } from "./packages/ComponentContainer";
