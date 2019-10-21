@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 import * as _ from "lodash";
-import * as path from "path";
-import * as fs from "fs";
 
 import { exec } from "../../exec";
 import { PyPIPackage } from "./PyPIPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../ComponentInfoPanel";
 import { PyPICoordinate } from "./PyPICoordinate";
-import { DependencyType } from "../DependencyType";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 
 export class PyPIDependencies extends PackageDependenciesHelper implements PackageDependencies {
@@ -61,7 +58,7 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
         }) => ({
           hash: null,
           componentIdentifier: {
-            format: DependencyType.PyPI.toLowerCase(),
+            format: "pypi",
             coordinates: {
               name: d.Name,
               version: d.Version,              
@@ -100,40 +97,30 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
   }
 
   public async packageForIq(): Promise<any> {
-    let pypiCommand;
     try {
-      const requirementsFile = path.join(this.getWorkspaceRoot(), "requirements.txt");
-
-      const outputPath: string = path.join(
-        this.getWorkspaceRoot(),
-        "requirementsTree.txt"
-      );
-      pypiCommand = `cat ${requirementsFile} > ${outputPath}`;
-      await exec(pypiCommand, {
+      let {stdout, stderr } = await exec(`cat requirements.txt`, {
         cwd: this.getWorkspaceRoot(),
         env: {
           PATH: process.env.PATH
         }
       });
 
-      if (!fs.existsSync(outputPath)) {
+      if (stdout != "" && stderr === "") {
+        const dependencyTree: string = stdout;
+
+        this.parsePyPIDependencyTree(dependencyTree);
+      } else {
         return Promise.reject(
           new Error(
             "Error occurred in generating dependency tree. Please check that pip is on your PATH."
           )
         );
       }
-      const dependencyTree: string = fs.readFileSync(outputPath).toString();
-
-      this.parsePyPIDependencyTree(dependencyTree);
 
       return Promise.resolve();
     } catch (e) {
       return Promise.reject(
-        "pip freeze failed, try running it manually to see what went wrong:" +
-        pypiCommand +
-          ", " +
-          e.error
+        `pip freeze failed, try running it manually to see what went wrong: ${e.error}`
       );
     }
   }
@@ -147,31 +134,35 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
     let dependencyList: PyPIPackage[] = [];
     //numpy==1.16.4
     const dependencyLines = dependencies.split("\n");
-    dependencyLines.forEach((dep, index) => {  
+    dependencyLines.forEach((dep) => {  
       console.debug(dep);
       if (dep.trim()) {
-        //ignore empty lines
-        const dependencyParts: string[] = dep.trim().split("==");
-        const name: string = dependencyParts[0];
-        const version: string = dependencyParts[1];
-        const extension: string = "";
-        const qualifier: string = "";
-          //dependencies used only during unit testing are generally ignored since they aren't included in the runtime artifact
-          // artifactId, extension, and version are required fields. If a single dependency is missing any of the three, IQ will return a 400 response for the whole list
-        if (name && version) {
-          const dependencyObject: PyPIPackage = new PyPIPackage(
-            name,
-            version,
-            extension,
-            qualifier
-          );
-          dependencyList.push(dependencyObject);
+        //ignore comments
+        if (dep.startsWith("#")) {
+          console.debug("Found comment, skipping");
         } else {
-          console.warn(
-            "Skipping dependency: " +
-              dep +
-              " due to missing data (name, version, and/or extension)"
-          );
+          const dependencyParts: string[] = dep.trim().split("==");
+          const name: string = dependencyParts[0];
+          const version: string = dependencyParts[1];
+          const extension: string = "";
+          const qualifier: string = "";
+            //dependencies used only during unit testing are generally ignored since they aren't included in the runtime artifact
+            // artifactId, extension, and version are required fields. If a single dependency is missing any of the three, IQ will return a 400 response for the whole list
+          if (name && version) {
+            const dependencyObject: PyPIPackage = new PyPIPackage(
+              name,
+              version,
+              extension,
+              qualifier
+            );
+            dependencyList.push(dependencyObject);
+          } else {
+            console.warn(
+              "Skipping dependency: " +
+                dep +
+                " due to missing data (name, version, and/or extension)"
+            );
+          }
         }
       }
     });

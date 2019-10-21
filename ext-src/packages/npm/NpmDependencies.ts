@@ -22,7 +22,6 @@ import { NpmPackage } from "./NpmPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../ComponentInfoPanel";
 import { NpmCoordinate } from "./NpmCoordinate";
-import { DependencyType } from "../DependencyType";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 
 export class NpmDependencies extends PackageDependenciesHelper implements PackageDependencies {
@@ -34,7 +33,7 @@ export class NpmDependencies extends PackageDependenciesHelper implements Packag
 
   public CheckIfValid(): boolean {
     if (this.doesPathExist(this.getWorkspaceRoot(), "package.json")) {
-      console.debug("Valid for NPM");
+      console.debug("Valid for npm");
       return true;
     }
     return false;
@@ -130,7 +129,7 @@ export class NpmDependencies extends PackageDependenciesHelper implements Packag
         }) => ({
           hash: null,
           componentIdentifier: {
-            format: DependencyType.NPM.toLowerCase(),
+            format: "npm",
             coordinates: {
               packageId: d.Name,
               version: d.Version
