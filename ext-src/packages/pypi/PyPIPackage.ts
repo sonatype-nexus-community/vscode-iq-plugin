@@ -13,9 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export enum DependencyType {
-  NPM = "NPM",
-  Maven = "Maven",
-  Golang = "Golang",
-  PyPI = "PyPI"
+
+import { PackageType } from "../PackageType";
+
+export class PyPIPackage implements PackageType {
+  constructor(
+    readonly Name: string,
+    readonly Version: string,
+    readonly Extension: string,
+    readonly Qualifier: string,
+    readonly Hash?: string
+  ) {}
+
+  public toCoordinates() {
+    return `${this.Name}:${this.Extension}:${this.Qualifier}:${this.Version}`;
+  }
+
+  public toCoordValueType(): string {
+    return `${this.Name} - ${this.Extension} - ${this.Qualifier} - ${this.Version}`;
+  }
 }

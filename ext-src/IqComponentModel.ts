@@ -28,6 +28,8 @@ import { DependencyType } from "./packages/DependencyType";
 import { ComponentEntry, PolicyViolation } from "./ComponentInfoPanel";
 import { GolangDependencies } from "./packages/golang/GolangDependencies";
 import { GolangCoordinate } from "./packages/golang/GolangCoordinate";
+import { PyPIDependencies } from "./packages/pypi/PyPIDependencies";
+import { PyPICoordinate } from "./packages/pypi/PyPICoordinate";
 
 export class IqComponentModel {
   components: Array<ComponentEntry> = [];
@@ -66,6 +68,9 @@ export class IqComponentModel {
       return DependencyType.Maven;
     } else if (this.doesPathExist(workspaceRoot, "go.sum")) {
       return DependencyType.Golang;
+    } else if (this.doesPathExist(workspaceRoot, "requirements.txt")) {
+      return DependencyType.PyPI;
+
     } else {
       throw new TypeError("Workspace has no package.json or pom.xml");
     }
@@ -101,6 +106,11 @@ export class IqComponentModel {
         let golangDependencies = new GolangDependencies();
         await golangDependencies.packageForIq(workspaceRoot);
         return Promise.resolve(golangDependencies);
+      case DependencyType.PyPI:
+          let pypiDependencies = new PyPIDependencies();
+          await pypiDependencies.packageForIq(workspaceRoot);
+          return Promise.resolve(pypiDependencies);
+  
       default:
         throw new TypeError("Functionality not implemented");
     }
@@ -201,9 +211,18 @@ export class IqComponentModel {
             coordinates.asCoordinates()
           );
         }
-        // componentEntry!.policyViolations = new Array<PolicyViolation>(
-        //   resultEntry.policyData.policyViolations
-        // );
+        else if (dependencyType === DependencyType.PyPI) {
+          let coordinates = new PyPICoordinate(
+            resultEntry.component.componentIdentifier.coordinates.name,
+            resultEntry.component.componentIdentifier.coordinates.version,
+            "", ""
+          );
+
+          componentEntry = this.coordsToComponent.get(
+            coordinates.asCoordinates()
+          );
+        }
+        
         componentEntry!.policyViolations = resultEntry.policyData
           .policyViolations as Array<PolicyViolation>;
 

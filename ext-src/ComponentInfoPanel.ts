@@ -138,11 +138,11 @@ export class ComponentInfoPanel {
   }
 
   private static getSettings() {
-    let config = vscode.workspace.getConfiguration("nexusiq.npm");
+    let config = vscode.workspace.getConfiguration("nexusiq");
     ComponentInfoPanel.iqUrl = config.get("url") + "";
     ComponentInfoPanel.iqUser = config.get("username") + "";
     ComponentInfoPanel.iqPassword = config.get("password") + "";
-    ComponentInfoPanel.iqApplicationId = config.get("applicationId") + "";
+    ComponentInfoPanel.iqApplicationId =  "";
     ComponentInfoPanel.iqApplicationPublicId =
       config.get("applicationPublicId") + "";
     ComponentInfoPanel._settings = {
