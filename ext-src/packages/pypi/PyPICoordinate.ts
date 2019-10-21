@@ -13,9 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export enum DependencyType {
-  NPM = "NPM",
-  Maven = "Maven",
-  Golang = "Golang",
-  PyPI = "PyPI"
+export class PyPICoordinate implements CoordinateType {
+  Name: string;
+  Version: string;
+  Extension: string;
+  Qualifier: string;
+ 
+  constructor (name: string, version: string, extension: string, qualifier: string){
+    this.Name = name;
+    this.Version = version;
+    this.Extension = extension;
+    this.Qualifier = qualifier;
+  }
+
+  public asCoordinates(): string {
+    return `${this.Name} - ${this.Extension} - ${this.Qualifier} - ${this.Version}`;
+  }
 }

@@ -17,6 +17,7 @@ import { PackageDependencies } from "./PackageDependencies";
 import { MavenDependencies } from "./maven/MavenDependencies";
 import { NpmDependencies } from "./npm/NpmDependencies";
 import { GolangDependencies } from "./golang/GolangDependencies";
+import { PyPIDependencies } from "./pypi/PyPIDependencies";
 
 export class ComponentContainer {
   Implementation: Array<PackageDependencies>;
@@ -26,6 +27,7 @@ export class ComponentContainer {
     this.Implementation.push(new MavenDependencies());
     this.Implementation.push(new NpmDependencies());
     this.Implementation.push(new GolangDependencies());
+    this.Implementation.push(new PyPIDependencies());
   }
 
   public checkDependencyType(): PackageDependencies {

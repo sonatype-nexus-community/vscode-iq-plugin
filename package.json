@@ -2,7 +2,7 @@
 	"name": "vscode-iq-plugin",
 	"displayName": "Sonatype Nexus IQ Extension for VSCode",
 	"description": "Sonatype Nexus IQ Extension for VSCode",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"author": {
 		"name": "ctownshend"
 	},
@@ -101,27 +101,27 @@
 				"type": "object",
 				"title": "Nexus IQ configuration",
 				"properties": {
-					"nexusiq.npm.url": {
+					"nexusiq.url": {
 						"type": "string",
 						"default": "http://127.0.0.1:8070",
 						"description": "URL including port of the Nexus IQ server"
 					},
-					"nexusiq.npm.username": {
+					"nexusiq.username": {
 						"type": "string",
 						"default": "admin",
 						"description": "Your Nexus IQ user name"
 					},
-					"nexusiq.npm.password": {
+					"nexusiq.password": {
 						"type": "string",
 						"default": "admin123",
 						"description": "Your Nexus IQ password"
 					},
-					"nexusiq.npm.applicationPublicId": {
+					"nexusiq.applicationPublicId": {
 						"type": "string",
 						"default": "sandbox-application",
 						"description": "Your Nexus IQ Application Public Id"
 					},
-					"nexusiq.npm.maximumEvaluationPollAttempts": {
+					"nexusiq.maximumEvaluationPollAttempts": {
 						"type": "number",
 						"default": "300",
 						"description": "Number of retries (every 2secs) to wait for the Evaluation report. "
@@ -142,6 +142,7 @@
 		"ansi-colors": "^4.1.1",
 		"bootstrap": "^4.3.1",
 		"dependency-tree": "^7.0.2",
+		"http-status-codes": "^1.3.2",
 		"lodash": "^4.17.15",
 		"react": "^16.3.2",
 		"react-bootstrap": "^1.0.0-beta.12",
