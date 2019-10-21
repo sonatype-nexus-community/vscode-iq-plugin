@@ -33,8 +33,8 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
   >();
 
   public CheckIfValid(): boolean {
-    if (this.doesPathExist(this.getWorkspaceRoot(), "package.json")) {
-      console.debug("Valid for NPM");
+    if (this.doesPathExist(this.getWorkspaceRoot(), "requirements.txt")) {
+      console.debug("Valid for PyPI");
       return true;
     }
     return false;

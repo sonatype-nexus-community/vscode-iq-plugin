@@ -20,23 +20,27 @@ import { GolangDependencies } from "./golang/GolangDependencies";
 import { PyPIDependencies } from "./pypi/PyPIDependencies";
 
 export class ComponentContainer {
-  Implementation: Array<PackageDependencies>;
+  Implementation: Array<PackageDependencies> = [];
+  PackageMuncher: PackageDependencies | undefined;
 
-  // To add a new format, you just need to push another implementation to this list
   constructor() {
+    // To add a new format, you just need to push another implementation to this list
     this.Implementation.push(new MavenDependencies());
     this.Implementation.push(new NpmDependencies());
     this.Implementation.push(new GolangDependencies());
     this.Implementation.push(new PyPIDependencies());
-  }
 
-  public checkDependencyType(): PackageDependencies {
-    this.Implementation.forEach(implementation => {
-      if(implementation.CheckIfValid()) {
-        return implementation;
+    // Bit of an odd side effect, if a project has multiple dependency types, the PackageMuncher will get set to the last one it encounters currently
+    this.Implementation.forEach(i => {
+      if(i.CheckIfValid()) {
+        this.PackageMuncher = i;
       }
     });
 
-    throw new TypeError("No valid implementation exists for workspace");
+    if (this.PackageMuncher != undefined) {
+      console.debug("Package Muncher set");
+    } else {
+      throw new TypeError("No valid implementation exists for workspace");
+    }
   }
 }

@@ -51,13 +51,18 @@ export class IqComponentModel {
     private async performIqScan() {
       try {
         let componentContainer = new ComponentContainer();
-        let packageMuncher = componentContainer.checkDependencyType();
+
+        let data: any;
+
+        if (componentContainer.PackageMuncher != undefined) {
+          componentContainer.PackageMuncher.packageForIq();
   
-        packageMuncher.packageForIq();
-  
-        let data = await packageMuncher.convertToNexusFormat();
-        this.components = packageMuncher.toComponentEntries(data);
-        this.coordsToComponent = packageMuncher.CoordinatesToComponents;
+          data = await componentContainer.PackageMuncher.convertToNexusFormat();
+          this.components = componentContainer.PackageMuncher.toComponentEntries(data);
+          this.coordsToComponent = componentContainer.PackageMuncher.CoordinatesToComponents;
+        } else {
+          throw new TypeError("Unable to instantiate Package Muncher");
+        }
 
         if (undefined == data) {
           throw new RangeError("Attempted to generated dependency list but received an empty collection. NexusIQ will not be invoked for this project.");
@@ -84,7 +89,7 @@ export class IqComponentModel {
           let componentEntry: ComponentEntry | undefined;
 
           componentEntry = this.coordsToComponent.get(
-            packageMuncher.ConvertToComponentEntry(resultEntry)
+            componentContainer.PackageMuncher.ConvertToComponentEntry(resultEntry)
           );
         
           componentEntry!.policyViolations = new Array<PolicyViolation>(resultEntry.policyData.policyViolations);
