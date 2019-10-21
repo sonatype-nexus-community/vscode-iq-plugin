@@ -92,7 +92,7 @@ export class IqComponentModel {
             componentContainer.PackageMuncher.ConvertToComponentEntry(resultEntry)
           );
         
-          componentEntry!.policyViolations = new Array<PolicyViolation>(resultEntry.policyData.policyViolations);
+          componentEntry!.policyViolations = resultEntry.policyData.policyViolations as Array<PolicyViolation>;
           componentEntry!.hash = resultEntry.component.hash;
           componentEntry!.nexusIQData = resultEntry;
         }
