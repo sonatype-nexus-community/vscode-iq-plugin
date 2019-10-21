@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 import * as _ from "lodash";
-import * as fs from "fs";
-import * as path from "path";
 
 import { exec } from "../../exec";
 import { GolangPackage } from "./GolangPackage";
@@ -89,28 +87,26 @@ export class GolangDependencies extends PackageDependenciesHelper implements Pac
 
   public async packageForIq(): Promise<any> {
     try {
-      // TODO: Probably should output to somewhere else on disk, or maybe just capture the stdout to a string
-      const outputPath = path.join(this.getWorkspaceRoot(), "golistresults.txt");
-
       // TODO: When running this command, Golang is now using the workspace root to establish a GOCACHE, we should use some other temporary area or try and suss out the real one
-      await exec(`go list -m all > ${outputPath}`, {
+      let { stdout, stderr } = await exec(`go list -m all`, {
         cwd: this.getWorkspaceRoot(),
         env: {
           PATH: process.env.PATH,
-          HOME: this.getWorkspaceRoot()
+          HOME: this.getGoCacheDirectory()
         }
       });
 
-      if (!fs.existsSync(outputPath)) {
+      if (stdout != "" && stderr === "") {
+        const dependencyTree: string = stdout;
+
+        this.parseGolangDependencies(dependencyTree);
+      } else {
         return Promise.reject(
           new Error(
             "Error occurred in generating dependency tree. Please check that golang is on your PATH."
           )
         );
       }
-      const dependencyTree: string = fs.readFileSync(outputPath).toString();
-
-      this.parseGolangDependencies(dependencyTree);
 
       return Promise.resolve();
     } catch (e) {
@@ -119,6 +115,11 @@ export class GolangDependencies extends PackageDependenciesHelper implements Pac
           e.message
       );
     }
+  }
+
+  private getGoCacheDirectory(): string {
+    // TODO: This will only work on OS X/Linux, need to find a valid GOCACHE dir and set it for Windows
+    return "/tmp/gocache/";
   }
 
   private parseGolangDependencies(dependencyTree: string) {
