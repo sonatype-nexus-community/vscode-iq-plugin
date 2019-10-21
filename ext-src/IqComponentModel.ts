@@ -55,7 +55,7 @@ export class IqComponentModel {
         let data: any;
 
         if (componentContainer.PackageMuncher != undefined) {
-          componentContainer.PackageMuncher.packageForIq();
+          await componentContainer.PackageMuncher.packageForIq();
   
           data = await componentContainer.PackageMuncher.convertToNexusFormat();
           this.components = componentContainer.PackageMuncher.toComponentEntries(data);
