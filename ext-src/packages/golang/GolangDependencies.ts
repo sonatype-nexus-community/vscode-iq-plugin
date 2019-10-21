@@ -96,9 +96,7 @@ export class GolangDependencies extends PackageDependenciesHelper implements Pac
       });
 
       if (stdout != "" && stderr === "") {
-        const dependencyTree: string = stdout;
-
-        this.parseGolangDependencies(dependencyTree);
+        this.parseGolangDependencies(stdout);
       } else {
         return Promise.reject(
           new Error(

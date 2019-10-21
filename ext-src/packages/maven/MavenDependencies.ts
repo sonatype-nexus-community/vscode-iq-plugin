@@ -117,7 +117,7 @@ export class MavenDependencies extends PackageDependenciesHelper implements Pack
         "dependency_tree.txt"
       );
       mvnCommand = `mvn dependency:tree -Dverbose -DoutputFile="${outputPath}" -f "${pomFile}"`;
-      // mvnCommand = `echo $PATH > ~/testoutputpath.txt`;
+
       await exec(mvnCommand, {
         cwd: this.getWorkspaceRoot(),
         env: {
@@ -198,6 +198,7 @@ export class MavenDependencies extends PackageDependenciesHelper implements Pack
       }
     });
 
+    // TODO: The dependency list brought back appears to have a ton of duplicates, it needs to be deduped at a minimum in the future
     this.Dependencies = dependencyList;
   }
 }

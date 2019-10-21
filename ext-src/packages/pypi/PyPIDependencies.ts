@@ -106,13 +106,11 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
       });
 
       if (stdout != "" && stderr === "") {
-        const dependencyTree: string = stdout;
-
-        this.parsePyPIDependencyTree(dependencyTree);
+        this.parsePyPIDependencyTree(stdout);
       } else {
         return Promise.reject(
           new Error(
-            "Error occurred in generating dependency tree. Please check that pip is on your PATH."
+            "Error occurred in generating dependency tree. Check that there is not an issue with your requirements.txt"
           )
         );
       }
@@ -120,7 +118,7 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
       return Promise.resolve();
     } catch (e) {
       return Promise.reject(
-        `pip freeze failed, try running it manually to see what went wrong: ${e.error}`
+        `cat requirements.txt failed, try running it manually to see what went wrong: ${e.error}`
       );
     }
   }
