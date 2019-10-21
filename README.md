@@ -66,4 +66,5 @@ This extension contributes the following settings, all are required:
 1) Create a folder under packages by copying maven folder
 2) Rename the MavenCoorindate.ts, MavenDependencies.ts and MavenPackage.ts to match your new format e.g. PyPICoordinates.ts
 3) Refactor the code in this class to match your format's coordinates
-4) Add DependencyType enum
+4) Add a push of your implementation to `ComponentContainer.ts` constructor
+5) Voila!

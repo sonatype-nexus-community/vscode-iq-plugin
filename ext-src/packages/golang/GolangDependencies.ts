@@ -20,7 +20,6 @@ import { GolangPackage } from "./GolangPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../ComponentInfoPanel";
 import { GolangCoordinate } from "./GolangCoordinate";
-import { DependencyType } from "../DependencyType";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 
 export class GolangDependencies extends PackageDependenciesHelper implements PackageDependencies {
@@ -52,7 +51,7 @@ export class GolangDependencies extends PackageDependenciesHelper implements Pac
         (d: { Hash: any; Name: any; Version: any }) => ({
           hash: null,
           componentIdentifier: {
-            format: DependencyType.Golang.toLowerCase(),
+            format: "golang",
             coordinates: {
               name: d.Name,
               version: d.Version

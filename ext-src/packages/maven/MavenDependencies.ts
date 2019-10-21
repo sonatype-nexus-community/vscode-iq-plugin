@@ -23,7 +23,6 @@ import { PackageDependencies } from "../PackageDependencies";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { ComponentEntry } from "../../ComponentInfoPanel";
 import { MavenCoordinate } from "./MavenCoordinate";
-import { DependencyType } from "../DependencyType";
 
 export class MavenDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<MavenPackage> = [];
@@ -62,7 +61,7 @@ export class MavenDependencies extends PackageDependenciesHelper implements Pack
         }) => ({
           hash: null,
           componentIdentifier: {
-            format: DependencyType.Maven.toLowerCase(),
+            format: "maven",
             coordinates: {
               artifactId: d.Name,
               groupId: d.Group,
