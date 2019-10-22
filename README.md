@@ -63,8 +63,5 @@ This extension contributes the following settings, all are required:
 * Styling of the Info panel needs some work
 
 ## Adding a format
-1) Create a folder under packages by copying maven folder
-2) Rename the MavenCoorindate.ts, MavenDependencies.ts and MavenPackage.ts to match your new format e.g. PyPICoordinates.ts
-3) Refactor the code in this class to match your format's coordinates
-4) Add a push of your implementation to `ComponentContainer.ts` constructor
-5) Voila!
+1) Run `FORMAT=Example npm run generate-format`, substituting FORMAT for the name of the Format you are working on, example: Maven
+2) Implement the methods you need to, and then in `ComponentContainer.ts`, add your Implementation!

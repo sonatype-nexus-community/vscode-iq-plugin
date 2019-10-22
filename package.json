@@ -136,7 +136,8 @@
 		"start": "react-scripts-ts start",
 		"build": "react-scripts-ts build && tsc -p tsconfig.extension.json",
 		"test": "react-scripts-ts test --env=jsdom",
-		"eject": "react-scripts-ts eject"
+		"eject": "react-scripts-ts eject",
+		"generate-format": "./generate-format.sh"
 	},
 	"dependencies": {
 		"ansi-colors": "^4.1.1",
@@ -154,13 +155,14 @@
 	},
 	"devDependencies": {
 		"@types/bootstrap": "^4.3.1",
-		"@types/request": "^2.48.2",
-		"@types/lodash": "^4.14.136",
 		"@types/dependency-tree": "^6.1.0",
 		"@types/jest": "^22.2.3",
+		"@types/lodash": "^4.14.136",
 		"@types/node": "^10.1.2",
-		"typescript": "^3.6.3",
 		"@types/react": "^16.3.14",
-		"@types/react-dom": "^16.0.5"
+		"@types/react-dom": "^16.0.5",
+		"@types/request": "^2.48.2",
+		"mustache": "^3.1.0",
+		"typescript": "^3.6.3"
 	}
 }
