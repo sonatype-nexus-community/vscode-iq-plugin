@@ -472,7 +472,7 @@ export class ComponentInfoPanel {
   }
 
   private loadHtmlForWebview() {
-    console.log("loadHtmlForWebview", this.component);
+    console.debug("loadHtmlForWebview", this.component);
     const settingsString = JSON.stringify(ComponentInfoPanel._settings);
 
     const onDiskPath = vscode.Uri.file(
@@ -500,16 +500,16 @@ export class ComponentInfoPanel {
 						<meta charset="utf-8">
 						<meta http-equiv="X-UA-Compatible" content="IE=edge">
 						<meta name="description" content="">
-						<meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta http-equiv="Content-Security-Policy" content="default-src * vscode-resource:; script-src * vscode-resource:; connect-src 'self'; style-src * vscode-resource:; media-src * vscode-resource:">
 						<link rel="stylesheet" href="${resourceSrc}/css/react-tabs.css">
-						<link rel="stylesheet" href="${resourceSrc}/css/styles.css">
+            <link rel="stylesheet" href="${resourceSrc}/css/styles.css">
 						<title>Component Info</title>
 				</head>
 				<body>
 						
 						<input type="hidden" id="settings" name="settings" value='${settingsString}'>
 						<input type="hidden" id="resourceSrc" name="resourceSrc" value='${resourceSrc}'>
-						<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 						<div id="root" />
 						<script nonce="${nonce}" src="${scriptUri}"></script>
 				</body>

@@ -1,5 +1,21 @@
+/*
+ * Copyright (c) 2019-present Sonatype, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import * as React from 'react';
 import Loader from 'react-loader-spinner';
+import './ComponentInfoPage.css';
 
 type CipProps = {
   selectedVersionDetails: any
@@ -13,7 +29,7 @@ class ComponentInfoPage extends React.Component<CipProps, CipState> {
   }
 
   public changeComponent(component: any) {
-    console.log("CIP changing component", component);
+    console.debug("CIP changing component", component);
     this.setState({component: component})
   }
 
@@ -28,9 +44,9 @@ class ComponentInfoPage extends React.Component<CipProps, CipState> {
         />
       );
     }
-    console.log("ComponentInfoPage rendering, props: ", this.props);
+    console.debug("ComponentInfoPage rendering, props: ", this.props);
     var coordinates = this.props.selectedVersionDetails.component.componentIdentifier.coordinates;
-    console.log("ComponentInfoPage coordinates: ", coordinates);
+    console.debug("ComponentInfoPage coordinates: ", coordinates);
 
     return (
       <div className="info-display">

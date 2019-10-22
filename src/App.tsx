@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2019-present Sonatype, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import * as React from 'react';
 import Loader from 'react-loader-spinner';
 import AllVersionsPage from './AllVersionsPage';
@@ -7,7 +22,6 @@ import SelectedVersionDetails from './SelectedVersionDetails';
 declare var acquireVsCodeApi: any;
 const vscode: any = acquireVsCodeApi();
 
-
 type AppProps = {
 };
 // todo declare more details on component
@@ -16,10 +30,11 @@ type AppState = {
   allVersions: any[],
   selectedVersionDetails?: any
 };
+
 class App extends React.Component<AppProps, AppState> {
   constructor(props: AppProps) {
     super(props);
-    console.log("App constructing, props:", props);
+    console.debug("App constructing, props:", props);
     this.state = {
       component: {},
       allVersions: [],
@@ -28,7 +43,7 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   public handleVersionSelection(newSelection: string) {
-    console.log("App received version change", newSelection);
+    console.debug("App received version change", newSelection);
     // TODO query for version data to populate details
     this.setState({selectedVersionDetails: undefined})
 
@@ -73,16 +88,16 @@ class App extends React.Component<AppProps, AppState> {
   public componentDidMount() {
     window.addEventListener('message', event => {
       const message = event.data;
-      console.log("App received VS message", message);
+      console.debug("App received VS message", message);
       switch (message.command) {
         case 'artifact':
-          console.log("Artifact received, updating state & children", message.component);
+          console.debug("Artifact received, updating state & children", message.component);
           const component = message.component;
           this.setState({component: component, allVersions: [], selectedVersionDetails: undefined});
           this.handleVersionSelection(message.component.version)
           break;
         case 'versionDetails':
-          console.log("Selected version details received", message.componentDetails);
+          console.debug("Selected version details received", message.componentDetails);
           this.setState({selectedVersionDetails: message.componentDetails})
           break;
         case 'allversions':

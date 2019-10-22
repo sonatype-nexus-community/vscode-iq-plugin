@@ -1,4 +1,4 @@
-body{
+body {
     width: 600px;
     height: 400px;
     margin: 2px;
@@ -244,7 +244,6 @@ input[type=submit]:hover {
 
 div .optionstable {
     border-radius: 5px;
-    background-color: white;
     padding: 20px;
 }
 
@@ -470,5 +469,4 @@ div.slick-cell.l0.r0 {
 
 .info-display{
     border: salmon;
-
 }
