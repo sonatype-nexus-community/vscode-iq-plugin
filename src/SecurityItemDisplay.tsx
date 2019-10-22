@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import * as React from 'react';
+import Table from 'react-bootstrap/Table';
 
 type State = {
 }
@@ -25,30 +26,36 @@ type Props = {
 class SecurityItemDisplay extends React.Component<Props, State> {
   public render() {
     return (
-      <div>
-        <div>
-          <h2>Issue: {this.props.securityIssue.reference}</h2>
-          <h2>CVSS:{this.props.securityIssue.severity}</h2>
-        </div>
-        <table>
+      <Table>
+        <thead>
           <tr>
-            <td className="label">Severity:</td>
-            <td className="data">{this.props.securityIssue.severity}</td>
+            <th>
+              Issue: {this.props.securityIssue.reference}
+            </th>
+            <th>
+              CVSS: {this.props.securityIssue.severity}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Severity:</td>
+            <td>{this.props.securityIssue.severity}</td>
           </tr>
           <tr>
-            <td className="label">Source:</td>
-            <td className="data">{this.props.securityIssue.source}</td>
+            <td>Source:</td>
+            <td>{this.props.securityIssue.source}</td>
           </tr>
           <tr>
-            <td className="label">Threat Category:</td>
-            <td className="data">{this.props.securityIssue.threatCategory}</td>
+            <td>Threat Category:</td>
+            <td>{this.props.securityIssue.threatCategory}</td>
           </tr>
           <tr>
-            <td className="label">URL:</td>
-            <td className="data">{this.props.securityIssue.url}</td>
+            <td>URL:</td>
+            <td>{this.props.securityIssue.url}</td>
           </tr>
-        </table>
-      </div>
+        </tbody>
+      </Table>
     );
   }
 }

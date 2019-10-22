@@ -17,6 +17,8 @@ import * as React from 'react';
 import LicensingPage from './LicensingPage';
 import ComponentInfoPage from './ComponentInfoPage';
 import SecurityPage from './SecurityPage';
+import Tabs from 'react-bootstrap/Tabs';
+import Tab from 'react-bootstrap/Tab';
 
 type Props = {
   selectedVersionDetails?: any
@@ -35,14 +37,17 @@ class SelectedVersionDetails extends React.Component<Props, State> {
     }
     console.debug("SelectedVersionDetails page rendering, props: ", this.props)
     return (
-      <div>
-            <h1>Component Info</h1>
+        <Tabs id="selected-version-tabs" defaultActiveKey="info">
+          <Tab title="Component Info" eventKey="info">
             <ComponentInfoPage selectedVersionDetails={this.props.selectedVersionDetails!}></ComponentInfoPage>
-            <h1>Security</h1>
+          </Tab>
+          <Tab title="Security" eventKey="security">
             <SecurityPage securityData={this.props.selectedVersionDetails.securityData}></SecurityPage>
-            <h1>Licensing</h1>
+          </Tab>
+          <Tab title="Licensing" eventKey="licensing">
             <LicensingPage licenseData={this.props.selectedVersionDetails.licenseData}></LicensingPage>
-      </div>
+          </Tab>
+        </Tabs>            
     );
   }
 }

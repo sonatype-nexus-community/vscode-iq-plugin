@@ -15,7 +15,7 @@
  */
 import * as React from 'react';
 import Loader from 'react-loader-spinner';
-import './ComponentInfoPage.css';
+import Table from 'react-bootstrap/Table';
 
 type CipProps = {
   selectedVersionDetails: any
@@ -31,6 +31,11 @@ class ComponentInfoPage extends React.Component<CipProps, CipState> {
   public changeComponent(component: any) {
     console.debug("CIP changing component", component);
     this.setState({component: component})
+  }
+
+  public formatDate(date: string) {
+    var dateTime = new Date(date);
+    return dateTime.toDateString();
   }
 
   public render() {
@@ -49,43 +54,41 @@ class ComponentInfoPage extends React.Component<CipProps, CipState> {
     console.debug("ComponentInfoPage coordinates: ", coordinates);
 
     return (
-      <div className="info-display">
-        <h2>{this.props.selectedVersionDetails.component.packageUrl}</h2>
-            <table className="optionstable">
-                <tr>
-                  <td className="label">Package:</td>
-                  <td className="data"><span id="package">{coordinates.packageId}</span></td>
-                </tr>
-                <tr>
-                  <td className="label">Version:</td>
-                  <td className="data"><span id="version">{coordinates.version}</span></td>
-                </tr>
-              <tr>
-                <td className="label"><span id="hash_label">Hash:</span></td>
-                <td className="data"><span id="hash">{this.props.selectedVersionDetails.hash}</span></td>
-              </tr>
-              <tr>    
-                <td className="label">Match State:</td>
-                <td className="data"><span id="matchstate"></span></td>
-              </tr>
-              <tr id="CatalogDate_Row">
-                <td className="label">Catalog Date:</td>
-                <td className="data"><span id="catalogdate">{this.props.selectedVersionDetails.catalogDate}</span></td>
-              </tr>
-              <tr id="RelativePopularity_Row">
-                <td className="label">Relative Popularity:</td>                
-                <td className="data"><span id="relativepopularity">{this.props.selectedVersionDetails.rlativePopularity}</span></td>
-              </tr>
-              {/* <tr>
-                <td className="label">Highest CVSS Score:</td>                
-                <td className="data"><span id="Highest_CVSS_Score" className="maxIssue"></span>{this.props.version.highestCvssScore}<span id="Num_CVSS_Issues" className="numissues"></span></td>
-              </tr>							
-              <tr>
-                <td className="label">Data Source:</td>                
-                <td className="data"><span id="datasource">{this.props.version.dataSource}</span></td>
-              </tr> */}
-            </table>									
-      </div>
+        <Table>
+          <thead>
+            <tr>
+              <th colSpan={2}>
+                {this.props.selectedVersionDetails.component.packageUrl}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Package:</td>
+              <td>{coordinates.packageId}</td>
+            </tr>
+            <tr>
+              <td>Version:</td>
+              <td><span id="version">{coordinates.version}</span></td>
+            </tr>
+            <tr>
+              <td>Hash:</td>
+              <td>{this.props.selectedVersionDetails.component.hash}</td>
+            </tr>
+            <tr>
+              <td>Match State:</td>
+              <td>{this.props.selectedVersionDetails.matchState}</td>
+            </tr>
+            <tr>
+              <td>Catalog Date:</td>
+              <td><span id="catalogdate">{ this.formatDate(this.props.selectedVersionDetails.catalogDate) }</span></td>
+            </tr>
+            <tr>
+              <td>Relative Popularity:</td>                
+              <td><span id="relativepopularity">{this.props.selectedVersionDetails.relativePopularity}</span></td>
+            </tr>
+          </tbody>
+        </Table>								
     );
   }
 }

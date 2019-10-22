@@ -486,11 +486,17 @@ export class ComponentInfoPanel {
       "asset-manifest.json"
     ));
     const mainScript = manifest["main.js"];
-    //const mainStyle = manifest['main.css'];
+    const mainStyle = manifest["main.css"];
+
     const scriptPathOnDisk = vscode.Uri.file(
       path.join(this._extensionPath, "build", mainScript)
     );
     const scriptUri = scriptPathOnDisk.with({ scheme: "vscode-resource" });
+
+    const stylePathOnDisk = vscode.Uri.file(
+      path.join(this._extensionPath, "build", mainStyle)
+    );
+    const styleUri = stylePathOnDisk.with({ scheme: "vscode-resource" });
 
     // Use a nonce to whitelist which scripts can be run
     const nonce = this.getNonce();
@@ -504,6 +510,7 @@ export class ComponentInfoPanel {
             <meta http-equiv="Content-Security-Policy" content="default-src * vscode-resource:; script-src * vscode-resource:; connect-src 'self'; style-src * vscode-resource:; media-src * vscode-resource:">
 						<link rel="stylesheet" href="${resourceSrc}/css/react-tabs.css">
             <link rel="stylesheet" href="${resourceSrc}/css/styles.css">
+            <link rel="stylesheet" href="${styleUri}">
 						<title>Component Info</title>
 				</head>
 				<body>

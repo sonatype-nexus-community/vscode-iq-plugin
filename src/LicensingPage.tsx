@@ -15,6 +15,7 @@
  */
 import * as React from 'react';
 import LicensingDisplay from './LicensingDisplay';
+import Table from 'react-bootstrap/Table';
 
 type Props = {
   licenseData: any
@@ -27,14 +28,30 @@ class LicensingPage extends React.Component<Props, State> {
   public render() {
     return (
       <div >
-        <h3>Declared Licenses</h3>
-        {this.props.licenseData.declaredLicenses.map(function(license: any, index: number) {
-          return <LicensingDisplay licenseData={license} />
-        })}
-        <h3>Observed Licenses</h3>
-        {this.props.licenseData.observedLicenses.map(function(license: any, index: number) {
-          return <LicensingDisplay licenseData={license} />
-        })}
+        <Table>
+          <thead>
+            <tr>
+              <th colSpan={2}>Declared Licenses</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.props.licenseData.declaredLicenses.map(function(license: any, index: number) {
+              return <LicensingDisplay licenseData={license} />
+            })}
+          </tbody>
+        </Table>
+        <Table>
+          <thead>
+            <tr>
+              <th colSpan={2}>Observed Licenses</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.props.licenseData.observedLicenses.map(function(license: any, index: number) {
+              return <LicensingDisplay licenseData={license} />
+            })}
+          </tbody>
+        </Table>
       </div>
     );
   }

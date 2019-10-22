@@ -1,33 +1,26 @@
 body {
-    width: 600px;
-    height: 400px;
     margin: 2px;
     padding:2px;
-    /* background:url(pic1.jpg); */
-    /* background-size: cover; */
-    /* background-position: center; */
     font-family:sans-serif;
     border-radius: 5px;
-    border-color: cornflowerblue;
     border-width: 2px;
+    background-color: black;
 }
 
 .sidenav {
     height: 100%; /* Full-height: remove this if you want "auto" height */
-    width: 160px; /* Set the width of the sidebar */
+    width: 250px; /* Set the width of the sidebar */
     position: fixed; /* Fixed Sidebar (stay in place on scroll) */
     z-index: 1; /* Stay on top */
     top: 0; /* Stay at the top */
     left: 0;
-    background-color: #111; /* Black */
     overflow-x: hidden; /* Disable horizontal scroll */
-    padding-top: 20px;
-  }
+}
   
-  .main {
-    margin-left: 160px; /* Same as the width of the sidebar */
+.main {
+    margin-left: 250px; /* Same as the width of the sidebar */
     padding: 0px 10px;
-  }
+}
   
   /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
   @media screen and (max-height: 450px) {
@@ -39,7 +32,6 @@ body {
     background-color: white;
     font-size: 1.25em;
     /* width:375px; */
-    
 }
 
 #response {
@@ -57,6 +49,7 @@ body {
     margin: 20px;
     font-size: 16px;
 }
+
 #error p {
     color: red; 
 }
@@ -75,6 +68,7 @@ body {
     padding: 70px 30px;
     /* background-position: center; */
 }
+
 .avatar {
     width:100px;
     height:100px;
@@ -84,30 +78,26 @@ body {
     left: calc(50% - 50px);
 }
 
-.loginbox h1
-{
+.loginbox h1 {
     margin:0;
     padding:0 0 20px;
     text-align:center;
     font-size:22px;
 }
 
-.loginbox p
-{
+.loginbox p {
     margin:0;
     padding:0;
     font-weight:bold;
 }
-.loginbox input
-{
+
+.loginbox input {
     width:100%;
     margin-bottom:20px;
 
 }
- 
 
-.loginbox input[type=submit]
-{
+.loginbox input[type=submit] {
     border:none;
     outline: none;
     height:40px;
@@ -117,12 +107,10 @@ body {
     border-radius:20px;
 }
 
-.loginbox input[type=submit]:hover
-{
+.loginbox input[type=submit]:hover {
     cursor:pointer;
     background: #ffc107;
     color:#fff;    
-
 }
 
 .invisible {
@@ -143,7 +131,7 @@ button {
     margin: 10px;
 }
 
-.optionstable{
+.optionstable {
     font-family: Arial, Helvetica, sans-serif;
     border-collapse: collapse;
     width: 100%;
@@ -152,27 +140,30 @@ button {
     border-color: blueviolet;
     border-spacing: 0px;
     border: 2px;
-  }
-table{
+}
+ 
+table {
     border-spacing: 0px;
 }  
-#remediation{
+
+#remediation {
     color: grey;
     font-size: 1em;
 }
+
 .optionstable td, .optionstable th {
     /* border: 1px solid #ddd; */
     padding: 4px;
     /* height: 100px !important; */
-
 }
+
 .optionstable th {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;
 }
 
-#password{
+#password {
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;
@@ -180,7 +171,6 @@ table{
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
-
     background: transparent;
     outline: none;
     /* height:40px; */
@@ -188,7 +178,7 @@ table{
     font-size:16px;
 }
 
-#appId{
+#appId {
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;
@@ -212,16 +202,12 @@ input[type=text], input[type=password]  select {
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
-
     background: transparent;
     outline: none;
     /* height:40px; */
     color: #2f4f4f;
     font-size:16px;
-
 }
-
-
 
 input[type=submit], input[type=reset], input[type=button] {
     width: 100%;
@@ -253,19 +239,19 @@ div .optionstable {
     font-size: small;
 }
 
-.data{
+.data {
     font-weight:bold;
     text-align: left;
     /* overflow: scroll; */
     font-size: small;
 }
-.reference{
+
+.reference {
     padding-bottom: 8px !important;
     padding-top: 0px !important;
 }
 
-
-.headingseverity{
+.headingseverity {
     float:right;
     padding: 2px 0px 2px 0px;
     margin: 0px 0px 0px 0px;
@@ -273,68 +259,64 @@ div .optionstable {
     font-size: 1em;
     border-radius: 2px; 
     font-weight:700;
-    
 }
 
 h3 {
     font-size: 1em;
 }
 
-.headingreference{
+.headingreference {
     float: left;
     font-size: 1.2em;
     text-transform: uppercase;
 }
 
-
-.criticalSeverity, .threat-critical{
+.criticalSeverity, .threat-critical {
     /* color: red; */
     /* font-weight:bold; */
     background-color: red;
     color: black;
 }
-.highSeverity, .threat-high{
+
+.highSeverity, .threat-high {
     background-color: #962c2c;
     color: black;
 }
 
-.mediumSeverity, .threat-mid{
+.mediumSeverity, .threat-mid {
     background-color: rgb(243, 134, 45);
     color: black;
 }
 
-.lowSeverity, .threat-low{
+.lowSeverity, .threat-low {
     background-color: rgb(240, 210, 76);
     color: black;
 }
 
-.noneSeverity, .threat-none{
+.noneSeverity, .threat-none {
     background-color: silver;
     color: black;
 }
 
-.current-version{
+.current-version {
     color: burlywood;
 }
-.selected-version{
+
+.selected-version {
     color: rgb(63, 155, 67);
 }
 
-
-
-.numissues{
+.numissues {
     padding: 1px;
-    margin: 1px;
-    
+    margin: 1px; 
 }
-.maxIssue{
+
+.maxIssue {
     padding: 0px 5px 0px 5px;
     margin: 2px;
     border-radius: 2px; 
     color: white;
-
 }
-
 
 #loader {
     position: absolute;
@@ -356,9 +338,8 @@ h3 {
 .loader {
     height: 600px;
     width: 600px;
+}
 
-
-  }
 .loader img {
     object-fit: cover;
     object-position: top;
@@ -407,7 +388,7 @@ a img {
     padding: 2px 0px 0px 2px;
 }
 
-.slick-grid{
+.slick-grid {
     /* width:"100%"; */
     width: 550px;
     height: 250px; 
@@ -418,7 +399,7 @@ a img {
     /* overflow-y: scroll; */
 }
 
-#myGrid div.slick-viewport{
+#myGrid div.slick-viewport {
     overflow-y: scroll !important;
     overflow: auto;
 }
@@ -435,33 +416,33 @@ div.slick-cell.l0.r0 {
     font-family: Consolas,monaco,monospace;
 }
 
-.remediation-version{
+.remediation-version {
     color: grey;
     background: lawngreen;
 }
 
-.ui-widget-content.slick-row.current-version{
+.ui-widget-content.slick-row.current-version {
     background-color: burlywood;
 }
 
 
-.ui-widget-content.slick-row.remediation-version{
+.ui-widget-content.slick-row.remediation-version {
     background-color: lawngreen;
 }
 
-.ui-widget-content.slick-row.odd{
+.ui-widget-content.slick-row.odd {
     background-color: white;
 }
 
-.ui-widget-content.slick-row.even{
+.ui-widget-content.slick-row.even {
     background-color: whitesmoke;
 }
 
-.grid-canvas{
+.grid-canvas {
     overflow-y: scroll ;
 }
 
-.component-tab{
+.component-tab {
     border: blue;
     border-radius: 4px;
     background-color: pink;

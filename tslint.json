@@ -1,7 +1,7 @@
 {
   "linterOptions": {
     "exclude": [
-      "config/**/*.js",
+    "config/**/*.js",
 	  "node_modules/**/*.ts",
 	  "ext-src/**/*.ts"
     ]

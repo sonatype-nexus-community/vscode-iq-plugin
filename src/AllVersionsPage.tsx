@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 import * as React from 'react';
+import Table from 'react-bootstrap/Table';
+import { FaChevronRight, FaCheckSquare, FaSquare } from 'react-icons/fa';
 
 //import logo from './logo.svg';
 type Props = {
@@ -63,11 +65,9 @@ class AllVersionsPage extends React.Component<Props, State> {
     });
 
     return (
-      <div>
-        <table>
+        <Table>
           {versionRows}
-        </table>
-      </div>
+        </Table>
     );
   }
 
@@ -97,17 +97,25 @@ class VersionRow extends React.Component<RowProps, RowState> {
     var _this = this;
     return (
       <tr onClick={_this.handleClick.bind(_this)} className={this.threatClassName()}>
-        <td><span className={this.selectedClassName()}/>{this.props.version}: {this.props.threatLevel}</td>
+        <td>
+          {this.selectedClassName()} {this.props.version}: {this.props.threatLevel}
+        </td>
       </tr>
     );
   }
   private selectedClassName() {
     if (this.props.selectedVersion == this.props.version) {
-      return "glyphicon glyphicon-chevron-right"
+      return (
+        <FaChevronRight />
+      )
     } else if (this.props.initialVersion == this.props.version) {
-      return "glyphicon glyphicon-check"
+      return (
+        <FaCheckSquare />
+      )
     } else {
-      return "glyphicon glyphicon-unchecked"
+      return (
+        <FaSquare />
+      )
     }
   }
   private threatClassName() {
