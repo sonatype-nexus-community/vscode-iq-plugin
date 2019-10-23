@@ -302,6 +302,28 @@ h3 {
     color: #00552a !important;
 }
 
+.alert .badge-danger {
+    background-color: lightcoral !important;
+    border-color: lightcoral !important;
+    color: #212529 !important;
+}
+
+.alert .badge-warning {
+    background-color: lightsalmon !important;
+    border-color: lightsalmon !important;
+    color: #212529 !important;
+}
+
+.alert .badge-secondary {
+    background-color: lightyellow !important;
+    border-color: lightyellow !important;
+}
+
+.alert .badge-info {
+    background-color: lightcyan !important;
+    border-color: lightcyan !important;
+}
+
 .current-version {
     color: burlywood;
 }
