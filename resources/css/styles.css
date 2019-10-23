@@ -273,6 +273,11 @@ h3 {
     text-transform: uppercase;
 }
 
+.card {
+    background-color: #212529 !important;
+    color: white !important;
+}
+
 .alert-danger, .badge-danger {
     background-color: red !important;
     border-color: red !important;

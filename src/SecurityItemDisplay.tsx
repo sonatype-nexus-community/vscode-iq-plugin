@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 import * as React from 'react';
+import { FaChevronRight } from 'react-icons/fa';
 import Table from 'react-bootstrap/Table';
 import Badge from 'react-bootstrap/Badge';
+import Accordion from 'react-bootstrap/Accordion';
+import Card from 'react-bootstrap/Card';
 
 type State = {
 }
@@ -42,40 +45,39 @@ class SecurityItemDisplay extends React.Component<Props, State> {
   
   public render() {
     return (
-      <Table variant="dark">
-        <thead>
-          <tr>
-            <th>
-              Issue: <Badge variant={this.threatClassName()}>{this.props.securityIssue.reference}</Badge>
-            </th>
-            <th>
-              CVSS: <Badge variant={this.threatClassName()}>{this.props.securityIssue.severity}</Badge>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Severity:</td>
-            <td><Badge variant={this.threatClassName()}>{this.props.securityIssue.severity}</Badge></td>
-          </tr>
-          <tr>
-            <td>Source:</td>
-            <td>{this.props.securityIssue.source}</td>
-          </tr>
-          <tr>
-            <td>Threat Category:</td>
-            <td>{this.props.securityIssue.threatCategory}</td>
-          </tr>
-          <tr>
-            <td>URL:</td>
-            <td>
-              { this.props.securityIssue.url != "" &&
-              <a href={this.props.securityIssue.url}>{this.props.securityIssue.url}</a>
-              }
-            </td>
-          </tr>
-        </tbody>
-      </Table>
+      <Card>
+        <Accordion.Toggle as={Card.Header} eventKey={this.props.securityIssue.reference}>
+          {this.props.securityIssue.reference} <FaChevronRight /> <Badge variant={this.threatClassName()} className="float-right">CVSS: {this.props.securityIssue.severity}</Badge>
+        </Accordion.Toggle>
+        <Accordion.Collapse eventKey={this.props.securityIssue.reference}>
+          <Card.Body>
+            <Table variant="dark">
+              <tbody>
+                <tr>
+                  <td>Severity:</td>
+                  <td><Badge variant={this.threatClassName()}>{this.props.securityIssue.severity}</Badge></td>
+                </tr>
+                <tr>
+                  <td>Source:</td>
+                  <td>{this.props.securityIssue.source}</td>
+                </tr>
+                <tr>
+                  <td>Threat Category:</td>
+                  <td>{this.props.securityIssue.threatCategory}</td>
+                </tr>
+                <tr>
+                  <td>URL:</td>
+                  <td>
+                    { this.props.securityIssue.url != "" &&
+                    <a href={this.props.securityIssue.url}>{this.props.securityIssue.url}</a>
+                    }
+                  </td>
+                </tr>
+              </tbody>
+            </Table>
+          </Card.Body>
+        </Accordion.Collapse>
+      </Card>
     );
   }
 }

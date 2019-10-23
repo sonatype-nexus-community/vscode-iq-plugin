@@ -15,6 +15,7 @@
  */
 import * as React from 'react';
 import SecurityItemDisplay from './SecurityItemDisplay';
+import Accordion from 'react-bootstrap/Accordion';
 
 type State = {
   securityData: any
@@ -31,11 +32,11 @@ class SecurityPage extends React.Component<State, Props> {
       );
     }
     return (
-      <div>
+      <Accordion>
         {this.props.securityData.securityIssues.map(function(issue: any, index: number) {
           return <SecurityItemDisplay securityIssue={issue} />
         })}
-      </div>
+      </Accordion>
     );
   }
 }
