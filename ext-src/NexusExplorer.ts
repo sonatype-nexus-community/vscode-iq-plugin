@@ -36,11 +36,28 @@ export class NexusExplorerProvider
 
   constructor(
     private context: vscode.ExtensionContext,
-    readonly componentModel: IqComponentModel
+    private componentModel: IqComponentModel
   ) {
-    this.refresh();
+    this.checkPassword();
   }
-  refresh(offset?: number): void {
+
+  checkPassword(): void {
+    if (this.componentModel.isPasswordSet()) {
+      this.doRefresh();
+    } else {
+      let options: vscode.InputBoxOptions = {
+        prompt: "Nexus IQ Password: ",
+        placeHolder: "(placeholder)"
+      }
+
+      vscode.window.showInputBox(options).then(value => {
+        this.componentModel.setPassword(value + "");
+        this.doRefresh();
+      });
+    }
+  }
+
+  doRefresh(): void {
     this.reloadComponentModel().then(v => {
       if (this.componentModel.components.length > 0) {
         this._onDidChangeTreeData.fire();
@@ -80,11 +97,7 @@ export class NexusExplorerProvider
       arguments: [entry]
     };
     let maxThreat = entry.maxPolicy();
-    // TODO flesh out more details in the tooltip?
-    treeItem.tooltip = `Name: ${entry.name}
-      Version: ${entry.version}
-      Hash: ${entry.hash}
-      Policy: ${maxThreat}`;
+    treeItem.tooltip = `Name: ${entry.name}\nVersion: ${entry.version}\nHash: ${entry.hash}\nPolicy: ${maxThreat}`;
 
     return treeItem;
   }
@@ -113,12 +126,11 @@ export class NexusExplorer {
     let config = vscode.workspace.getConfiguration("nexusiq");
     let url = config.get("url") + "";
     let username = config.get("username") + "";
-    let password = config.get("password") + "";
     let applicationPublicId = config.get("applicationPublicId") + "";
     let maximumEvaluationPollAttempts = parseInt(
       config.get("maximumEvaluationPollAttempts") + "", 10);
-
-    /* Please note that login information is hardcoded only for this example purpose and recommended not to do it in general. */
+    let password = config.get("password") + "";
+    
     this.componentModel = new IqComponentModel(
       url,
       username,
@@ -137,7 +149,7 @@ export class NexusExplorer {
     });
 
     vscode.commands.registerCommand("nexusExplorer.refresh", () =>
-      this.nexusExplorerProvider.refresh()
+      this.nexusExplorerProvider.doRefresh()
     );
 
     vscode.commands.registerCommand("nexusExplorer.revealResource", () =>

@@ -37,6 +37,17 @@ export class IqComponentModel {
       private applicationPublicId: string,
       private getmaximumEvaluationPollAttempts: number
     ) {}
+
+    public setPassword(password: string) {
+      this.password = password;
+    }
+
+    public isPasswordSet(): boolean {
+      if(this.password == "") {
+        return false;
+      }
+      return true;
+    }
   
     public getContent(resource: Uri): Thenable<string> {
       // TODO get the HTML doc for webview

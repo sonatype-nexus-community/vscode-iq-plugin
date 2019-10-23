@@ -158,8 +158,6 @@ export class ComponentInfoPanel {
     this._panel = panel;
     this._extensionPath = extensionPath;
     ComponentInfoPanel.getSettings();
-    // Set the webview's initial html content
-    //this._update();
     this.loadHtmlForWebview();
 
     // send the settings
@@ -433,7 +431,6 @@ export class ComponentInfoPanel {
         this.component.version === newComponent.version
       )
     ) {
-      // a new component has been sent, refresh the view
       this.component = newComponent;
       this.updateViewForThisComponent();
 
@@ -462,7 +459,6 @@ export class ComponentInfoPanel {
       command: "allversions",
       allversions: allversions
     });
-    // vscode.window.showInformationMessage(message.cve);
   }
 
   private encodeComponentIdentifier(componentIdentifier: string) {
