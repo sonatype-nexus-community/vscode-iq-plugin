@@ -25,6 +25,7 @@ type Props = {
 }
 
 class SecurityItemDisplay extends React.Component<Props, State> {
+  // TODO: This is duplicated from AllVersionsPage, and we should really just have a util class for it, or something akin
   private threatClassName() {
     if (this.props.securityIssue.severity < 1) {
       return "primary"
