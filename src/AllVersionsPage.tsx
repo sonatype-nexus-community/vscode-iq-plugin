@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import { FaChevronRight, FaCheckSquare, FaSquare } from 'react-icons/fa';
+import { FaChevronRight, FaCheckSquare, FaRegSquare } from 'react-icons/fa';
 import Alert from 'react-bootstrap/Alert';
 import Badge from 'react-bootstrap/Badge';
 
-//import logo from './logo.svg';
 type Props = {
   allVersions: any[],
   initialVersion: string,
@@ -48,12 +47,12 @@ class AllVersionsPage extends React.Component<Props, State> {
   public render() {
     var _this = this;
     if (!this.props.allVersions || this.props.allVersions.length <= 0) {
-      console.log("AllVersions page showing no data available", this.props);
+      console.debug("AllVersions page showing no data available", this.props);
       return(
         <h3>No data available</h3>
       );
     }
-    console.log("AllVersionsPage rendering", this.props.allVersions)
+    console.debug("AllVersionsPage rendering", this.props.allVersions)
     var versionRows = this.props.allVersions.map(function(row: any) {
       return (
         <VersionRow version={row.componentIdentifier.coordinates.version}
@@ -70,18 +69,6 @@ class AllVersionsPage extends React.Component<Props, State> {
         {versionRows}
       </React.Fragment>
     );
-  }
-
-  public componentDidMount() {
-    // TODO: No longer using Glyphicons, probably need to clean this up
-    var initialRow:any = document.getElementsByClassName("glyphicon-check")
-    if (!initialRow) {
-      initialRow = document.getElementsByClassName("glyphicon-chevron-right")
-    }
-    for (let item of initialRow) {
-      // TODO why doesn't this work?
-      item.scrollIntoView();
-    }
   }
 }
 
@@ -114,7 +101,7 @@ class VersionRow extends React.Component<RowProps, RowState> {
       )
     } else {
       return (
-        <FaSquare />
+        <FaRegSquare />
       )
     }
   }

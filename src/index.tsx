@@ -22,9 +22,3 @@ ReactDOM.render(
   <App  />,
   document.getElementById('root') as HTMLElement
 );
-
-
-// ReactDOM.render(
-//   <VersionGraph />,
-//   document.getElementById('versionGraph') as HTMLElement
-// );
