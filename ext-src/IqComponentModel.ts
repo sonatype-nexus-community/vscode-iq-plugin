@@ -253,4 +253,160 @@ export class IqComponentModel {
       }
     );
   }
+
+  public async getRemediation(nexusArtifact: any, iqApplicationId: string) {
+    return new Promise((resolve, reject) => {
+      console.debug("begin getRemediation", nexusArtifact);
+      var requestdata = nexusArtifact.component;
+      console.debug("requestdata", requestdata);
+      let url = `${this.url}/api/v2/components/remediation/application/${iqApplicationId}`;
+
+      request.post(
+        {
+          method: "post",
+          json: requestdata,
+          url: url,
+          auth: { user: this.user, pass: this.password }
+        },
+        (err, response, body) => {
+          if (err) {
+            reject(`Unable to retrieve Component details: ${err}`);
+            return;
+          }
+          console.debug("response", response);
+          console.debug("body", body);
+          resolve(body);
+        }
+      );
+    });
+  }
+
+  public async GetCVEDetails(cve: any, nexusArtifact: any) {
+    //, settings) {
+    return new Promise((resolve, reject) => {
+      console.log("begin GetCVEDetails", cve, nexusArtifact);
+      let timestamp = Date.now();
+      let hash = nexusArtifact.components[0].hash;
+      let componentIdentifier = this.encodeComponentIdentifier(
+        nexusArtifact.components[0].componentIdentifier
+      );
+      let vulnerability_source;
+      if (cve.search("sonatype") >= 0) {
+        vulnerability_source = "sonatype";
+      } else {
+        vulnerability_source = "cve";
+      }
+      let url = `${this.url}/rest/vulnerability/details/${vulnerability_source}/${cve}?componentIdentifier=${componentIdentifier}&hash=${hash}&timestamp=${timestamp}`;
+
+      request.get(
+        {
+          method: "GET",
+          url: url,
+          auth: {
+            user: this.user,
+            pass: this.password
+          }
+        },
+        (err, response, body) => {
+          if (err) {
+            reject(`Unable to retrieve CVEData: ${err}`);
+            return;
+          }
+          console.debug("response", response);
+          console.debug("body", body);
+
+          resolve(body);
+        }
+      );
+    });
+  }
+
+  public async getAllVersions(nexusArtifact: any, iqApplicationPublicId: string): Promise<any[]> {
+    if (!nexusArtifact || !nexusArtifact.hash) {
+      return [];
+    }
+    return new Promise<any[]>((resolve, reject) => {
+      let hash = nexusArtifact.hash;
+      let comp = this.encodeComponentIdentifier(
+        nexusArtifact.componentIdentifier
+      );
+      let d = new Date();
+      let timestamp = d.getDate();
+      let matchstate = "exact";
+      let url =
+        `${this.url}/rest/ide/componentDetails/application/` +
+        `${iqApplicationPublicId}/allVersions?` +
+        `componentIdentifier=${comp}&` +
+        `hash=${hash}&matchState=${matchstate}&` +
+        `timestamp=${timestamp}&proprietary=false`;
+
+      request.get(
+        {
+          method: "GET",
+          url: url,
+          auth: {
+            user: this.user,
+            pass: this.password
+          }
+        },
+        (err, response, body) => {
+          if (err) {
+            reject(`Unable to retrieve GetAllVersions: ${err}`);
+            return;
+          }
+          const versionArray = JSON.parse(body) as any[];
+          console.debug("getAllVersions retrieved body", versionArray);
+          resolve(versionArray);
+        }
+      );
+    });
+  }
+
+  public async showSelectedVersion(componentIdentifier: any, version: string) {
+    return new Promise((resolve, reject) => {
+      console.debug("begin showSelectedVersion", componentIdentifier, version);
+      var transmittingComponentIdentifier = { ...componentIdentifier };
+
+      transmittingComponentIdentifier.coordinates = {
+        ...componentIdentifier.coordinates
+      };
+
+      transmittingComponentIdentifier.coordinates.version = version;
+      var detailsRequest = {
+        components: [
+          {
+            hash: null,
+            componentIdentifier: transmittingComponentIdentifier
+          }
+        ]
+      };
+      let url = `${this.url}/api/v2/components/details`;
+
+      request.post(
+        {
+          method: "post",
+          json: detailsRequest,
+          url: url,
+          auth: {
+            user: this.user,
+            pass: this.password
+          }
+        },
+        (err, response, body) => {
+          if (err) {
+            reject(`Unable to retrieve selected version details: ${err}`);
+            return;
+          }
+
+          resolve(body);
+        }
+      );
+    });
+  }
+
+  private encodeComponentIdentifier(componentIdentifier: string) {
+    let actual = encodeURIComponent(JSON.stringify(componentIdentifier));
+    console.log("actual", actual);
+    return actual;
+  }
 }

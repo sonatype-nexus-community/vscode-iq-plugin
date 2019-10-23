@@ -97,7 +97,7 @@ class App extends React.Component<AppProps, AppState> {
           this.handleVersionSelection(message.component.version)
           break;
         case 'versionDetails':
-          console.debug("Selected version details received", message.componentDetails);
+          console.log("Selected version details received", message.componentDetails);
           this.setState({selectedVersionDetails: message.componentDetails})
           break;
         case 'allversions':

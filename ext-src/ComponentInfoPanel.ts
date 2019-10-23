@@ -1,6 +1,21 @@
+/*
+ * Copyright (c) 2019-present Sonatype, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import * as vscode from "vscode";
 import * as path from "path";
-import * as request from "request";
+import { IqComponentModel } from "./IqComponentModel";
 
 export class ConstraintReason {
   constructor(readonly reason: string) {}
@@ -74,13 +89,11 @@ export class ComponentInfoPanel {
    * Track the currently panel. Only allow a single panel to exist at a time.
    */
   public static currentPanel: ComponentInfoPanel | undefined;
+  private iqComponentModel: IqComponentModel;
 
   // TODO get this from configuration or constructor
-  public static iqUrl: string;
-  public static iqUser: string;
-  public static iqPassword: string;
-  public static iqApplicationId: string;
-  public static iqApplicationPublicId: string;
+  private static iqApplicationId: string;
+  private static iqApplicationPublicId: string;
   private static _settings: any;
 
   component?: ComponentEntry;
@@ -93,8 +106,10 @@ export class ComponentInfoPanel {
 
   public static createOrShow(
     extensionPath: string,
-    newComponent: ComponentEntry
+    newComponent: ComponentEntry,
+    iqComponenentModel: IqComponentModel
   ) {
+
     const column = vscode.window.activeTextEditor
       ? vscode.window.activeTextEditor.viewColumn
       : undefined;
@@ -125,49 +140,36 @@ export class ComponentInfoPanel {
 
     ComponentInfoPanel.currentPanel = new ComponentInfoPanel(
       panel,
-      extensionPath
+      extensionPath,
+      iqComponenentModel
     );
     ComponentInfoPanel.currentPanel.showComponent(newComponent);
   }
 
-  public static revive(panel: vscode.WebviewPanel, extensionPath: string) {
-    ComponentInfoPanel.currentPanel = new ComponentInfoPanel(
-      panel,
-      extensionPath
-    );
-  }
-
   private static getSettings() {
     let config = vscode.workspace.getConfiguration("nexusiq");
-    ComponentInfoPanel.iqUrl = config.get("url") + "";
-    ComponentInfoPanel.iqUser = config.get("username") + "";
-    ComponentInfoPanel.iqPassword = config.get("password") + "";
     ComponentInfoPanel.iqApplicationId =  "";
     ComponentInfoPanel.iqApplicationPublicId =
       config.get("applicationPublicId") + "";
     ComponentInfoPanel._settings = {
-      iqUrl: ComponentInfoPanel.iqUrl,
-      iqUser: ComponentInfoPanel.iqUser,
-      iqPassword: ComponentInfoPanel.iqPassword,
       iqApplicationId: ComponentInfoPanel.iqApplicationId,
       iqApplicationPublicId: ComponentInfoPanel.iqApplicationPublicId
     };
   }
 
-  private constructor(panel: vscode.WebviewPanel, extensionPath: string) {
+  private constructor(panel: vscode.WebviewPanel, extensionPath: string, iqComponentModel: IqComponentModel) {
     this._panel = panel;
     this._extensionPath = extensionPath;
     ComponentInfoPanel.getSettings();
+    this.iqComponentModel = iqComponentModel;
     this.loadHtmlForWebview();
 
-    // send the settings
-    console.log("posting settings", this.component);
     const pageSettings = {
-      serverName: ComponentInfoPanel._settings.iqUrl,
       appInternalId: ComponentInfoPanel._settings.iqApplicationId,
       username: ComponentInfoPanel._settings.iqUser,
       password: ComponentInfoPanel._settings.iqPassword
     };
+
     this._panel.webview.postMessage({
       command: "settings",
       settings: pageSettings
@@ -194,11 +196,8 @@ export class ComponentInfoPanel {
         console.log("onDidReceiveMessage", message);
         switch (message.command) {
           case "selectVersion":
-            console.log("selectVersion received, message:", message);
-            this.showSelectedVersion(
-              message.package.nexusIQData.component.componentIdentifier,
-              message.version
-            );
+            console.debug("selectVersion received, message:", message);
+            this.showSelectedVersion(message.package.nexusIQData.component.componentIdentifier, message.version);
             return;
           case "alert":
             vscode.window.showErrorMessage(message.text);
@@ -221,191 +220,35 @@ export class ComponentInfoPanel {
     );
   }
 
-  private async showSelectedVersion(componentIdentifier: any, version: string) {
-    return new Promise((resolve, reject) => {
-      console.log("begin showSelectedVersion", componentIdentifier, version);
-      var transmittingComponentIdentifier = { ...componentIdentifier };
-      transmittingComponentIdentifier.coordinates = {
-        ...componentIdentifier.coordinates
-      };
-      transmittingComponentIdentifier.coordinates.version = version;
-      var detailsRequest = {
-        components: [
-          {
-            hash: null,
-            componentIdentifier: transmittingComponentIdentifier
-          }
-        ]
-      };
-      //servername has a slash
-      let url = `${ComponentInfoPanel.iqUrl}/api/v2/components/details`;
-
-      request.post(
-        {
-          method: "post",
-          json: detailsRequest,
-          url: url,
-          auth: {
-            user: ComponentInfoPanel.iqUser,
-            pass: ComponentInfoPanel.iqPassword
-          }
-        },
-        (err, response, body) => {
-          if (err) {
-            reject(`Unable to retrieve selected version details: ${err}`);
-            return;
-          }
-          console.log("showSelectedVersion response", response);
-          console.log("showSelectedVersion body", body);
-
-          this._panel.webview.postMessage({
-            command: "versionDetails",
-            componentDetails: body.componentDetails[0]
-          });
-        }
-      );
+  private async showSelectedVersion(componentIdentifier: string, version: string) {
+    console.log("showSelectedVersion", componentIdentifier);
+    let body: any = await this.iqComponentModel.showSelectedVersion(componentIdentifier, version);
+    
+    this._panel.webview.postMessage({
+      command: "versionDetails",
+      componentDetails: body.componentDetails[0]
     });
   }
 
   private async showRemediation(nexusArtifact: any) {
-    console.log("showRemediation", nexusArtifact);
-    let remediation = await this.getRemediation(nexusArtifact);
-    console.log("posting message: remediation", remediation);
+    console.debug("showRemediation", nexusArtifact);
+    let remediation = await this.iqComponentModel.getRemediation(nexusArtifact, ComponentInfoPanel.iqApplicationId);
+    
+    console.debug("posting message: remediation", remediation);
     this._panel.webview.postMessage({
       command: "remediation",
       remediation: remediation
     });
-    // vscode.window.showInformationMessage(message.cve);
   }
+
   private async showCVE(cve: any, nexusArtifact: any) {
-    console.log("showCVE", cve, nexusArtifact);
-    let cvedetails = await this.GetCVEDetails(cve, nexusArtifact);
-    // let cvedetails = JSON.stringify(cvePromise);
-    console.log("posting message: cvedetails", cvedetails);
+    console.debug("showCVE", cve, nexusArtifact);
+    let cvedetails = await this.iqComponentModel.GetCVEDetails(cve, nexusArtifact);
+    
+    console.debug("posting message: cvedetails", cvedetails);
     this._panel.webview.postMessage({
       command: "cvedetails",
       cvedetails: cvedetails
-    });
-    // vscode.window.showInformationMessage(message.cve);
-  }
-
-  private async getAllVersions(): Promise<any[]> {
-    //, settings) {
-    let nexusArtifact = this.component!.nexusIQData.component;
-    if (!nexusArtifact || !nexusArtifact.hash) {
-      return [];
-    }
-    return new Promise<any[]>((resolve, reject) => {
-      console.log("begin GetAllVersions", this.component);
-      let hash = nexusArtifact.hash;
-      let comp = this.encodeComponentIdentifier(
-        nexusArtifact.componentIdentifier
-      );
-      let d = new Date();
-      let timestamp = d.getDate();
-      let matchstate = "exact";
-      let url =
-        `${ComponentInfoPanel.iqUrl}/rest/ide/componentDetails/application/` +
-        `${ComponentInfoPanel.iqApplicationPublicId}/allVersions?` +
-        `componentIdentifier=${comp}&` +
-        `hash=${hash}&matchState=${matchstate}&` +
-        `timestamp=${timestamp}&proprietary=false`;
-
-      request.get(
-        {
-          method: "GET",
-          url: url,
-          auth: {
-            user: ComponentInfoPanel.iqUser,
-            pass: ComponentInfoPanel.iqPassword
-          }
-        },
-        (err, response, body) => {
-          if (err) {
-            reject(`Unable to retrieve GetAllVersions: ${err}`);
-            return;
-          }
-          const versionArray = JSON.parse(body) as any[];
-          console.log("getAllVersions retrieved body", versionArray);
-          resolve(versionArray);
-        }
-      );
-    });
-  }
-
-  private async GetCVEDetails(cve: any, nexusArtifact: any) {
-    //, settings) {
-    return new Promise((resolve, reject) => {
-      console.log("begin GetCVEDetails", cve, nexusArtifact);
-      let timestamp = Date.now();
-      let hash = nexusArtifact.components[0].hash;
-      let componentIdentifier = this.encodeComponentIdentifier(
-        nexusArtifact.components[0].componentIdentifier
-      );
-      let vulnerability_source;
-      if (cve.search("sonatype") >= 0) {
-        vulnerability_source = "sonatype";
-      } else {
-        //CVE type
-        vulnerability_source = "cve";
-      }
-      //servername has a slash
-
-      let url = `${ComponentInfoPanel.iqUrl}/rest/vulnerability/details/${vulnerability_source}/${cve}?componentIdentifier=${componentIdentifier}&hash=${hash}&timestamp=${timestamp}`;
-
-      request.get(
-        {
-          method: "GET",
-          url: url,
-          auth: {
-            user: ComponentInfoPanel.iqUser,
-            pass: ComponentInfoPanel.iqPassword
-          }
-        },
-        (err, response, body) => {
-          if (err) {
-            reject(`Unable to retrieve CVEData: ${err}`);
-            return;
-          }
-          console.log("response", response);
-          console.log("body", body);
-
-          resolve(body);
-          // return body;
-        }
-      );
-    });
-  }
-
-  private async getRemediation(nexusArtifact: any) {
-    //, settings) {
-    return new Promise((resolve, reject) => {
-      console.log("begin getRemediation", nexusArtifact);
-      var requestdata = nexusArtifact.component;
-      console.log("requestdata", requestdata);
-      //servername has a slash
-      let url = `${ComponentInfoPanel.iqUrl}/api/v2/components/remediation/application/${ComponentInfoPanel.iqApplicationId}`;
-
-      request.post(
-        {
-          method: "post",
-          json: requestdata,
-          url: url,
-          auth: {
-            user: ComponentInfoPanel.iqUser,
-            pass: ComponentInfoPanel.iqPassword
-          }
-        },
-        (err, response, body) => {
-          if (err) {
-            reject(`Unable to retrieve Component details: ${err}`);
-            return;
-          }
-          console.log("response", response);
-          console.log("body", body);
-          resolve(body);
-        }
-      );
     });
   }
 
@@ -439,10 +282,11 @@ export class ComponentInfoPanel {
   }
 
   private updateViewForThisComponent() {
-    console.log(`Update called`);
+    console.debug(`Update called`);
     if (this.component) {
       this._panel.title = `IQ Scan: ${this.component.name}@${this.component.version}`;
-      console.log("posting message: artifact", this.component);
+      console.debug("posting message: artifact", this.component);
+
       this.showAllVersions();
       this._panel.webview.postMessage({
         command: "artifact",
@@ -452,19 +296,14 @@ export class ComponentInfoPanel {
   }
 
   private async showAllVersions() {
-    console.log("showAllVersions", this.component);
-    let allversions = await this.getAllVersions();
-    console.log("posting message: allversions", allversions);
+    console.debug("showAllVersions", this.component);
+    let allversions = await this.iqComponentModel.getAllVersions(this.component!.nexusIQData.component, ComponentInfoPanel.iqApplicationPublicId);
+    
+    console.debug("posting message: allversions", allversions);
     this._panel.webview.postMessage({
       command: "allversions",
       allversions: allversions
     });
-  }
-
-  private encodeComponentIdentifier(componentIdentifier: string) {
-    let actual = encodeURIComponent(JSON.stringify(componentIdentifier));
-    console.log("actual", actual);
-    return actual;
   }
 
   private loadHtmlForWebview() {
