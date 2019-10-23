@@ -54,7 +54,7 @@ class ComponentInfoPage extends React.Component<CipProps, CipState> {
     console.debug("ComponentInfoPage coordinates: ", coordinates);
 
     return (
-        <Table>
+        <Table variant="dark">
           <thead>
             <tr>
               <th colSpan={2}>

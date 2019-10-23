@@ -25,7 +25,7 @@ type Props = {}
 class SecurityPage extends React.Component<State, Props> {
   public render() {
     if (!this.props.securityData || !this.props.securityData.securityIssues || this.props.securityData.securityIssues.length == 0) {
-      console.log("Security page rendering no content, securityData: ", this.props.securityData)
+      console.debug("Security page rendering no content, securityData: ", this.props.securityData)
       return (
         <h1>No security issues found</h1>
       );

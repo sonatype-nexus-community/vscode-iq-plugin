@@ -15,6 +15,7 @@
  */
 import * as React from 'react';
 import Table from 'react-bootstrap/Table';
+import Badge from 'react-bootstrap/Badge';
 
 type State = {
 }
@@ -24,23 +25,37 @@ type Props = {
 }
 
 class SecurityItemDisplay extends React.Component<Props, State> {
+  private threatClassName() {
+    if (this.props.securityIssue.severity < 1) {
+      return "primary"
+    } else if (this.props.securityIssue.severity < 2) {
+      return "info"
+    } else if (this.props.securityIssue.severity < 4) {
+      return "secondary"
+    } else if (this.props.securityIssue.severity < 8) {
+      return "warning"
+    } else {
+      return "danger"
+    }
+  }
+  
   public render() {
     return (
-      <Table>
+      <Table variant="dark">
         <thead>
           <tr>
             <th>
-              Issue: {this.props.securityIssue.reference}
+              Issue: <Badge variant={this.threatClassName()}>{this.props.securityIssue.reference}</Badge>
             </th>
             <th>
-              CVSS: {this.props.securityIssue.severity}
+              CVSS: <Badge variant={this.threatClassName()}>{this.props.securityIssue.severity}</Badge>
             </th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>Severity:</td>
-            <td>{this.props.securityIssue.severity}</td>
+            <td><Badge variant={this.threatClassName()}>{this.props.securityIssue.severity}</Badge></td>
           </tr>
           <tr>
             <td>Source:</td>
@@ -52,7 +67,11 @@ class SecurityItemDisplay extends React.Component<Props, State> {
           </tr>
           <tr>
             <td>URL:</td>
-            <td>{this.props.securityIssue.url}</td>
+            <td>
+              { this.props.securityIssue.url != "" &&
+              <a href={this.props.securityIssue.url}>{this.props.securityIssue.url}</a>
+              }
+            </td>
           </tr>
         </tbody>
       </Table>

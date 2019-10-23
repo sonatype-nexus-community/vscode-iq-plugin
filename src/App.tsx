@@ -101,7 +101,7 @@ class App extends React.Component<AppProps, AppState> {
           this.setState({selectedVersionDetails: message.componentDetails})
           break;
         case 'allversions':
-          console.log("App handling allVersions message", message);
+          console.debug("App handling allVersions message", message);
           this.setState({allVersions: message.allversions});
           break;
         }

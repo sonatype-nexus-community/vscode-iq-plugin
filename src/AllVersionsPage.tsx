@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import Table from 'react-bootstrap/Table';
 import { FaChevronRight, FaCheckSquare, FaSquare } from 'react-icons/fa';
+import Alert from 'react-bootstrap/Alert';
+import Badge from 'react-bootstrap/Badge';
 
 //import logo from './logo.svg';
 type Props = {
@@ -32,14 +33,14 @@ type State = {
 class AllVersionsPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    console.log("AllVersionPage created with properties", props);
+    console.debug("AllVersionPage created with properties", props);
     this.state = {
       selectedVersion: props.selectedVersion
     }
   }
 
   private versionChanged(newVersion: string) {
-    console.log("AllVersionsPage version change received: ", newVersion);
+    console.debug("AllVersionsPage version change received: ", newVersion);
     this.setState({selectedVersion: newVersion});
     this.props.versionChangeHandler(newVersion);
   }
@@ -65,13 +66,14 @@ class AllVersionsPage extends React.Component<Props, State> {
     });
 
     return (
-        <Table>
-          {versionRows}
-        </Table>
+      <React.Fragment>
+        {versionRows}
+      </React.Fragment>
     );
   }
 
   public componentDidMount() {
+    // TODO: No longer using Glyphicons, probably need to clean this up
     var initialRow:any = document.getElementsByClassName("glyphicon-check")
     if (!initialRow) {
       initialRow = document.getElementsByClassName("glyphicon-chevron-right")
@@ -96,11 +98,9 @@ class VersionRow extends React.Component<RowProps, RowState> {
   public render() {
     var _this = this;
     return (
-      <tr onClick={_this.handleClick.bind(_this)} className={this.threatClassName()}>
-        <td>
-          {this.selectedClassName()} {this.props.version}: {this.props.threatLevel}
-        </td>
-      </tr>
+        <Alert variant={this.threatClassName()} onClick={_this.handleClick.bind(_this)}>
+          {this.selectedClassName()} {this.props.version}: <Badge variant="secondary">{this.props.threatLevel}</Badge>
+        </Alert>
     );
   }
   private selectedClassName() {
@@ -120,20 +120,21 @@ class VersionRow extends React.Component<RowProps, RowState> {
   }
   private threatClassName() {
     if (this.props.threatLevel < 1) {
-      return "bg-primary"
+      return "primary"
     } else if (this.props.threatLevel < 2) {
-      return "threat-low"
+      return "info"
     } else if (this.props.threatLevel < 4) {
-      return "threat-mid"
+      return "secondary"
     } else if (this.props.threatLevel < 8) {
-      return "threat-high"
+      return "warning"
     } else {
-      return "threat-critical"
+      return "danger"
     }
   }
+  
   private handleClick(e: any) {
-    console.log("row clicked, event:", e);
-    console.log("row clicked, AllVersionsPage props: ", this.props);
+    console.debug("row clicked, event:", e);
+    console.debug("row clicked, AllVersionsPage props: ", this.props);
     this.props.versionChangeHandler(this.props.version);
   }
 }

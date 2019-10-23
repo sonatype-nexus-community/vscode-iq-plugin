@@ -4,7 +4,11 @@ body {
     font-family:sans-serif;
     border-radius: 5px;
     border-width: 2px;
-    background-color: black;
+    background-color:#212529 !important;
+}
+
+h1 {
+    color: white;
 }
 
 .sidenav {
@@ -15,11 +19,14 @@ body {
     top: 0; /* Stay at the top */
     left: 0;
     overflow-x: hidden; /* Disable horizontal scroll */
+    background-color:#212529;
 }
   
 .main {
     margin-left: 250px; /* Same as the width of the sidebar */
+    height: 100%;
     padding: 0px 10px;
+    background-color: #212529;
 }
   
   /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
@@ -152,9 +159,7 @@ table {
 }
 
 .optionstable td, .optionstable th {
-    /* border: 1px solid #ddd; */
     padding: 4px;
-    /* height: 100px !important; */
 }
 
 .optionstable th {
@@ -173,7 +178,6 @@ table {
     box-sizing: border-box;
     background: transparent;
     outline: none;
-    /* height:40px; */
     color: #2f4f4f;
     font-size:16px;
 }
@@ -189,7 +193,6 @@ table {
 
     background: transparent;
     outline: none;
-    /* height:40px; */
     color: #2f4f4f;
     font-size:16px;
 }
@@ -204,7 +207,6 @@ input[type=text], input[type=password]  select {
     box-sizing: border-box;
     background: transparent;
     outline: none;
-    /* height:40px; */
     color: #2f4f4f;
     font-size:16px;
 }
@@ -271,31 +273,28 @@ h3 {
     text-transform: uppercase;
 }
 
-.criticalSeverity, .threat-critical {
-    /* color: red; */
-    /* font-weight:bold; */
-    background-color: red;
-    color: black;
+.alert-danger, .badge-danger {
+    background-color: red !important;
+    border-color: red !important;
+    color: #212529 !important;
 }
 
-.highSeverity, .threat-high {
-    background-color: #962c2c;
-    color: black;
+.alert-warning, .badge-warning {
+    background-color: #962c2c !important;
+    border-color: #962c2c !important;
+    color: #ffecdb !important;
 }
 
-.mediumSeverity, .threat-mid {
-    background-color: rgb(243, 134, 45);
-    color: black;
+.alert-secondary, .badge-secondary {
+    background-color: #F3862D !important;
+    border-color:  #F3862D !important;
+    color: #152a23 !important;
 }
 
-.lowSeverity, .threat-low {
-    background-color: rgb(240, 210, 76);
-    color: black;
-}
-
-.noneSeverity, .threat-none {
-    background-color: silver;
-    color: black;
+.alert-info, .badge-info {
+    background-color: #F0D24C !important;
+    border-color: #F0D24C !important;
+    color: #00552a !important;
 }
 
 .current-version {

@@ -28,7 +28,7 @@ class LicensingPage extends React.Component<Props, State> {
   public render() {
     return (
       <div >
-        <Table>
+        <Table variant="dark">
           <thead>
             <tr>
               <th colSpan={2}>Declared Licenses</th>
@@ -40,7 +40,7 @@ class LicensingPage extends React.Component<Props, State> {
             })}
           </tbody>
         </Table>
-        <Table>
+        <Table variant="dark">
           <thead>
             <tr>
               <th colSpan={2}>Observed Licenses</th>
