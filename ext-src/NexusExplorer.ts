@@ -47,7 +47,8 @@ export class NexusExplorerProvider
     } else {
       let options: vscode.InputBoxOptions = {
         prompt: "Nexus IQ Password: ",
-        placeHolder: "(placeholder)"
+        placeHolder: "password",
+        password: true
       }
 
       vscode.window.showInputBox(options).then(value => {
