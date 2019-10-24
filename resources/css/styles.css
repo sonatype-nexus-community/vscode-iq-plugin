@@ -302,25 +302,27 @@ h3 {
 }
 
 .alert .badge-danger {
-  background-color: lightcoral !important;
-  border-color: lightcoral !important;
+  background-color: red !important;
+  border-color: red !important;
   color: #212529 !important;
 }
 
 .alert .badge-warning {
-  background-color: lightsalmon !important;
-  border-color: lightsalmon !important;
-  color: #212529 !important;
+  background-color: #962c2c !important;
+  border-color: #962c2c !important;
+  color: #ffecdb !important;
 }
 
 .alert .badge-secondary {
-  background-color: lightyellow !important;
-  border-color: lightyellow !important;
+  background-color: #F3862D !important;
+  border-color:  #F3862D !important;
+  color: #152a23 !important;
 }
 
 .alert .badge-info {
-  background-color: lightcyan !important;
-  border-color: lightcyan !important;
+  background-color: #F0D24C !important;
+  border-color: #F0D24C !important;
+  color: #00552a !important;
 }
 
 .current-version {

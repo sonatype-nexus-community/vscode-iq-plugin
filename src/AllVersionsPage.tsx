@@ -85,7 +85,7 @@ class VersionRow extends React.Component<RowProps, RowState> {
   public render() {
     var _this = this;
     return (
-        <Alert variant={this.threatClassName()} onClick={_this.handleClick.bind(_this)}>
+        <Alert variant="primary" onClick={_this.handleClick.bind(_this)}>
           {this.selectedClassName()} {this.props.version} <Badge variant={this.threatClassName()} className="float-right">CVSS: {this.props.threatLevel}</Badge>
         </Alert>
     );
