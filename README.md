@@ -52,14 +52,16 @@ You will need a Sonatype Nexus IQ Lifecycle License to be able to use this exten
 
 This extension contributes the following settings, all are required:
 
-* `nexusiq.npm.url`: URL including port of the Nexus IQ server
-* `nexusiq.npm.username`: Your Nexus IQ user name
-* `nexusiq.npm.password`: Your Nexus IQ Internal ApplicationId
-* `nexusiq.npm.applicationId`: Your Nexus IQ Internal ApplicationId
-* `nexusiq.npm.applicationPublicId`: Your Nexus IQ Application Public Id
+* `nexusiq.url`: URL including port of the Nexus IQ server
+* `nexusiq.username`: Your Nexus IQ user name
+* `nexusiq.password`: Your Nexus IQ Internal ApplicationId
+* `nexusiq.applicationPublicId`: Your Nexus IQ Application Public Id
 
 ## Known Issues
 * You have to specify the Application Public Id and Application Internal UUID, this is a pain. I will create a GUI for this when I get to it. For now you have to work out your UUID. Call this end point to find the UUID - /api/v2/applications.
 * Password is stored in plain text
 * Styling of the Info panel needs some work
 
+## Adding a format
+1) Run `FORMAT=Maven npm run generate-format`, substituting the value for FORMAT for the name of the Format you are working on, example: `Maven` in this case
+2) Implement the methods you need to in these newly generated classes, and then in `ext-src/packages/ComponentContainer.ts`, add your Implementation!

@@ -13,12 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import App from './App';
+ /**
+ * @class {{format}}Coordinate
+ */
+export class {{format}}Coordinate implements CoordinateType {
+  Name: string;
+  Version: string;
+ 
+  constructor (name: string, version: string){
+    this.Name = name;
+    this.Version = version;
+  }
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
-  ReactDOM.unmountComponentAtNode(div);
-});
+  public asCoordinates(): string {
+    throw new Error("not Implemented");
+  }
+}

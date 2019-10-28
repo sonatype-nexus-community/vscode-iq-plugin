@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import App from './App';
+export class GolangCoordinate implements CoordinateType {
+  Name: string;
+  Version: string;
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
-  ReactDOM.unmountComponentAtNode(div);
-});
+  constructor (name: string, version: string){
+    this.Name = name;
+    this.Version = version;
+  }
+
+  public asCoordinates(): string {
+    return `${this.Name} - ${this.Version}`;
+  }
+}

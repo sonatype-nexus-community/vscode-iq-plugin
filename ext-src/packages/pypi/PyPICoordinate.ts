@@ -13,12 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import App from './App';
+export class PyPICoordinate implements CoordinateType {
+  Name: string;
+  Version: string;
+  Extension: string;
+  Qualifier: string;
+ 
+  constructor (name: string, version: string, extension: string, qualifier: string){
+    this.Name = name;
+    this.Version = version;
+    this.Extension = extension;
+    this.Qualifier = qualifier;
+  }
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
-  ReactDOM.unmountComponentAtNode(div);
-});
+  public asCoordinates(): string {
+    return `${this.Name} - ${this.Extension} - ${this.Qualifier} - ${this.Version}`;
+  }
+}

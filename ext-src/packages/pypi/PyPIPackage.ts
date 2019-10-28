@@ -13,12 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import App from './App';
+import { PackageType } from "../PackageType";
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
-  ReactDOM.unmountComponentAtNode(div);
-});
+export class PyPIPackage implements PackageType {
+  constructor(
+    readonly Name: string,
+    readonly Version: string,
+    readonly Extension: string,
+    readonly Qualifier: string,
+    readonly Hash?: string
+  ) {}
+
+  public toCoordinates() {
+    return `${this.Name}:${this.Extension}:${this.Qualifier}:${this.Version}`;
+  }
+
+  public toCoordValueType(): string {
+    return `${this.Name} - ${this.Extension} - ${this.Qualifier} - ${this.Version}`;
+  }
+}

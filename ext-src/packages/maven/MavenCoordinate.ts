@@ -13,12 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import App from './App';
+export class MavenCoordinate implements CoordinateType {
+  Name: string;
+  Group: string;
+  Version: string;
+  Extension: string;
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
-  ReactDOM.unmountComponentAtNode(div);
-});
+  constructor (artifactId: string, groupId: string, version: string, extension: string){
+    this.Name = artifactId;
+    this.Group = groupId;
+    this.Version = version;
+    this.Extension = extension;
+  }
+
+  public asCoordinates(): string {
+    return `${this.Group}:${this.Name} - ${this.Version}`;
+  }
+}

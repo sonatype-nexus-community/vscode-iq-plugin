@@ -1,6 +1,23 @@
+/*
+ * Copyright (c) 2019-present Sonatype, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 import * as React from 'react';
+import { FaChevronRight, FaCheckSquare, FaRegSquare } from 'react-icons/fa';
+import Alert from 'react-bootstrap/Alert';
+import Badge from 'react-bootstrap/Badge';
 
-//import logo from './logo.svg';
 type Props = {
   allVersions: any[],
   initialVersion: string,
@@ -15,14 +32,14 @@ type State = {
 class AllVersionsPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    console.log("AllVersionPage created with properties", props);
+    console.debug("AllVersionPage created with properties", props);
     this.state = {
       selectedVersion: props.selectedVersion
     }
   }
 
   private versionChanged(newVersion: string) {
-    console.log("AllVersionsPage version change received: ", newVersion);
+    console.debug("AllVersionsPage version change received: ", newVersion);
     this.setState({selectedVersion: newVersion});
     this.props.versionChangeHandler(newVersion);
   }
@@ -30,12 +47,12 @@ class AllVersionsPage extends React.Component<Props, State> {
   public render() {
     var _this = this;
     if (!this.props.allVersions || this.props.allVersions.length <= 0) {
-      console.log("AllVersions page showing no data available", this.props);
+      console.debug("AllVersions page showing no data available", this.props);
       return(
         <h3>No data available</h3>
       );
     }
-    console.log("AllVersionsPage rendering", this.props.allVersions)
+    console.debug("AllVersionsPage rendering", this.props.allVersions)
     var versionRows = this.props.allVersions.map(function(row: any) {
       return (
         <VersionRow version={row.componentIdentifier.coordinates.version}
@@ -48,23 +65,10 @@ class AllVersionsPage extends React.Component<Props, State> {
     });
 
     return (
-      <div>
-        <table>
-          {versionRows}
-        </table>
-      </div>
+      <React.Fragment>
+        {versionRows}
+      </React.Fragment>
     );
-  }
-
-  public componentDidMount() {
-    var initialRow:any = document.getElementsByClassName("glyphicon-check")
-    if (!initialRow) {
-      initialRow = document.getElementsByClassName("glyphicon-chevron-right")
-    }
-    for (let item of initialRow) {
-      // TODO why doesn't this work?
-      item.scrollIntoView();
-    }
   }
 }
 
@@ -81,36 +85,43 @@ class VersionRow extends React.Component<RowProps, RowState> {
   public render() {
     var _this = this;
     return (
-      <tr onClick={_this.handleClick.bind(_this)} className={this.threatClassName()}>
-        <td><span className={this.selectedClassName()}/>{this.props.version}: {this.props.threatLevel}</td>
-      </tr>
+        <Alert variant="primary" onClick={_this.handleClick.bind(_this)}>
+          {this.selectedClassName()} {this.props.version} <Badge variant={this.threatClassName()} className="float-right">CVSS: {this.props.threatLevel}</Badge>
+        </Alert>
     );
   }
   private selectedClassName() {
     if (this.props.selectedVersion == this.props.version) {
-      return "glyphicon glyphicon-chevron-right"
+      return (
+        <FaChevronRight />
+      )
     } else if (this.props.initialVersion == this.props.version) {
-      return "glyphicon glyphicon-check"
+      return (
+        <FaCheckSquare />
+      )
     } else {
-      return "glyphicon glyphicon-unchecked"
+      return (
+        <FaRegSquare />
+      )
     }
   }
   private threatClassName() {
     if (this.props.threatLevel < 1) {
-      return "bg-primary"
+      return "primary"
     } else if (this.props.threatLevel < 2) {
-      return "threat-low"
+      return "info"
     } else if (this.props.threatLevel < 4) {
-      return "threat-mid"
+      return "secondary"
     } else if (this.props.threatLevel < 8) {
-      return "threat-high"
+      return "warning"
     } else {
-      return "threat-critical"
+      return "danger"
     }
   }
+
   private handleClick(e: any) {
-    console.log("row clicked, event:", e);
-    console.log("row clicked, AllVersionsPage props: ", this.props);
+    console.debug("row clicked, event:", e);
+    console.debug("row clicked, AllVersionsPage props: ", this.props);
     this.props.versionChangeHandler(this.props.version);
   }
 }

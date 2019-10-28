@@ -13,12 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import App from './App';
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
-  ReactDOM.unmountComponentAtNode(div);
-});
+import { PackageType } from "../PackageType";
+
+export class MavenPackage implements PackageType {
+  constructor(
+    readonly Name: string,
+    readonly Group: string,
+    readonly Version: string,
+    readonly Extension: string,
+    readonly Hash?: string
+  ) {}
+
+  public toCoordinates() {
+    return `${this.Group}:${this.Name}.${this.Extension}:${this.Version}`;
+  }
+
+  public toCoordValueType(): string {
+    return `${this.Group}:${this.Name} - ${this.Version}`;
+  }
+}

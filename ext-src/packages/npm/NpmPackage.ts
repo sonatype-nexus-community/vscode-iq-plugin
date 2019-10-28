@@ -13,12 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import App from './App';
+import { PackageType } from '../PackageType';
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
-  ReactDOM.unmountComponentAtNode(div);
-});
+export class NpmPackage implements PackageType {
+  Hash: string;
+  Name: string;
+  Version: string;
+    
+  constructor(name: string, version: string, hash: string
+  ) {
+    this.Hash = hash;
+    this.Name = name;
+    this.Version = version;
+  }
+
+  public toCoordinates() {
+    return `${this.Name}@${this.Version}`;
+  }
+
+  public toCoordValueType(): string {
+    return `${this.Name} - ${this.Version}`;
+  }
+}

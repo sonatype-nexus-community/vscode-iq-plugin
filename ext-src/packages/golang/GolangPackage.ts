@@ -13,12 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import App from './App';
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
-  ReactDOM.unmountComponentAtNode(div);
-});
+import { PackageType } from "../PackageType";
+
+export class GolangPackage implements PackageType {
+  constructor(
+    readonly Name: string,
+    readonly Version: string,
+    readonly Hash?: string
+  ) {}
+
+  public toCoordinates() {
+    return `${this.Name}:${this.Version}`;
+  }
+
+  public toCoordValueType(): string {
+    return `${this.Name} - ${this.Version}`;
+  }
+}

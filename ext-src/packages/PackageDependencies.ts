@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import App from './App';
+import { PackageType } from "./PackageType";
+import { ComponentEntry } from "../ComponentInfoPanel";
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
-  ReactDOM.unmountComponentAtNode(div);
-});
+export interface PackageDependencies {
+  Dependencies: Array<PackageType>;
+  CoordinatesToComponents: Map<string, ComponentEntry>;
+  CheckIfValid(): boolean;
+  ConvertToComponentEntry(resultEntry: any): string;
+  convertToNexusFormat(): any;
+  toComponentEntries(data: any): Array<ComponentEntry>;
+  packageForIq(): Promise<undefined>;
+}
