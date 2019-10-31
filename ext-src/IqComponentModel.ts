@@ -37,17 +37,6 @@ export class IqComponentModel {
     ) {
       this.requestService = new IqRequestService(this.url, this.user, this.password, this.getmaximumEvaluationPollAttempts);
     }
-
-    public setPassword(password: string) {
-      this.password = password;
-    }
-
-    public isPasswordSet(): boolean {
-      if(this.password == "") {
-        return false;
-      }
-      return true;
-    }
   
     public getContent(resource: Uri): Thenable<string> {
       return new Promise((c, e) => "my stubbed content entry");

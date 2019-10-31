@@ -27,6 +27,17 @@ export class IqRequestService implements RequestService {
     private getmaximumEvaluationPollAttempts: number
   ) {}
 
+  public setPassword(password: string) {
+    this.password = password;
+  }
+
+  public isPasswordSet(): boolean {
+    if(this.password == "") {
+      return false;
+    }
+    return true;
+  }
+
   public async getApplicationId(applicationPublicId: string) {
     console.debug("getApplicationId", applicationPublicId);
 
