@@ -18,17 +18,18 @@ import { MavenDependencies } from "./maven/MavenDependencies";
 import { NpmDependencies } from "./npm/NpmDependencies";
 import { GolangDependencies } from "./golang/GolangDependencies";
 import { PyPIDependencies } from "./pypi/PyPIDependencies";
+import { RequestService } from "../RequestService";
 
 export class ComponentContainer {
   Implementation: Array<PackageDependencies> = [];
   PackageMuncher: PackageDependencies | undefined;
 
-  constructor() {
+  constructor(private requestService: RequestService) {
     // To add a new format, you just need to push another implementation to this list
-    this.Implementation.push(new MavenDependencies());
-    this.Implementation.push(new NpmDependencies());
-    this.Implementation.push(new GolangDependencies());
-    this.Implementation.push(new PyPIDependencies());
+    this.Implementation.push(new MavenDependencies(this.requestService));
+    this.Implementation.push(new NpmDependencies(this.requestService));
+    this.Implementation.push(new GolangDependencies(this.requestService));
+    this.Implementation.push(new PyPIDependencies(this.requestService));
 
     // Bit of an odd side effect, if a project has multiple dependency types, the PackageMuncher will get set to the last one it encounters currently
     this.Implementation.forEach(i => {

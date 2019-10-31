@@ -23,6 +23,7 @@ import { PackageDependencies } from "../PackageDependencies";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { ComponentEntry } from "../../ComponentInfoPanel";
 import { MavenCoordinate } from "./MavenCoordinate";
+import { RequestService } from "../../RequestService";
 
 export class MavenDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<MavenPackage> = [];
@@ -30,6 +31,12 @@ export class MavenDependencies extends PackageDependenciesHelper implements Pack
     string,
     ComponentEntry
   >();
+  RequestService: RequestService;
+
+  constructor(private requestService: RequestService) {
+    super();
+    this.RequestService = this.requestService;
+  }
 
   public CheckIfValid(): boolean {
     if (this.doesPathExist(this.getWorkspaceRoot(), "pom.xml")) {

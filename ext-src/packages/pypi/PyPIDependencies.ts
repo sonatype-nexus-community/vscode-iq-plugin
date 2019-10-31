@@ -21,6 +21,7 @@ import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../ComponentInfoPanel";
 import { PyPICoordinate } from "./PyPICoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
+import { RequestService } from "../../RequestService";
 
 export class PyPIDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<PyPIPackage> = [];
@@ -28,6 +29,12 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
     string,
     ComponentEntry
   >();
+  RequestService: RequestService;
+
+  constructor(private requestService: RequestService) {
+    super();
+    this.RequestService = this.requestService;
+  }
 
   public CheckIfValid(): boolean {
     if (this.doesPathExist(this.getWorkspaceRoot(), "requirements.txt")) {
