@@ -60,7 +60,7 @@ This extension contributes the following settings, all are required:
 You can set your username and password to authenticate with IQ Server via the following config:
 
 * `nexusiq.username`: Your Nexus IQ user name
-* `nexusiq.password`: Your Nexus IQ Internal ApplicationId
+* `nexusiq.password`: Your Nexus IQ password
 
 **WARNING: Your IQ password will obviously be saved in plaintext if you do this, please read further for more information. As well, if you do not set your password, the extension will prompt you for it when you start Visual Studio Code, which will prevent it from being saved in plaintext.**
 
