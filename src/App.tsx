@@ -110,14 +110,18 @@ class App extends React.Component<AppProps, AppState> {
         case 'artifact':
           console.debug("Artifact received, updating state & children", message.component);
           const component = message.component;
-          this.setState({component: component, allVersions: [], selectedVersionDetails: undefined});
+          this.setState({
+            component: component, 
+            allVersions: [], 
+            selectedVersionDetails: undefined,
+            initialVersion: message.component.version
+          });
           this.handleVersionSelection(message.component.version)
           break;
         case 'versionDetails':
           console.log("Selected version details received", message.componentDetails);
           this.setState({selectedVersionDetails: message.componentDetails, 
-            selectedVersion: message.componentDetails.component.componentIdentifier.coordinates.version,
-            initialVersion: message.componentDetails.component.componentIdentifier.coordinates.version
+            selectedVersion: message.componentDetails.component.componentIdentifier.coordinates.version
           })
           break;
         case 'allversions':

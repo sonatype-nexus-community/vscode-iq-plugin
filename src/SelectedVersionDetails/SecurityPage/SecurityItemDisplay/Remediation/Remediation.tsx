@@ -24,14 +24,14 @@ type State = {
 
 class Remediation extends React.Component<Props, State> {
   public render() {
-    console.log("Remediation section rendering");
+    console.debug("Remediation section rendering");
     return (
       <VersionsContextConsumer>
         { context => context && context.remediation && (
           Object.keys(context.remediation.versionChanges).map(val => (
             <React.Fragment>
               <h2>Remediation Type: {context.remediation.versionChanges[val].type}</h2>
-              Version: {context.remediation.versionChanges[val].data.component.packageUrl}
+              Upgrade to this version: {context.remediation.versionChanges[val].data.component.componentIdentifier.coordinates.version}
             </React.Fragment>
             )
           )           
