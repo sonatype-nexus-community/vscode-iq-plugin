@@ -30,7 +30,11 @@ class SecurityPage extends React.Component<State, Props> {
         {context => context && context.selectedVersionDetails && (
           <Accordion>
             {context.selectedVersionDetails.securityData.securityIssues.map(function(issue: any) {
-              return <SecurityItemDisplay securityIssue={issue} />
+              return <SecurityItemDisplay
+                nexusArtifact = { context.selectedVersionDetails }
+                securityIssue = { issue }
+                remediationEvent = { context.handleGetRemediation }
+                />
             })}
           </Accordion>
         )}

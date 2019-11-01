@@ -25,15 +25,26 @@ type State = {
 }
 
 type Props = {
-  securityIssue: any
+  securityIssue: any,
+  nexusArtifact: any,
+  remediationEvent: (nexusArtifact: any) => void
 }
 
 class SecurityItemDisplay extends React.Component<Props, State> {
   public render() {
     return (
       <Card>
-        <Accordion.Toggle as={Card.Header} eventKey={this.props.securityIssue.reference}>
-          {this.props.securityIssue.reference} <FaChevronRight /> <Badge variant={ClassNameUtils.threatClassName(this.props.securityIssue.severity)} className="float-right">CVSS: {this.props.securityIssue.severity}</Badge>
+        <Accordion.Toggle 
+          as={Card.Header} 
+          eventKey={this.props.securityIssue.reference} 
+          onClick={this.props.remediationEvent.bind(this, this.props.nexusArtifact)}
+          >
+          { this.props.securityIssue.reference } <FaChevronRight /> 
+          <Badge 
+            variant={ClassNameUtils.threatClassName(this.props.securityIssue.severity)} 
+            className="float-right">
+              CVSS: {this.props.securityIssue.severity}
+          </Badge>
         </Accordion.Toggle>
         <Accordion.Collapse eventKey={this.props.securityIssue.reference}>
           <Card.Body>

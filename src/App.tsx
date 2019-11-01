@@ -31,7 +31,9 @@ type AppState = {
   allVersions: any[],
   selectedVersionDetails?: any,
   selectedVersion: string,
-  initialVersion: string
+  initialVersion: string,
+  remediation?: any,
+  handleGetRemediation(o: any): void
 };
 
 class App extends React.Component<AppProps, AppState> {
@@ -43,7 +45,9 @@ class App extends React.Component<AppProps, AppState> {
       allVersions: [],
       selectedVersionDetails: undefined,
       selectedVersion: "",
-      initialVersion: ""
+      initialVersion: "",
+      remediation: undefined,
+      handleGetRemediation: this.handleGetRemediation.bind(this)
     }
   }
 
@@ -55,6 +59,16 @@ class App extends React.Component<AppProps, AppState> {
       command: 'selectVersion',
       version: newSelection,
       package: this.state.component
+    });
+  }
+
+  public handleGetRemediation(nexusArtifact: any): void {
+    console.debug("App received remediation request", nexusArtifact);
+    this.setState({remediation: undefined})
+
+    vscode.postMessage({
+      command: 'getRemediation',
+      nexusArtifact: nexusArtifact
     });
   }
 
@@ -70,13 +84,12 @@ class App extends React.Component<AppProps, AppState> {
         />
       );
     }
-    
+
     return (
       <VersionsContextProvider value={this.state}>
         <div>
           <div className="sidenav">
             <h1>Versions</h1>
-            
               <AllVersionsPage
                 versionChangeHandler={_this.handleVersionSelection.bind(_this)}>
               </AllVersionsPage>
@@ -110,6 +123,10 @@ class App extends React.Component<AppProps, AppState> {
         case 'allversions':
           console.debug("App handling allVersions message", message);
           this.setState({allVersions: message.allversions});
+          break;
+        case 'remediationDetail':
+          console.debug("App handling remediationDetail message", message.remediation);
+          this.setState({remediation: message.remediation});
           break;
         }
     });

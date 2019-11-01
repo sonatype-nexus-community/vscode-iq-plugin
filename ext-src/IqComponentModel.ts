@@ -26,6 +26,7 @@ export class IqComponentModel {
       string,
       ComponentEntry
     >();
+    applicationId: string = "";
   
     // TODO make these configurable???
     readonly evaluationPollDelayMs = 2000;
@@ -85,13 +86,13 @@ export class IqComponentModel {
         let appRep = JSON.parse(response);
         console.debug("appRep", appRep);
   
-        let applicationInternalId: string = appRep.applications[0].id;
-        console.debug("applicationInternalId", applicationInternalId);
+        this.applicationId = appRep.applications[0].id;
+        console.debug("applicationInternalId", this.applicationId);
   
-        let resultId = await this.submitToIqForEvaluation(data, applicationInternalId);
+        let resultId = await this.submitToIqForEvaluation(data, this.applicationId);
   
         console.debug("report", resultId);
-        let resultDataString = await this.asyncPollForEvaluationResults(applicationInternalId, resultId);
+        let resultDataString = await this.asyncPollForEvaluationResults(this.applicationId, resultId);
         let resultData = JSON.parse(resultDataString as string);
   
         console.debug(`Received results from IQ scan:`, resultData);
@@ -254,12 +255,12 @@ export class IqComponentModel {
     );
   }
 
-  public async getRemediation(nexusArtifact: any, iqApplicationId: string) {
+  public async getRemediation(nexusArtifact: any) {
     return new Promise((resolve, reject) => {
       console.debug("begin getRemediation", nexusArtifact);
       var requestdata = nexusArtifact.component;
       console.debug("requestdata", requestdata);
-      let url = `${this.url}/api/v2/components/remediation/application/${iqApplicationId}`;
+      let url = `${this.url}/api/v2/components/remediation/application/${this.applicationId}`;
 
       request.post(
         {

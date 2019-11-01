@@ -210,7 +210,7 @@ export class ComponentInfoPanel {
               JSON.stringify(message.artifact)
             );
             return;
-          case "GetRemediation":
+          case "getRemediation":
             this.showRemediation(message.nexusArtifact);
             return;
         }
@@ -232,11 +232,11 @@ export class ComponentInfoPanel {
 
   private async showRemediation(nexusArtifact: any) {
     console.debug("showRemediation", nexusArtifact);
-    let remediation = await this.iqComponentModel.getRemediation(nexusArtifact, ComponentInfoPanel.iqApplicationId);
+    let remediation = await this.iqComponentModel.getRemediation(nexusArtifact);
     
     console.debug("posting message: remediation", remediation);
     this._panel.webview.postMessage({
-      command: "remediation",
+      command: "remediationDetail",
       remediation: remediation
     });
   }

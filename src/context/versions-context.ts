@@ -20,7 +20,9 @@ export interface VersionsContextInterface {
   component: any,
   selectedVersionDetails?: any,
   selectedVersion: string,
-  initialVersion: string
+  initialVersion: string,
+  remediation?: any,
+  handleGetRemediation(o: any): void
 }
 
 const ctxt = React.createContext<VersionsContextInterface | undefined>(undefined);
