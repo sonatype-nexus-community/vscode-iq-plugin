@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import ComponentInfoPage from './ComponentInfoPage';
+import ComponentInfoPage from './ComponentInfoPage/ComponentInfoPage';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
-import SecurityPage from './SecurityPage';
-import LicensingPage from './LicensingPage';
+import SecurityPage from './SecurityPage/SecurityPage';
+import LicensingPage from './LicensingPage/LicensingPage';
 
 type Props = {
 }

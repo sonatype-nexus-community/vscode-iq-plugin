@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import SecurityItemDisplay from './SecurityItemDisplay';
+import SecurityItemDisplay from './SecurityItemDisplay/SecurityItemDisplay';
 import Accordion from 'react-bootstrap/Accordion';
-import { VersionsContextConsumer } from './context/versions-context';
+import { VersionsContextConsumer } from '../../context/versions-context';
 
 type State = {
 }

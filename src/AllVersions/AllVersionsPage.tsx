@@ -17,7 +17,7 @@ import * as React from 'react';
 import { FaChevronRight, FaCheckSquare, FaRegSquare } from 'react-icons/fa';
 import Alert from 'react-bootstrap/Alert';
 import Badge from 'react-bootstrap/Badge';
-import { VersionsContextConsumer } from './context/versions-context';
+import { VersionsContextConsumer } from '../context/versions-context';
 
 type Props = {
   versionChangeHandler: (version: string) => void

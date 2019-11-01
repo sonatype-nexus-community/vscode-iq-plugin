@@ -15,8 +15,8 @@
  */
 import * as React from 'react';
 import Loader from 'react-loader-spinner';
-import AllVersionsPage from './AllVersionsPage';
-import SelectedVersionDetails from './SelectedVersionDetails';
+import AllVersionsPage from './AllVersions/AllVersionsPage';
+import SelectedVersionDetails from './SelectedVersionDetails/SelectedVersionDetails';
 import { VersionsContextProvider } from './context/versions-context';
 
 // add workarounds to call VSCode
