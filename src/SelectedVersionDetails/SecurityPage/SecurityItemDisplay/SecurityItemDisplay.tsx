@@ -20,6 +20,7 @@ import Badge from 'react-bootstrap/Badge';
 import Accordion from 'react-bootstrap/Accordion';
 import Card from 'react-bootstrap/Card';
 import ClassNameUtils from '../../../utils/ClassNameUtils';
+import Remediation from './Remediation/Remediation';
 
 type State = {
 }
@@ -68,6 +69,11 @@ class SecurityItemDisplay extends React.Component<Props, State> {
                     { this.props.securityIssue.url != "" &&
                     <a href={this.props.securityIssue.url}>{this.props.securityIssue.url}</a>
                     }
+                  </td>
+                </tr>
+                <tr>
+                  <td colSpan={2}>
+                    <Remediation />
                   </td>
                 </tr>
               </tbody>

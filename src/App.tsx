@@ -125,8 +125,8 @@ class App extends React.Component<AppProps, AppState> {
           this.setState({allVersions: message.allversions});
           break;
         case 'remediationDetail':
-          console.debug("App handling remediationDetail message", message.remediation);
-          this.setState({remediation: message.remediation});
+          console.debug("App handling remediationDetail message", message.remediation.remediation);
+          this.setState({remediation: message.remediation.remediation});
           break;
         }
     });
