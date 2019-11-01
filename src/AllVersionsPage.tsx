@@ -17,14 +17,12 @@ import * as React from 'react';
 import { FaChevronRight, FaCheckSquare, FaRegSquare } from 'react-icons/fa';
 import Alert from 'react-bootstrap/Alert';
 import Badge from 'react-bootstrap/Badge';
+import { VersionsContextConsumer } from './context/versions-context';
 
 type Props = {
-  allVersions: any[],
-  initialVersion: string,
-  selectedVersion: string,
   versionChangeHandler: (version: string) => void
 };
-// todo declare more details on component
+
 type State = {
   selectedVersion: string
 };
@@ -32,50 +30,39 @@ type State = {
 class AllVersionsPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    console.debug("AllVersionPage created with properties", props);
     this.state = {
-      selectedVersion: props.selectedVersion
+      selectedVersion: ""
     }
   }
 
   private versionChanged(newVersion: string) {
-    console.debug("AllVersionsPage version change received: ", newVersion);
+    console.log("AllVersionsPage version change received: ", newVersion);
     this.setState({selectedVersion: newVersion});
     this.props.versionChangeHandler(newVersion);
   }
 
   public render() {
     var _this = this;
-    if (!this.props.allVersions || this.props.allVersions.length <= 0) {
-      console.debug("AllVersions page showing no data available", this.props);
-      return(
-        <h3>No data available</h3>
-      );
-    }
-    console.debug("AllVersionsPage rendering", this.props.allVersions)
-    var versionRows = this.props.allVersions.map(function(row: any) {
-      return (
-        <VersionRow version={row.componentIdentifier.coordinates.version}
-          selectedVersion={_this.state.selectedVersion}
-          initialVersion={_this.props.initialVersion}
-          threatLevel={row.highestSecurityVulnerabilitySeverity}
-          versionChangeHandler={_this.versionChanged.bind(_this)}
-          />
-      );
-    });
 
     return (
-      <React.Fragment>
-        {versionRows}
-      </React.Fragment>
+      <VersionsContextConsumer>
+        {context => (
+          <React.Fragment>
+            {Object.keys(context!.allVersions).map(row => (
+              <VersionRow version={context!.allVersions[row].componentIdentifier.coordinates.version}
+                threatLevel={context!.allVersions[row].highestSecurityVulnerabilitySeverity}
+                versionChangeHandler={_this.versionChanged.bind(_this)}
+              />
+            ))}
+          </React.Fragment>
+        )}
+      </VersionsContextConsumer>
     );
   }
 }
 
 type RowProps = {
   version: string,
-  selectedVersion: string,
-  initialVersion: string,
   threatLevel: number,
   versionChangeHandler: (version: string) => void
 };
@@ -85,17 +72,22 @@ class VersionRow extends React.Component<RowProps, RowState> {
   public render() {
     var _this = this;
     return (
-        <Alert variant="primary" onClick={_this.handleClick.bind(_this)}>
-          {this.selectedClassName()} {this.props.version} <Badge variant={this.threatClassName()} className="float-right">CVSS: {this.props.threatLevel}</Badge>
-        </Alert>
+      <VersionsContextConsumer>
+        { context =>
+          <Alert variant="primary" onClick={_this.handleClick.bind(_this)}>
+            {this.selectedClassName(context!.selectedVersion, this.props.version, context!.initialVersion)} {this.props.version} <Badge variant={this.threatClassName()} className="float-right">CVSS: {this.props.threatLevel}</Badge>
+          </Alert>
+        }
+      </VersionsContextConsumer>   
     );
   }
-  private selectedClassName() {
-    if (this.props.selectedVersion == this.props.version) {
+
+  private selectedClassName(selectedVersion: string, version: string, initialVersion: string) {
+    if (selectedVersion == version) {
       return (
         <FaChevronRight />
       )
-    } else if (this.props.initialVersion == this.props.version) {
+    } else if (initialVersion == version) {
       return (
         <FaCheckSquare />
       )

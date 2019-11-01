@@ -17,6 +17,7 @@ import * as React from 'react';
 import Loader from 'react-loader-spinner';
 import AllVersionsPage from './AllVersionsPage';
 import SelectedVersionDetails from './SelectedVersionDetails';
+import { VersionsContextProvider } from './context/versions-context';
 
 // add workarounds to call VSCode
 declare var acquireVsCodeApi: any;
@@ -24,11 +25,13 @@ const vscode: any = acquireVsCodeApi();
 
 type AppProps = {
 };
-// todo declare more details on component
+
 type AppState = {
   component: any,
   allVersions: any[],
-  selectedVersionDetails?: any
+  selectedVersionDetails?: any,
+  selectedVersion: string,
+  initialVersion: string
 };
 
 class App extends React.Component<AppProps, AppState> {
@@ -38,7 +41,9 @@ class App extends React.Component<AppProps, AppState> {
     this.state = {
       component: {},
       allVersions: [],
-      selectedVersionDetails: undefined
+      selectedVersionDetails: undefined,
+      selectedVersion: "",
+      initialVersion: ""
     }
   }
 
@@ -70,11 +75,11 @@ class App extends React.Component<AppProps, AppState> {
       <div>
         <div className="sidenav">
           <h1>Versions</h1>
-          <AllVersionsPage
-              allVersions={this.state.allVersions}
-              initialVersion={this.state.component.version}
-              selectedVersion={this.state.component.version}
-              versionChangeHandler={_this.handleVersionSelection.bind(_this)}></AllVersionsPage>
+          <VersionsContextProvider value={this.state}>
+            <AllVersionsPage
+              versionChangeHandler={_this.handleVersionSelection.bind(_this)}>
+            </AllVersionsPage>
+          </VersionsContextProvider>
         </div>
         <div className="main">
           <SelectedVersionDetails
@@ -98,7 +103,10 @@ class App extends React.Component<AppProps, AppState> {
           break;
         case 'versionDetails':
           console.log("Selected version details received", message.componentDetails);
-          this.setState({selectedVersionDetails: message.componentDetails})
+          this.setState({selectedVersionDetails: message.componentDetails, 
+            selectedVersion: message.componentDetails.component.componentIdentifier.coordinates.version,
+            initialVersion: message.componentDetails.component.componentIdentifier.coordinates.version
+          })
           break;
         case 'allversions':
           console.debug("App handling allVersions message", message);
