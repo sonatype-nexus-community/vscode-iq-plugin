@@ -49,7 +49,6 @@ class App extends React.Component<AppProps, AppState> {
 
   public handleVersionSelection(newSelection: string) {
     console.debug("App received version change", newSelection);
-    // TODO query for version data to populate details
     this.setState({selectedVersionDetails: undefined})
 
     vscode.postMessage({
@@ -72,21 +71,20 @@ class App extends React.Component<AppProps, AppState> {
       );
     }
     return (
-      <div>
-        <div className="sidenav">
-          <h1>Versions</h1>
-          <VersionsContextProvider value={this.state}>
-            <AllVersionsPage
-              versionChangeHandler={_this.handleVersionSelection.bind(_this)}>
-            </AllVersionsPage>
-          </VersionsContextProvider>
+      <VersionsContextProvider value={this.state}>
+        <div>
+          <div className="sidenav">
+            <h1>Versions</h1>
+            
+              <AllVersionsPage
+                versionChangeHandler={_this.handleVersionSelection.bind(_this)}>
+              </AllVersionsPage>
+          </div>
+          <div className="main">
+              <SelectedVersionDetails/>
+          </div>
         </div>
-        <div className="main">
-          <SelectedVersionDetails
-            selectedVersionDetails={this.state.selectedVersionDetails}
-          />
-        </div>
-      </div>
+      </VersionsContextProvider>
     );
   }
 

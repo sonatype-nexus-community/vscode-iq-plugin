@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import LicensingPage from './LicensingPage';
 import ComponentInfoPage from './ComponentInfoPage';
-import SecurityPage from './SecurityPage';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
+import SecurityPage from './SecurityPage';
+import LicensingPage from './LicensingPage';
 
 type Props = {
-  selectedVersionDetails?: any
 }
 
 type State = {
@@ -29,25 +28,19 @@ type State = {
 
 class SelectedVersionDetails extends React.Component<Props, State> {
   public render() {
-    if (!this.props.selectedVersionDetails) {
-      console.debug("SelectedVersionDetails page rendering no content, props: ", this.props)
-      return (
-        <h1>Select a version to render details</h1>
-      );
-    }
-    console.debug("SelectedVersionDetails page rendering, props: ", this.props)
+    console.log("SelectedVersionDetails page rendering")
     return (
-        <Tabs id="selected-version-tabs" defaultActiveKey="info">
-          <Tab title="Component Info" eventKey="info">
-            <ComponentInfoPage selectedVersionDetails={this.props.selectedVersionDetails!}></ComponentInfoPage>
-          </Tab>
-          <Tab title="Security" eventKey="security">
-            <SecurityPage securityData={this.props.selectedVersionDetails.securityData}></SecurityPage>
-          </Tab>
-          <Tab title="Licensing" eventKey="licensing">
-            <LicensingPage licenseData={this.props.selectedVersionDetails.licenseData}></LicensingPage>
-          </Tab>
-        </Tabs>            
+      <Tabs id="selected-version-tabs" defaultActiveKey="info">
+        <Tab title="Component Info" eventKey="info">
+          <ComponentInfoPage></ComponentInfoPage>
+        </Tab>
+        <Tab title="Security" eventKey="security">
+          <SecurityPage></SecurityPage>
+        </Tab>
+        <Tab title="Licensing" eventKey="licensing">
+          <LicensingPage></LicensingPage>
+        </Tab>
+      </Tabs>     
     );
   }
 }

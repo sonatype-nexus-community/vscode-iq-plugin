@@ -16,9 +16,9 @@
 import * as React from 'react';
 import LicensingDisplay from './LicensingDisplay';
 import Table from 'react-bootstrap/Table';
+import { VersionsContextConsumer } from './context/versions-context';
 
 type Props = {
-  licenseData: any
 }
 
 type State = {
@@ -27,32 +27,36 @@ type State = {
 class LicensingPage extends React.Component<Props, State> {
   public render() {
     return (
-      <div >
-        <Table variant="dark">
-          <thead>
-            <tr>
-              <th colSpan={2}>Declared Licenses</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.props.licenseData.declaredLicenses.map(function(license: any, index: number) {
-              return <LicensingDisplay licenseData={license} />
-            })}
-          </tbody>
-        </Table>
-        <Table variant="dark">
-          <thead>
-            <tr>
-              <th colSpan={2}>Observed Licenses</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.props.licenseData.observedLicenses.map(function(license: any, index: number) {
-              return <LicensingDisplay licenseData={license} />
-            })}
-          </tbody>
-        </Table>
-      </div>
+      <VersionsContextConsumer>
+        {context => context && context.selectedVersionDetails && (
+          <div >
+            <Table variant="dark">
+              <thead>
+                <tr>
+                  <th colSpan={2}>Declared Licenses</th>
+                </tr>
+              </thead>
+              <tbody>
+                {context.selectedVersionDetails.licenseData.declaredLicenses.map(function(license: any) {
+                  return <LicensingDisplay licenseData={license} />
+                })}
+              </tbody>
+            </Table>
+            <Table variant="dark">
+              <thead>
+                <tr>
+                  <th colSpan={2}>Observed Licenses</th>
+                </tr>
+              </thead>
+              <tbody>
+                {context.selectedVersionDetails.licenseData.observedLicenses.map(function(license: any) {
+                  return <LicensingDisplay licenseData={license} />
+                })}
+              </tbody>
+            </Table>
+          </div>
+        )}
+      </VersionsContextConsumer>
     );
   }
 }
