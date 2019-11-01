@@ -18,6 +18,7 @@ import { FaChevronRight, FaCheckSquare, FaRegSquare } from 'react-icons/fa';
 import Alert from 'react-bootstrap/Alert';
 import Badge from 'react-bootstrap/Badge';
 import { VersionsContextConsumer } from '../context/versions-context';
+import ClassNameUtils from '../utils/ClassNameUtils';
 
 type Props = {
   versionChangeHandler: (version: string) => void
@@ -75,7 +76,7 @@ class VersionRow extends React.Component<RowProps, RowState> {
       <VersionsContextConsumer>
         { context =>
           <Alert variant="primary" onClick={_this.handleClick.bind(_this)}>
-            {this.selectedClassName(context!.selectedVersion, this.props.version, context!.initialVersion)} {this.props.version} <Badge variant={this.threatClassName()} className="float-right">CVSS: {this.props.threatLevel}</Badge>
+            {this.selectedClassName(context!.selectedVersion, this.props.version, context!.initialVersion)} {this.props.version} <Badge variant={ClassNameUtils.threatClassName(this.props.threatLevel)} className="float-right">CVSS: {this.props.threatLevel}</Badge>
           </Alert>
         }
       </VersionsContextConsumer>   
@@ -95,19 +96,6 @@ class VersionRow extends React.Component<RowProps, RowState> {
       return (
         <FaRegSquare />
       )
-    }
-  }
-  private threatClassName() {
-    if (this.props.threatLevel < 1) {
-      return "primary"
-    } else if (this.props.threatLevel < 2) {
-      return "info"
-    } else if (this.props.threatLevel < 4) {
-      return "secondary"
-    } else if (this.props.threatLevel < 8) {
-      return "warning"
-    } else {
-      return "danger"
     }
   }
 

@@ -19,6 +19,7 @@ import Table from 'react-bootstrap/Table';
 import Badge from 'react-bootstrap/Badge';
 import Accordion from 'react-bootstrap/Accordion';
 import Card from 'react-bootstrap/Card';
+import ClassNameUtils from '../../../utils/ClassNameUtils';
 
 type State = {
 }
@@ -28,26 +29,11 @@ type Props = {
 }
 
 class SecurityItemDisplay extends React.Component<Props, State> {
-  // TODO: This is duplicated from AllVersionsPage, and we should really just have a util class for it, or something akin
-  private threatClassName() {
-    if (this.props.securityIssue.severity < 1) {
-      return "primary"
-    } else if (this.props.securityIssue.severity < 2) {
-      return "info"
-    } else if (this.props.securityIssue.severity < 4) {
-      return "secondary"
-    } else if (this.props.securityIssue.severity < 8) {
-      return "warning"
-    } else {
-      return "danger"
-    }
-  }
-  
   public render() {
     return (
       <Card>
         <Accordion.Toggle as={Card.Header} eventKey={this.props.securityIssue.reference}>
-          {this.props.securityIssue.reference} <FaChevronRight /> <Badge variant={this.threatClassName()} className="float-right">CVSS: {this.props.securityIssue.severity}</Badge>
+          {this.props.securityIssue.reference} <FaChevronRight /> <Badge variant={ClassNameUtils.threatClassName(this.props.securityIssue.severity)} className="float-right">CVSS: {this.props.securityIssue.severity}</Badge>
         </Accordion.Toggle>
         <Accordion.Collapse eventKey={this.props.securityIssue.reference}>
           <Card.Body>
@@ -55,7 +41,7 @@ class SecurityItemDisplay extends React.Component<Props, State> {
               <tbody>
                 <tr>
                   <td>Severity:</td>
-                  <td><Badge variant={this.threatClassName()}>{this.props.securityIssue.severity}</Badge></td>
+                  <td><Badge variant={ClassNameUtils.threatClassName(this.props.securityIssue.severity)}>{this.props.securityIssue.severity}</Badge></td>
                 </tr>
                 <tr>
                   <td>Source:</td>

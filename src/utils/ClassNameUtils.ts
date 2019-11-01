@@ -13,28 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
+import { BadgeProps } from 'react-bootstrap';
 
-type Props = {
-  licenseData: any
-}
-
-type State = {
-}
-
-class LicensingDisplay extends React.Component<Props, State> {
-  public render() {
-    return (
-      <tr>
-        <td>
-          Id: {this.props.licenseData.licenseId}
-        </td>
-        <td>
-          Name: {this.props.licenseData.licenseName}
-        </td>
-      </tr>
-    );
+export default abstract class ClassNameUtils {
+  public static threatClassName(severity: Number): BadgeProps["variant"] {
+    if (severity < 1) {
+      return "primary"
+    } else if (severity < 2) {
+      return "info"
+    } else if (severity < 4) {
+      return "secondary"
+    } else if (severity < 8) {
+      return "warning"
+    } else {
+      return "danger"
+    }
   }
 }
-
-export default LicensingDisplay;
