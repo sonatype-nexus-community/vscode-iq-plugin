@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import * as request from "request";
-import { Uri, window } from "vscode";
+import { Uri, window, extensions } from "vscode";
 import * as HttpStatus from 'http-status-codes';
 
 import { ComponentEntry, PolicyViolation } from "./ComponentInfoPanel";
@@ -122,6 +122,7 @@ export class IqComponentModel {
         {
           method: "GET",
           url: `${this.url}/api/v2/applications?publicId=${applicationPublicId}`,
+          headers: this.getUserAgentHeader(),
           auth: { user: this.user, pass: this.password }
         },
         (err: any, response: any, body: any) => {
@@ -150,6 +151,7 @@ export class IqComponentModel {
           method: "POST",
           url: `${this.url}/api/v2/evaluation/applications/${applicationInternalId}`,
           json: data,
+          headers: this.getUserAgentHeader(),
           auth: { user: this.user, pass: this.password }
         },
         (err: any, response: any, body: any) => {
@@ -239,6 +241,7 @@ export class IqComponentModel {
       {
         method: "GET",
         url: `${this.url}/api/v2/evaluation/applications/${applicationInternalId}/results/${resultId}`,
+        headers: this.getUserAgentHeader(),
         auth: { user: this.user, pass: this.password }
       },
       (error: any, response: any, body: any) => {
@@ -267,6 +270,7 @@ export class IqComponentModel {
           method: "post",
           json: requestdata,
           url: url,
+          headers: this.getUserAgentHeader(),
           auth: { user: this.user, pass: this.password }
         },
         (err, response, body) => {
@@ -303,6 +307,7 @@ export class IqComponentModel {
         {
           method: "GET",
           url: url,
+          headers: this.getUserAgentHeader(),
           auth: {
             user: this.user,
             pass: this.password
@@ -345,6 +350,7 @@ export class IqComponentModel {
         {
           method: "GET",
           url: url,
+          headers: this.getUserAgentHeader(),
           auth: {
             user: this.user,
             pass: this.password
@@ -388,6 +394,7 @@ export class IqComponentModel {
           method: "post",
           json: detailsRequest,
           url: url,
+          headers: this.getUserAgentHeader(),
           auth: {
             user: this.user,
             pass: this.password
@@ -409,5 +416,18 @@ export class IqComponentModel {
     let actual = encodeURIComponent(JSON.stringify(componentIdentifier));
     console.log("actual", actual);
     return actual;
+  }
+
+  private getUserAgentHeader() {
+    return { 'User-Agent': `Nexus_IQ_Visual_Studio_Code/${this.getExtensionVersion()}` };
+  }
+
+  private getExtensionVersion() {
+    let extension = extensions.getExtension('cameronsonatype.vscode-iq-plugin');
+    if (extension != undefined) {
+      return extension.packageJSON.version;
+    } else {
+      return "0.0.0"
+    }
   }
 }
