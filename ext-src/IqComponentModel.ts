@@ -19,6 +19,7 @@ import * as HttpStatus from 'http-status-codes';
 
 import { ComponentEntry, PolicyViolation } from "./ComponentInfoPanel";
 import { ComponentContainer } from "./packages/ComponentContainer";
+import { platform } from "platform";
 
 export class IqComponentModel {
     components: Array<ComponentEntry> = [];
@@ -419,7 +420,12 @@ export class IqComponentModel {
   }
 
   private getUserAgentHeader() {
-    return { 'User-Agent': `Nexus_IQ_Visual_Studio_Code/${this.getExtensionVersion()} (Visual Studio Code: ${version})` };
+    let nodeVersion = process.versions;
+    let environment = 'NodeJS';
+    let environmentVersion = nodeVersion.node;
+    let os = platform.os;
+    
+    return { 'User-Agent': `Nexus_IQ_Visual_Studio_Code/${this.getExtensionVersion()} (${environment} ${environmentVersion}; ${os}; VSCode: ${version})` };
   }
 
   private getExtensionVersion() {
