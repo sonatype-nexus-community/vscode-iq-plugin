@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import * as request from "request";
-import { Uri, window, extensions } from "vscode";
+import { Uri, window, extensions, version } from "vscode";
 import * as HttpStatus from 'http-status-codes';
 
 import { ComponentEntry, PolicyViolation } from "./ComponentInfoPanel";
@@ -419,7 +419,7 @@ export class IqComponentModel {
   }
 
   private getUserAgentHeader() {
-    return { 'User-Agent': `Nexus_IQ_Visual_Studio_Code/${this.getExtensionVersion()}` };
+    return { 'User-Agent': `Nexus_IQ_Visual_Studio_Code/${this.getExtensionVersion()} (Visual Studio Code: ${version})` };
   }
 
   private getExtensionVersion() {
