@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 import * as React from 'react';
+import { VersionsContextConsumer } from '../../../../context/versions-context';
 
-export interface VersionsContextInterface {
-  allVersions: any[],
-  component: any,
-  selectedVersionDetails?: any,
-  selectedVersion: string,
-  initialVersion: string,
-  remediation?: any,
-  cvedetails?: any,
-  handleGetRemediation(o: any, s: string): void
+type Props = {
 }
 
-const ctxt = React.createContext<VersionsContextInterface | undefined>(undefined);
+type State = {
+}
 
-export const VersionsContextProvider = ctxt.Provider;
+class CveDetails extends React.Component<Props, State> {
+  public render() {
+    console.debug("CVE Details section rendering");
+    return (
+      <VersionsContextConsumer>
+        {context => context && context.cvedetails && (
+          <div dangerouslySetInnerHTML={{ __html: context.cvedetails.htmlDetails }} />
+        )}
+      </VersionsContextConsumer>
+    );
+  }
+}
 
-export const VersionsContextConsumer = ctxt.Consumer;
+export default CveDetails;

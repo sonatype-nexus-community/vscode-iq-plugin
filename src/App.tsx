@@ -33,7 +33,8 @@ type AppState = {
   selectedVersion: string,
   initialVersion: string,
   remediation?: any,
-  handleGetRemediation(o: any): void
+  cvedetails?: any,
+  handleGetRemediation(o: any, s: string): void
 };
 
 class App extends React.Component<AppProps, AppState> {
@@ -47,6 +48,7 @@ class App extends React.Component<AppProps, AppState> {
       selectedVersion: "",
       initialVersion: "",
       remediation: undefined,
+      cvedetails: undefined,
       handleGetRemediation: this.handleGetRemediation.bind(this)
     }
   }
@@ -62,12 +64,18 @@ class App extends React.Component<AppProps, AppState> {
     });
   }
 
-  public handleGetRemediation(nexusArtifact: any): void {
+  public handleGetRemediation(nexusArtifact: any, cve: string): void {
     console.debug("App received remediation request", nexusArtifact);
     this.setState({remediation: undefined})
 
     vscode.postMessage({
       command: 'getRemediation',
+      nexusArtifact: nexusArtifact
+    });
+
+    vscode.postMessage({
+      command: 'getCVEDetails',
+      cve: cve,
       nexusArtifact: nexusArtifact
     });
   }
@@ -131,6 +139,10 @@ class App extends React.Component<AppProps, AppState> {
         case 'remediationDetail':
           console.debug("App handling remediationDetail message", message.remediation.remediation);
           this.setState({remediation: message.remediation.remediation});
+          break;
+        case 'cveDetails':
+          console.debug("App handling cveDetails message", message.cvedetails);
+          this.setState({cvedetails: message.cvedetails});
           break;
         }
     });

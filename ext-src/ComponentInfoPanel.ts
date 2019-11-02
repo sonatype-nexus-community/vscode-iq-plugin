@@ -202,7 +202,7 @@ export class ComponentInfoPanel {
           case "alert":
             vscode.window.showErrorMessage(message.text);
             return;
-          case "GetCVEDetails":
+          case "getCVEDetails":
             this.showCVE(message.cve, message.nexusArtifact);
             return;
           case "Evaluate":
@@ -245,9 +245,9 @@ export class ComponentInfoPanel {
     console.debug("showCVE", cve, nexusArtifact);
     let cvedetails = await this.iqComponentModel.GetCVEDetails(cve, nexusArtifact);
     
-    console.debug("posting message: cvedetails", cvedetails);
+    console.debug("posting message: cveDetails", cvedetails);
     this._panel.webview.postMessage({
-      command: "cvedetails",
+      command: "cveDetails",
       cvedetails: cvedetails
     });
   }

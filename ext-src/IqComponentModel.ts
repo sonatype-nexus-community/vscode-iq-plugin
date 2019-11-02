@@ -291,9 +291,9 @@ export class IqComponentModel {
     return new Promise((resolve, reject) => {
       console.log("begin GetCVEDetails", cve, nexusArtifact);
       let timestamp = Date.now();
-      let hash = nexusArtifact.components[0].hash;
+      let hash = nexusArtifact.component.hash;
       let componentIdentifier = this.encodeComponentIdentifier(
-        nexusArtifact.components[0].componentIdentifier
+        nexusArtifact.component.componentIdentifier
       );
       let vulnerability_source;
       if (cve.search("sonatype") >= 0) {
@@ -320,8 +320,8 @@ export class IqComponentModel {
           }
           console.debug("response", response);
           console.debug("body", body);
-
-          resolve(body);
+          let resp = JSON.parse(body) as any;
+          resolve(resp);
         }
       );
     });

@@ -21,6 +21,7 @@ import Accordion from 'react-bootstrap/Accordion';
 import Card from 'react-bootstrap/Card';
 import ClassNameUtils from '../../../utils/ClassNameUtils';
 import Remediation from './Remediation/Remediation';
+import CveDetails from './CveDetails/CveDetails';
 
 type State = {
 }
@@ -28,7 +29,7 @@ type State = {
 type Props = {
   securityIssue: any,
   nexusArtifact: any,
-  remediationEvent: (nexusArtifact: any) => void
+  remediationEvent: (nexusArtifact: any, cve: string) => void
 }
 
 class SecurityItemDisplay extends React.Component<Props, State> {
@@ -38,7 +39,7 @@ class SecurityItemDisplay extends React.Component<Props, State> {
         <Accordion.Toggle 
           as={Card.Header} 
           eventKey={this.props.securityIssue.reference} 
-          onClick={this.props.remediationEvent.bind(this, this.props.nexusArtifact)}
+          onClick={this.props.remediationEvent.bind(this, this.props.nexusArtifact, this.props.securityIssue.reference)}
           >
           { this.props.securityIssue.reference } <FaChevronRight /> 
           <Badge 
@@ -69,6 +70,11 @@ class SecurityItemDisplay extends React.Component<Props, State> {
                     { this.props.securityIssue.url != "" &&
                     <a href={this.props.securityIssue.url}>{this.props.securityIssue.url}</a>
                     }
+                  </td>
+                </tr>
+                <tr>
+                  <td colSpan={2}>
+                    <CveDetails />
                   </td>
                 </tr>
                 <tr>
