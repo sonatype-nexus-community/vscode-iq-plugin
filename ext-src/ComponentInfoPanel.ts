@@ -202,7 +202,7 @@ export class ComponentInfoPanel {
           case "alert":
             vscode.window.showErrorMessage(message.text);
             return;
-          case "GetCVEDetails":
+          case "getCVEDetails":
             this.showCVE(message.cve, message.nexusArtifact);
             return;
           case "Evaluate":
@@ -210,7 +210,7 @@ export class ComponentInfoPanel {
               JSON.stringify(message.artifact)
             );
             return;
-          case "GetRemediation":
+          case "getRemediation":
             this.showRemediation(message.nexusArtifact);
             return;
         }
@@ -232,11 +232,11 @@ export class ComponentInfoPanel {
 
   private async showRemediation(nexusArtifact: any) {
     console.debug("showRemediation", nexusArtifact);
-    let remediation = await this.iqComponentModel.getRemediation(nexusArtifact, ComponentInfoPanel.iqApplicationId);
+    let remediation = await this.iqComponentModel.getRemediation(nexusArtifact);
     
     console.debug("posting message: remediation", remediation);
     this._panel.webview.postMessage({
-      command: "remediation",
+      command: "remediationDetail",
       remediation: remediation
     });
   }
@@ -245,9 +245,9 @@ export class ComponentInfoPanel {
     console.debug("showCVE", cve, nexusArtifact);
     let cvedetails = await this.iqComponentModel.GetCVEDetails(cve, nexusArtifact);
     
-    console.debug("posting message: cvedetails", cvedetails);
+    console.debug("posting message: cveDetails", cvedetails);
     this._panel.webview.postMessage({
-      command: "cvedetails",
+      command: "cveDetails",
       cvedetails: cvedetails
     });
   }

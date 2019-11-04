@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 import * as request from "request";
-import { Uri, window } from "vscode";
+import { Uri, window, extensions, version } from "vscode";
 import * as HttpStatus from 'http-status-codes';
 
 import { ComponentEntry, PolicyViolation } from "./ComponentInfoPanel";
 import { ComponentContainer } from "./packages/ComponentContainer";
+import * as platform from "platform";
 
 export class IqComponentModel {
     components: Array<ComponentEntry> = [];
@@ -26,6 +27,7 @@ export class IqComponentModel {
       string,
       ComponentEntry
     >();
+    applicationId: string = "";
   
     // TODO make these configurable???
     readonly evaluationPollDelayMs = 2000;
@@ -85,13 +87,13 @@ export class IqComponentModel {
         let appRep = JSON.parse(response);
         console.debug("appRep", appRep);
   
-        let applicationInternalId: string = appRep.applications[0].id;
-        console.debug("applicationInternalId", applicationInternalId);
+        this.applicationId = appRep.applications[0].id;
+        console.debug("applicationInternalId", this.applicationId);
   
-        let resultId = await this.submitToIqForEvaluation(data, applicationInternalId);
+        let resultId = await this.submitToIqForEvaluation(data, this.applicationId);
   
         console.debug("report", resultId);
-        let resultDataString = await this.asyncPollForEvaluationResults(applicationInternalId, resultId);
+        let resultDataString = await this.asyncPollForEvaluationResults(this.applicationId, resultId);
         let resultData = JSON.parse(resultDataString as string);
   
         console.debug(`Received results from IQ scan:`, resultData);
@@ -121,6 +123,7 @@ export class IqComponentModel {
         {
           method: "GET",
           url: `${this.url}/api/v2/applications?publicId=${applicationPublicId}`,
+          headers: this.getUserAgentHeader(),
           auth: { user: this.user, pass: this.password }
         },
         (err: any, response: any, body: any) => {
@@ -149,6 +152,7 @@ export class IqComponentModel {
           method: "POST",
           url: `${this.url}/api/v2/evaluation/applications/${applicationInternalId}`,
           json: data,
+          headers: this.getUserAgentHeader(),
           auth: { user: this.user, pass: this.password }
         },
         (err: any, response: any, body: any) => {
@@ -238,6 +242,7 @@ export class IqComponentModel {
       {
         method: "GET",
         url: `${this.url}/api/v2/evaluation/applications/${applicationInternalId}/results/${resultId}`,
+        headers: this.getUserAgentHeader(),
         auth: { user: this.user, pass: this.password }
       },
       (error: any, response: any, body: any) => {
@@ -254,18 +259,19 @@ export class IqComponentModel {
     );
   }
 
-  public async getRemediation(nexusArtifact: any, iqApplicationId: string) {
+  public async getRemediation(nexusArtifact: any) {
     return new Promise((resolve, reject) => {
       console.debug("begin getRemediation", nexusArtifact);
       var requestdata = nexusArtifact.component;
       console.debug("requestdata", requestdata);
-      let url = `${this.url}/api/v2/components/remediation/application/${iqApplicationId}`;
+      let url = `${this.url}/api/v2/components/remediation/application/${this.applicationId}`;
 
       request.post(
         {
           method: "post",
           json: requestdata,
           url: url,
+          headers: this.getUserAgentHeader(),
           auth: { user: this.user, pass: this.password }
         },
         (err, response, body) => {
@@ -286,9 +292,9 @@ export class IqComponentModel {
     return new Promise((resolve, reject) => {
       console.log("begin GetCVEDetails", cve, nexusArtifact);
       let timestamp = Date.now();
-      let hash = nexusArtifact.components[0].hash;
+      let hash = nexusArtifact.component.hash;
       let componentIdentifier = this.encodeComponentIdentifier(
-        nexusArtifact.components[0].componentIdentifier
+        nexusArtifact.component.componentIdentifier
       );
       let vulnerability_source;
       if (cve.search("sonatype") >= 0) {
@@ -302,6 +308,7 @@ export class IqComponentModel {
         {
           method: "GET",
           url: url,
+          headers: this.getUserAgentHeader(),
           auth: {
             user: this.user,
             pass: this.password
@@ -314,8 +321,8 @@ export class IqComponentModel {
           }
           console.debug("response", response);
           console.debug("body", body);
-
-          resolve(body);
+          let resp = JSON.parse(body) as any;
+          resolve(resp);
         }
       );
     });
@@ -344,6 +351,7 @@ export class IqComponentModel {
         {
           method: "GET",
           url: url,
+          headers: this.getUserAgentHeader(),
           auth: {
             user: this.user,
             pass: this.password
@@ -387,6 +395,7 @@ export class IqComponentModel {
           method: "post",
           json: detailsRequest,
           url: url,
+          headers: this.getUserAgentHeader(),
           auth: {
             user: this.user,
             pass: this.password
@@ -408,5 +417,23 @@ export class IqComponentModel {
     let actual = encodeURIComponent(JSON.stringify(componentIdentifier));
     console.log("actual", actual);
     return actual;
+  }
+
+  private getUserAgentHeader() {
+    let nodeVersion = process.versions;
+    let environment = 'NodeJS';
+    let environmentVersion = nodeVersion.node;
+    let os = platform.os;
+
+    return { 'User-Agent': `Nexus_IQ_Visual_Studio_Code/${this.getExtensionVersion()} (${environment} ${environmentVersion}; ${os}; VSCode: ${version})` };
+  }
+
+  private getExtensionVersion() {
+    let extension = extensions.getExtension('cameronsonatype.vscode-iq-plugin');
+    if (extension != undefined) {
+      return extension.packageJSON.version;
+    } else {
+      return "0.0.0"
+    }
   }
 }

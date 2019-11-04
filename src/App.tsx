@@ -15,8 +15,9 @@
  */
 import * as React from 'react';
 import Loader from 'react-loader-spinner';
-import AllVersionsPage from './AllVersionsPage';
-import SelectedVersionDetails from './SelectedVersionDetails';
+import AllVersionsPage from './AllVersions/AllVersionsPage';
+import SelectedVersionDetails from './SelectedVersionDetails/SelectedVersionDetails';
+import { VersionsContextProvider } from './context/versions-context';
 
 // add workarounds to call VSCode
 declare var acquireVsCodeApi: any;
@@ -24,11 +25,16 @@ const vscode: any = acquireVsCodeApi();
 
 type AppProps = {
 };
-// todo declare more details on component
+
 type AppState = {
   component: any,
   allVersions: any[],
-  selectedVersionDetails?: any
+  selectedVersionDetails?: any,
+  selectedVersion: string,
+  initialVersion: string,
+  remediation?: any,
+  cvedetails?: any,
+  handleGetRemediation(o: any, s: string): void
 };
 
 class App extends React.Component<AppProps, AppState> {
@@ -38,19 +44,39 @@ class App extends React.Component<AppProps, AppState> {
     this.state = {
       component: {},
       allVersions: [],
-      selectedVersionDetails: undefined
+      selectedVersionDetails: undefined,
+      selectedVersion: "",
+      initialVersion: "",
+      remediation: undefined,
+      cvedetails: undefined,
+      handleGetRemediation: this.handleGetRemediation.bind(this)
     }
   }
 
   public handleVersionSelection(newSelection: string) {
     console.debug("App received version change", newSelection);
-    // TODO query for version data to populate details
     this.setState({selectedVersionDetails: undefined})
 
     vscode.postMessage({
       command: 'selectVersion',
       version: newSelection,
       package: this.state.component
+    });
+  }
+
+  public handleGetRemediation(nexusArtifact: any, cve: string): void {
+    console.debug("App received remediation request", nexusArtifact);
+    this.setState({remediation: undefined})
+
+    vscode.postMessage({
+      command: 'getRemediation',
+      nexusArtifact: nexusArtifact
+    });
+
+    vscode.postMessage({
+      command: 'getCVEDetails',
+      cve: cve,
+      nexusArtifact: nexusArtifact
     });
   }
 
@@ -66,22 +92,21 @@ class App extends React.Component<AppProps, AppState> {
         />
       );
     }
+
     return (
-      <div>
-        <div className="sidenav">
-          <h1>Versions</h1>
-          <AllVersionsPage
-              allVersions={this.state.allVersions}
-              initialVersion={this.state.component.version}
-              selectedVersion={this.state.component.version}
-              versionChangeHandler={_this.handleVersionSelection.bind(_this)}></AllVersionsPage>
+      <VersionsContextProvider value={this.state}>
+        <div>
+          <div className="sidenav">
+            <h1>Versions</h1>
+              <AllVersionsPage
+                versionChangeHandler={_this.handleVersionSelection.bind(_this)}>
+              </AllVersionsPage>
+          </div>
+          <div className="main">
+              <SelectedVersionDetails/>
+          </div>
         </div>
-        <div className="main">
-          <SelectedVersionDetails
-            selectedVersionDetails={this.state.selectedVersionDetails}
-          />
-        </div>
-      </div>
+      </VersionsContextProvider>
     );
   }
 
@@ -93,16 +118,31 @@ class App extends React.Component<AppProps, AppState> {
         case 'artifact':
           console.debug("Artifact received, updating state & children", message.component);
           const component = message.component;
-          this.setState({component: component, allVersions: [], selectedVersionDetails: undefined});
+          this.setState({
+            component: component, 
+            allVersions: [], 
+            selectedVersionDetails: undefined,
+            initialVersion: message.component.version
+          });
           this.handleVersionSelection(message.component.version)
           break;
         case 'versionDetails':
           console.log("Selected version details received", message.componentDetails);
-          this.setState({selectedVersionDetails: message.componentDetails})
+          this.setState({selectedVersionDetails: message.componentDetails, 
+            selectedVersion: message.componentDetails.component.componentIdentifier.coordinates.version
+          })
           break;
         case 'allversions':
           console.debug("App handling allVersions message", message);
           this.setState({allVersions: message.allversions});
+          break;
+        case 'remediationDetail':
+          console.debug("App handling remediationDetail message", message.remediation.remediation);
+          this.setState({remediation: message.remediation.remediation});
+          break;
+        case 'cveDetails':
+          console.debug("App handling cveDetails message", message.cvedetails);
+          this.setState({cvedetails: message.cvedetails});
           break;
         }
     });
