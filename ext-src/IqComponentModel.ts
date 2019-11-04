@@ -17,8 +17,8 @@ import { Uri, window } from "vscode";
 
 import { ComponentEntry, PolicyViolation } from "./ComponentInfoPanel";
 import { ComponentContainer } from "./packages/ComponentContainer";
-import { IqRequestService } from "./IqRequestService";
 import { RequestService } from "./RequestService";
+import { IqRequestService } from "./IqRequestService";
 
 export class IqComponentModel {
     components: Array<ComponentEntry> = [];
@@ -73,13 +73,13 @@ export class IqComponentModel {
         let appRep = JSON.parse(response);
         console.debug("appRep", appRep);
   
-        let applicationInternalId: string = appRep.applications[0].id;
-        console.debug("applicationInternalId", applicationInternalId);
+        this.requestService.setApplicationId(appRep.applications[0].id)
+        console.debug("applicationInternalId", this.requestService.getApplicationInternalId());
   
-        let resultId = await this.requestService.submitToIqForEvaluation(data, applicationInternalId);
+        let resultId = await this.requestService.submitToIqForEvaluation(data, this.requestService.getApplicationInternalId());
   
         console.debug("report", resultId);
-        let resultDataString = await this.requestService.asyncPollForEvaluationResults(applicationInternalId, resultId);
+        let resultDataString = await this.requestService.asyncPollForEvaluationResults(this.requestService.getApplicationInternalId(), resultId);
         let resultData = JSON.parse(resultDataString as string);
   
         console.debug(`Received results from IQ scan:`, resultData);

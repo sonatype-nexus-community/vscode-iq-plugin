@@ -15,25 +15,19 @@
  */
 import * as React from 'react';
 
-type Props = {
-  licenseData: any
-}
-type State = {
-}
-
-class LicensingDisplay extends React.Component<Props, State> {
-  public render() {
-    return (
-      <tr>
-        <td>
-          Id: {this.props.licenseData.licenseId}
-        </td>
-        <td>
-          Name: {this.props.licenseData.licenseName}
-        </td>
-      </tr>
-    );
-  }
+export interface VersionsContextInterface {
+  allVersions: any[],
+  component: any,
+  selectedVersionDetails?: any,
+  selectedVersion: string,
+  initialVersion: string,
+  remediation?: any,
+  cvedetails?: any,
+  handleGetRemediation(o: any, s: string): void
 }
 
-export default LicensingDisplay;
+const ctxt = React.createContext<VersionsContextInterface | undefined>(undefined);
+
+export const VersionsContextProvider = ctxt.Provider;
+
+export const VersionsContextConsumer = ctxt.Consumer;

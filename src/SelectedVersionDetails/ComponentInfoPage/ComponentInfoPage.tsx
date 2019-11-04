@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import Loader from 'react-loader-spinner';
 import Table from 'react-bootstrap/Table';
+import { VersionsContextConsumer } from '../../context/versions-context';
 
 type CipProps = {
-  selectedVersionDetails: any
 };
 // todo declare more details on component
 type CipState = {};
@@ -39,56 +38,46 @@ class ComponentInfoPage extends React.Component<CipProps, CipState> {
   }
 
   public render() {
-    if (!this.props.selectedVersionDetails) {
-      return (
-        <Loader
-          type="Puff"
-          color="#00BFFF"
-          height="100"
-          width="100"
-        />
-      );
-    }
-    console.debug("ComponentInfoPage rendering, props: ", this.props);
-    var coordinates = this.props.selectedVersionDetails.component.componentIdentifier.coordinates;
-    console.debug("ComponentInfoPage coordinates: ", coordinates);
-
     return (
-        <Table variant="dark">
+      <VersionsContextConsumer>
+        {context => context && context.selectedVersionDetails && (
+          <Table variant="dark">
           <thead>
             <tr>
               <th colSpan={2}>
-                {this.props.selectedVersionDetails.component.packageUrl}
+                {context.selectedVersionDetails.component.packageUrl}
               </th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td>Package:</td>
-              <td>{coordinates.packageId}</td>
+              <td>{context.selectedVersionDetails.component.componentIdentifier.coordinates.packageId}</td>
             </tr>
             <tr>
               <td>Version:</td>
-              <td><span id="version">{coordinates.version}</span></td>
+              <td><span id="version">{context.selectedVersionDetails.component.componentIdentifier.coordinates.version}</span></td>
             </tr>
             <tr>
               <td>Hash:</td>
-              <td>{this.props.selectedVersionDetails.component.hash}</td>
+              <td>{context.selectedVersionDetails.component.hash}</td>
             </tr>
             <tr>
               <td>Match State:</td>
-              <td>{this.props.selectedVersionDetails.matchState}</td>
+              <td>{context.selectedVersionDetails.matchState}</td>
             </tr>
             <tr>
               <td>Catalog Date:</td>
-              <td><span id="catalogdate">{ this.formatDate(this.props.selectedVersionDetails.catalogDate) }</span></td>
+              <td><span id="catalogdate">{ this.formatDate(context.selectedVersionDetails.catalogDate) }</span></td>
             </tr>
             <tr>
               <td>Relative Popularity:</td>                
-              <td><span id="relativepopularity">{this.props.selectedVersionDetails.relativePopularity}</span></td>
+              <td><span id="relativepopularity">{context.selectedVersionDetails.relativePopularity}</span></td>
             </tr>
           </tbody>
-        </Table>								
+        </Table>		
+        )}
+      </VersionsContextConsumer>	
     );
   }
 }

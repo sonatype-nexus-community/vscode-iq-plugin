@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { extensions, version } from "vscode";
 import * as request from "request";
 import * as HttpStatus from 'http-status-codes';
 import { RequestService } from "./RequestService";
+import * as platform from "platform";
 
 export class IqRequestService implements RequestService {
   readonly evaluationPollDelayMs = 2000;
+  applicationId: string = "";
 
   constructor(
     readonly url: string,
@@ -38,6 +41,14 @@ export class IqRequestService implements RequestService {
     return true;
   }
 
+  public setApplicationId(applicationId: string) {
+    this.applicationId = applicationId;
+  }
+
+  public getApplicationInternalId(): string {
+    return this.applicationId;
+  }
+
   public async getApplicationId(applicationPublicId: string) {
     console.debug("getApplicationId", applicationPublicId);
 
@@ -46,6 +57,7 @@ export class IqRequestService implements RequestService {
         {
           method: "GET",
           url: `${this.url}/api/v2/applications?publicId=${applicationPublicId}`,
+          headers: this.getUserAgentHeader(),
           auth: { user: this.user, pass: this.password }
         },
         (err: any, response: any, body: any) => {
@@ -74,6 +86,7 @@ export class IqRequestService implements RequestService {
           method: "POST",
           url: `${this.url}/api/v2/evaluation/applications/${applicationInternalId}`,
           json: data,
+          headers: this.getUserAgentHeader(),
           auth: { user: this.user, pass: this.password }
         },
         (err: any, response: any, body: any) => {
@@ -163,6 +176,7 @@ export class IqRequestService implements RequestService {
       {
         method: "GET",
         url: `${this.url}/api/v2/evaluation/applications/${applicationInternalId}/results/${resultId}`,
+        headers: this.getUserAgentHeader(),
         auth: { user: this.user, pass: this.password }
       },
       (error: any, response: any, body: any) => {
@@ -179,18 +193,19 @@ export class IqRequestService implements RequestService {
     );
   }
 
-  public async getRemediation(nexusArtifact: any, iqApplicationId: string) {
+  public async getRemediation(nexusArtifact: any) {
     return new Promise((resolve, reject) => {
       console.debug("begin getRemediation", nexusArtifact);
       var requestdata = nexusArtifact.component;
       console.debug("requestdata", requestdata);
-      let url = `${this.url}/api/v2/components/remediation/application/${iqApplicationId}`;
+      let url = `${this.url}/api/v2/components/remediation/application/${this.applicationId}`;
 
       request.post(
         {
           method: "post",
           json: requestdata,
           url: url,
+          headers: this.getUserAgentHeader(),
           auth: { user: this.user, pass: this.password }
         },
         (err, response, body) => {
@@ -206,14 +221,14 @@ export class IqRequestService implements RequestService {
     });
   }
 
-  public async GetCVEDetails(cve: any, nexusArtifact: any) {
+  public async getCVEDetails(cve: any, nexusArtifact: any) {
     //, settings) {
     return new Promise((resolve, reject) => {
       console.log("begin GetCVEDetails", cve, nexusArtifact);
       let timestamp = Date.now();
-      let hash = nexusArtifact.components[0].hash;
+      let hash = nexusArtifact.component.hash;
       let componentIdentifier = this.encodeComponentIdentifier(
-        nexusArtifact.components[0].componentIdentifier
+        nexusArtifact.component.componentIdentifier
       );
       let vulnerability_source;
       if (cve.search("sonatype") >= 0) {
@@ -227,6 +242,7 @@ export class IqRequestService implements RequestService {
         {
           method: "GET",
           url: url,
+          headers: this.getUserAgentHeader(),
           auth: {
             user: this.user,
             pass: this.password
@@ -240,7 +256,9 @@ export class IqRequestService implements RequestService {
           console.debug("response", response);
           console.debug("body", body);
 
-          resolve(body);
+          let resp = JSON.parse(body) as any;
+
+          resolve(resp);
         }
       );
     });
@@ -269,6 +287,7 @@ export class IqRequestService implements RequestService {
         {
           method: "GET",
           url: url,
+          headers: this.getUserAgentHeader(),
           auth: {
             user: this.user,
             pass: this.password
@@ -312,6 +331,7 @@ export class IqRequestService implements RequestService {
           method: "post",
           json: detailsRequest,
           url: url,
+          headers: this.getUserAgentHeader(),
           auth: {
             user: this.user,
             pass: this.password
@@ -333,5 +353,23 @@ export class IqRequestService implements RequestService {
     let actual = encodeURIComponent(JSON.stringify(componentIdentifier));
     console.log("actual", actual);
     return actual;
+  }
+
+  private getUserAgentHeader() {
+    let nodeVersion = process.versions;
+    let environment = 'NodeJS';
+    let environmentVersion = nodeVersion.node;
+    let os = platform.os;
+
+    return { 'User-Agent': `Nexus_IQ_Visual_Studio_Code/${this.getExtensionVersion()} (${environment} ${environmentVersion}; ${os}; VSCode: ${version})` };
+  }
+
+  private getExtensionVersion() {
+    let extension = extensions.getExtension('cameronsonatype.vscode-iq-plugin');
+    if (extension != undefined) {
+      return extension.packageJSON.version;
+    } else {
+      return "0.0.0"
+    }
   }
 }

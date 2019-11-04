@@ -14,29 +14,31 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import SecurityItemDisplay from './SecurityItemDisplay';
+import SecurityItemDisplay from './SecurityItemDisplay/SecurityItemDisplay';
 import Accordion from 'react-bootstrap/Accordion';
+import { VersionsContextConsumer } from '../../context/versions-context';
 
 type State = {
-  securityData: any
 }
 
 type Props = {}
 
 class SecurityPage extends React.Component<State, Props> {
   public render() {
-    if (!this.props.securityData || !this.props.securityData.securityIssues || this.props.securityData.securityIssues.length == 0) {
-      console.debug("Security page rendering no content, securityData: ", this.props.securityData)
-      return (
-        <h1>No security issues found</h1>
-      );
-    }
     return (
-      <Accordion>
-        {this.props.securityData.securityIssues.map(function(issue: any, index: number) {
-          return <SecurityItemDisplay securityIssue={issue} />
-        })}
-      </Accordion>
+      <VersionsContextConsumer>
+        {context => context && context.selectedVersionDetails && (
+          <Accordion>
+            {context.selectedVersionDetails.securityData.securityIssues.map(function(issue: any) {
+              return <SecurityItemDisplay
+                nexusArtifact = { context.selectedVersionDetails }
+                securityIssue = { issue }
+                remediationEvent = { context.handleGetRemediation }
+                />
+            })}
+          </Accordion>
+        )}
+      </VersionsContextConsumer>
     );
   }
 }
