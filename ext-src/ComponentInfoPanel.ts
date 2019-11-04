@@ -222,7 +222,7 @@ export class ComponentInfoPanel {
 
   private async showSelectedVersion(componentIdentifier: string, version: string) {
     console.log("showSelectedVersion", componentIdentifier);
-    let body: any = await this.iqComponentModel.showSelectedVersion(componentIdentifier, version);
+    let body: any = await this.iqComponentModel.requestService.showSelectedVersion(componentIdentifier, version);
     
     this._panel.webview.postMessage({
       command: "versionDetails",
@@ -232,7 +232,7 @@ export class ComponentInfoPanel {
 
   private async showRemediation(nexusArtifact: any) {
     console.debug("showRemediation", nexusArtifact);
-    let remediation = await this.iqComponentModel.getRemediation(nexusArtifact);
+    let remediation = await this.iqComponentModel.requestService.getRemediation(nexusArtifact, ComponentInfoPanel.iqApplicationId);
     
     console.debug("posting message: remediation", remediation);
     this._panel.webview.postMessage({
@@ -243,7 +243,7 @@ export class ComponentInfoPanel {
 
   private async showCVE(cve: any, nexusArtifact: any) {
     console.debug("showCVE", cve, nexusArtifact);
-    let cvedetails = await this.iqComponentModel.GetCVEDetails(cve, nexusArtifact);
+    let cvedetails = await this.iqComponentModel.requestService.getCVEDetails(cve, nexusArtifact);
     
     console.debug("posting message: cveDetails", cvedetails);
     this._panel.webview.postMessage({
@@ -297,7 +297,7 @@ export class ComponentInfoPanel {
 
   private async showAllVersions() {
     console.debug("showAllVersions", this.component);
-    let allversions = await this.iqComponentModel.getAllVersions(this.component!.nexusIQData.component, ComponentInfoPanel.iqApplicationPublicId);
+    let allversions = await this.iqComponentModel.requestService.getAllVersions(this.component!.nexusIQData.component, ComponentInfoPanel.iqApplicationPublicId);
     
     console.debug("posting message: allversions", allversions);
     this._panel.webview.postMessage({

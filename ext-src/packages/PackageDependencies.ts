@@ -15,10 +15,12 @@
  */
 import { PackageType } from "./PackageType";
 import { ComponentEntry } from "../ComponentInfoPanel";
+import { RequestService } from "../RequestService";
 
 export interface PackageDependencies {
   Dependencies: Array<PackageType>;
   CoordinatesToComponents: Map<string, ComponentEntry>;
+  RequestService: RequestService;
   CheckIfValid(): boolean;
   ConvertToComponentEntry(resultEntry: any): string;
   convertToNexusFormat(): any;

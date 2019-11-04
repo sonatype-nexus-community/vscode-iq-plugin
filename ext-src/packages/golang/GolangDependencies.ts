@@ -21,6 +21,7 @@ import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../ComponentInfoPanel";
 import { GolangCoordinate } from "./GolangCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
+import { RequestService } from "../../RequestService";
 
 export class GolangDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<GolangPackage> = [];
@@ -28,6 +29,12 @@ export class GolangDependencies extends PackageDependenciesHelper implements Pac
     string,
     ComponentEntry
   >();
+  RequestService: RequestService;
+
+  constructor(private requestService: RequestService) {
+    super();
+    this.RequestService = this.requestService;
+  }
 
   public CheckIfValid(): boolean {
     if (this.doesPathExist(this.getWorkspaceRoot(), "go.sum")) {

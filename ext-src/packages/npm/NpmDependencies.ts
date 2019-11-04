@@ -23,6 +23,7 @@ import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../ComponentInfoPanel";
 import { NpmCoordinate } from "./NpmCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
+import { RequestService } from "../../RequestService";
 
 export class NpmDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<NpmPackage> = [];
@@ -30,6 +31,12 @@ export class NpmDependencies extends PackageDependenciesHelper implements Packag
     string,
     ComponentEntry
   >();
+  RequestService: RequestService;
+
+  constructor(private requestService: RequestService) {
+    super();
+    this.RequestService = this.requestService;
+  }
 
   public CheckIfValid(): boolean {
     if (this.doesPathExist(this.getWorkspaceRoot(), "package.json")) {

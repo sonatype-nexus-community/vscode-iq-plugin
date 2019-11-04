@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as request from "request";
-import { Uri, window, extensions, version } from "vscode";
-import * as HttpStatus from 'http-status-codes';
+import { Uri, window } from "vscode";
 
 import { ComponentEntry, PolicyViolation } from "./ComponentInfoPanel";
 import { ComponentContainer } from "./packages/ComponentContainer";
-import * as platform from "platform";
+import { RequestService } from "./RequestService";
+import { IqRequestService } from "./IqRequestService";
 
 export class IqComponentModel {
     components: Array<ComponentEntry> = [];
@@ -27,10 +26,7 @@ export class IqComponentModel {
       string,
       ComponentEntry
     >();
-    applicationId: string = "";
-  
-    // TODO make these configurable???
-    readonly evaluationPollDelayMs = 2000;
+    requestService: RequestService;
   
     constructor(
       readonly url: string,
@@ -38,21 +34,11 @@ export class IqComponentModel {
       private password: string,
       private applicationPublicId: string,
       private getmaximumEvaluationPollAttempts: number
-    ) {}
-
-    public setPassword(password: string) {
-      this.password = password;
-    }
-
-    public isPasswordSet(): boolean {
-      if(this.password == "") {
-        return false;
-      }
-      return true;
+    ) {
+      this.requestService = new IqRequestService(this.url, this.user, this.password, this.getmaximumEvaluationPollAttempts);
     }
   
     public getContent(resource: Uri): Thenable<string> {
-      // TODO get the HTML doc for webview
       return new Promise((c, e) => "my stubbed content entry");
     }
   
@@ -63,7 +49,7 @@ export class IqComponentModel {
   
     private async performIqScan() {
       try {
-        let componentContainer = new ComponentContainer();
+        let componentContainer = new ComponentContainer(this.requestService);
 
         let data: any;
 
@@ -82,18 +68,18 @@ export class IqComponentModel {
         }
   
         console.debug("getting applicationInternalId", this.applicationPublicId);
-        let response: string = await this.getApplicationId(this.applicationPublicId) as string;
+        let response: string = await this.requestService.getApplicationId(this.applicationPublicId) as string;
   
         let appRep = JSON.parse(response);
         console.debug("appRep", appRep);
   
-        this.applicationId = appRep.applications[0].id;
-        console.debug("applicationInternalId", this.applicationId);
+        this.requestService.setApplicationId(appRep.applications[0].id)
+        console.debug("applicationInternalId", this.requestService.getApplicationInternalId());
   
-        let resultId = await this.submitToIqForEvaluation(data, this.applicationId);
+        let resultId = await this.requestService.submitToIqForEvaluation(data, this.requestService.getApplicationInternalId());
   
         console.debug("report", resultId);
-        let resultDataString = await this.asyncPollForEvaluationResults(this.applicationId, resultId);
+        let resultDataString = await this.requestService.asyncPollForEvaluationResults(this.requestService.getApplicationInternalId(), resultId);
         let resultData = JSON.parse(resultDataString as string);
   
         console.debug(`Received results from IQ scan:`, resultData);
@@ -113,327 +99,5 @@ export class IqComponentModel {
         window.showErrorMessage("Nexus IQ extension: " + e);
         return;
       }
-  }
-
-  private async getApplicationId(applicationPublicId: string) {
-    console.debug("getApplicationId", applicationPublicId);
-
-    return new Promise((resolve, reject) => {
-      request.get(
-        {
-          method: "GET",
-          url: `${this.url}/api/v2/applications?publicId=${applicationPublicId}`,
-          headers: this.getUserAgentHeader(),
-          auth: { user: this.user, pass: this.password }
-        },
-        (err: any, response: any, body: any) => {
-          if (err) {            
-            reject(`Unable to retrieve Application ID: ${err}`);
-            return;
-          }
-          if (response.statusCode != HttpStatus.OK) {            
-            reject(`Unable to retrieve Application ID. Could not communicate with server. Server error: ${response.statusCode}`);
-            return;
-          }
-          resolve(body);
-          return;
-        }
-      );
-    });
-  }
-
-  private async submitToIqForEvaluation(
-    data: any,
-    applicationInternalId: string
-  ): Promise<string> {
-    return new Promise((resolve, reject) => {
-      request.post(
-        {
-          method: "POST",
-          url: `${this.url}/api/v2/evaluation/applications/${applicationInternalId}`,
-          json: data,
-          headers: this.getUserAgentHeader(),
-          auth: { user: this.user, pass: this.password }
-        },
-        (err: any, response: any, body: any) => {
-          // console.log(response.statusCode, body);
-          if (err) {
-            reject(`Unable to perform IQ scan: ${err}`);
-            return;
-          }
-          if (response.statusCode != HttpStatus.OK) {
-            reject(`Unable to perform IQ scan: ${body}`);
-            return;
-          }
-
-          let resultId = body.resultId;
-          resolve(resultId);
-          return;
-        }
-      );
-    });
-  }
-
-  private async asyncPollForEvaluationResults(
-    applicationInternalId: string,
-    resultId: string
-  ) {
-    return new Promise((resolve, reject) => {
-      this.pollForEvaluationResults(
-        applicationInternalId,
-        resultId,
-        body => resolve(body),
-        (statusCode, message) =>
-          reject(
-            `Could not fetch evaluation result, code ${statusCode}, message ${message}`
-          )
-      );
-    });
-  }
-
-  private pollForEvaluationResults(
-    applicationInternalId: string,
-    resultId: string,
-    success: (body: string) => any,
-    failed: (statusCode: number, message: string) => any
-  ) {
-    let _this = this;
-    let pollAttempts = 0;
-
-    let successHandler = function(value: string) {
-      success(value);
-    };
-    let errorHandler = function(statusCode: number, message: string) {
-      if (statusCode === HttpStatus.NOT_FOUND) {
-        // report still being worked on, continue to poll
-        pollAttempts += 1;
-        // TODO use the top-level class constant, but references are failing
-        if (pollAttempts >= _this.getmaximumEvaluationPollAttempts) {
-          failed(statusCode, "Poll limit exceeded, try again later");
-        } else {
-          setTimeout(() => {
-            _this.getEvaluationResults(
-              applicationInternalId,
-              resultId,
-              successHandler,
-              errorHandler
-            );
-          }, _this.evaluationPollDelayMs);
-        }
-      } else {
-        failed(statusCode, message);
-      }
-    };
-    this.getEvaluationResults(
-      applicationInternalId,
-      resultId,
-      successHandler,
-      errorHandler
-    );
-  }
-
-  private getEvaluationResults(
-    applicationInternalId: string,
-    resultId: string,
-    resolve: (body: string) => any,
-    reject: (statusCode: number, message: string) => any
-  ) {
-    request.get(
-      {
-        method: "GET",
-        url: `${this.url}/api/v2/evaluation/applications/${applicationInternalId}/results/${resultId}`,
-        headers: this.getUserAgentHeader(),
-        auth: { user: this.user, pass: this.password }
-      },
-      (error: any, response: any, body: any) => {
-        if (response && response.statusCode != HttpStatus.OK) {
-          reject(response.statusCode, error);
-          return;
-        }
-        if (error) {
-          reject(response.statusCode, error);
-          return;
-        }
-        resolve(body);
-      }
-    );
-  }
-
-  public async getRemediation(nexusArtifact: any) {
-    return new Promise((resolve, reject) => {
-      console.debug("begin getRemediation", nexusArtifact);
-      var requestdata = nexusArtifact.component;
-      console.debug("requestdata", requestdata);
-      let url = `${this.url}/api/v2/components/remediation/application/${this.applicationId}`;
-
-      request.post(
-        {
-          method: "post",
-          json: requestdata,
-          url: url,
-          headers: this.getUserAgentHeader(),
-          auth: { user: this.user, pass: this.password }
-        },
-        (err, response, body) => {
-          if (err) {
-            reject(`Unable to retrieve Component details: ${err}`);
-            return;
-          }
-          console.debug("response", response);
-          console.debug("body", body);
-          resolve(body);
-        }
-      );
-    });
-  }
-
-  public async GetCVEDetails(cve: any, nexusArtifact: any) {
-    //, settings) {
-    return new Promise((resolve, reject) => {
-      console.log("begin GetCVEDetails", cve, nexusArtifact);
-      let timestamp = Date.now();
-      let hash = nexusArtifact.component.hash;
-      let componentIdentifier = this.encodeComponentIdentifier(
-        nexusArtifact.component.componentIdentifier
-      );
-      let vulnerability_source;
-      if (cve.search("sonatype") >= 0) {
-        vulnerability_source = "sonatype";
-      } else {
-        vulnerability_source = "cve";
-      }
-      let url = `${this.url}/rest/vulnerability/details/${vulnerability_source}/${cve}?componentIdentifier=${componentIdentifier}&hash=${hash}&timestamp=${timestamp}`;
-
-      request.get(
-        {
-          method: "GET",
-          url: url,
-          headers: this.getUserAgentHeader(),
-          auth: {
-            user: this.user,
-            pass: this.password
-          }
-        },
-        (err, response, body) => {
-          if (err) {
-            reject(`Unable to retrieve CVEData: ${err}`);
-            return;
-          }
-          console.debug("response", response);
-          console.debug("body", body);
-          let resp = JSON.parse(body) as any;
-          resolve(resp);
-        }
-      );
-    });
-  }
-
-  public async getAllVersions(nexusArtifact: any, iqApplicationPublicId: string): Promise<any[]> {
-    if (!nexusArtifact || !nexusArtifact.hash) {
-      return [];
-    }
-    return new Promise<any[]>((resolve, reject) => {
-      let hash = nexusArtifact.hash;
-      let comp = this.encodeComponentIdentifier(
-        nexusArtifact.componentIdentifier
-      );
-      let d = new Date();
-      let timestamp = d.getDate();
-      let matchstate = "exact";
-      let url =
-        `${this.url}/rest/ide/componentDetails/application/` +
-        `${iqApplicationPublicId}/allVersions?` +
-        `componentIdentifier=${comp}&` +
-        `hash=${hash}&matchState=${matchstate}&` +
-        `timestamp=${timestamp}&proprietary=false`;
-
-      request.get(
-        {
-          method: "GET",
-          url: url,
-          headers: this.getUserAgentHeader(),
-          auth: {
-            user: this.user,
-            pass: this.password
-          }
-        },
-        (err, response, body) => {
-          if (err) {
-            reject(`Unable to retrieve GetAllVersions: ${err}`);
-            return;
-          }
-          const versionArray = JSON.parse(body) as any[];
-          console.debug("getAllVersions retrieved body", versionArray);
-          resolve(versionArray);
-        }
-      );
-    });
-  }
-
-  public async showSelectedVersion(componentIdentifier: any, version: string) {
-    return new Promise((resolve, reject) => {
-      console.debug("begin showSelectedVersion", componentIdentifier, version);
-      var transmittingComponentIdentifier = { ...componentIdentifier };
-
-      transmittingComponentIdentifier.coordinates = {
-        ...componentIdentifier.coordinates
-      };
-
-      transmittingComponentIdentifier.coordinates.version = version;
-      var detailsRequest = {
-        components: [
-          {
-            hash: null,
-            componentIdentifier: transmittingComponentIdentifier
-          }
-        ]
-      };
-      let url = `${this.url}/api/v2/components/details`;
-
-      request.post(
-        {
-          method: "post",
-          json: detailsRequest,
-          url: url,
-          headers: this.getUserAgentHeader(),
-          auth: {
-            user: this.user,
-            pass: this.password
-          }
-        },
-        (err, response, body) => {
-          if (err) {
-            reject(`Unable to retrieve selected version details: ${err}`);
-            return;
-          }
-
-          resolve(body);
-        }
-      );
-    });
-  }
-
-  private encodeComponentIdentifier(componentIdentifier: string) {
-    let actual = encodeURIComponent(JSON.stringify(componentIdentifier));
-    console.log("actual", actual);
-    return actual;
-  }
-
-  private getUserAgentHeader() {
-    let nodeVersion = process.versions;
-    let environment = 'NodeJS';
-    let environmentVersion = nodeVersion.node;
-    let os = platform.os;
-
-    return { 'User-Agent': `Nexus_IQ_Visual_Studio_Code/${this.getExtensionVersion()} (${environment} ${environmentVersion}; ${os}; VSCode: ${version})` };
-  }
-
-  private getExtensionVersion() {
-    let extension = extensions.getExtension('cameronsonatype.vscode-iq-plugin');
-    if (extension != undefined) {
-      return extension.packageJSON.version;
-    } else {
-      return "0.0.0"
-    }
   }
 }

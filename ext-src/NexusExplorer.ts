@@ -42,7 +42,7 @@ export class NexusExplorerProvider
   }
 
   checkPassword(): void {
-    if (this.componentModel.isPasswordSet()) {
+    if (this.componentModel.requestService.isPasswordSet()) {
       this.doRefresh();
     } else {
       let options: vscode.InputBoxOptions = {
@@ -52,7 +52,7 @@ export class NexusExplorerProvider
       }
 
       vscode.window.showInputBox(options).then(value => {
-        this.componentModel.setPassword(value + "");
+        this.componentModel.requestService.setPassword(value + "");
         this.doRefresh();
       });
     }
