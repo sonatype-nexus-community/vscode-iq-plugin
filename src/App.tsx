@@ -97,7 +97,7 @@ class App extends React.Component<AppProps, AppState> {
       <VersionsContextProvider value={this.state}>
         <div>
           <div className="sidenav">
-            <h1>Versions</h1>
+            <h3>Versions</h3>
               <AllVersionsPage
                 versionChangeHandler={_this.handleVersionSelection.bind(_this)}>
               </AllVersionsPage>
