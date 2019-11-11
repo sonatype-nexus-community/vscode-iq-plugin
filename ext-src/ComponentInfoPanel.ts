@@ -213,6 +213,9 @@ export class ComponentInfoPanel {
           case "getRemediation":
             this.showRemediation(message.nexusArtifact);
             return;
+          case "getPolicyViolations":
+            this.showPolicyViolations();
+            return;
         }
       },
       null,
@@ -238,6 +241,17 @@ export class ComponentInfoPanel {
     this._panel.webview.postMessage({
       command: "remediationDetail",
       remediation: remediation
+    });
+  }
+
+  private async showPolicyViolations() {
+    console.debug("showPolicyViolations");
+    let policyViolations = await this.iqComponentModel.requestService.getPolicyViolations(ComponentInfoPanel.iqApplicationPublicId);
+    
+    console.debug("posting message: policyViolations", policyViolations);
+    this._panel.webview.postMessage({
+      command: "policyViolations",
+      policyViolations: policyViolations
     });
   }
 

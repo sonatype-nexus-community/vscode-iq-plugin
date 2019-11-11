@@ -33,6 +33,7 @@ type AppState = {
   selectedVersion: string,
   initialVersion: string,
   remediation?: any,
+  policyViolations?: any[],
   cvedetails?: any,
   handleGetRemediation(o: any, s: string): void
 };
@@ -48,6 +49,7 @@ class App extends React.Component<AppProps, AppState> {
       selectedVersion: "",
       initialVersion: "",
       remediation: undefined,
+      policyViolations: undefined,
       cvedetails: undefined,
       handleGetRemediation: this.handleGetRemediation.bind(this)
     }
@@ -61,6 +63,16 @@ class App extends React.Component<AppProps, AppState> {
       command: 'selectVersion',
       version: newSelection,
       package: this.state.component
+    });
+  }
+
+  public handlePolicyViolations(e: Event) {
+    console.debug(e);
+    console.debug("App received policy violations request");
+    this.setState({policyViolations: undefined});
+
+    vscode.postMessage({
+      command: 'getPolicyViolations'
     });
   }
 
@@ -103,7 +115,9 @@ class App extends React.Component<AppProps, AppState> {
               </AllVersionsPage>
           </div>
           <div className="main">
-              <SelectedVersionDetails/>
+              <SelectedVersionDetails
+                handlePolicyViolations={_this.handlePolicyViolations.bind(_this)}
+              />
           </div>
         </div>
       </VersionsContextProvider>
@@ -119,9 +133,10 @@ class App extends React.Component<AppProps, AppState> {
           console.debug("Artifact received, updating state & children", message.component);
           const component = message.component;
           this.setState({
-            component: component, 
-            allVersions: [], 
+            component: component,
+            allVersions: [],
             selectedVersionDetails: undefined,
+            policyViolations: component.policyViolations,
             initialVersion: message.component.version
           });
           this.handleVersionSelection(message.component.version)
@@ -143,6 +158,10 @@ class App extends React.Component<AppProps, AppState> {
         case 'cveDetails':
           console.debug("App handling cveDetails message", message.cvedetails);
           this.setState({cvedetails: message.cvedetails});
+          break;
+        case 'policyViolations':
+          console.debug("App handling policyViolations message", message.policyViolations);
+          this.setState({policyViolations: message.policyViolations});
           break;
         }
     });
