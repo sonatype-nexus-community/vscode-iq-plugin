@@ -95,6 +95,7 @@ export class ComponentInfoPanel {
   private static iqApplicationId: string;
   private static iqApplicationPublicId: string;
   private static _settings: any;
+  private static _ossSettings: any;
 
   component?: ComponentEntry;
 
@@ -147,10 +148,11 @@ export class ComponentInfoPanel {
   }
 
   private static getSettings() {
-    let config = vscode.workspace.getConfiguration("nexusiq");
+    let iqConfig = vscode.workspace.getConfiguration("nexusiq");
     ComponentInfoPanel.iqApplicationId =  "";
     ComponentInfoPanel.iqApplicationPublicId =
-      config.get("applicationPublicId") + "";
+      iqConfig.get("applicationPublicId") + "";
+
     ComponentInfoPanel._settings = {
       iqApplicationId: ComponentInfoPanel.iqApplicationId,
       iqApplicationPublicId: ComponentInfoPanel.iqApplicationPublicId
@@ -167,7 +169,9 @@ export class ComponentInfoPanel {
     const pageSettings = {
       appInternalId: ComponentInfoPanel._settings.iqApplicationId,
       username: ComponentInfoPanel._settings.iqUser,
-      password: ComponentInfoPanel._settings.iqPassword
+      password: ComponentInfoPanel._settings.iqPassword,
+      ossIndexUsername: ComponentInfoPanel._ossSettings.username,
+      ossIndexPassword: ComponentInfoPanel._ossSettings.password
     };
 
     this._panel.webview.postMessage({

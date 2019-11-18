@@ -89,17 +89,26 @@
 		},
 		"configuration": [
 			{
-				"title": "Nexus IQ Explorer",
+				"title": "Sonatype Explorer",
 				"properties": {
 					"nexusExplorer.autorefresh": {
 						"type": "boolean",
 						"default": false
+					},
+					"nexusExplorer.dataSource": {
+						"type": "string",
+						"default": "ossindex",
+						"enum": ["ossindex", "iqServer"],
+						"enumDescription": [
+							"Use publicly available OSS Index data",
+							"Use commercial Sonatype IQ Server data"
+						]
 					}
 				}
 			},
 			{
 				"type": "object",
-				"title": "Nexus IQ configuration",
+				"title": "Sonatype Nexus IQ configuration",
 				"properties": {
 					"nexusiq.url": {
 						"type": "string",
@@ -127,7 +136,22 @@
 						"description": "Number of retries (every 2secs) to wait for the Evaluation report. "
 					}
 				}
+			},
+			{
+				"type": "object",
+				"title": "Sonatype OSS Index Configuration",
+				"properties": {
+					"ossindex.username": {
+						"type": "string",
+						"description": "Your OSS Index user name"
+					},
+					"ossindex.password": {
+						"type": "string",
+						"description": "Your OSS Index password"
+					}
+				}
 			}
+
 		]
 	},
 	"scripts": {

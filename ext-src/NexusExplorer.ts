@@ -23,6 +23,7 @@ import {
   ComponentEntry
 } from "./ComponentInfoPanel";
 import { IqComponentModel } from "./IqComponentModel";
+import { ComponentModelFactory } from "./ComponentModelFactory";
 
 export class NexusExplorerProvider
   implements vscode.TreeDataProvider<ComponentEntry> {
@@ -124,21 +125,7 @@ export class NexusExplorer {
 
   constructor(readonly context: vscode.ExtensionContext) {
     /////////CPT/////////////
-    let config = vscode.workspace.getConfiguration("nexusiq");
-    let url = config.get("url") + "";
-    let username = config.get("username") + "";
-    let applicationPublicId = config.get("applicationPublicId") + "";
-    let maximumEvaluationPollAttempts = parseInt(
-      config.get("maximumEvaluationPollAttempts") + "", 10);
-    let password = config.get("password") + "";
-    
-    this.componentModel = new IqComponentModel(
-      url,
-      username,
-      password,
-      applicationPublicId,
-      maximumEvaluationPollAttempts
-    );
+    this.componentModel = ComponentModelFactory.getComponentModel(vscode.workspace.getConfiguration());
 
     this.nexusExplorerProvider = new NexusExplorerProvider(
       context,
