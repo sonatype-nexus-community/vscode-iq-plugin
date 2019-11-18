@@ -13,21 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { window } from "vscode";
+import { window, WorkspaceConfiguration } from "vscode";
 import * as _ from "lodash";
 
 import { ComponentEntry } from "./ComponentInfoPanel";
 import { LiteComponentContainer } from './packages/LiteComponentContainer';
 import { LiteRequestService } from "./LiteRequestService";
 import { OssIndexRequestService } from "./OssIndexRequestService";
+import { ComponentModel } from "./ComponentModel";
 
-export class OssIndexComponentModel {
-    components: Array<ComponentEntry> = [];
+export class OssIndexComponentModel implements ComponentModel {
+  components = new Array<ComponentEntry>();
     requestService: LiteRequestService;
   
     constructor(
+      configuration: WorkspaceConfiguration
     ) {
-      this.requestService = new OssIndexRequestService();
+      let username = configuration.get("ossindex.username") + "";
+      let password = configuration.get("ossindex.password") + "";
+      this.requestService = new OssIndexRequestService(username, password);
     }
   
     public async evaluateComponents() {
@@ -45,8 +49,15 @@ export class OssIndexComponentModel {
           await componentContainer.PackageMuncher.packageForService();
 
           let purls = _.map(componentContainer.PackageMuncher.dependencies, (x => x.toPurl()));
+          let results = await this.requestService.getResultsFromPurls(purls) as Array<any>;
+          console.log("Result array from OSS Index", results);
 
-          console.log(this.requestService.getResultsFromPurls(purls));
+          this.components = results.map(x => {
+            let coordinates = x.coordinates as string;
+            let name = coordinates.substring(0, coordinates.indexOf("@"));
+            let version = coordinates.substring(coordinates.indexOf("@"), coordinates.length);
+            return new ComponentEntry(name, version)
+          })
         } else {
           throw new TypeError("Unable to instantiate Package Muncher");
         }

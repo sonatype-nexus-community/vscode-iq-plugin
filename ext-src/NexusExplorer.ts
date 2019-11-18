@@ -23,7 +23,8 @@ import {
   ComponentEntry
 } from "./ComponentInfoPanel";
 import { IqComponentModel } from "./IqComponentModel";
-import { ComponentModelFactory } from "./ComponentModelFactory";
+import { OssIndexComponentModel } from "./OssIndexComponentModel";
+import { ComponentModel } from "./ComponentModel";
 
 export class NexusExplorerProvider
   implements vscode.TreeDataProvider<ComponentEntry> {
@@ -120,16 +121,21 @@ export class NexusExplorerProvider
 
 export class NexusExplorer {
   private nexusViewer: vscode.TreeView<ComponentEntry>;
-  private componentModel: IqComponentModel;
+  private componentModel: ComponentModel;
   private nexusExplorerProvider: NexusExplorerProvider;
 
   constructor(readonly context: vscode.ExtensionContext) {
     /////////CPT/////////////
-    this.componentModel = ComponentModelFactory.getComponentModel(vscode.workspace.getConfiguration());
+    let configuration = vscode.workspace.getConfiguration();
+    if (configuration.get("nexusExplorer.dataSource", 'ossindex') + "" == 'iqServer') {
+      this.componentModel = new IqComponentModel(configuration);
+    } else {
+      this.componentModel = new OssIndexComponentModel(configuration);
+    }
 
     this.nexusExplorerProvider = new NexusExplorerProvider(
       context,
-      this.componentModel
+      this.componentModel as IqComponentModel
     );
 
     this.nexusViewer = vscode.window.createTreeView("nexusExplorer", {
@@ -165,6 +171,6 @@ export class NexusExplorer {
   }
 
   private viewNode(entry: ComponentEntry) {
-    ComponentInfoPanel.createOrShow(this.context.extensionPath, entry, this.componentModel);
+    ComponentInfoPanel.createOrShow(this.context.extensionPath, entry, this.componentModel as IqComponentModel);
   }
 }

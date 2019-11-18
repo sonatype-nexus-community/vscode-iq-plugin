@@ -25,19 +25,33 @@ const URL = `https://ossindex.sonatype.org/api/v3/component-report`;
 
 export class OssIndexRequestService implements LiteRequestService {
 
+  constructor(readonly username: string, private password: string){}
+
+  public isPasswordSet():boolean {
+    if(this.password == "") {
+      return false;
+    }
+    return true;
+  }
+
+  public setPassword(password: string) {
+    this.password = password;
+  }
+
+
   public async getResultsFromPurls(purls: Array<String>): Promise<any> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       let newPurls = this.chunkPurls(purls);
-      let response: any;
-  
-      newPurls.forEach(purlList => {
-        let res, err = this.callOssIndex(purlList);
+      let response = new Array();
+
+      for (var purlList of newPurls) {
+        let err, res = await this.callOssIndex(purlList);
         if (err != null) {
           console.log(err);
         } else {
-          response.push(res);
+          response = response.concat(res);
         }
-      });
+      }
 
       if (response.length > 0) {
         resolve(response);
@@ -63,7 +77,7 @@ export class OssIndexRequestService implements LiteRequestService {
             reject(`Unable to retrieve Component Report: ${err}`);
             return;
           }
-          if (response.statusCode != HttpStatus.OK) {            
+          if (response.statusCode != HttpStatus.OK) {
             reject(`Unable to retrieve Component Report. Could not communicate with server. Server error: ${response.statusCode}`);
             return;
           }
@@ -74,11 +88,11 @@ export class OssIndexRequestService implements LiteRequestService {
     });
   }
 
-  private turnPurlsIntoOssIndexRequestObject(purls: String[]): string {
+  private turnPurlsIntoOssIndexRequestObject(purls: String[]): any {
     let components = {
-      components: purls
+      coordinates: purls
     }
-    return JSON.stringify(components);
+    return components;
   }
 
   /**

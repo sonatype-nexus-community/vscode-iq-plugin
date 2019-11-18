@@ -1,3 +1,5 @@
+import { BaseRequestService } from "./BaseRequestService";
+
 /*
  * Copyright (c) 2019-present Sonatype, Inc.
  *
@@ -13,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export interface RequestService {
+export interface RequestService extends BaseRequestService {
   getApplicationId(applicationPublicId: string): Promise<any>;
   submitToIqForEvaluation(data: any, applicationInternalId: string): Promise<any>;
   asyncPollForEvaluationResults(applicationInternalId: string, resultId: string): Promise<any>;

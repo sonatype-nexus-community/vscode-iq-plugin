@@ -1,4 +1,4 @@
-import { BaseRequestService } from "./BaseRequestService";
+import { ComponentEntry } from "./ComponentInfoPanel";
 
 /*
  * Copyright (c) 2019-present Sonatype, Inc.
@@ -15,6 +15,6 @@ import { BaseRequestService } from "./BaseRequestService";
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export interface LiteRequestService extends BaseRequestService {
-  getResultsFromPurls(purls: Array<String>): Promise<any>;
+export interface ComponentModel {
+  components: Array<ComponentEntry>;
 }
