@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 import * as request from "request";
-import * as HttpStatus from 'http-status-codes';
+import * as HttpStatus from "http-status-codes";
 
-import { LightRequestService } from './LightRequestService';
+import { LiteRequestService } from "./LiteRequestService";
 import { RequestHelpers } from "./RequestHelpers";
 
 const MAX_COORDS: number = 128;
 
 const URL = `https://ossindex.sonatype.org/api/v3/component-report`;
 
-export class OssIndexRequestService implements LightRequestService {
+export class OssIndexRequestService implements LiteRequestService {
 
   public async getResultsFromPurls(purls: Array<String>): Promise<any> {
     return new Promise((resolve, reject) => {

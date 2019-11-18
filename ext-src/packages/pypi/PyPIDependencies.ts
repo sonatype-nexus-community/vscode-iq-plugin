@@ -37,7 +37,7 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
   }
 
   public CheckIfValid(): boolean {
-    if (this.doesPathExist(this.getWorkspaceRoot(), "requirements.txt")) {
+    if (PackageDependenciesHelper.doesPathExist(PackageDependenciesHelper.getWorkspaceRoot(), "requirements.txt")) {
       console.debug("Valid for PyPI");
       return true;
     }
@@ -106,7 +106,7 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
   public async packageForIq(): Promise<any> {
     try {
       let {stdout, stderr } = await exec(`cat requirements.txt`, {
-        cwd: this.getWorkspaceRoot(),
+        cwd: PackageDependenciesHelper.getWorkspaceRoot(),
         env: {
           PATH: process.env.PATH
         }

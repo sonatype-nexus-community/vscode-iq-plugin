@@ -18,11 +18,11 @@ import * as path from "path";
 import { workspace } from "vscode";
 
 export class PackageDependenciesHelper {
-  public doesPathExist(workspaceRoot: string, filename: string): boolean {
+  public static doesPathExist(workspaceRoot: string, filename: string): boolean {
     return this.pathExists(path.join(workspaceRoot, filename));
   }
  
-  private pathExists(p: string): boolean {
+  private static pathExists(p: string): boolean {
     try {
       fs.accessSync(p);
       return true;
@@ -31,11 +31,19 @@ export class PackageDependenciesHelper {
     }
   }
 
-  public getWorkspaceRoot(): string {
+  public static getWorkspaceRoot(): string {
     let workspaceRoot = workspace.rootPath;
     if (workspaceRoot === undefined) {
       throw new TypeError("No workspace opened");
     }
     return workspaceRoot;
-  } 
+  }
+  
+  public static checkIfValid(manifest: string, format: string): boolean {
+    if (this.doesPathExist(this.getWorkspaceRoot(), manifest)) {
+      console.debug(`Valid for ${format}`);
+      return true;
+    }
+    return false;
+  }
 }

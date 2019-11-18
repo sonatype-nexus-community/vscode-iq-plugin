@@ -29,6 +29,11 @@ export class MavenPackage implements PackageType {
     return `${this.Group}:${this.Name}.${this.Extension}:${this.Version}`;
   }
 
+  public toPurl() {
+    // TODO: Finish
+    return `pkg:maven/${this.Group}/${this.Name}`;
+  }
+
   public toCoordValueType(): string {
     return `${this.Group}:${this.Name} - ${this.Version}`;
   }

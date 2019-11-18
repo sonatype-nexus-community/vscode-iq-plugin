@@ -37,7 +37,7 @@ export class GolangDependencies extends PackageDependenciesHelper implements Pac
   }
 
   public CheckIfValid(): boolean {
-    if (this.doesPathExist(this.getWorkspaceRoot(), "go.sum")) {
+    if (PackageDependenciesHelper.doesPathExist(PackageDependenciesHelper.getWorkspaceRoot(), "go.sum")) {
       console.debug("Valid for Golang");
       return true;
     }
@@ -95,7 +95,7 @@ export class GolangDependencies extends PackageDependenciesHelper implements Pac
     try {
       // TODO: When running this command, Golang is now using the workspace root to establish a GOCACHE, we should use some other temporary area or try and suss out the real one
       let { stdout, stderr } = await exec(`go list -m all`, {
-        cwd: this.getWorkspaceRoot(),
+        cwd: PackageDependenciesHelper.getWorkspaceRoot(),
         env: {
           PATH: process.env.PATH,
           HOME: this.getGoCacheDirectory()

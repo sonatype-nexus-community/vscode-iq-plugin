@@ -39,7 +39,7 @@ export class MavenDependencies extends PackageDependenciesHelper implements Pack
   }
 
   public CheckIfValid(): boolean {
-    if (this.doesPathExist(this.getWorkspaceRoot(), "pom.xml")) {
+    if (PackageDependenciesHelper.doesPathExist(PackageDependenciesHelper.getWorkspaceRoot(), "pom.xml")) {
       console.debug("Valid for Maven");
       return true;
     }
@@ -111,7 +111,7 @@ export class MavenDependencies extends PackageDependenciesHelper implements Pack
   public async packageForIq(): Promise<any> {
     let mvnCommand;
     try {
-      const pomFile = path.join(this.getWorkspaceRoot(), "pom.xml");
+      const pomFile = path.join(PackageDependenciesHelper.getWorkspaceRoot(), "pom.xml");
 
       /*
        * Need to use dependency tree operation because:
@@ -120,13 +120,13 @@ export class MavenDependencies extends PackageDependenciesHelper implements Pack
        * 3. Effective POM may contain unused dependencies
        */
       const outputPath: string = path.join(
-        this.getWorkspaceRoot(),
+        PackageDependenciesHelper.getWorkspaceRoot(),
         "dependency_tree.txt"
       );
       mvnCommand = `mvn dependency:tree -Dverbose -DoutputFile="${outputPath}" -f "${pomFile}"`;
 
       await exec(mvnCommand, {
-        cwd: this.getWorkspaceRoot(),
+        cwd: PackageDependenciesHelper.getWorkspaceRoot(),
         env: {
           PATH: process.env.PATH
         }
