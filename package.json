@@ -166,6 +166,7 @@
 		"@types/react-dom": "^16.9.3",
 		"@types/request": "^2.48.2",
 		"mustache": "^3.1.0",
+		"semantic-release": "^15.13.31",
 		"typescript": "^3.6.3"
 	}
 }
