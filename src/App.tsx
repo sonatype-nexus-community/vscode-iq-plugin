@@ -20,6 +20,7 @@ import SelectedVersionDetails from './SelectedVersionDetails/SelectedVersionDeta
 import { VersionsContextProvider } from './context/versions-context';
 import { OssIndexContextProvider } from './context/ossindex-context';
 import { ExtScanType } from './utils/ExtScanType';
+import OssIndexVersionDetails from './OssIndexVersionDetails/OssIndexVersionDetails';
 
 // add workarounds to call VSCode
 declare var acquireVsCodeApi: any;
@@ -100,7 +101,7 @@ class App extends React.Component<AppProps, AppState> {
       console.log("Attempting to render OSS Index");
       return (
         <OssIndexContextProvider value={this.state}>
-          <h1>Hello</h1>
+          <OssIndexVersionDetails />
         </OssIndexContextProvider>
       )
     }
@@ -127,12 +128,6 @@ class App extends React.Component<AppProps, AppState> {
       const message = event.data;
       console.debug("App received VS message", message);
       switch (message.command) {
-        case 'scanType':
-          console.debug("ScanType recieved");
-          this.setState({
-            scanType: message.scanType
-          });
-          break;
         case 'artifact':
           console.debug("Artifact received, updating state & children", message.component);
           const component = message.component;
@@ -146,18 +141,20 @@ class App extends React.Component<AppProps, AppState> {
           break;
         case 'versionDetails':
           console.log("Selected version details received", message.componentDetails);
+          let selectedVersion: any;
+          let version: string = "";
           if (message.scanType == ExtScanType.NexusIq) {
-            this.setState({selectedVersionDetails: message.componentDetails, 
-              selectedVersion: message.componentDetails.component.componentIdentifier.coordinates.version,
-              scanType: message.scanType
-            })
+            selectedVersion = message.componentDetails;
+            version = message.componentDetails.component.componentIdentifier.coordinates.version;
           }
           if (message.scanType == ExtScanType.OssIndex) {
-            this.setState({selectedVersionDetails: message.componentDetails, 
-              selectedVersion: message.componentDetails.version,
-              scanType: message.scanType
-            })
+            selectedVersion = message.componentDetails;
+            version = message.componentDetails.version;
           }
+          this.setState({selectedVersionDetails: selectedVersion, 
+            selectedVersion: version,
+            scanType: message.scanType
+          })
           break;
         case 'allversions':
           console.debug("App handling allVersions message", message);

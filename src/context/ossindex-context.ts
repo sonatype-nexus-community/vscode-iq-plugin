@@ -18,6 +18,7 @@ import { ExtScanType } from 'src/utils/ExtScanType';
 
 export interface OssIndexContextInterface {
   scanType?: ExtScanType,
+  component?: any
 }
 
 const ctxt = React.createContext<OssIndexContextInterface | undefined>(undefined);
@@ -25,3 +26,5 @@ const ctxt = React.createContext<OssIndexContextInterface | undefined>(undefined
 export const OssIndexContextProvider = ctxt.Provider;
 
 export const OssIndexContextConsumer = ctxt.Consumer;
+
+export const OssIndexContext = ctxt;

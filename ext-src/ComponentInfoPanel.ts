@@ -41,15 +41,20 @@ export class PolicyViolation {
 }
 
 export class ComponentEntry {
-  constructor(readonly name: string, readonly version: string, readonly scanType: ScanType) {}
   scope: string = "";
   failure: string = "";
   policyViolations: Array<PolicyViolation> = [];
   hash: string = "";
   nexusIQData: any = undefined;
+  ossIndexData: any = undefined;
+
+  constructor(readonly name: string, readonly version: string, readonly scanType: ScanType) {
+  }
+
   public toString(): string {
     return `${this.name} @ ${this.version}`;
   }
+
   public maxPolicy(): number {
     let maxThreatLevel = 0;
     if (!this.policyViolations) {
@@ -313,7 +318,7 @@ export class ComponentInfoPanel {
     console.debug(`Update called`);
     if (this.component) {
       this._panel.title = `IQ Scan: ${this.component.name}@${this.component.version}`;
-      console.debug("posting message: artifact", this.component);
+      console.log("posting message: artifact", this.component);
 
       this.showAllVersions();
 

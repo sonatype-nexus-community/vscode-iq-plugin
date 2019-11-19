@@ -55,7 +55,9 @@ export class OssIndexComponentModel implements ComponentModel {
             let coordinates = x.coordinates as string;
             let name = coordinates.substring(0, coordinates.indexOf("@"));
             let version = coordinates.substring(coordinates.indexOf("@"), coordinates.length);
-            return new ComponentEntry(name, version, ScanType.OssIndex)
+            let componentEntry = new ComponentEntry(name, version, ScanType.OssIndex);
+            componentEntry.ossIndexData = x;
+            return componentEntry;
           })
         } else {
           throw new TypeError("Unable to instantiate Package Muncher");
