@@ -22,7 +22,11 @@ jobs:
           name: build
           command: npm run build
   release:
+    working_directory: ~/vscode-iq-plugin 
+    docker: 
+      - image: circleci/node:10.16.3 
     steps:
+      - checkout
       - run: npm install -g vsce
       - run: npm install -g semantic-release
       - run: npx semantic-release -d
