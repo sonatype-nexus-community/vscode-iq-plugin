@@ -48,7 +48,6 @@ class OssIndexSecurityInfo extends React.Component<OssCipProps, OssCipState> {
   }
 
   private printVulnerabitilies(vulnerabilities: any[]) {
-    console.log("Vulnerability rendering");
     console.debug("Printing vulnerability", vulnerabilities);
 
     return (
@@ -59,21 +58,16 @@ class OssIndexSecurityInfo extends React.Component<OssCipProps, OssCipState> {
           </tr>
         </thead>
         <tbody>
-        { vulnerabilities.map(x => {
-            this.printVulnerability(x);
-          }) 
-        }
+          { vulnerabilities.map(this.printVulnerability) }
         </tbody>
       </Table>
     )
   }
 
   private printVulnerability(vulnerability: any) {
-    console.log("I'm here");
-    console.log(vulnerability);
     return (
       <tr>
-        <td>{vulnerability.description}</td>
+        { vulnerability.description }
       </tr>
     )
   }
