@@ -18,6 +18,7 @@ import Loader from 'react-loader-spinner';
 import AllVersionsPage from './AllVersions/AllVersionsPage';
 import SelectedVersionDetails from './SelectedVersionDetails/SelectedVersionDetails';
 import { VersionsContextProvider } from './context/versions-context';
+import { OssIndexContextProvider } from './context/ossindex-context';
 
 // add workarounds to call VSCode
 declare var acquireVsCodeApi: any;
@@ -27,6 +28,7 @@ type AppProps = {
 };
 
 type AppState = {
+  scanType: string,
   component: any,
   allVersions: any[],
   selectedVersionDetails?: any,
@@ -42,6 +44,7 @@ class App extends React.Component<AppProps, AppState> {
     super(props);
     console.debug("App constructing, props:", props);
     this.state = {
+      scanType: "",
       component: {},
       allVersions: [],
       selectedVersionDetails: undefined,
@@ -91,6 +94,12 @@ class App extends React.Component<AppProps, AppState> {
           width="100"
         />
       );
+    } else if ( this.state.scanType === "ossindex"){
+      return (
+        <OssIndexContextProvider value={this.state}>
+          <h1>Hello</h1>
+        </OssIndexContextProvider>
+      )
     }
 
     return (
@@ -115,6 +124,12 @@ class App extends React.Component<AppProps, AppState> {
       const message = event.data;
       console.debug("App received VS message", message);
       switch (message.command) {
+        case 'scanType':
+          console.debug("ScanType recieved");
+          this.setState({
+            scanType: message.scanType
+          });
+          break;
         case 'artifact':
           console.debug("Artifact received, updating state & children", message.component);
           const component = message.component;

@@ -19,9 +19,9 @@ import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { GolangUtils } from "./GolangUtils";
 
 export class GolangLiteDependencies implements LitePackageDependencies {
-  dependencies: Array<GolangPackage>;
-  manifestName: "go.sum";
-  format: "golang";
+  dependencies: Array<GolangPackage> = [];
+  manifestName: string = "go.sum";
+  format: string = "golang";
   
   public checkIfValid(): boolean {
     return PackageDependenciesHelper.checkIfValid(this.manifestName, this.format);

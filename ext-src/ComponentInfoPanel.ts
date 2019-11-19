@@ -279,10 +279,18 @@ export class ComponentInfoPanel {
       )
     ) {
       this.component = newComponent;
-      this.updateViewForThisComponent();
-
-      // TODO CVE, remediation, security
+      //this.updateViewForThisComponent();
     }
+  }
+
+  private updateViewForOssIndexComponent() {
+    console.debug(`Update called`);
+    this._panel.title = `OSS Index Scan: BLAH`;
+
+    this._panel.webview.postMessage({
+      command: "scanType",
+      scanType: "ossindex"
+    });
   }
 
   private updateViewForThisComponent() {
@@ -292,6 +300,7 @@ export class ComponentInfoPanel {
       console.debug("posting message: artifact", this.component);
 
       this.showAllVersions();
+
       this._panel.webview.postMessage({
         command: "artifact",
         component: this.component

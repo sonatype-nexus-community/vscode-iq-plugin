@@ -19,9 +19,9 @@ import { PyPiUtils } from './PyPiUtils';
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 
 export class PyPiLiteDependencies implements LitePackageDependencies {
-  dependencies: Array<PyPIPackage>;
-  format: "pypi";
-  manifestName: "requirements.txt";
+  dependencies: Array<PyPIPackage> = [];
+  format: string = "pypi";
+  manifestName: string = "requirements.txt";
 
   public checkIfValid(): boolean {
     return PackageDependenciesHelper.checkIfValid(this.manifestName, this.format);

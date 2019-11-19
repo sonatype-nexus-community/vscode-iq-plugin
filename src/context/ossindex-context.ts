@@ -15,20 +15,12 @@
  */
 import * as React from 'react';
 
-export interface VersionsContextInterface {
+export interface OssIndexContextInterface {
   scanType: string,
-  allVersions: any[],
-  component: any,
-  selectedVersionDetails?: any,
-  selectedVersion: string,
-  initialVersion: string,
-  remediation?: any,
-  cvedetails?: any,
-  handleGetRemediation(o: any, s: string): void
 }
 
-const ctxt = React.createContext<VersionsContextInterface | undefined>(undefined);
+const ctxt = React.createContext<OssIndexContextInterface | undefined>(undefined);
 
-export const VersionsContextProvider = ctxt.Provider;
+export const OssIndexContextProvider = ctxt.Provider;
 
-export const VersionsContextConsumer = ctxt.Consumer;
+export const OssIndexContextConsumer = ctxt.Consumer;

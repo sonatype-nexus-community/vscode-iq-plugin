@@ -19,9 +19,9 @@ import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { MavenUtils } from "./MavenUtils";
 
 export class MavenLiteDependencies implements LitePackageDependencies {
-  dependencies: Array<MavenPackage>;
-  manifestName: "pom.xml";
-  format: "maven";
+  dependencies: Array<MavenPackage> = [];
+  manifestName: string = "pom.xml";
+  format: string = "maven";
 
   public checkIfValid(): boolean {
     return PackageDependenciesHelper.checkIfValid(this.manifestName, this.format);
