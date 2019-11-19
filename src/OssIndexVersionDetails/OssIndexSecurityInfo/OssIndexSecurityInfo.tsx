@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import { Table } from 'react-bootstrap';
+import { Table, Badge } from 'react-bootstrap';
+import ClassNameUtils from '../../utils/ClassNameUtils';
 
 type OssCipProps = {
   vulnerabilities: any[]
@@ -54,7 +55,9 @@ class OssIndexSecurityInfo extends React.Component<OssCipProps, OssCipState> {
       <Table variant="dark">
         <thead>
           <tr>
-            Vulnerability
+            <th colSpan={2}>
+              Vulnerabilities
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -66,9 +69,41 @@ class OssIndexSecurityInfo extends React.Component<OssCipProps, OssCipState> {
 
   private printVulnerability(vulnerability: any) {
     return (
-      <tr>
-        { vulnerability.description }
-      </tr>
+      <React.Fragment>
+        <tr>
+          <td colSpan={2}>
+            { vulnerability.title }
+          </td>
+        </tr>
+        <tr>
+          <td colSpan={2}>
+            { vulnerability.description }
+          </td>
+        </tr>
+        <tr>
+          <td>
+            CVSS Score
+          </td>
+          <td>
+            <Badge variant={ClassNameUtils.threatClassName(vulnerability.cvssScore)}>
+              { vulnerability.cvssScore }
+            </Badge>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            CVSS Vector
+          </td>
+          <td>
+            { vulnerability.cvssVector }
+          </td>
+        </tr>
+        <tr>
+          <td colSpan={2}>
+            Click here for more info: <a href={ vulnerability.reference } target="_blank">{ vulnerability.reference }</a>
+          </td>
+        </tr>
+      </React.Fragment>
     )
   }
 }
