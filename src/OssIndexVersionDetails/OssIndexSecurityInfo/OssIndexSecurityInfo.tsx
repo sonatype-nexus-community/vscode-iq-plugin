@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import Table from 'react-bootstrap/Table';
+import { Table } from 'react-bootstrap';
 
 type OssCipProps = {
   vulnerabilities: any[]
@@ -30,11 +30,14 @@ class OssIndexSecurityInfo extends React.Component<OssCipProps, OssCipState> {
 
   public render() {
     if (this.props.vulnerabilities && this.props.vulnerabilities.length > 0) {
-      Object.keys(this.props.vulnerabilities).forEach(x => {
-        return this.printVulnerability(this.props.vulnerabilities[x])
-      })
+      return (
+        <React.Fragment>
+            { this.printVulnerabitilies(this.props.vulnerabilities) }
+        </React.Fragment>
+      )
+    } else {
+      return this.noVulnerabilitiesFound();
     }
-    return this.noVulnerabilitiesFound();
   }
 
   private noVulnerabilitiesFound() {
@@ -44,36 +47,34 @@ class OssIndexSecurityInfo extends React.Component<OssCipProps, OssCipState> {
     );
   }
 
-  private printVulnerability(vulnerability: any) {
-    console.debug("Printing vulnerability", vulnerability)
+  private printVulnerabitilies(vulnerabilities: any[]) {
+    console.log("Vulnerability rendering");
+    console.debug("Printing vulnerability", vulnerabilities);
+
     return (
       <Table variant="dark">
         <thead>
           <tr>
-            <th colSpan={2}>
-              {vulnerability.title}
-            </th>
+            Vulnerability
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Description:</td>
-            <td>{vulnerability.description}</td>
-          </tr>
-          <tr>
-            <td>CVSS Score:</td>
-            <td><span id="cvssScore">{vulnerability.cvssScore}</span></td>
-          </tr>
-          <tr>
-            <td>CVSS Vector:</td>
-            <td><span id="cvssVector">{vulnerability.cvssVector}</span></td>
-          </tr>
-          <tr>
-            <td>Link For Info:</td>
-            <td>{vulnerability.reference}</td>
-          </tr>
+        { vulnerabilities.map(x => {
+            this.printVulnerability(x);
+          }) 
+        }
         </tbody>
       </Table>
+    )
+  }
+
+  private printVulnerability(vulnerability: any) {
+    console.log("I'm here");
+    console.log(vulnerability);
+    return (
+      <tr>
+        <td>{vulnerability.description}</td>
+      </tr>
     )
   }
 }
