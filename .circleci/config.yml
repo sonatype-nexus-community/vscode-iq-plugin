@@ -28,6 +28,7 @@ jobs:
     steps:
       - checkout
       - run: sudo chown -R circleci:circleci /usr/local/lib
+      - run: sudo chown -R circleci:circleci /usr/local/bin
       - run: npm install -g vsce
       - run: npm install -g semantic-release
       - run: npx semantic-release -d
