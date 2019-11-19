@@ -1,5 +1,3 @@
-import { ComponentEntry } from "./ComponentInfoPanel";
-
 /*
  * Copyright (c) 2019-present Sonatype, Inc.
  *
@@ -15,6 +13,9 @@ import { ComponentEntry } from "./ComponentInfoPanel";
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+ import { ComponentEntry } from "./ComponentEntry";
+
 export interface ComponentModel {
   components: Array<ComponentEntry>;
 }

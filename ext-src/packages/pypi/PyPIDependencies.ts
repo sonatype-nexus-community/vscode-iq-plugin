@@ -17,7 +17,7 @@ import * as _ from "lodash";
 
 import { PyPIPackage } from "./PyPIPackage";
 import { PackageDependencies } from "../PackageDependencies";
-import { ComponentEntry } from "../../ComponentInfoPanel";
+import { ComponentEntry } from "../../ComponentEntry";
 import { PyPICoordinate } from "./PyPICoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { RequestService } from "../../RequestService";

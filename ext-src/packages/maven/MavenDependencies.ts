@@ -18,11 +18,11 @@ import * as _ from "lodash";
 import { MavenPackage } from "./MavenPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { ComponentEntry } from "../../ComponentInfoPanel";
 import { MavenCoordinate } from "./MavenCoordinate";
 import { RequestService } from "../../RequestService";
 import { MavenUtils } from "./MavenUtils";
 import { ScanType } from "../../ScanType";
+import { ComponentEntry } from "../../ComponentEntry";
 
 export class MavenDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<MavenPackage> = [];

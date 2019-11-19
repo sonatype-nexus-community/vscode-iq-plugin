@@ -43,7 +43,7 @@
 			"explorer": [
 				{
 					"id": "nexusExplorer",
-					"name": "Nexus IQ"
+					"name": "Sonatype Nexus"
 				}
 			]
 		},
@@ -99,7 +99,7 @@
 						"type": "string",
 						"default": "ossindex",
 						"enum": ["ossindex", "iqServer"],
-						"enumDescription": [
+						"enumDescriptions": [
 							"Use publicly available OSS Index data",
 							"Use commercial Sonatype IQ Server data"
 						]

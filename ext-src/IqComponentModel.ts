@@ -15,11 +15,12 @@
  */
 import { Uri, window, WorkspaceConfiguration } from "vscode";
 
-import { ComponentEntry, PolicyViolation } from "./ComponentInfoPanel";
 import { ComponentContainer } from "./packages/ComponentContainer";
 import { RequestService } from "./RequestService";
 import { IqRequestService } from "./IqRequestService";
 import { ComponentModel } from "./ComponentModel";
+import { ComponentEntry } from "./ComponentEntry";
+import { PolicyViolation } from "./PolicyViolation";
 
 export class IqComponentModel implements ComponentModel {
     components = new Array<ComponentEntry>();

@@ -19,78 +19,10 @@ import { IqComponentModel } from "./IqComponentModel";
 import { ScanType } from "./ScanType";
 import { ComponentModel } from "./ComponentModel";
 import { OssIndexComponentModel } from "./OssIndexComponentModel";
+import { ComponentEntry } from "./ComponentEntry";
 
-export class ConstraintReason {
-  constructor(readonly reason: string) {}
-}
-export class ConstraintViolation {
-  constructor(
-    readonly constraintId: string,
-    constraintName: string,
-    readonly reasons: Array<ConstraintReason>
-  ) {}
-}
 
-export class PolicyViolation {
-  constructor(
-    readonly policyId: string,
-    readonly policyName: string,
-    readonly threatLevel: number,
-    readonly constraintViolations: Array<ConstraintViolation>
-  ) {}
-}
 
-export class ComponentEntry {
-  scope: string = "";
-  failure: string = "";
-  policyViolations: Array<PolicyViolation> = [];
-  hash: string = "";
-  nexusIQData: any = undefined;
-  ossIndexData: any = undefined;
-
-  constructor(readonly name: string, readonly version: string, readonly scanType: ScanType) {
-  }
-
-  public toString(): string {
-    return `${this.name} @ ${this.version}`;
-  }
-
-  public maxPolicy(): number {
-    let maxThreatLevel = 0;
-    if (!this.policyViolations) {
-      return maxThreatLevel;
-    }
-    if (this.policyViolations && this.policyViolations.length > 0) {
-      maxThreatLevel = this.policyViolations.reduce(
-        (prevMax: number, a: PolicyViolation) => {
-          console.log(a);
-          return a.threatLevel > prevMax ? a.threatLevel : prevMax;
-        },
-        0
-      );
-    }
-    return maxThreatLevel;
-  }
-  public iconName(): string {
-    if (!this.policyViolations || !this.nexusIQData) {
-      return "loading.gif";
-    }
-    let maxThreatLevel = this.maxPolicy();
-
-    // TODO what is the right way to display threat level graphically?
-    if (maxThreatLevel >= 8) {
-      return `threat-critical.png`;
-    } else if (maxThreatLevel >= 7) {
-      return `threat-severe.png`;
-    } else if (maxThreatLevel >= 5) {
-      return `threat-moderate.png`;
-    } else if (maxThreatLevel >= 1) {
-      return `threat-low.png`;
-    } else {
-      return `threat-none.png`;
-    }
-  }
-}
 
 export class ComponentInfoPanel {
   /**

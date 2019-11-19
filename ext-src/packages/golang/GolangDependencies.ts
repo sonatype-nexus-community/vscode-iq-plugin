@@ -17,12 +17,12 @@ import * as _ from "lodash";
 
 import { GolangPackage } from "./GolangPackage";
 import { PackageDependencies } from "../PackageDependencies";
-import { ComponentEntry } from "../../ComponentInfoPanel";
 import { GolangCoordinate } from "./GolangCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { RequestService } from "../../RequestService";
 import { GolangUtils } from "./GolangUtils";
 import { ScanType } from "../../ScanType";
+import { ComponentEntry } from "../../ComponentEntry";
 
 export class GolangDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<GolangPackage> = [];

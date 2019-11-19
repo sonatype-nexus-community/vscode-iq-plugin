@@ -17,12 +17,12 @@ import * as _ from "lodash";
 
 import { NpmPackage } from "./NpmPackage";
 import { PackageDependencies } from "../PackageDependencies";
-import { ComponentEntry } from "../../ComponentInfoPanel";
 import { NpmCoordinate } from "./NpmCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { RequestService } from "../../RequestService";
 import { NpmUtils } from './NpmUtils';
 import { ScanType } from "../../ScanType";
+import { ComponentEntry } from "../../ComponentEntry";
 
 export class NpmDependencies implements PackageDependencies {
   Dependencies: Array<NpmPackage> = [];
