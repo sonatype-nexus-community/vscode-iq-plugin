@@ -1,7 +1,15 @@
 {
 	"plugins": [
 		"@semantic-release/commit-analyzer",
-		"@semantic-release/release-notes-generator",
+		["@semantic-release/commit-analyzer", {
+      "preset": "angular",
+      "releaseRules": [
+        {"type": "docs", "scope": "README.md", "release": "patch"},
+        {"type": "refactor", "scope": ["/ext-src/*", "/src/"], "release": "minor"},
+				{"type": "big-time", "release": "major"},
+        {"scope": "no-release", "release": false}
+      ]
+    }],
 		[
 			"@semantic-release/github",
 			{
