@@ -23,7 +23,11 @@ jobs:
           command: npm run build
   release:
     steps:
-      - run: npx semantic-release
+      - run: npm install -g vsce
+      - run: npm install -g semantic-release
+      - run: npx semantic-release 
+      - run: vsce package
+      - run: vsce publish
 
 workflows:
   version: 2.1
