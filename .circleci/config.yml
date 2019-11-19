@@ -27,6 +27,7 @@ jobs:
       - image: circleci/node:10.16.3 
     steps:
       - checkout
+      - run: sudo chown -R circleci:circleci /usr/local/lib
       - run: npm install -g vsce
       - run: npm install -g semantic-release
       - run: npx semantic-release -d
