@@ -34,23 +34,36 @@ export class ComponentEntry {
 
   public maxPolicy(): number {
     let maxThreatLevel = 0;
-    if (!this.policyViolations) {
-      return maxThreatLevel;
-    }
-    if (this.policyViolations && this.policyViolations.length > 0) {
-      maxThreatLevel = this.policyViolations.reduce(
-        (prevMax: number, a: PolicyViolation) => {
-          console.log(a);
-          return a.threatLevel > prevMax ? a.threatLevel : prevMax;
-        },
-        0
-      );
+    if (this.scanType == ScanType.NexusIq) {
+      if (!this.policyViolations) {
+        return maxThreatLevel;
+      }
+      if (this.policyViolations && this.policyViolations.length > 0) {
+        maxThreatLevel = this.policyViolations.reduce(
+          (prevMax: number, a: PolicyViolation) => {
+            return a.threatLevel > prevMax ? a.threatLevel : prevMax;
+          },
+          0
+        );
+      }
+    } else if (this.scanType == ScanType.OssIndex) {
+      if (!this.ossIndexData.vulnerabilities) {
+        return maxThreatLevel;
+      }
+      if (this.ossIndexData.vulnerabilities.length > 0) {
+        maxThreatLevel = this.ossIndexData.vulnerabilities.reduce(
+          (prevMax: number, a: any) => {
+            return a.cvssScore > prevMax ? a.cvssScore : prevMax;
+          },
+          0
+        );
+      }
     }
     return maxThreatLevel;
   }
   public iconName(): string {
-    console.log(`iconName called for ${this.toString()}`, this);
-    if (!this.policyViolations || !this.nexusIQData) {
+    if ((this.scanType == ScanType.NexusIq && (!this.policyViolations || !this.nexusIQData)) ||
+      (this.scanType == ScanType.OssIndex && !this.ossIndexData )) {
       return "loading.gif";
     }
     let maxThreatLevel = this.maxPolicy();
