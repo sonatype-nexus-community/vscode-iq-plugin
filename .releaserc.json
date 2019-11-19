@@ -9,7 +9,15 @@
         {"scope": "no-release", "release": false}
       ]
     }],
-    "@semantic-release/release-notes-generator",
+    ["@semantic-release/release-notes-generator", {
+      "preset": "angular",
+      "parserOpts": {
+        "noteKeywords": ["docs", "refactor", "big-time", "no-release", "README.md"]
+      },
+      "writerOpts": {
+        "commitsSort": ["subject", "scope"]
+      }
+    }],
 		[
 			"@semantic-release/github",
 			{
