@@ -1,6 +1,3 @@
-import { GolangPackage } from "./GolangPackage";
-import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-
 /*
  * Copyright (c) 2019-present Sonatype, Inc.
  *
@@ -17,6 +14,9 @@ import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
  * limitations under the License.
  */
 import { exec } from "../../exec";
+
+import { GolangPackage } from "./GolangPackage";
+import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 
 export class GolangUtils {
   public async getDependencyArray(): Promise<any> {

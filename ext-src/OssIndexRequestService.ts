@@ -38,7 +38,6 @@ export class OssIndexRequestService implements LiteRequestService {
     this.password = password;
   }
 
-
   public async getResultsFromPurls(purls: Array<String>): Promise<any> {
     return new Promise(async (resolve, reject) => {
       let newPurls = this.chunkPurls(purls);
