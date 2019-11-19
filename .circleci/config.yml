@@ -14,9 +14,6 @@ jobs:
       - run:
           name: install-npm-wee
           command: npm install
-      - run:
-          name: start-semantic-release
-          command: npx semantic-release    
       - save_cache: 
           key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
@@ -24,3 +21,15 @@ jobs:
       - run: 
           name: build
           command: npm run build
+  release:
+    steps:
+      - run: npx semantic-release
+
+workflows:
+  version: 2.1
+  build_and_release:
+    jobs:
+      - build
+      - release:
+          requires:
+            - build
