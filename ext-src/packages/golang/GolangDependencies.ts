@@ -15,13 +15,13 @@
  */
 import * as _ from "lodash";
 
-import { exec } from "../../exec";
 import { GolangPackage } from "./GolangPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../ComponentInfoPanel";
 import { GolangCoordinate } from "./GolangCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { RequestService } from "../../RequestService";
+import { GolangUtils } from "./GolangUtils";
 
 export class GolangDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<GolangPackage> = [];
@@ -93,54 +93,12 @@ export class GolangDependencies extends PackageDependenciesHelper implements Pac
 
   public async packageForIq(): Promise<any> {
     try {
-      // TODO: When running this command, Golang is now using the workspace root to establish a GOCACHE, we should use some other temporary area or try and suss out the real one
-      let { stdout, stderr } = await exec(`go list -m all`, {
-        cwd: PackageDependenciesHelper.getWorkspaceRoot(),
-        env: {
-          PATH: process.env.PATH,
-          HOME: this.getGoCacheDirectory()
-        }
-      });
-
-      if (stdout != "" && stderr === "") {
-        this.parseGolangDependencies(stdout);
-      } else {
-        return Promise.reject(
-          new Error(
-            "Error occurred in generating dependency tree. Please check that golang is on your PATH."
-          )
-        );
-      }
-
-      return Promise.resolve();
-    } catch (e) {
-      return Promise.reject(
-        "go list -m all failed, please try running locally to see why: " +
-          e.message
-      );
+      let golangUtils = new GolangUtils();
+      this.Dependencies = await golangUtils.getDependencyArray();
+      Promise.resolve();
     }
-  }
-
-  private getGoCacheDirectory(): string {
-    // TODO: This will only work on OS X/Linux, need to find a valid GOCACHE dir and set it for Windows
-    return "/tmp/gocache/";
-  }
-
-  private parseGolangDependencies(dependencyTree: string) {
-    let dependencyList: GolangPackage[] = [];
-
-    const dependencyLines = dependencyTree.split("\n");
-
-    dependencyLines.forEach((dep, index) => {
-      if (index > 0 && dep != "") {
-        const dependencyParts: string[] = dep.trim().split(" ");
-        const name: string = dependencyParts[0];
-        const version: string = dependencyParts[1];
-
-        dependencyList.push(new GolangPackage(name, version));
-      }
-    });
-
-    this.Dependencies = dependencyList;
+    catch (e) {
+      Promise.reject();
+    }
   }
 }

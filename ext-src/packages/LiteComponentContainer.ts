@@ -17,6 +17,8 @@
 import { LitePackageDependencies } from "./LitePackageDependencies";
 import { NpmLiteDependencies } from "./npm/NpmLiteDependencies";
 import { PyPiLiteDependencies } from "./pypi/PyPiLiteDependencies";
+import { GolangLiteDependencies } from "./golang/GolangLiteDependencies";
+import { MavenLiteDependencies } from "./maven/MavenLiteDependencies";
 
 export class LiteComponentContainer {
   Implementation: Array<LitePackageDependencies> = [];
@@ -26,6 +28,8 @@ export class LiteComponentContainer {
     // To add a new format, you just need to push another implementation to this list
     this.Implementation.push(new NpmLiteDependencies());
     this.Implementation.push(new PyPiLiteDependencies());
+    this.Implementation.push(new GolangLiteDependencies());
+    this.Implementation.push(new MavenLiteDependencies());
 
     // Bit of an odd side effect, if a project has multiple dependency types, the PackageMuncher will get set to the last one it encounters currently
     this.Implementation.forEach(i => {

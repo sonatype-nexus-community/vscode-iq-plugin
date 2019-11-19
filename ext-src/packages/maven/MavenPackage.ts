@@ -30,8 +30,7 @@ export class MavenPackage implements PackageType {
   }
 
   public toPurl() {
-    // TODO: Finish
-    return `pkg:maven/${this.Group}/${this.Name}`;
+    return `pkg:maven/${this.Group}/${this.Name}@${this.Version}`;
   }
 
   public toCoordValueType(): string {
