@@ -1,6 +1,6 @@
-# vscode-iq-plugin
+# Sonatype Nexus Security Extension for VSCode
 To run:
-The plugin will create a new panel in your IDE called "Nexus IQ". It will automatically evaluate your components.
+The plugin will create a new panel in your IDE called "Nexus Security". It will automatically evaluate your components.
 
 Currently it is limited to analyzing NPM projects.
 
