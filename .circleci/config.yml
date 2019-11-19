@@ -32,7 +32,7 @@ jobs:
       - run: npm install -g vsce
       - run: npm install -g semantic-release
       - run: npm install -g @semantic-release/git
-      - run: npx semantic-release -d
+      - run: npx semantic-release -d -b semver
       # - run: vsce package
       # - run: vsce publish -p VSCODE_TOKEN
 
