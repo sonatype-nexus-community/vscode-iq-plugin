@@ -171,6 +171,6 @@ export class NexusExplorer {
   }
 
   private viewNode(entry: ComponentEntry) {
-    ComponentInfoPanel.createOrShow(this.context.extensionPath, entry, this.componentModel as IqComponentModel);
+    ComponentInfoPanel.createOrShow(this.context.extensionPath, entry, this.componentModel);
   }
 }

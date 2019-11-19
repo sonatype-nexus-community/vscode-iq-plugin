@@ -22,6 +22,7 @@ import { ComponentEntry } from "../../ComponentInfoPanel";
 import { MavenCoordinate } from "./MavenCoordinate";
 import { RequestService } from "../../RequestService";
 import { MavenUtils } from "./MavenUtils";
+import { ScanType } from "../../ScanType";
 
 export class MavenDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<MavenPackage> = [];
@@ -85,7 +86,8 @@ export class MavenDependencies extends PackageDependenciesHelper implements Pack
 
       let componentEntry = new ComponentEntry(
         packageId,
-        entry.componentIdentifier.coordinates.version
+        entry.componentIdentifier.coordinates.version,
+        ScanType.NexusIq
       );
       components.push(componentEntry);
       let coordinates = new MavenCoordinate(

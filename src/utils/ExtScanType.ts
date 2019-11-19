@@ -13,23 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
-import { ExtScanType } from 'src/utils/ExtScanType';
 
-export interface VersionsContextInterface {
-  scanType?: ExtScanType,
-  allVersions: any[],
-  component: any,
-  selectedVersionDetails?: any,
-  selectedVersion: string,
-  initialVersion: string,
-  remediation?: any,
-  cvedetails?: any,
-  handleGetRemediation(o: any, s: string): void
-}
-
-const ctxt = React.createContext<VersionsContextInterface | undefined>(undefined);
-
-export const VersionsContextProvider = ctxt.Provider;
-
-export const VersionsContextConsumer = ctxt.Consumer;
+ export enum ExtScanType {
+   NexusIq = 1,
+   OssIndex = 2
+ }

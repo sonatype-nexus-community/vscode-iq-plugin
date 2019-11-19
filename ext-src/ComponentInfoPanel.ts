@@ -16,6 +16,9 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import { IqComponentModel } from "./IqComponentModel";
+import { ScanType } from "./ScanType";
+import { ComponentModel } from "./ComponentModel";
+import { OssIndexComponentModel } from "./OssIndexComponentModel";
 
 export class ConstraintReason {
   constructor(readonly reason: string) {}
@@ -38,7 +41,7 @@ export class PolicyViolation {
 }
 
 export class ComponentEntry {
-  constructor(readonly name: string, readonly version: string) {}
+  constructor(readonly name: string, readonly version: string, readonly scanType: ScanType) {}
   scope: string = "";
   failure: string = "";
   policyViolations: Array<PolicyViolation> = [];
@@ -89,7 +92,7 @@ export class ComponentInfoPanel {
    * Track the currently panel. Only allow a single panel to exist at a time.
    */
   public static currentPanel: ComponentInfoPanel | undefined;
-  private iqComponentModel: IqComponentModel;
+  private componentModel: ComponentModel;
 
   // TODO get this from configuration or constructor
   private static iqApplicationId: string;
@@ -108,7 +111,7 @@ export class ComponentInfoPanel {
   public static createOrShow(
     extensionPath: string,
     newComponent: ComponentEntry,
-    iqComponenentModel: IqComponentModel
+    componenentModel: ComponentModel
   ) {
 
     const column = vscode.window.activeTextEditor
@@ -142,7 +145,7 @@ export class ComponentInfoPanel {
     ComponentInfoPanel.currentPanel = new ComponentInfoPanel(
       panel,
       extensionPath,
-      iqComponenentModel
+      componenentModel
     );
     ComponentInfoPanel.currentPanel.showComponent(newComponent);
   }
@@ -157,13 +160,17 @@ export class ComponentInfoPanel {
       iqApplicationId: ComponentInfoPanel.iqApplicationId,
       iqApplicationPublicId: ComponentInfoPanel.iqApplicationPublicId
     };
+    ComponentInfoPanel._ossSettings = {
+      username: "",
+      password: ""
+    };
   }
 
-  private constructor(panel: vscode.WebviewPanel, extensionPath: string, iqComponentModel: IqComponentModel) {
+  private constructor(panel: vscode.WebviewPanel, extensionPath: string, componentModel: ComponentModel) {
     this._panel = panel;
     this._extensionPath = extensionPath;
     ComponentInfoPanel.getSettings();
-    this.iqComponentModel = iqComponentModel;
+    this.componentModel = componentModel;
     this.loadHtmlForWebview();
 
     const pageSettings = {
@@ -201,7 +208,7 @@ export class ComponentInfoPanel {
         switch (message.command) {
           case "selectVersion":
             console.debug("selectVersion received, message:", message);
-            this.showSelectedVersion(message.package.nexusIQData.component.componentIdentifier, message.version);
+            this.showSelectedVersion(message);
             return;
           case "alert":
             vscode.window.showErrorMessage(message.text);
@@ -224,36 +231,55 @@ export class ComponentInfoPanel {
     );
   }
 
-  private async showSelectedVersion(componentIdentifier: string, version: string) {
-    console.log("showSelectedVersion", componentIdentifier);
-    let body: any = await this.iqComponentModel.requestService.showSelectedVersion(componentIdentifier, version);
+  private async showSelectedVersion(message: any) {
+    console.log("showSelectedVersion", message);
+    if (this.componentModel instanceof IqComponentModel) {
+      var componentIdentifier = message.package.nexusIQData.component.componentIdentifier;
+      var version = message.version;
+      var iqComponentModel = this.componentModel as IqComponentModel
+      let body: any = await iqComponentModel.requestService.showSelectedVersion(componentIdentifier, version);
     
-    this._panel.webview.postMessage({
-      command: "versionDetails",
-      componentDetails: body.componentDetails[0]
-    });
+      this._panel.webview.postMessage({
+        command: "versionDetails",
+        componentDetails: body.componentDetails[0],
+        scanType: ScanType.NexusIq
+      });
+    } else if (this.componentModel instanceof OssIndexComponentModel) {
+      this._panel.webview.postMessage({
+        command: "versionDetails",
+        componentDetails: message.package,
+        scanType: ScanType.OssIndex
+      });
+    }
+
   }
 
   private async showRemediation(nexusArtifact: any) {
     console.debug("showRemediation", nexusArtifact);
-    let remediation = await this.iqComponentModel.requestService.getRemediation(nexusArtifact, ComponentInfoPanel.iqApplicationId);
-    
-    console.debug("posting message: remediation", remediation);
-    this._panel.webview.postMessage({
-      command: "remediationDetail",
-      remediation: remediation
-    });
+    if (this.componentModel instanceof IqComponentModel) {
+      var iqComponentModel = this.componentModel as IqComponentModel
+      let remediation = await iqComponentModel.requestService.getRemediation(nexusArtifact, ComponentInfoPanel.iqApplicationId);
+      
+      console.debug("posting message: remediation", remediation);
+      this._panel.webview.postMessage({
+        command: "remediationDetail",
+        remediation: remediation
+      });
+    }
   }
 
   private async showCVE(cve: any, nexusArtifact: any) {
     console.debug("showCVE", cve, nexusArtifact);
-    let cvedetails = await this.iqComponentModel.requestService.getCVEDetails(cve, nexusArtifact);
-    
-    console.debug("posting message: cveDetails", cvedetails);
-    this._panel.webview.postMessage({
-      command: "cveDetails",
-      cvedetails: cvedetails
-    });
+    if (this.componentModel instanceof IqComponentModel) {
+      var iqComponentModel = this.componentModel as IqComponentModel
+      let cvedetails = await iqComponentModel.requestService.getCVEDetails(cve, nexusArtifact);
+      
+      console.debug("posting message: cveDetails", cvedetails);
+      this._panel.webview.postMessage({
+        command: "cveDetails",
+        cvedetails: cvedetails
+      });
+    }
   }
 
   public dispose() {
@@ -279,18 +305,8 @@ export class ComponentInfoPanel {
       )
     ) {
       this.component = newComponent;
-      //this.updateViewForThisComponent();
+      this.updateViewForThisComponent();
     }
-  }
-
-  private updateViewForOssIndexComponent() {
-    console.debug(`Update called`);
-    this._panel.title = `OSS Index Scan: BLAH`;
-
-    this._panel.webview.postMessage({
-      command: "scanType",
-      scanType: "ossindex"
-    });
   }
 
   private updateViewForThisComponent() {
@@ -310,13 +326,16 @@ export class ComponentInfoPanel {
 
   private async showAllVersions() {
     console.debug("showAllVersions", this.component);
-    let allversions = await this.iqComponentModel.requestService.getAllVersions(this.component!.nexusIQData.component, ComponentInfoPanel.iqApplicationPublicId);
-    
-    console.debug("posting message: allversions", allversions);
-    this._panel.webview.postMessage({
-      command: "allversions",
-      allversions: allversions
-    });
+    if (this.componentModel instanceof IqComponentModel) {
+      var iqComponentModel = this.componentModel as IqComponentModel
+      let allversions = await iqComponentModel.requestService.getAllVersions(this.component!.nexusIQData.component, ComponentInfoPanel.iqApplicationPublicId);
+      
+      console.debug("posting message: allversions", allversions);
+      this._panel.webview.postMessage({
+        command: "allversions",
+        allversions: allversions
+      });
+    }
   }
 
   private loadHtmlForWebview() {

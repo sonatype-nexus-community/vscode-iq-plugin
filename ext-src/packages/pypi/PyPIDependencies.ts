@@ -22,6 +22,7 @@ import { PyPICoordinate } from "./PyPICoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { RequestService } from "../../RequestService";
 import { PyPiUtils } from "./PyPiUtils";
+import { ScanType } from "../../ScanType";
 
 export class PyPIDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<PyPIPackage> = [];
@@ -86,7 +87,8 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
 
       let componentEntry = new ComponentEntry(
         packageId,
-        entry.componentIdentifier.coordinates.version
+        entry.componentIdentifier.coordinates.version,
+        ScanType.NexusIq
       );
       components.push(componentEntry);
       let coordinates = new PyPICoordinate(

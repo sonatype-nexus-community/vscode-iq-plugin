@@ -22,6 +22,7 @@ import { GolangCoordinate } from "./GolangCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { RequestService } from "../../RequestService";
 import { GolangUtils } from "./GolangUtils";
+import { ScanType } from "../../ScanType";
 
 export class GolangDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<GolangPackage> = [];
@@ -76,7 +77,8 @@ export class GolangDependencies extends PackageDependenciesHelper implements Pac
 
       let componentEntry = new ComponentEntry(
         packageId,
-        entry.componentIdentifier.coordinates.version
+        entry.componentIdentifier.coordinates.version,
+        ScanType.NexusIq
       );
       components.push(componentEntry);
       let coordinates = new GolangCoordinate(

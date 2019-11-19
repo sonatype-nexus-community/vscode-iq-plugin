@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 import * as React from 'react';
+import { ExtScanType } from 'src/utils/ExtScanType';
 
 export interface OssIndexContextInterface {
-  scanType: string,
+  scanType?: ExtScanType,
 }
 
 const ctxt = React.createContext<OssIndexContextInterface | undefined>(undefined);

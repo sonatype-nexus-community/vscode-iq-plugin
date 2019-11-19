@@ -21,6 +21,7 @@ import { LiteComponentContainer } from './packages/LiteComponentContainer';
 import { LiteRequestService } from "./LiteRequestService";
 import { OssIndexRequestService } from "./OssIndexRequestService";
 import { ComponentModel } from "./ComponentModel";
+import { ScanType } from "./ScanType";
 
 export class OssIndexComponentModel implements ComponentModel {
   components = new Array<ComponentEntry>();
@@ -43,8 +44,6 @@ export class OssIndexComponentModel implements ComponentModel {
       try {
         let componentContainer = new LiteComponentContainer();
 
-        let data: any;
-
         if (componentContainer.PackageMuncher != undefined) {
           await componentContainer.PackageMuncher.packageForService();
 
@@ -56,16 +55,11 @@ export class OssIndexComponentModel implements ComponentModel {
             let coordinates = x.coordinates as string;
             let name = coordinates.substring(0, coordinates.indexOf("@"));
             let version = coordinates.substring(coordinates.indexOf("@"), coordinates.length);
-            return new ComponentEntry(name, version)
+            return new ComponentEntry(name, version, ScanType.OssIndex)
           })
         } else {
           throw new TypeError("Unable to instantiate Package Muncher");
         }
-
-        if (undefined == data) {
-          throw new RangeError("Attempted to generated dependency list but received an empty collection. NexusIQ will not be invoked for this project.");
-        }
-
       } catch (e) {
         window.showErrorMessage("Nexus Security extension: " + e);
         return;

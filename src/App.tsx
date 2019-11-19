@@ -19,6 +19,7 @@ import AllVersionsPage from './AllVersions/AllVersionsPage';
 import SelectedVersionDetails from './SelectedVersionDetails/SelectedVersionDetails';
 import { VersionsContextProvider } from './context/versions-context';
 import { OssIndexContextProvider } from './context/ossindex-context';
+import { ExtScanType } from './utils/ExtScanType';
 
 // add workarounds to call VSCode
 declare var acquireVsCodeApi: any;
@@ -28,7 +29,7 @@ type AppProps = {
 };
 
 type AppState = {
-  scanType: string,
+  scanType?: ExtScanType,
   component: any,
   allVersions: any[],
   selectedVersionDetails?: any,
@@ -44,7 +45,6 @@ class App extends React.Component<AppProps, AppState> {
     super(props);
     console.debug("App constructing, props:", props);
     this.state = {
-      scanType: "",
       component: {},
       allVersions: [],
       selectedVersionDetails: undefined,
@@ -85,7 +85,9 @@ class App extends React.Component<AppProps, AppState> {
 
   public render() {
     var _this = this;
-    if (!this.state.component || !this.state.component.nexusIQData) {
+    console.log("App render called, state:", this.state);
+    if (!this.state.scanType) {
+      console.log("rendering loader because ")
       return (
         <Loader
           type="Puff"
@@ -94,14 +96,15 @@ class App extends React.Component<AppProps, AppState> {
           width="100"
         />
       );
-    } else if ( this.state.scanType === "ossindex"){
+    } else if ( this.state.scanType === ExtScanType.OssIndex){
+      console.log("Attempting to render OSS Index");
       return (
         <OssIndexContextProvider value={this.state}>
           <h1>Hello</h1>
         </OssIndexContextProvider>
       )
     }
-
+    console.log("rendering Nexus IQ");
     return (
       <VersionsContextProvider value={this.state}>
         <div>
@@ -143,9 +146,18 @@ class App extends React.Component<AppProps, AppState> {
           break;
         case 'versionDetails':
           console.log("Selected version details received", message.componentDetails);
-          this.setState({selectedVersionDetails: message.componentDetails, 
-            selectedVersion: message.componentDetails.component.componentIdentifier.coordinates.version
-          })
+          if (message.scanType == ExtScanType.NexusIq) {
+            this.setState({selectedVersionDetails: message.componentDetails, 
+              selectedVersion: message.componentDetails.component.componentIdentifier.coordinates.version,
+              scanType: message.scanType
+            })
+          }
+          if (message.scanType == ExtScanType.OssIndex) {
+            this.setState({selectedVersionDetails: message.componentDetails, 
+              selectedVersion: message.componentDetails.version,
+              scanType: message.scanType
+            })
+          }
           break;
         case 'allversions':
           console.debug("App handling allVersions message", message);

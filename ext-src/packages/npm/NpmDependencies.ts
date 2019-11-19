@@ -22,6 +22,7 @@ import { NpmCoordinate } from "./NpmCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { RequestService } from "../../RequestService";
 import { NpmUtils } from './NpmUtils';
+import { ScanType } from "../../ScanType";
 
 export class NpmDependencies implements PackageDependencies {
   Dependencies: Array<NpmPackage> = [];
@@ -86,7 +87,8 @@ export class NpmDependencies implements PackageDependencies {
     for (let entry of data.components) {
       let componentEntry = new ComponentEntry(
         entry.componentIdentifier.coordinates.packageId,
-        entry.componentIdentifier.coordinates.version
+        entry.componentIdentifier.coordinates.version,
+        ScanType.NexusIq
       );
       components.push(componentEntry);
       let coordinates = new NpmCoordinate(
