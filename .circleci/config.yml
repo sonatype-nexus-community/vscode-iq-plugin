@@ -25,9 +25,9 @@ jobs:
     steps:
       - run: npm install -g vsce
       - run: npm install -g semantic-release
-      - run: npx semantic-release 
-      - run: vsce package
-      - run: vsce publish
+      - run: npx semantic-release -d
+      # - run: vsce package
+      # - run: vsce publish -p VSCODE_TOKEN
 
 workflows:
   version: 2.1
@@ -35,5 +35,6 @@ workflows:
     jobs:
       - build
       - release:
+          context: vscode-plugin
           requires:
             - build
