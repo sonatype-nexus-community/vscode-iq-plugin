@@ -16,6 +16,7 @@
 
 import { LitePackageDependencies } from "./LitePackageDependencies";
 import { NpmLiteDependencies } from "./npm/NpmLiteDependencies";
+import { PyPiLiteDependencies } from "./pypi/PyPiLiteDependencies";
 
 export class LiteComponentContainer {
   Implementation: Array<LitePackageDependencies> = [];
@@ -24,6 +25,7 @@ export class LiteComponentContainer {
   constructor() {
     // To add a new format, you just need to push another implementation to this list
     this.Implementation.push(new NpmLiteDependencies());
+    this.Implementation.push(new PyPiLiteDependencies());
 
     // Bit of an odd side effect, if a project has multiple dependency types, the PackageMuncher will get set to the last one it encounters currently
     this.Implementation.forEach(i => {

@@ -15,13 +15,13 @@
  */
 import * as _ from "lodash";
 
-import { exec } from "../../exec";
 import { PyPIPackage } from "./PyPIPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../ComponentInfoPanel";
 import { PyPICoordinate } from "./PyPICoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { RequestService } from "../../RequestService";
+import { PyPiUtils } from "./PyPiUtils";
 
 export class PyPIDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<PyPIPackage> = [];
@@ -105,73 +105,12 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
 
   public async packageForIq(): Promise<any> {
     try {
-      let {stdout, stderr } = await exec(`cat requirements.txt`, {
-        cwd: PackageDependenciesHelper.getWorkspaceRoot(),
-        env: {
-          PATH: process.env.PATH
-        }
-      });
-
-      if (stdout != "" && stderr === "") {
-        this.parsePyPIDependencyTree(stdout);
-      } else {
-        return Promise.reject(
-          new Error(
-            "Error occurred in generating dependency tree. Check that there is not an issue with your requirements.txt"
-          )
-        );
-      }
-
-      return Promise.resolve();
-    } catch (e) {
-      return Promise.reject(
-        `cat requirements.txt failed, try running it manually to see what went wrong: ${e.error}`
-      );
+      let pypiUtils = new PyPiUtils();
+      this.Dependencies = await pypiUtils.getDependencyArray();
+      Promise.resolve();
     }
-  }
-
-  private parsePyPIDependencyTree(dependencyTree: string) {
-    const dependencies: string = dependencyTree;
-    console.debug(dependencies);
-    console.debug(
-      "------------------------------------------------------------------------------"
-    );
-    let dependencyList: PyPIPackage[] = [];
-    //numpy==1.16.4
-    const dependencyLines = dependencies.split("\n");
-    dependencyLines.forEach((dep) => {  
-      console.debug(dep);
-      if (dep.trim()) {
-        //ignore comments
-        if (dep.startsWith("#")) {
-          console.debug("Found comment, skipping");
-        } else {
-          const dependencyParts: string[] = dep.trim().split("==");
-          const name: string = dependencyParts[0];
-          const version: string = dependencyParts[1];
-          const extension: string = "";
-          const qualifier: string = "";
-            //dependencies used only during unit testing are generally ignored since they aren't included in the runtime artifact
-            // artifactId, extension, and version are required fields. If a single dependency is missing any of the three, IQ will return a 400 response for the whole list
-          if (name && version) {
-            const dependencyObject: PyPIPackage = new PyPIPackage(
-              name,
-              version,
-              extension,
-              qualifier
-            );
-            dependencyList.push(dependencyObject);
-          } else {
-            console.warn(
-              "Skipping dependency: " +
-                dep +
-                " due to missing data (name, version, and/or extension)"
-            );
-          }
-        }
-      }
-    });
-
-    this.Dependencies = dependencyList;
+    catch (e) {
+      Promise.reject();
+    }
   }
 }
