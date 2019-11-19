@@ -1,6 +1,5 @@
 {
 	"plugins": [
-		"@semantic-release/commit-analyzer",
 		["@semantic-release/commit-analyzer", {
       "preset": "angular",
       "releaseRules": [
@@ -10,6 +9,7 @@
         {"scope": "no-release", "release": false}
       ]
     }],
+    "@semantic-release/release-notes-generator",
 		[
 			"@semantic-release/github",
 			{

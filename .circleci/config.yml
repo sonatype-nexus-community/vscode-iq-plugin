@@ -29,9 +29,11 @@ jobs:
       - checkout
       - run: sudo chown -R circleci:circleci /usr/local/lib
       - run: sudo chown -R circleci:circleci /usr/local/bin
+      - run: sudo npm install -g npm@latest
+      - run: sudo npm install
       - run: npm install -g vsce
       - run: npm install -g semantic-release
-      - run: npm install -g @semantic-release/git
+      - run: npm install -g @semantic-release/git@7.0.17
       - run: npx semantic-release -d -b semver
       # - run: vsce package
       # - run: vsce publish -p VSCODE_TOKEN
