@@ -49,7 +49,7 @@ class OssIndexComponentInfo extends React.Component<OssCipProps, OssCipState> {
               <td><span id="version">{context.component.version}</span></td>
             </tr>
             <tr>
-              <td>Version:</td>
+              <td>Description:</td>
               <td><span id="description">{context.component.ossIndexData.description}</span></td>
             </tr>
           </tbody>

@@ -18,6 +18,7 @@ import { ExtScanType } from 'src/utils/ExtScanType';
 
 export interface OssIndexContextInterface {
   scanType?: ExtScanType,
+  vulnerabilities?: any[],
   component?: any
 }
 

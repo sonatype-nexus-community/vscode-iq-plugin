@@ -17,6 +17,8 @@ import * as React from 'react';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import OssIndexComponentInfo from './OssIndexComponentInfo/OssIndexComponentInfo';
+import OssIndexSecurityInfo from './OssIndexSecurityInfo/OssIndexSecurityInfo';
+import { OssIndexContextConsumer } from 'src/context/ossindex-context';
 
 type Props = {
 }
@@ -33,7 +35,11 @@ class OssIndexVersionDetails extends React.Component<Props, State> {
           <OssIndexComponentInfo />
         </Tab>
         <Tab title="Security" eventKey="security">
-          <h2>Nothing here</h2>
+          <OssIndexContextConsumer>
+            {context => context && context.vulnerabilities && (
+              <OssIndexSecurityInfo vulnerabilities={context.vulnerabilities}/>
+            )}
+          </OssIndexContextConsumer>
         </Tab>
         <Tab title="Licensing" eventKey="licensing">
           <h2>Nothing here</h2>

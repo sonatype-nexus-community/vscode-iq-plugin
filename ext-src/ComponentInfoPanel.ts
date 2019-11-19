@@ -253,6 +253,7 @@ export class ComponentInfoPanel {
       this._panel.webview.postMessage({
         command: "versionDetails",
         componentDetails: message.package,
+        vulnerabilities: message.package.ossIndexData.vulnerabilities,
         scanType: ScanType.OssIndex
       });
     }

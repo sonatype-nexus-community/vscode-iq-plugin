@@ -31,6 +31,7 @@ type AppProps = {
 
 type AppState = {
   scanType?: ExtScanType,
+  vulnerabilities?: any[],
   component: any,
   allVersions: any[],
   selectedVersionDetails?: any,
@@ -47,6 +48,7 @@ class App extends React.Component<AppProps, AppState> {
     console.debug("App constructing, props:", props);
     this.state = {
       component: {},
+      vulnerabilities: [],
       allVersions: [],
       selectedVersionDetails: undefined,
       selectedVersion: "",
@@ -143,6 +145,7 @@ class App extends React.Component<AppProps, AppState> {
           console.log("Selected version details received", message.componentDetails);
           let selectedVersion: any;
           let version: string = "";
+          let vulnerabilities: [] = [];
           if (message.scanType == ExtScanType.NexusIq) {
             selectedVersion = message.componentDetails;
             version = message.componentDetails.component.componentIdentifier.coordinates.version;
@@ -150,10 +153,12 @@ class App extends React.Component<AppProps, AppState> {
           if (message.scanType == ExtScanType.OssIndex) {
             selectedVersion = message.componentDetails;
             version = message.componentDetails.version;
+            vulnerabilities = message.vulnerabilities;
           }
           this.setState({selectedVersionDetails: selectedVersion, 
             selectedVersion: version,
-            scanType: message.scanType
+            scanType: message.scanType,
+            vulnerabilities: vulnerabilities
           })
           break;
         case 'allversions':
