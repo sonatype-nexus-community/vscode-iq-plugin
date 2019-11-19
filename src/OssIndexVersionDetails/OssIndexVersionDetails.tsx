@@ -42,7 +42,7 @@ class OssIndexVersionDetails extends React.Component<Props, State> {
           </OssIndexContextConsumer>
         </Tab>
         <Tab title="Licensing" eventKey="licensing">
-          <h2>Nothing here</h2>
+          <h2>Nothing here, buy IQ Server to learn more!</h2>
         </Tab>
       </Tabs>     
     );

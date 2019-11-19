@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import { Table, Badge } from 'react-bootstrap';
+import { Table, Badge, Accordion, Card } from 'react-bootstrap';
 import ClassNameUtils from '../../utils/ClassNameUtils';
+import { FaChevronDown } from 'react-icons/fa';
 
 type OssCipProps = {
   vulnerabilities: any[]
@@ -33,6 +34,7 @@ class OssIndexSecurityInfo extends React.Component<OssCipProps, OssCipState> {
     if (this.props.vulnerabilities && this.props.vulnerabilities.length > 0) {
       return (
         <React.Fragment>
+            <h3>Vulnerabilities</h3>
             { this.printVulnerabitilies(this.props.vulnerabilities) }
         </React.Fragment>
       )
@@ -52,58 +54,59 @@ class OssIndexSecurityInfo extends React.Component<OssCipProps, OssCipState> {
     console.debug("Printing vulnerability", vulnerabilities);
 
     return (
-      <Table variant="dark">
-        <thead>
-          <tr>
-            <th colSpan={2}>
-              Vulnerabilities
-            </th>
-          </tr>
-        </thead>
-        <tbody>
+      <Accordion>
           { vulnerabilities.map(this.printVulnerability) }
-        </tbody>
-      </Table>
+      </Accordion>
     )
   }
 
   private printVulnerability(vulnerability: any) {
     return (
-      <React.Fragment>
-        <tr>
-          <td colSpan={2}>
-            { vulnerability.title }
-          </td>
-        </tr>
-        <tr>
-          <td colSpan={2}>
-            { vulnerability.description }
-          </td>
-        </tr>
-        <tr>
-          <td>
-            CVSS Score
-          </td>
-          <td>
-            <Badge variant={ClassNameUtils.threatClassName(vulnerability.cvssScore)}>
-              { vulnerability.cvssScore }
+      <Card>
+        <Card.Header>
+          <Accordion.Toggle as={Card.Header} 
+            eventKey={vulnerability.id}>
+            { vulnerability.title } <FaChevronDown /> 
+            <Badge 
+              variant={ClassNameUtils.threatClassName(vulnerability.cvssScore)}
+              className="float-right"
+              >
+                CVSS: { vulnerability.cvssScore }
             </Badge>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            CVSS Vector
-          </td>
-          <td>
-            { vulnerability.cvssVector }
-          </td>
-        </tr>
-        <tr>
-          <td colSpan={2}>
-            Click here for more info: <a href={ vulnerability.reference } target="_blank">{ vulnerability.reference }</a>
-          </td>
-        </tr>
-      </React.Fragment>
+          </Accordion.Toggle>
+        </Card.Header>
+        <Accordion.Collapse eventKey={vulnerability.id}>
+          <Card.Body>
+            <Table variant="dark">
+              <tbody>
+                <tr>
+                  <td>
+                    { vulnerability.description }
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    CVSS Score:             
+                    <Badge variant={ClassNameUtils.threatClassName(vulnerability.cvssScore)}>
+                      { vulnerability.cvssScore }
+                    </Badge>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    CVSS Vector: { vulnerability.cvssVector }
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Click here for more info: <a href={ vulnerability.reference } target="_blank">{ vulnerability.reference }</a>
+                  </td>
+                </tr>
+              </tbody>
+            </Table>
+          </Card.Body>
+        </Accordion.Collapse>
+      </Card>
     )
   }
 }
