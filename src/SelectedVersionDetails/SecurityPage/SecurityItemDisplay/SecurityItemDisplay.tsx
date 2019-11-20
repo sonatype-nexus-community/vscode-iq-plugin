@@ -43,8 +43,7 @@ class SecurityItemDisplay extends React.Component<Props, State> {
           >
           { this.props.securityIssue.reference } <FaChevronRight /> 
           <Badge 
-            variant={ClassNameUtils.threatClassName(this.props.securityIssue.severity)} 
-            className="float-right">
+            className={ClassNameUtils.threatClassName(this.props.securityIssue.severity)}>
               CVSS: {this.props.securityIssue.severity}
           </Badge>
         </Accordion.Toggle>
@@ -54,7 +53,7 @@ class SecurityItemDisplay extends React.Component<Props, State> {
               <tbody>
                 <tr>
                   <td>Severity:</td>
-                  <td><Badge variant={ClassNameUtils.threatClassName(this.props.securityIssue.severity)}>{this.props.securityIssue.severity}</Badge></td>
+                  <td><Badge className={ClassNameUtils.threatClassName(this.props.securityIssue.severity)}>{this.props.securityIssue.severity}</Badge></td>
                 </tr>
                 <tr>
                   <td>Source:</td>

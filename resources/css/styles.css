@@ -16,6 +16,7 @@ h1, h2, h3 {
   width: 250px; /* Set the width of the sidebar */
   position: fixed; /* Fixed Sidebar (stay in place on scroll) */
   z-index: 1; /* Stay on top */
+  padding: 10px;
   top: 0; /* Stay at the top */
   left: 0;
   overflow-x: hidden; /* Disable horizontal scroll */
@@ -25,7 +26,7 @@ h1, h2, h3 {
 .main {
   margin-left: 250px; /* Same as the width of the sidebar */
   height: 100%;
-  padding: 0px 10px;
+  padding: 10px;
   background-color: #212529;
 }
   
@@ -277,52 +278,48 @@ h3 {
   color: white !important;
 }
 
-.alert-danger, .badge-danger {
+.critical {
   background-color: red !important;
   border-color: red !important;
   color: #212529 !important;
+  float: right;
 }
 
-.alert-warning, .badge-warning {
-  background-color: #962c2c !important;
-  border-color: #962c2c !important;
-  color: #ffecdb !important;
-}
-
-.alert-secondary, .badge-secondary {
-  background-color: #F3862D !important;
-  border-color:  #F3862D !important;
-  color: #152a23 !important;
-}
-
-.alert-info, .badge-info {
-  background-color: #F0D24C !important;
-  border-color: #F0D24C !important;
-  color: #00552a !important;
-}
-
-.alert .badge-danger {
-  background-color: red !important;
-  border-color: red !important;
+.severe {
+  background-color: orange !important;
+  border-color: orange !important;
   color: #212529 !important;
+  float: right;
 }
 
-.alert .badge-warning {
-  background-color: #962c2c !important;
-  border-color: #962c2c !important;
+.moderate {
+  background-color: yellow !important;
+  border-color: yellow !important;
   color: #ffecdb !important;
+  float: right;
 }
 
-.alert .badge-secondary {
-  background-color: #F3862D !important;
-  border-color:  #F3862D !important;
+.low {
+  background-color: darkblue !important;
+  border-color:  darkblue !important;
   color: #152a23 !important;
+  float: right;
 }
 
-.alert .badge-info {
-  background-color: #F0D24C !important;
-  border-color: #F0D24C !important;
+.none {
+  background-color: lightblue !important;
+  border-color: lightblue !important;
   color: #00552a !important;
+  float: right;
+}
+
+.alert {
+  position: relative !important;
+  padding: .25rem .75rem !important;
+  margin-bottom: .5rem !important;
+  border: 1px solid transparent !important;
+  border-radius: .25rem !important;
+  background-color: lightgray !important;
 }
 
 .current-version {

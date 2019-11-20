@@ -50,14 +50,13 @@ class AllVersionsPage extends React.Component<Props, State> {
         {context => (
           <React.Fragment>
             {Object.keys(context!.allVersions).map(row => (
-              <Alert variant="primary" onClick={_this.handleClick.bind(_this, context!.allVersions[row].componentIdentifier.coordinates.version)}>
+              <Alert onClick={_this.handleClick.bind(_this, context!.allVersions[row].componentIdentifier.coordinates.version)}>
                 <SelectedBadge 
                   version={context!.allVersions[row].componentIdentifier.coordinates.version} 
                   selectedVersion={context!.selectedVersion} 
                   initialVersion={context!.initialVersion} /> { context!.allVersions[row].componentIdentifier.coordinates.version }
                 <Badge 
-                  variant={ClassNameUtils.threatClassName(context!.allVersions[row].highestSecurityVulnerabilitySeverity)} 
-                  className="float-right">
+                  className={ClassNameUtils.threatClassName(context!.allVersions[row].highestSecurityVulnerabilitySeverity)}>
                     CVSS: {context!.allVersions[row].highestSecurityVulnerabilitySeverity}
                 </Badge>
               </Alert>

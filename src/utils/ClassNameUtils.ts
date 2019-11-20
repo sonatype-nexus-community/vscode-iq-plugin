@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { BadgeProps } from 'react-bootstrap';
 
 export default abstract class ClassNameUtils {
-  public static threatClassName(severity: Number): BadgeProps["variant"] {
+  public static threatClassName(severity: Number): string {
     if (severity < 1) {
-      return "primary"
+      return "none"
     } else if (severity < 2) {
-      return "info"
+      return "low"
     } else if (severity < 4) {
-      return "secondary"
+      return "moderate"
     } else if (severity < 8) {
-      return "warning"
+      return "severe"
     } else {
-      return "danger"
+      return "critical"
     }
   }
 }
