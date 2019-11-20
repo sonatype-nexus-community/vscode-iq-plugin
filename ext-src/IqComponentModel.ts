@@ -77,11 +77,9 @@ export class IqComponentModel {
         console.debug("applicationInternalId", this.requestService.getApplicationInternalId());
   
         let resultId = await this.requestService.submitToIqForEvaluation(data, this.requestService.getApplicationInternalId());
-
-        this.requestService.setResultId(resultId);
-
-        console.debug("report", this.requestService.getResultId());
-        let resultDataString = await this.requestService.asyncPollForEvaluationResults(this.requestService.getApplicationInternalId(), this.requestService.getResultId());
+  
+        console.debug("report", resultId);
+        let resultDataString = await this.requestService.asyncPollForEvaluationResults(this.requestService.getApplicationInternalId(), resultId);
         let resultData = JSON.parse(resultDataString as string);
   
         console.debug(`Received results from IQ scan:`, resultData);

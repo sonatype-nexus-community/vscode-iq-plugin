@@ -22,7 +22,6 @@ import LicensingPage from './LicensingPage/LicensingPage';
 import PolicyPage from './PolicyPage/PolicyPage';
 
 type Props = {
-  handlePolicyViolations: () => void;
 }
 
 type State = {
@@ -38,7 +37,7 @@ class SelectedVersionDetails extends React.Component<Props, State> {
     console.log("SelectedVersionDetails page rendering")
     return (
       this.context && (
-      <Tabs id="selected-version-tabs" defaultActiveKey="info" onSelect={this.props.handlePolicyViolations.bind(this)}>
+      <Tabs id="selected-version-tabs" defaultActiveKey="info">
         <Tab title="Component Info" eventKey="info">
           <ComponentInfoPage></ComponentInfoPage>
         </Tab>

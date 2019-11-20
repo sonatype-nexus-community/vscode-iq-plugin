@@ -25,7 +25,4 @@ export interface RequestService {
   isPasswordSet(): boolean;
   setApplicationId(s: string): void;
   getApplicationInternalId(): string;
-  setResultId(s: string): void;
-  getResultId(): string;
-  getPolicyViolations(o: string): Promise<any>;
 }

@@ -15,6 +15,7 @@
  */
 import * as React from 'react';
 import { VersionsContext } from '../../context/versions-context';
+import { Table } from 'react-bootstrap';
 
 type Props = {
 };
@@ -34,13 +35,43 @@ class PolicyPage extends React.Component<Props, State> {
     return (
         <React.Fragment>
             {this.context && this.context.policyViolations && (
-              this.context.policyViolations.map(function(policyViolation: any) {
-              <h2 key={policyViolation.policyId}>
-                {policyViolation.policyName}
-              </h2>
-            })
-          )}
+              this.context.policyViolations.map(this.printPolicyViolation)
+              )
+            }
+          )
         </React.Fragment>
+    );
+  }
+
+  private printPolicyViolation(policyViolation: any) {
+    return (
+      <Table variant="dark">
+        <thead>
+          <tr>
+            <th>{ policyViolation.policyName }</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Threat Level: { policyViolation.threatLevel }</td>
+          </tr>
+          <tr>
+            { policyViolation.constraintViolations.map((x: any) => (
+              <td>
+                <h5>Constraint: { x.constraintName }</h5>
+                <h5>Reasons:</h5>
+                <ol>
+                  { x.reasons.map((y: any) => (
+                    <li>
+                      { y.reason }
+                    </li>
+                  ))}
+                </ol>
+              </td>
+            ))}
+          </tr>
+        </tbody>
+      </Table>
     );
   }
 }

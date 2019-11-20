@@ -22,7 +22,6 @@ import * as platform from "platform";
 export class IqRequestService implements RequestService {
   readonly evaluationPollDelayMs = 2000;
   applicationId: string = "";
-  resultId: string = "";
 
   constructor(
     readonly url: string,
@@ -48,14 +47,6 @@ export class IqRequestService implements RequestService {
 
   public getApplicationInternalId(): string {
     return this.applicationId;
-  }
-
-  public setResultId(resultId: string) {
-    this.resultId = resultId;
-  }
-
-  public getResultId(): string {
-    return this.resultId;
   }
 
   public async getApplicationId(applicationPublicId: string) {
@@ -200,31 +191,6 @@ export class IqRequestService implements RequestService {
         resolve(body);
       }
     );
-  }
-
-  public async getPolicyViolations(applicationPublicId: string) {
-    return new Promise((resolve, reject) => {
-      console.debug("begin getPolicyViolations", applicationPublicId);
-      let url = `${this.url}/api/v2/applications/${applicationPublicId}/reports/${this.resultId}/policy`;
-
-      request.get(
-        {
-          method: "get",
-          url: url,
-          headers: this.getUserAgentHeader(),
-          auth: { user: this.user, pass: this.password }
-        },
-        (err, response, body) => {
-          if (err) {
-            reject(`Unable to retrieve Policy Violation details: ${err}`);
-            return;
-          }
-          console.debug("response", response);
-          console.debug("body", body);
-          resolve(body);
-        }
-      );
-    });
   }
 
   public async getRemediation(nexusArtifact: any) {

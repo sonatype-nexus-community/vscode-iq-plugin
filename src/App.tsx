@@ -66,16 +66,6 @@ class App extends React.Component<AppProps, AppState> {
     });
   }
 
-  public handlePolicyViolations(e: Event) {
-    console.debug(e);
-    console.debug("App received policy violations request");
-    this.setState({policyViolations: undefined});
-
-    vscode.postMessage({
-      command: 'getPolicyViolations'
-    });
-  }
-
   public handleGetRemediation(nexusArtifact: any, cve: string): void {
     console.debug("App received remediation request", nexusArtifact);
     this.setState({remediation: undefined})
@@ -109,15 +99,13 @@ class App extends React.Component<AppProps, AppState> {
       <VersionsContextProvider value={this.state}>
         <div>
           <div className="sidenav">
-            <h1>Versions</h1>
+            <h3>Versions</h3>
               <AllVersionsPage
                 versionChangeHandler={_this.handleVersionSelection.bind(_this)}>
               </AllVersionsPage>
           </div>
           <div className="main">
-              <SelectedVersionDetails
-                handlePolicyViolations={_this.handlePolicyViolations.bind(_this)}
-              />
+              <SelectedVersionDetails/>
           </div>
         </div>
       </VersionsContextProvider>
@@ -158,10 +146,6 @@ class App extends React.Component<AppProps, AppState> {
         case 'cveDetails':
           console.debug("App handling cveDetails message", message.cvedetails);
           this.setState({cvedetails: message.cvedetails});
-          break;
-        case 'policyViolations':
-          console.debug("App handling policyViolations message", message.policyViolations);
-          this.setState({policyViolations: message.policyViolations});
           break;
         }
     });
