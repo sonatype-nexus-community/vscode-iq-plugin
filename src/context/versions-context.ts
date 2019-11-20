@@ -25,6 +25,7 @@ export interface VersionsContextInterface {
   initialVersion: string,
   remediation?: any,
   cvedetails?: any,
+  policyViolations?: any[],
   handleGetRemediation(o: any, s: string): void
 }
 
@@ -33,3 +34,5 @@ const ctxt = React.createContext<VersionsContextInterface | undefined>(undefined
 export const VersionsContextProvider = ctxt.Provider;
 
 export const VersionsContextConsumer = ctxt.Consumer;
+
+export const VersionsContext = ctxt;

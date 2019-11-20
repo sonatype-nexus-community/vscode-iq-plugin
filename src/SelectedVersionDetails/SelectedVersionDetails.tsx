@@ -19,6 +19,7 @@ import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import SecurityPage from './SecurityPage/SecurityPage';
 import LicensingPage from './LicensingPage/LicensingPage';
+import PolicyPage from './PolicyPage/PolicyPage';
 
 type Props = {
 }
@@ -27,12 +28,21 @@ type State = {
 }
 
 class SelectedVersionDetails extends React.Component<Props, State> {
+
+  constructor(props: Props) {
+    super(props);
+  }
+
   public render() {
     console.log("SelectedVersionDetails page rendering")
     return (
+      this.context && (
       <Tabs id="selected-version-tabs" defaultActiveKey="info">
         <Tab title="Component Info" eventKey="info">
           <ComponentInfoPage></ComponentInfoPage>
+        </Tab>
+        <Tab title="Policy" eventKey="policy">
+          <PolicyPage></PolicyPage>
         </Tab>
         <Tab title="Security" eventKey="security">
           <SecurityPage></SecurityPage>
@@ -40,7 +50,8 @@ class SelectedVersionDetails extends React.Component<Props, State> {
         <Tab title="Licensing" eventKey="licensing">
           <LicensingPage></LicensingPage>
         </Tab>
-      </Tabs>     
+      </Tabs>   
+      )
     );
   }
 }
