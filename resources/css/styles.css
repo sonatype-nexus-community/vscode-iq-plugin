@@ -20,14 +20,12 @@ body {
   top: 0; /* Stay at the top */
   left: 0;
   overflow-x: hidden; /* Disable horizontal scroll */
-  background-color:#212529;
 }
   
 .main {
   margin-left: 250px; /* Same as the width of the sidebar */
   height: 100%;
   padding: 10px;
-  background-color: #212529;
 }
   
 /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
@@ -131,17 +129,18 @@ h3 {
   position: relative !important;
   padding: .25rem .75rem !important;
   margin-bottom: .5rem !important;
-  border: 1px solid transparent !important;
+  border: 1px solid;
   border-radius: .25rem !important;
-  background-color: lightgray !important;
+  border-color: var(--vscode-list-inactive-focus-background);
 }
 
-.current-version {
-  color: burlywood;
+.alert.selected-version {
+  color: var(--vscode-button-foreground);
+  background-color: var(--vscode-button-background);
 }
 
-.selected-version {
-  color: rgb(63, 155, 67);
+.alert.current-version {
+  border-color: var(--vscode-selection-background);
 }
 
 .numissues {
@@ -182,16 +181,6 @@ a img {
 
 .code, code {
   font-family: Consolas,monaco,monospace;
-}
-
-.component-tab {
-  border: blue;
-  border-radius: 4px;
-  background-color: pink;
-}
-
-.info-display {
-  border: salmon;
 }
 
 .cipInfoLabel {
