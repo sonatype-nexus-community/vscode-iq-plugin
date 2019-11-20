@@ -82,15 +82,12 @@ h3 {
 }
 
 .vscode-dark .card-header, .vscode-dark .card-body {
-  /* background-color: lighten(var(--vscode-editor-background), 50%) !important; */
   filter: brightness(130%) !important;
 }
 .vscode-light .card-header, .vscode-light .card-body {
-  /* background-color: darken(var(--vscode-editor-background), 50%) !important; */
   filter: brightness(90%);
 }
 .vscode-high-contrast .card-header, .vscode-high-contrast .card-body{
-  /* background-color: darken(var(--vscode-editor-background), 50%) !important; */
   filter: brightness(90%);
 }
 
