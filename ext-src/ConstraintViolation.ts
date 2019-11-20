@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PackageType } from "./PackageType";
-import { ComponentEntry } from "../ComponentEntry";
-import { RequestService } from "../RequestService";
 
-export interface PackageDependencies {
-  Dependencies: Array<PackageType>;
-  CoordinatesToComponents: Map<string, ComponentEntry>;
-  RequestService: RequestService;
-  CheckIfValid(): boolean;
-  ConvertToComponentEntry(resultEntry: any): string;
-  convertToNexusFormat(): any;
-  toComponentEntries(data: any): Array<ComponentEntry>;
-  packageForIq(): Promise<undefined>;
+import { ConstraintReason } from "./ConstraintReason";
+
+export class ConstraintViolation {
+  constructor(
+    readonly constraintId: string,
+    constraintName: string,
+    readonly reasons: Array<ConstraintReason>
+  ) {}
 }

@@ -18,6 +18,9 @@ import Loader from 'react-loader-spinner';
 import AllVersionsPage from './AllVersions/AllVersionsPage';
 import SelectedVersionDetails from './SelectedVersionDetails/SelectedVersionDetails';
 import { VersionsContextProvider } from './context/versions-context';
+import { OssIndexContextProvider } from './context/ossindex-context';
+import { ExtScanType } from './utils/ExtScanType';
+import OssIndexVersionDetails from './OssIndexVersionDetails/OssIndexVersionDetails';
 
 // add workarounds to call VSCode
 declare var acquireVsCodeApi: any;
@@ -27,6 +30,8 @@ type AppProps = {
 };
 
 type AppState = {
+  scanType?: ExtScanType,
+  vulnerabilities?: any[],
   component: any,
   allVersions: any[],
   selectedVersionDetails?: any,
@@ -44,6 +49,7 @@ class App extends React.Component<AppProps, AppState> {
     console.debug("App constructing, props:", props);
     this.state = {
       component: {},
+      vulnerabilities: [],
       allVersions: [],
       selectedVersionDetails: undefined,
       selectedVersion: "",
@@ -84,7 +90,9 @@ class App extends React.Component<AppProps, AppState> {
 
   public render() {
     var _this = this;
-    if (!this.state.component || !this.state.component.nexusIQData) {
+    console.log("App render called, state:", this.state);
+    if (!this.state.scanType) {
+      console.log("rendering loader because ")
       return (
         <Loader
           type="Puff"
@@ -93,8 +101,15 @@ class App extends React.Component<AppProps, AppState> {
           width="100"
         />
       );
+    } else if ( this.state.scanType === ExtScanType.OssIndex){
+      console.log("Attempting to render OSS Index");
+      return (
+        <OssIndexContextProvider value={this.state}>
+          <OssIndexVersionDetails />
+        </OssIndexContextProvider>
+      )
     }
-
+    console.log("rendering Nexus IQ");
     return (
       <VersionsContextProvider value={this.state}>
         <div>
@@ -131,8 +146,22 @@ class App extends React.Component<AppProps, AppState> {
           break;
         case 'versionDetails':
           console.log("Selected version details received", message.componentDetails);
-          this.setState({selectedVersionDetails: message.componentDetails, 
-            selectedVersion: message.componentDetails.component.componentIdentifier.coordinates.version
+          let selectedVersion: any;
+          let version: string = "";
+          let vulnerabilities: [] = [];
+          if (message.scanType == ExtScanType.NexusIq) {
+            selectedVersion = message.componentDetails;
+            version = message.componentDetails.component.componentIdentifier.coordinates.version;
+          }
+          if (message.scanType == ExtScanType.OssIndex) {
+            selectedVersion = message.componentDetails;
+            version = message.componentDetails.version;
+            vulnerabilities = message.vulnerabilities;
+          }
+          this.setState({selectedVersionDetails: selectedVersion, 
+            selectedVersion: version,
+            scanType: message.scanType,
+            vulnerabilities: vulnerabilities
           })
           break;
         case 'allversions':

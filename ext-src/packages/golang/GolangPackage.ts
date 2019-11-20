@@ -27,6 +27,10 @@ export class GolangPackage implements PackageType {
     return `${this.Name}:${this.Version}`;
   }
 
+  public toPurl() {
+    return `pkg:golang/${this.Name}@${this.Version}`;
+  }
+
   public toCoordValueType(): string {
     return `${this.Name} - ${this.Version}`;
   }

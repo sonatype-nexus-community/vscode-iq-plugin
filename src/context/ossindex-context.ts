@@ -13,17 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PackageType } from "./PackageType";
-import { ComponentEntry } from "../ComponentEntry";
-import { RequestService } from "../RequestService";
+import * as React from 'react';
+import { ExtScanType } from 'src/utils/ExtScanType';
 
-export interface PackageDependencies {
-  Dependencies: Array<PackageType>;
-  CoordinatesToComponents: Map<string, ComponentEntry>;
-  RequestService: RequestService;
-  CheckIfValid(): boolean;
-  ConvertToComponentEntry(resultEntry: any): string;
-  convertToNexusFormat(): any;
-  toComponentEntries(data: any): Array<ComponentEntry>;
-  packageForIq(): Promise<undefined>;
+export interface OssIndexContextInterface {
+  scanType?: ExtScanType,
+  vulnerabilities?: any[],
+  component?: any
 }
+
+const ctxt = React.createContext<OssIndexContextInterface | undefined>(undefined);
+
+export const OssIndexContextProvider = ctxt.Provider;
+
+export const OssIndexContextConsumer = ctxt.Consumer;
+
+export const OssIndexContext = ctxt;

@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 import * as React from 'react';
+import { ExtScanType } from 'src/utils/ExtScanType';
 
 export interface VersionsContextInterface {
+  scanType?: ExtScanType,
   allVersions: any[],
   component: any,
   selectedVersionDetails?: any,

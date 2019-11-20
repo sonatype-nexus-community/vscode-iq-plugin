@@ -18,11 +18,11 @@ import * as path from "path";
 import * as _ from "lodash";
 import * as dependencyTree from "dependency-tree";
 
-import {
-  ComponentInfoPanel,
-  ComponentEntry
-} from "./ComponentInfoPanel";
+import { ComponentInfoPanel } from "./ComponentInfoPanel";
 import { IqComponentModel } from "./IqComponentModel";
+import { OssIndexComponentModel } from "./OssIndexComponentModel";
+import { ComponentModel } from "./ComponentModel";
+import { ComponentEntry } from "./ComponentEntry";
 
 export class NexusExplorerProvider
   implements vscode.TreeDataProvider<ComponentEntry> {
@@ -42,7 +42,10 @@ export class NexusExplorerProvider
   }
 
   checkPassword(): void {
-    if (this.componentModel.requestService.isPasswordSet()) {
+    if (this.componentModel instanceof OssIndexComponentModel) {
+      this.doRefresh();
+    }
+    else if (this.componentModel.requestService.isPasswordSet()) {
       this.doRefresh();
     } else {
       let options: vscode.InputBoxOptions = {
@@ -119,30 +122,21 @@ export class NexusExplorerProvider
 
 export class NexusExplorer {
   private nexusViewer: vscode.TreeView<ComponentEntry>;
-  private componentModel: IqComponentModel;
+  private componentModel: ComponentModel;
   private nexusExplorerProvider: NexusExplorerProvider;
 
   constructor(readonly context: vscode.ExtensionContext) {
     /////////CPT/////////////
-    let config = vscode.workspace.getConfiguration("nexusiq");
-    let url = config.get("url") + "";
-    let username = config.get("username") + "";
-    let applicationPublicId = config.get("applicationPublicId") + "";
-    let maximumEvaluationPollAttempts = parseInt(
-      config.get("maximumEvaluationPollAttempts") + "", 10);
-    let password = config.get("password") + "";
-    
-    this.componentModel = new IqComponentModel(
-      url,
-      username,
-      password,
-      applicationPublicId,
-      maximumEvaluationPollAttempts
-    );
+    let configuration = vscode.workspace.getConfiguration();
+    if (configuration.get("nexusExplorer.dataSource", 'ossindex') + "" == 'iqServer') {
+      this.componentModel = new IqComponentModel(configuration);
+    } else {
+      this.componentModel = new OssIndexComponentModel(configuration);
+    }
 
     this.nexusExplorerProvider = new NexusExplorerProvider(
       context,
-      this.componentModel
+      this.componentModel as IqComponentModel
     );
 
     this.nexusViewer = vscode.window.createTreeView("nexusExplorer", {

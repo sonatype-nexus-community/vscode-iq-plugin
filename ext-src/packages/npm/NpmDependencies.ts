@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 import * as _ from "lodash";
-import * as path from "path";
-import * as fs from "fs";
 
-import { exec } from "../../exec";
 import { NpmPackage } from "./NpmPackage";
 import { PackageDependencies } from "../PackageDependencies";
-import { ComponentEntry } from "../../ComponentInfoPanel";
 import { NpmCoordinate } from "./NpmCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { RequestService } from "../../RequestService";
+import { NpmUtils } from './NpmUtils';
+import { ScanType } from "../../ScanType";
+import { ComponentEntry } from "../../ComponentEntry";
 
-export class NpmDependencies extends PackageDependenciesHelper implements PackageDependencies {
+export class NpmDependencies implements PackageDependencies {
   Dependencies: Array<NpmPackage> = [];
   CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
     string,
@@ -34,16 +33,22 @@ export class NpmDependencies extends PackageDependenciesHelper implements Packag
   RequestService: RequestService;
 
   constructor(private requestService: RequestService) {
-    super();
     this.RequestService = this.requestService;
   }
 
-  public CheckIfValid(): boolean {
-    if (this.doesPathExist(this.getWorkspaceRoot(), "package.json")) {
-      console.debug("Valid for npm");
-      return true;
+  public async packageForIq(): Promise<any> {
+    try {
+      let npmUtils = new NpmUtils();
+      this.Dependencies = await npmUtils.getDependencyArray();
+      Promise.resolve();
     }
-    return false;
+    catch (e) {
+      Promise.reject();
+    }
+  }
+
+  public CheckIfValid(): boolean {
+    return PackageDependenciesHelper.checkIfValid("package.json", "npm");
   }
 
   public ConvertToComponentEntry(resultEntry: any): string {
@@ -51,76 +56,6 @@ export class NpmDependencies extends PackageDependenciesHelper implements Packag
       resultEntry.component.componentIdentifier.coordinates.version);
     
     return coordinates.asCoordinates();
-  }
-
-  public async packageForIq(): Promise<any> {
-    try {
-      const npmShrinkwrapFilename = path.join(
-        this.getWorkspaceRoot(),
-        "npm-shrinkwrap.json"
-      );
-      if (!fs.existsSync(npmShrinkwrapFilename)) {
-        let { stdout, stderr } = await exec("npm shrinkwrap", {
-          cwd: this.getWorkspaceRoot()
-        });
-        let npmShrinkWrapFile = "npm-shrinkwrap.json";
-        let shrinkWrapSucceeded =
-          stdout || stderr.search(npmShrinkWrapFile) > -1;
-        if (!shrinkWrapSucceeded) {
-          return Promise.reject("Unable to run npm shrinkwrap");
-        }
-      }
-      //read npm-shrinkwrap.json
-      let obj = JSON.parse(fs.readFileSync(npmShrinkwrapFilename, "utf8"));
-      this.Dependencies = this.flattenAndUniqDependencies(obj);
-
-      return Promise.resolve();
-    } catch (e) {
-      return Promise.reject(
-        "npm shrinkwrap failed, try running it manually to see what went wrong:" +
-          e.message
-      );
-    }
-  }
-
-  private flattenAndUniqDependencies(
-    npmShrinkwrapContents: any
-  ): Array<NpmPackage> {
-    console.debug("flattenAndUniqDependencies");
-    //first level in npm-shrinkwrap is our project package, we go a level deeper not to include it in the results
-    // TODO: handle case where npmShrinkwrapContents does not have a 'dependencies' element defined (eg: simple projects)
-    if (npmShrinkwrapContents.dependencies === undefined) {
-      return new Array();
-    }
-    let flatDependencies = this.flattenDependencies(
-      this.extractInfo(npmShrinkwrapContents.dependencies)
-    );
-    let newflatDependencies = _.uniqBy(flatDependencies, function(x) {
-      return x.Name;
-    });
-
-    console.log(newflatDependencies);
-    return flatDependencies;
-  }
-
-  private flattenDependencies(dependencies: any): Array<NpmPackage> {
-    let result = new Array<NpmPackage>();
-    for (let dependency of dependencies) {
-      result.push(dependency);
-      if (dependency.dependencies) {
-        result = result.concat(
-          this.flattenDependencies(this.extractInfo(dependency.dependencies))
-        );
-      }
-    }
-    return result;
-  }
-
-  //extracts array with name, version, dependencies from a dictionary
-  private extractInfo(array: any): Array<NpmPackage> {
-    return Object.keys(array).map(
-      k => new NpmPackage(k, array[k].version, array[k].dependencies)
-    );
   }
 
   public convertToNexusFormat() {
@@ -152,7 +87,8 @@ export class NpmDependencies extends PackageDependenciesHelper implements Packag
     for (let entry of data.components) {
       let componentEntry = new ComponentEntry(
         entry.componentIdentifier.coordinates.packageId,
-        entry.componentIdentifier.coordinates.version
+        entry.componentIdentifier.coordinates.version,
+        ScanType.NexusIq
       );
       components.push(componentEntry);
       let coordinates = new NpmCoordinate(

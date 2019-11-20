@@ -43,7 +43,7 @@
 			"explorer": [
 				{
 					"id": "nexusExplorer",
-					"name": "Nexus IQ"
+					"name": "Sonatype Nexus"
 				}
 			]
 		},
@@ -89,17 +89,26 @@
 		},
 		"configuration": [
 			{
-				"title": "Nexus IQ Explorer",
+				"title": "Sonatype Explorer",
 				"properties": {
 					"nexusExplorer.autorefresh": {
 						"type": "boolean",
 						"default": false
+					},
+					"nexusExplorer.dataSource": {
+						"type": "string",
+						"default": "ossindex",
+						"enum": ["ossindex", "iqServer"],
+						"enumDescriptions": [
+							"Use publicly available OSS Index data",
+							"Use commercial Sonatype IQ Server data"
+						]
 					}
 				}
 			},
 			{
 				"type": "object",
-				"title": "Nexus IQ configuration",
+				"title": "Sonatype Nexus IQ configuration",
 				"properties": {
 					"nexusiq.url": {
 						"type": "string",

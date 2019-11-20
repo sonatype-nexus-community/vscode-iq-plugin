@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 import { PackageType } from "./PackageType";
-import { ComponentEntry } from "../ComponentEntry";
-import { RequestService } from "../RequestService";
 
-export interface PackageDependencies {
-  Dependencies: Array<PackageType>;
-  CoordinatesToComponents: Map<string, ComponentEntry>;
-  RequestService: RequestService;
-  CheckIfValid(): boolean;
-  ConvertToComponentEntry(resultEntry: any): string;
-  convertToNexusFormat(): any;
-  toComponentEntries(data: any): Array<ComponentEntry>;
-  packageForIq(): Promise<undefined>;
+export interface LitePackageDependencies {
+  dependencies: Array<PackageType>;
+  format: string;
+  manifestName: string;
+  checkIfValid(): boolean;
+  packageForService(): Promise<undefined>;
 }

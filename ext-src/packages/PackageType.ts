@@ -21,5 +21,6 @@ export interface PackageType {
   Hash?: string;
   Extension?: string;
   toCoordinates(): string;
+  toPurl(): string;
   toCoordValueType(coordinate: CoordinateType): string;
 }
