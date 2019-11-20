@@ -33,6 +33,7 @@ type AppState = {
   selectedVersion: string,
   initialVersion: string,
   remediation?: any,
+  policyViolations?: any[],
   cvedetails?: any,
   handleGetRemediation(o: any, s: string): void
 };
@@ -48,6 +49,7 @@ class App extends React.Component<AppProps, AppState> {
       selectedVersion: "",
       initialVersion: "",
       remediation: undefined,
+      policyViolations: undefined,
       cvedetails: undefined,
       handleGetRemediation: this.handleGetRemediation.bind(this)
     }
@@ -119,9 +121,10 @@ class App extends React.Component<AppProps, AppState> {
           console.debug("Artifact received, updating state & children", message.component);
           const component = message.component;
           this.setState({
-            component: component, 
-            allVersions: [], 
+            component: component,
+            allVersions: [],
             selectedVersionDetails: undefined,
+            policyViolations: component.policyViolations,
             initialVersion: message.component.version
           });
           this.handleVersionSelection(message.component.version)
