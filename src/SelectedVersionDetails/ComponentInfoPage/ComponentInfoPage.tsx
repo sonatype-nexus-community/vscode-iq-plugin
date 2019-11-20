@@ -45,33 +45,33 @@ class ComponentInfoPage extends React.Component<CipProps, CipState> {
           <thead>
             <tr>
               <th colSpan={2}>
-                {context.selectedVersionDetails.component.packageUrl}
+                <h2>{context.selectedVersionDetails.component.packageUrl}</h2>
               </th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>Package:</td>
+              <td className="cipInfoLabel">Package</td>
               <td>{context.selectedVersionDetails.component.componentIdentifier.coordinates.packageId}</td>
             </tr>
             <tr>
-              <td>Version:</td>
+              <td className="cipInfoLabel">Version</td>
               <td><span id="version">{context.selectedVersionDetails.component.componentIdentifier.coordinates.version}</span></td>
             </tr>
             <tr>
-              <td>Hash:</td>
+              <td className="cipInfoLabel">Hash</td>
               <td>{context.selectedVersionDetails.component.hash}</td>
             </tr>
             <tr>
-              <td>Match State:</td>
+              <td className="cipInfoLabel">Match State</td>
               <td>{context.selectedVersionDetails.matchState}</td>
             </tr>
             <tr>
-              <td>Catalog Date:</td>
+              <td className="cipInfoLabel">Catalog Date</td>
               <td><span id="catalogdate">{ this.formatDate(context.selectedVersionDetails.catalogDate) }</span></td>
             </tr>
             <tr>
-              <td>Relative Popularity:</td>                
+              <td className="cipInfoLabel">Relative Popularity</td>                
               <td><span id="relativepopularity">{context.selectedVersionDetails.relativePopularity}</span></td>
             </tr>
           </tbody>
