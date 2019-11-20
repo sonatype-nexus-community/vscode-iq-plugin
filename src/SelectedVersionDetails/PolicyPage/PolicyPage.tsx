@@ -22,7 +22,7 @@ type Props = {
 };
 // todo declare more details on component
 type State = {
-  selected: string
+  selected: Map<string, string>
 };
 
 class PolicyPage extends React.Component<Props, State> {
@@ -31,9 +31,9 @@ class PolicyPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    this.setState({
-      selected: ""
-    });
+    this.state = {
+      selected: new Map<string, string>()
+    }
   }
 
   public render() {
@@ -41,7 +41,7 @@ class PolicyPage extends React.Component<Props, State> {
     return (
         <React.Fragment>
             {this.context && this.context.policyViolations && (
-              this.context.policyViolations.map((x: any) => this.printPolicyViolation(x), this)
+              this.context.policyViolations.map((x: any, y: any) => this.printPolicyViolation(x, y), this)
               )
             }
           )
@@ -49,19 +49,51 @@ class PolicyPage extends React.Component<Props, State> {
     );
   }
 
-  printPolicyViolation = (policyViolation: any) => {
-    const icon = (this.state.selected === policyViolation.policyId ? <FaChevronRight /> : <FaChevronDown />);
+  switchIcon = (policyId: string) => {
+    if (this.state != undefined) {
+      if (this.state.selected.get(policyId)) {
+        return (
+          <FaChevronDown />
+        )
+      } 
+    }
+    return (
+      <FaChevronRight />
+    )
+  }
+
+  setSelected = (policyId: string) => {
+    console.log(policyId);
+    if (this.state != undefined) {
+      if (this.state.selected.get(policyId) != undefined) {
+        let mutatedMap = this.state.selected;
+        mutatedMap.delete(policyId);
+        this.setState({
+          selected: mutatedMap
+        });
+      } else {
+        let mutatedMap = this.state.selected;
+        mutatedMap.set(policyId, "active");
+        this.setState({
+          selected: mutatedMap
+        });
+      }
+    }
+  }
+
+  printPolicyViolation = (policyViolation: any, index: number) => {
+    const icon = this.switchIcon(index.toString());
     return (
       <Accordion>
         <Card>
           <Accordion.Toggle 
             as={ Card.Header }
-            eventKey={ policyViolation.policyId } 
-            onClick={() => this.setState({selected: policyViolation.policyId})}>
-              Policy Violation: { policyViolation.policyName } 
-              { icon }
+            eventKey={ index.toString() } 
+            onClick={() => this.setSelected(index.toString())}>
+              Policy Violation: { policyViolation.policyName }
+            { icon }
           </Accordion.Toggle>
-          <Accordion.Collapse eventKey={ policyViolation.policyId }>
+          <Accordion.Collapse eventKey={ index.toString() }>
             <Card.Body>
               Threat Level: { policyViolation.threatLevel }
               { policyViolation.constraintViolations.map((x: any) => (
