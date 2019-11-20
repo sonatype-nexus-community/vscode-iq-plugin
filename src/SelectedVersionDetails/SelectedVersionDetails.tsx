@@ -41,11 +41,11 @@ class SelectedVersionDetails extends React.Component<Props, State> {
         <Tab title="Component Info" eventKey="info">
           <ComponentInfoPage></ComponentInfoPage>
         </Tab>
-        <Tab title="Security" eventKey="security">
-          <SecurityPage></SecurityPage>
-        </Tab>
         <Tab title="Policy" eventKey="policy">
           <PolicyPage></PolicyPage>
+        </Tab>
+        <Tab title="Security" eventKey="security">
+          <SecurityPage></SecurityPage>
         </Tab>
         <Tab title="Licensing" eventKey="licensing">
           <LicensingPage></LicensingPage>
