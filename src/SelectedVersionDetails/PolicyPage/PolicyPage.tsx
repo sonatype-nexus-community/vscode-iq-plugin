@@ -84,35 +84,33 @@ class PolicyPage extends React.Component<Props, State> {
   printPolicyViolation = (policyViolation: any, index: number) => {
     const icon = this.switchIcon(index.toString());
     return (
-      <Accordion>
-        <Card>
-          <Accordion.Toggle 
-            as={ Card.Header }
-            eventKey={ index.toString() } 
-            onClick={() => this.setSelected(index.toString())}>
-              Policy Violation: { policyViolation.policyName }
-            { icon }
-          </Accordion.Toggle>
-          <Accordion.Collapse eventKey={ index.toString() }>
-            <Card.Body>
-              Threat Level: { policyViolation.threatLevel }
-              { policyViolation.constraintViolations.map((x: any) => (
-                <td>
-                  <h5>Constraint: { x.constraintName }</h5>
-                  <h5>Reasons:</h5>
-                  <ol>
-                    { x.reasons.map((y: any) => (
-                      <li>
-                        { y.reason }
-                      </li>
-                    ))}
-                  </ol>
-                </td>
-              ))}
-            </Card.Body>
-          </Accordion.Collapse >
-        </Card>
-      </Accordion>
+      <Table>
+        <thead>
+          <tr>
+            <th>{ policyViolation.policyName }</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Threat Level: { policyViolation.threatLevel }</td>
+          </tr>
+          <tr>
+            { policyViolation.constraintViolations.map((x: any) => (
+              <td>
+                <h5>Constraint: { x.constraintName }</h5>
+                <h5>Reasons:</h5>
+                <ol>
+                  { x.reasons.map((y: any) => (
+                    <li>
+                      { y.reason }
+                    </li>
+                  ))}
+                </ol>
+              </td>
+            ))}
+          </tr>
+        </tbody>
+      </Table>
     );
   }
 }

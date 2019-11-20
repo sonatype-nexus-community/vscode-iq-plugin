@@ -1,15 +1,15 @@
 body {
   margin: 2px;
   padding:2px;
-  font-family:sans-serif;
+  font-family: var(--vscode-editor-font-family);
+  font-weight: var(--vscode-editor-font-weight);
+  font-size: var(--vscode-editor-font-size);
   border-radius: 5px;
   border-width: 2px;
-  background-color:#212529 !important;
+  color: var(--vscode-editor-foreground) !important;
+  background-color: var(--vscode-editor-background) !important;
 }
 
-h1, h2, h3 {
-  color: white;
-}
 
 .sidenav {
   height: 100%; /* Full-height: remove this if you want "auto" height */
@@ -46,22 +46,9 @@ button {
 
 table {
   border-spacing: 0px;
+  color: var(--vscode-editor-foreground) !important;
+  background-color: var(--vscode-editor-background) !important;
 }  
-
-#appId {
-  width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-
-  background: transparent;
-  outline: none;
-  color: #2f4f4f;
-  font-size:16px;
-}
 
 .label {
   /* font-style: italic; */
@@ -85,10 +72,28 @@ h3 {
   font-size: 1em;
 }
 
-.card {
-  background-color: #212529 !important;
-  color: white !important;
+.card, .card-header, .card-body {
+  color: var(--vscode-editor-foreground) !important;
+  background-color: var(--vscode-editor-background) !important;
 }
+
+.accordion > .card {
+  margin-bottom: 1em;
+}
+
+.vscode-dark .card-header, .vscode-dark .card-body {
+  /* background-color: lighten(var(--vscode-editor-background), 50%) !important; */
+  filter: brightness(130%) !important;
+}
+.vscode-light .card-header, .vscode-light .card-body {
+  /* background-color: darken(var(--vscode-editor-background), 50%) !important; */
+  filter: brightness(90%);
+}
+.vscode-high-contrast .card-header, .vscode-high-contrast .card-body{
+  /* background-color: darken(var(--vscode-editor-background), 50%) !important; */
+  filter: brightness(90%);
+}
+
 
 .critical {
   background-color: red !important;
@@ -151,7 +156,7 @@ h3 {
   padding: 0px 5px 0px 5px;
   margin: 2px;
   border-radius: 2px; 
-  color: white;
+  /* color: white; */
 }
 
   /* Add animation to "page content" */

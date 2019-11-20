@@ -63,7 +63,6 @@ class OssIndexSecurityInfo extends React.Component<OssCipProps, OssCipState> {
   private printVulnerability(vulnerability: any) {
     return (
       <Card>
-        <Card.Header>
           <Accordion.Toggle as={Card.Header} 
             eventKey={vulnerability.id}>
             { vulnerability.title } <FaChevronDown /> 
@@ -73,10 +72,9 @@ class OssIndexSecurityInfo extends React.Component<OssCipProps, OssCipState> {
                 CVSS: { vulnerability.cvssScore }
             </Badge>
           </Accordion.Toggle>
-        </Card.Header>
         <Accordion.Collapse eventKey={vulnerability.id}>
           <Card.Body>
-            <Table variant="dark">
+            <Table>
               <tbody>
                 <tr>
                   <td>

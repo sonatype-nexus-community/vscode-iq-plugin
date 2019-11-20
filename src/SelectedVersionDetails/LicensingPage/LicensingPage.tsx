@@ -30,7 +30,7 @@ class LicensingPage extends React.Component<Props, State> {
       <VersionsContextConsumer>
         {context => context && context.selectedVersionDetails && (
           <div >
-            <Table variant="dark">
+            <Table>
               <thead>
                 <tr>
                   <th colSpan={2}>Declared Licenses</th>
@@ -42,7 +42,7 @@ class LicensingPage extends React.Component<Props, State> {
                 })}
               </tbody>
             </Table>
-            <Table variant="dark">
+            <Table>
               <thead>
                 <tr>
                   <th colSpan={2}>Observed Licenses</th>
