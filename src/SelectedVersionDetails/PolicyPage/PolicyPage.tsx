@@ -15,12 +15,14 @@
  */
 import * as React from 'react';
 import { VersionsContext } from '../../context/versions-context';
-import { Table } from 'react-bootstrap';
+import { Accordion, Card } from 'react-bootstrap';
+import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
 
 type Props = {
 };
 // todo declare more details on component
 type State = {
+  selected: Map<string, string>
 };
 
 class PolicyPage extends React.Component<Props, State> {
@@ -28,6 +30,10 @@ class PolicyPage extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
+
+    this.state = {
+      selected: new Map<string, string>()
+    }
   }
 
   public render() {
@@ -35,7 +41,7 @@ class PolicyPage extends React.Component<Props, State> {
     return (
         <React.Fragment>
             {this.context && this.context.policyViolations && (
-              this.context.policyViolations.map(this.printPolicyViolation)
+              this.context.policyViolations.map((x: any, y: any) => this.printPolicyViolation(x, y), this)
               )
             }
           )
@@ -43,35 +49,70 @@ class PolicyPage extends React.Component<Props, State> {
     );
   }
 
-  private printPolicyViolation(policyViolation: any) {
+  switchIcon = (policyId: string) => {
+    if (this.state != undefined) {
+      if (this.state.selected.get(policyId)) {
+        return (
+          <FaChevronDown />
+        )
+      } 
+    }
     return (
-      <Table variant="dark">
-        <thead>
-          <tr>
-            <th>{ policyViolation.policyName }</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Threat Level: { policyViolation.threatLevel }</td>
-          </tr>
-          <tr>
-            { policyViolation.constraintViolations.map((x: any) => (
-              <td>
-                <h5>Constraint: { x.constraintName }</h5>
-                <h5>Reasons:</h5>
-                <ol>
-                  { x.reasons.map((y: any) => (
-                    <li>
-                      { y.reason }
-                    </li>
-                  ))}
-                </ol>
-              </td>
-            ))}
-          </tr>
-        </tbody>
-      </Table>
+      <FaChevronRight />
+    )
+  }
+
+  setSelected = (policyId: string) => {
+    console.log(policyId);
+    if (this.state != undefined) {
+      if (this.state.selected.get(policyId) != undefined) {
+        let mutatedMap = this.state.selected;
+        mutatedMap.delete(policyId);
+        this.setState({
+          selected: mutatedMap
+        });
+      } else {
+        let mutatedMap = this.state.selected;
+        mutatedMap.set(policyId, "active");
+        this.setState({
+          selected: mutatedMap
+        });
+      }
+    }
+  }
+
+  printPolicyViolation = (policyViolation: any, index: number) => {
+    const icon = this.switchIcon(index.toString());
+    return (
+      <Accordion>
+        <Card>
+          <Accordion.Toggle 
+            as={ Card.Header }
+            eventKey={ index.toString() } 
+            onClick={() => this.setSelected(index.toString())}>
+              Policy Violation: { policyViolation.policyName }
+            { icon }
+          </Accordion.Toggle>
+          <Accordion.Collapse eventKey={ index.toString() }>
+            <Card.Body>
+              Threat Level: { policyViolation.threatLevel }
+              { policyViolation.constraintViolations.map((x: any) => (
+                <td>
+                  <h5>Constraint: { x.constraintName }</h5>
+                  <h5>Reasons:</h5>
+                  <ol>
+                    { x.reasons.map((y: any) => (
+                      <li>
+                        { y.reason }
+                      </li>
+                    ))}
+                  </ol>
+                </td>
+              ))}
+            </Card.Body>
+          </Accordion.Collapse >
+        </Card>
+      </Accordion>
     );
   }
 }
