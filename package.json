@@ -136,22 +136,7 @@
 						"description": "Number of retries (every 2secs) to wait for the Evaluation report. "
 					}
 				}
-			},
-			{
-				"type": "object",
-				"title": "Sonatype OSS Index Configuration",
-				"properties": {
-					"ossindex.username": {
-						"type": "string",
-						"description": "Your OSS Index user name"
-					},
-					"ossindex.password": {
-						"type": "string",
-						"description": "Your OSS Index password"
-					}
-				}
 			}
-
 		]
 	},
 	"scripts": {

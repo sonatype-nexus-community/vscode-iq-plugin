@@ -26,6 +26,7 @@ import { ComponentEntry } from "./ComponentEntry";
 export class OssIndexComponentModel implements ComponentModel {
   components = new Array<ComponentEntry>();
     requestService: LiteRequestService;
+    dataSourceType: string = "ossindex";
   
     constructor(
       configuration: WorkspaceConfiguration
