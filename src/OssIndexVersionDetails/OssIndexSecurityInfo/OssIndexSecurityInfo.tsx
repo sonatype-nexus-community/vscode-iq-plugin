@@ -68,8 +68,7 @@ class OssIndexSecurityInfo extends React.Component<OssCipProps, OssCipState> {
             eventKey={vulnerability.id}>
             { vulnerability.title } <FaChevronDown /> 
             <Badge 
-              variant={ClassNameUtils.threatClassName(vulnerability.cvssScore)}
-              className="float-right"
+              className={ClassNameUtils.threatClassName(vulnerability.cvssScore)}
               >
                 CVSS: { vulnerability.cvssScore }
             </Badge>
@@ -87,7 +86,7 @@ class OssIndexSecurityInfo extends React.Component<OssCipProps, OssCipState> {
                 <tr>
                   <td>
                     CVSS Score:             
-                    <Badge variant={ClassNameUtils.threatClassName(vulnerability.cvssScore)}>
+                    <Badge className={ClassNameUtils.threatClassName(vulnerability.cvssScore)}>
                       { vulnerability.cvssScore }
                     </Badge>
                   </td>
