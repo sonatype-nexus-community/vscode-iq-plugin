@@ -478,3 +478,7 @@ div.slick-cell.l0.r0 {
 .info-display {
   border: salmon;
 }
+
+.cipInfoLabel {
+  font-size: 25px;
+}

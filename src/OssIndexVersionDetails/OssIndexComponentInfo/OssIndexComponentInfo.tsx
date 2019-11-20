@@ -19,8 +19,9 @@ import { OssIndexContextConsumer} from '../../context/ossindex-context';
 
 type OssCipProps = {
 };
-// todo declare more details on component
-type OssCipState = {};
+
+type OssCipState = {
+};
 
 class OssIndexComponentInfo extends React.Component<OssCipProps, OssCipState> {
   constructor(props: OssCipProps) {
@@ -35,21 +36,21 @@ class OssIndexComponentInfo extends React.Component<OssCipProps, OssCipState> {
           <thead>
             <tr>
               <th colSpan={2}>
-                {context.component.ossIndexData.coordinates}
+                <h2>{context.component.ossIndexData.coordinates}</h2>
               </th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>Package:</td>
+              <td className="cipInfoLabel">Package</td>
               <td>{context.component.ossIndexData.coordinates}</td>
             </tr>
             <tr>
-              <td>Version:</td>
+              <td className="cipInfoLabel">Version</td>
               <td><span id="version">{context.component.version}</span></td>
             </tr>
             <tr>
-              <td>Description:</td>
+              <td className="cipInfoLabel">Description</td>
               <td><span id="description">{context.component.ossIndexData.description}</span></td>
             </tr>
           </tbody>
