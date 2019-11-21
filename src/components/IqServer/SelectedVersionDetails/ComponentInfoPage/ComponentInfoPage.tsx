@@ -15,16 +15,23 @@
  */
 import * as React from 'react';
 import Table from 'react-bootstrap/Table';
-import { VersionsContextConsumer } from '../../../../context/versions-context';
+import { VersionsContext } from '../../../../context/versions-context';
 
 type CipProps = {
 };
 // todo declare more details on component
-type CipState = {};
+type CipState = {
+  component: any
+};
 
 class ComponentInfoPage extends React.Component<CipProps, CipState> {
+  static contextType = VersionsContext;
+
   constructor(props: CipProps) {
     super(props);
+    this.state = {
+      component: {}
+    }
   }
 
   public changeComponent(component: any) {
@@ -39,45 +46,45 @@ class ComponentInfoPage extends React.Component<CipProps, CipState> {
 
   public render() {
     return (
-      <VersionsContextConsumer>
-        {context => context && context.selectedVersionDetails && (
+      <React.Fragment>
+        {this.context && this.context.selectedVersionDetails && (
           <Table>
-          <thead>
-            <tr>
-              <th colSpan={2}>
-                <h2>{context.selectedVersionDetails.component.packageUrl}</h2>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="cipInfoLabel">Package</td>
-              <td>{context.selectedVersionDetails.component.componentIdentifier.coordinates.packageId}</td>
-            </tr>
-            <tr>
-              <td className="cipInfoLabel">Version</td>
-              <td><span id="version">{context.selectedVersionDetails.component.componentIdentifier.coordinates.version}</span></td>
-            </tr>
-            <tr>
-              <td className="cipInfoLabel">Hash</td>
-              <td>{context.selectedVersionDetails.component.hash}</td>
-            </tr>
-            <tr>
-              <td className="cipInfoLabel">Match State</td>
-              <td>{context.selectedVersionDetails.matchState}</td>
-            </tr>
-            <tr>
-              <td className="cipInfoLabel">Catalog Date</td>
-              <td><span id="catalogdate">{ this.formatDate(context.selectedVersionDetails.catalogDate) }</span></td>
-            </tr>
-            <tr>
-              <td className="cipInfoLabel">Relative Popularity</td>                
-              <td><span id="relativepopularity">{context.selectedVersionDetails.relativePopularity}</span></td>
-            </tr>
-          </tbody>
-        </Table>		
-        )}
-      </VersionsContextConsumer>	
+            <thead>
+              <tr>
+                <th colSpan={2}>
+                  <h2>{ this.context.selectedVersionDetails.component.packageUrl }</h2>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="cipInfoLabel">Package</td>
+                <td>{ this.context.selectedVersionDetails.component.componentIdentifier.coordinates.packageId }</td>
+              </tr>
+              <tr>
+                <td className="cipInfoLabel">Version</td>
+                <td><span id="version">{ this.context.selectedVersionDetails.component.componentIdentifier.coordinates.version }</span></td>
+              </tr>
+              <tr>
+                <td className="cipInfoLabel">Hash</td>
+                <td>{ this.context.selectedVersionDetails.component.hash }</td>
+              </tr>
+              <tr>
+                <td className="cipInfoLabel">Match State</td>
+                <td>{ this.context.selectedVersionDetails.matchState }</td>
+              </tr>
+              <tr>
+                <td className="cipInfoLabel">Catalog Date</td>
+                <td><span id="catalogdate">{ this.formatDate(this.context.selectedVersionDetails.catalogDate) }</span></td>
+              </tr>
+              <tr>
+                <td className="cipInfoLabel">Relative Popularity</td>                
+                <td><span id="relativepopularity">{ this.context.selectedVersionDetails.relativePopularity }</span></td>
+              </tr>
+            </tbody>
+            </Table>
+            )}
+        </React.Fragment>
     );
   }
 }
