@@ -41,7 +41,7 @@ class ComponentInfoPage extends React.Component<CipProps, CipState> {
     return (
       <VersionsContextConsumer>
         {context => context && context.selectedVersionDetails && (
-          <Table variant="dark">
+          <Table>
           <thead>
             <tr>
               <th colSpan={2}>

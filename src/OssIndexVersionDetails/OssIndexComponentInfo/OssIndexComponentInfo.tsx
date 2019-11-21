@@ -32,7 +32,7 @@ class OssIndexComponentInfo extends React.Component<OssCipProps, OssCipState> {
     return (
       <OssIndexContextConsumer>
         {context => context && context.component && (
-          <Table variant="dark">
+          <Table>
           <thead>
             <tr>
               <th colSpan={2}>

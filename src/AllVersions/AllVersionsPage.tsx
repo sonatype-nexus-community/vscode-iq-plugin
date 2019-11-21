@@ -50,7 +50,9 @@ class AllVersionsPage extends React.Component<Props, State> {
         {context => (
           <React.Fragment>
             {Object.keys(context!.allVersions).map(row => (
-              <Alert onClick={_this.handleClick.bind(_this, context!.allVersions[row].componentIdentifier.coordinates.version)}>
+              <Alert 
+                  className={_this.getAlertClassname(context, row)}
+                  onClick={_this.handleClick.bind(_this, context!.allVersions[row].componentIdentifier.coordinates.version)}>
                 <SelectedBadge 
                   version={context!.allVersions[row].componentIdentifier.coordinates.version} 
                   selectedVersion={context!.selectedVersion} 
@@ -65,6 +67,17 @@ class AllVersionsPage extends React.Component<Props, State> {
         )}
       </VersionsContextConsumer>
     );
+  }
+
+  private getAlertClassname(context: any, row: any): string {
+    var className: string = ""
+    if (context!.allVersions[row].componentIdentifier.coordinates.version == context!.selectedVersion) {
+      className += " selected-version";
+    }
+    if (context!.allVersions[row].componentIdentifier.coordinates.version == context!.initialVersion) {
+      className += " current-version";
+    }
+    return className
   }
 }
 

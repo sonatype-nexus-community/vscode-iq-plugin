@@ -44,7 +44,6 @@ class PolicyPage extends React.Component<Props, State> {
               this.context.policyViolations.map((x: any, y: any) => this.printPolicyViolation(x, y), this)
               )
             }
-          )
         </React.Fragment>
     );
   }

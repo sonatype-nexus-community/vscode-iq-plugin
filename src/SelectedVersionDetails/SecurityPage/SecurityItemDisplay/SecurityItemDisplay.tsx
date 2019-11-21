@@ -49,7 +49,7 @@ class SecurityItemDisplay extends React.Component<Props, State> {
         </Accordion.Toggle>
         <Accordion.Collapse eventKey={this.props.securityIssue.reference}>
           <Card.Body>
-            <Table variant="dark">
+            <Table>
               <tbody>
                 <tr>
                   <td>Severity:</td>
