@@ -63,7 +63,7 @@ class App extends React.Component<AppProps, AppState> {
 
   public handleVersionSelection(newSelection: string) {
     console.debug("App received version change", newSelection);
-    this.setState({selectedVersionDetails: undefined})
+    this.setState({selectedVersionDetails: undefined, selectedVersion: newSelection})
 
     vscode.postMessage({
       command: 'selectVersion',
