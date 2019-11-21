@@ -166,6 +166,13 @@ class App extends React.Component<AppProps, AppState> {
           break;
         case 'allversions':
           console.debug("App handling allVersions message", message);
+          console.debug("allVersions state component", this.state.component);
+          if (!this.allVersionsIsForCurrentComponent(message.allversions)) {
+            console.debug("Received allVersions for different component, ignoring", message);
+            break;
+          }
+          console.debug("allVersions updtating state component, componentIdentifier", this.state.component)
+          console.debug("allVersions updtating componentIdentifier", message.allversions[0].componentIdentifier.coordinates)
           this.setState({allVersions: message.allversions});
           break;
         case 'remediationDetail':
@@ -178,6 +185,24 @@ class App extends React.Component<AppProps, AppState> {
           break;
         }
     });
+  }
+
+  private allVersionsIsForCurrentComponent(allVersions: any): boolean {
+    if (!allVersions || allVersions.length <= 0) {
+      // no version array provided
+      console.debug(`allVersions 0 length: ${allVersions}`);
+      return false;
+    }
+    let current = this.state.component.nexusIQData.component.componentIdentifier.coordinates;
+    let next = allVersions[0].componentIdentifier.coordinates;
+
+    for (var key in current) {
+      if (key != "version" && current[key] != next[key]) {
+        console.debug(`next allVersion has property mismatch. Key=[${key}], current: ${current[key]}, next: ${next[key]}`);
+        return false;
+      }
+    }
+    return true;
   }
 }
 
