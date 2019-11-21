@@ -54,8 +54,8 @@ export class OssIndexComponentModel implements ComponentModel {
 
           this.components = results.map(x => {
             let coordinates = x.coordinates as string;
-            let name = coordinates.substring(0, coordinates.indexOf("@"));
-            let version = coordinates.substring(coordinates.indexOf("@"), coordinates.length);
+            let name = this.parsePackageName(coordinates);
+            let version = coordinates.substring(coordinates.indexOf("@") + 1, coordinates.length);
             let componentEntry = new ComponentEntry(name, version, ScanType.OssIndex);
             componentEntry.ossIndexData = x;
             return componentEntry;
@@ -64,8 +64,12 @@ export class OssIndexComponentModel implements ComponentModel {
           throw new TypeError("Unable to instantiate Package Muncher");
         }
       } catch (e) {
-        window.showErrorMessage("Nexus Security extension: " + e);
+        window.showErrorMessage("Nexus IQ extension: " + e);
         return;
       }
+  }
+
+  private parsePackageName(pkg: string): string {
+    return pkg.substring(pkg.indexOf("/") + 1, pkg.indexOf("@"));
   }
 }

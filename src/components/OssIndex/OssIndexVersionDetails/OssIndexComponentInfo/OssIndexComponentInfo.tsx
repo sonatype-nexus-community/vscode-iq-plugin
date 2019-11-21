@@ -43,7 +43,7 @@ class OssIndexComponentInfo extends React.Component<OssCipProps, OssCipState> {
           <tbody>
             <tr>
               <td className="cipInfoLabel">Package</td>
-              <td>{context.component.ossIndexData.coordinates}</td>
+              <td>{context.component.name}</td>
             </tr>
             <tr>
               <td className="cipInfoLabel">Version</td>
