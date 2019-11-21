@@ -21,6 +21,36 @@ body {
   left: 0;
   overflow-x: hidden; /* Disable horizontal scroll */
 }
+
+.nav-item {
+  background-color: var(--vscode-tab-inactiveBackground) !important;
+  color: var(--vscode-tab-inactiveForeground) !important;
+  border-color: var(--vscode-editorGroupBorder) !important;
+}
+
+.nav-item.active {
+  color: var(--vscode-tab-activeForeground) !important;
+  background-color: var(--vscode-tab-activeBackground) !important;
+  border-color: var(--vscode-tab-activeBorder) !important;
+}
+
+.nav-item:hover {
+  background-color: var(--vscode-tab-unfocusedHoverBackground) !important;
+  border-color: var(--vscode-tab-hoverBorder) !important;
+}
+
+.nav-item.active:hover {
+  background-color: var(--vscode-tab-hoverBackground) !important;
+}
+
+a.nav-link, a.nav-link:hover {
+  color: var(--vscode-tab-inactiveForeground) !important;
+}
+
+a.nav-link.active, a.nav-link.active:hover {
+  color: var(--vscode-tab-activeForeground) !important;
+}
+
   
 .main {
   margin-left: 250px; /* Same as the width of the sidebar */
@@ -89,7 +119,6 @@ h3 {
   filter: brightness(90%);
 }
 
-
 .critical {
   background-color: red !important;
   border-color: red !important;
@@ -131,7 +160,7 @@ h3 {
   margin-bottom: .5rem !important;
   border: 1px solid;
   border-radius: .25rem !important;
-  border-color: var(--vscode-list-inactive-focus-background);
+  border-color: var(--vscode-list-inactiveFocusBackground);
 }
 
 .alert.selected-version {
