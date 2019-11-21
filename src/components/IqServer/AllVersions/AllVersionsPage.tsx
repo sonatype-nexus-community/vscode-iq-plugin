@@ -19,6 +19,7 @@ import Badge from 'react-bootstrap/Badge';
 import { VersionsContextConsumer } from '../../../context/versions-context';
 import ClassNameUtils from '../../../utils/ClassNameUtils';
 import SelectedBadge from './SelectedBadge/SelectedBadge';
+import Loader from 'react-loader-spinner';
 
 type Props = {
   versionChangeHandler: (version: string) => void
@@ -47,44 +48,74 @@ class AllVersionsPage extends React.Component<Props, State> {
 
     return (
       <VersionsContextConsumer>
-        {context => (
-          <React.Fragment>
-            {Object.keys(context!.allVersions).map(row => (
-              <Alert 
-                  className={_this.getAlertClassname(context, row)}
-                  onClick={_this.handleClick.bind(_this, context!.allVersions[row].componentIdentifier.coordinates.version)}>
-                <SelectedBadge 
-                  version={context!.allVersions[row].componentIdentifier.coordinates.version} 
-                  selectedVersion={context!.selectedVersion} 
-                  initialVersion={context!.initialVersion} /> { context!.allVersions[row].componentIdentifier.coordinates.version }
-                <Badge 
-                  className={ClassNameUtils.threatClassName(context!.allVersions[row].highestSecurityVulnerabilitySeverity)}>
-                    CVSS: {context!.allVersions[row].highestSecurityVulnerabilitySeverity}
-                </Badge>
-              </Alert>
-            ))}
-          </React.Fragment>
-        )}
+        {context => {
+          if (!context!.allVersions || context!.allVersions.length == 0 ) {
+            return _this.buildLoader(context);
+          }
+          return _this.buildAllVersionsList(context);
+        }}
       </VersionsContextConsumer>
     );
   }
 
   public componentDidMount() {
+    console.debug("AllVersionsPage componentDidMount, state", this.state)
     this.scrollToCurrentVersion()
   }
 
   public componentDidUpdate() {
-    console.debug("AllVersionsPage updated");
+    console.debug("AllVersionsPage componentDidUpdate, state", this.state)
     this.scrollToCurrentVersion()
   }
 
+  private buildLoader(context: any) {
+    return (
+      <Loader
+        type="MutatingDots"
+        color="#00BFFF"
+        height={100}
+        width={100}
+      />
+    );
+  }
+
+  private buildAllVersionsList(context: any) {
+    console.debug(`buildAllVersions called, selected: ${context!.selectedVersion}`)
+    var _this = this;
+    return (
+      <React.Fragment>
+        {Object.keys(context!.allVersions).map(row => (
+          <Alert 
+              className={this.getAlertClassname(context, row)}
+              onClick={_this.handleClick.bind(_this, context!.allVersions[row].componentIdentifier.coordinates.version)}>
+            <SelectedBadge 
+              version={context!.allVersions[row].componentIdentifier.coordinates.version} 
+              selectedVersion={context!.selectedVersion} 
+              initialVersion={context!.initialVersion} /> { context!.allVersions[row].componentIdentifier.coordinates.version }
+            <Badge 
+              className={ClassNameUtils.threatClassName(context!.allVersions[row].highestSecurityVulnerabilitySeverity)}>
+                CVSS: {context!.allVersions[row].highestSecurityVulnerabilitySeverity}
+            </Badge>
+          </Alert>
+      ))}
+      </React.Fragment>
+    )
+  }
+
   private scrollToCurrentVersion() {
-    let selectedElement = document.getElementsByClassName("current-version");
-    console.debug("found current version", selectedElement);
-    if (selectedElement && selectedElement.length > 0) {
-      console.debug("scrolling into view ", selectedElement[0]);
+    let selectedElement = document.getElementsByClassName("selected-version");
+    console.debug("scrollToCurrentVersion found selected version", selectedElement);
+    if (selectedElement && selectedElement.length > 0 && !this.isElementInViewport(selectedElement[0])) {
       selectedElement[0].scrollIntoView();
     }
+  }
+
+  private isElementInViewport(element: Element) {
+    var bounding = element.getBoundingClientRect();
+    return (
+        bounding.top >= 0 &&
+        bounding.bottom <= (window.innerHeight || document.documentElement.clientHeight)
+    );
   }
 
   private getAlertClassname(context: any, row: any): string {
