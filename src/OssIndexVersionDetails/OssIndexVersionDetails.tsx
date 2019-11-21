@@ -19,6 +19,7 @@ import Tab from 'react-bootstrap/Tab';
 import OssIndexComponentInfo from './OssIndexComponentInfo/OssIndexComponentInfo';
 import OssIndexSecurityInfo from './OssIndexSecurityInfo/OssIndexSecurityInfo';
 import { OssIndexContextConsumer } from 'src/context/ossindex-context';
+import { Alert } from 'react-bootstrap';
 
 type Props = {
 }
@@ -42,10 +43,18 @@ class OssIndexVersionDetails extends React.Component<Props, State> {
           </OssIndexContextConsumer>
         </Tab>
         <Tab title="Policy" eventKey="policy">
-          <h2>Nothing here, buy IQ Server to learn more!</h2>
+          <Alert variant="info">
+            IQ Server provides policy based, automated risk mitigation in your CI environment.
+          </Alert>
+          
+          <p><a href="https://www.sonatype.com/product-nexus-lifecycle" target="_blank">Learn more about IQ Server</a></p>
         </Tab>
         <Tab title="Licensing" eventKey="licensing">
-          <h2>Nothing here, buy IQ Server to learn more!</h2>
+          <Alert variant="info">
+            IQ Server gives you visibility into the licensing of your components, and allows you to manage your legal obligations using our automated policy enforcement engine.
+          </Alert>
+            
+          <p><a href="https://www.sonatype.com/product-nexus-lifecycle" target="_blank">Learn more about IQ Server</a></p>
         </Tab>
       </Tabs>     
     );

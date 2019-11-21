@@ -2,7 +2,7 @@
 	"name": "vscode-iq-plugin",
 	"displayName": "Sonatype Nexus IQ Extension for VSCode",
 	"description": "Sonatype Nexus IQ Extension for VSCode",
-	"version": "0.2.0",
+	"version": "0.1.0",
 	"author": {
 		"name": "ctownshend"
 	},
@@ -43,7 +43,7 @@
 			"explorer": [
 				{
 					"id": "nexusExplorer",
-					"name": "Sonatype Nexus"
+					"name": "Sonatype Scan Results"
 				}
 			]
 		},

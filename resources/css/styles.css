@@ -186,3 +186,7 @@ a img {
 .cipInfoLabel {
   font-size: 25px;
 }
+
+.tab-content>.active {
+  padding: 10px;
+}
