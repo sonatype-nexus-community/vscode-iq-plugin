@@ -15,7 +15,7 @@
  */
 import * as React from 'react';
 import Table from 'react-bootstrap/Table';
-import { VersionsContextConsumer } from '../../context/versions-context';
+import { VersionsContextConsumer } from '../../../../context/versions-context';
 
 type CipProps = {
 };

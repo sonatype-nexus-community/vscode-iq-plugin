@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import { VersionsContextConsumer } from '../../../../context/versions-context';
+import { VersionsContextConsumer } from '../../../../../../context/versions-context';
 
 type Props = {
 }
@@ -22,17 +22,23 @@ type Props = {
 type State = {
 }
 
-class CveDetails extends React.Component<Props, State> {
+class Remediation extends React.Component<Props, State> {
   public render() {
-    console.debug("CVE Details section rendering");
+    console.debug("Remediation section rendering");
     return (
       <VersionsContextConsumer>
-        {context => context && context.cvedetails && (
-          <div dangerouslySetInnerHTML={{ __html: context.cvedetails.htmlDetails }} />
+        { context => context && context.remediation && (
+          Object.keys(context.remediation.versionChanges).map(val => (
+            <React.Fragment>
+              <h2>Remediation Type: {context.remediation.versionChanges[val].type}</h2>
+              Upgrade to this version: {context.remediation.versionChanges[val].data.component.componentIdentifier.coordinates.version}
+            </React.Fragment>
+            )
+          )           
         )}
       </VersionsContextConsumer>
     );
   }
 }
 
-export default CveDetails;
+export default Remediation;

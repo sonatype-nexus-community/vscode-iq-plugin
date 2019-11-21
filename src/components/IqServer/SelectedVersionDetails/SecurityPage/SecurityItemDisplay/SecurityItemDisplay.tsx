@@ -19,7 +19,7 @@ import Table from 'react-bootstrap/Table';
 import Badge from 'react-bootstrap/Badge';
 import Accordion from 'react-bootstrap/Accordion';
 import Card from 'react-bootstrap/Card';
-import ClassNameUtils from '../../../utils/ClassNameUtils';
+import ClassNameUtils from '../../../../../utils/ClassNameUtils';
 import Remediation from './Remediation/Remediation';
 import CveDetails from './CveDetails/CveDetails';
 

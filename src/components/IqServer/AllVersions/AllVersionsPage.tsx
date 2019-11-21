@@ -16,8 +16,8 @@
 import * as React from 'react';
 import Alert from 'react-bootstrap/Alert';
 import Badge from 'react-bootstrap/Badge';
-import { VersionsContextConsumer } from '../context/versions-context';
-import ClassNameUtils from '../utils/ClassNameUtils';
+import { VersionsContextConsumer } from '../../../context/versions-context';
+import ClassNameUtils from '../../../utils/ClassNameUtils';
 import SelectedBadge from './SelectedBadge/SelectedBadge';
 
 type Props = {

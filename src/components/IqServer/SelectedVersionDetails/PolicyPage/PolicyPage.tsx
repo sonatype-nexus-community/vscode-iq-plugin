@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import { VersionsContext } from '../../context/versions-context';
+import { VersionsContext } from '../../../../context/versions-context';
 import { Accordion, Card } from 'react-bootstrap';
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
 

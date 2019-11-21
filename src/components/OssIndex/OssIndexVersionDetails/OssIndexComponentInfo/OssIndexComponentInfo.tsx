@@ -15,7 +15,7 @@
  */
 import * as React from 'react';
 import Table from 'react-bootstrap/Table';
-import { OssIndexContextConsumer} from '../../context/ossindex-context';
+import { OssIndexContextConsumer} from '../../../../context/ossindex-context';
 
 type OssCipProps = {
 };

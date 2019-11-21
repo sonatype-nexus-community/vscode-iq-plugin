@@ -15,7 +15,7 @@
  */
 import * as React from 'react';
 import { Table, Badge, Accordion, Card } from 'react-bootstrap';
-import ClassNameUtils from '../../utils/ClassNameUtils';
+import ClassNameUtils from '../../../../utils/ClassNameUtils';
 import { FaChevronDown } from 'react-icons/fa';
 
 type OssCipProps = {

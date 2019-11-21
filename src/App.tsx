@@ -15,12 +15,12 @@
  */
 import * as React from 'react';
 import Loader from 'react-loader-spinner';
-import AllVersionsPage from './AllVersions/AllVersionsPage';
-import SelectedVersionDetails from './SelectedVersionDetails/SelectedVersionDetails';
+import AllVersionsPage from './components/IqServer/AllVersions/AllVersionsPage';
+import SelectedVersionDetails from './components/IqServer/SelectedVersionDetails/SelectedVersionDetails';
 import { VersionsContextProvider } from './context/versions-context';
 import { OssIndexContextProvider } from './context/ossindex-context';
 import { ExtScanType } from './utils/ExtScanType';
-import OssIndexVersionDetails from './OssIndexVersionDetails/OssIndexVersionDetails';
+import OssIndexVersionDetails from './components/OssIndex/OssIndexVersionDetails/OssIndexVersionDetails';
 
 // add workarounds to call VSCode
 declare var acquireVsCodeApi: any;
