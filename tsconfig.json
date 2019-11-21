@@ -28,6 +28,7 @@
     "webpack",
     "jest",
 	  "src/setupTests.ts",
-	  ".vscode-test"
+    ".vscode-test",
+    "src/**/*.test.tsx"
   ]
 }
