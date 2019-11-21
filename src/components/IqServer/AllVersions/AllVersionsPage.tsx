@@ -69,6 +69,24 @@ class AllVersionsPage extends React.Component<Props, State> {
     );
   }
 
+  public componentDidMount() {
+    this.scrollToCurrentVersion()
+  }
+
+  public componentDidUpdate() {
+    console.debug("AllVersionsPage updated");
+    this.scrollToCurrentVersion()
+  }
+
+  private scrollToCurrentVersion() {
+    let selectedElement = document.getElementsByClassName("current-version");
+    console.debug("found current version", selectedElement);
+    if (selectedElement && selectedElement.length > 0) {
+      console.debug("scrolling into view ", selectedElement[0]);
+      selectedElement[0].scrollIntoView();
+    }
+  }
+
   private getAlertClassname(context: any, row: any): string {
     var className: string = ""
     if (context!.allVersions[row].componentIdentifier.coordinates.version == context!.selectedVersion) {
