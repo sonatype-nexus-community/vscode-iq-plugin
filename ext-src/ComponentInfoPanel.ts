@@ -35,7 +35,6 @@ export class ComponentInfoPanel {
   private static iqApplicationId: string;
   private static iqApplicationPublicId: string;
   private static _settings: any;
-  private static _ossSettings: any;
 
   component?: ComponentEntry;
 
@@ -97,10 +96,6 @@ export class ComponentInfoPanel {
       iqApplicationId: ComponentInfoPanel.iqApplicationId,
       iqApplicationPublicId: ComponentInfoPanel.iqApplicationPublicId
     };
-    ComponentInfoPanel._ossSettings = {
-      username: "",
-      password: ""
-    };
   }
 
   private constructor(panel: vscode.WebviewPanel, extensionPath: string, componentModel: ComponentModel) {
@@ -113,9 +108,7 @@ export class ComponentInfoPanel {
     const pageSettings = {
       appInternalId: ComponentInfoPanel._settings.iqApplicationId,
       username: ComponentInfoPanel._settings.iqUser,
-      password: ComponentInfoPanel._settings.iqPassword,
-      ossIndexUsername: ComponentInfoPanel._ossSettings.username,
-      ossIndexPassword: ComponentInfoPanel._ossSettings.password
+      password: ComponentInfoPanel._settings.iqPassword
     };
 
     this._panel.webview.postMessage({
@@ -250,7 +243,8 @@ export class ComponentInfoPanel {
   private updateViewForThisComponent() {
     console.debug(`Update called`);
     if (this.component) {
-      this._panel.title = `IQ Scan: ${this.component.name}@${this.component.version}`;
+      var scanTitle = (this.componentModel instanceof OssIndexComponentModel) ? "OSS Index" : "IQ"
+      this._panel.title = `${scanTitle} Scan: ${this.component.name}@${this.component.version}`;
       console.log("posting message: artifact", this.component);
 
       this.showAllVersions();
