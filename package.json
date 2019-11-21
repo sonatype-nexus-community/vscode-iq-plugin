@@ -98,7 +98,10 @@
 					"nexusExplorer.dataSource": {
 						"type": "string",
 						"default": "ossindex",
-						"enum": ["ossindex", "iqServer"],
+						"enum": [
+							"ossindex",
+							"iqServer"
+						],
 						"enumDescriptions": [
 							"Use publicly available OSS Index data",
 							"Use commercial Sonatype IQ Server data"
@@ -168,12 +171,16 @@
 	"devDependencies": {
 		"@types/bootstrap": "^4.3.1",
 		"@types/dependency-tree": "^6.1.0",
+		"@types/enzyme": "^3.10.3",
+		"@types/enzyme-adapter-react-16": "^1.0.5",
 		"@types/jest": "^22.2.3",
 		"@types/lodash": "^4.14.136",
 		"@types/node": "^10.1.2",
 		"@types/react": "^16.9.11",
 		"@types/react-dom": "^16.9.3",
 		"@types/request": "^2.48.2",
+		"enzyme": "^3.10.0",
+		"enzyme-adapter-react-16": "^1.15.1",
 		"mustache": "^3.1.0",
 		"typescript": "^3.6.3"
 	}
