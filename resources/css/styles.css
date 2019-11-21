@@ -96,8 +96,12 @@ table {
   padding-top: 0px !important;
 }
 
-h3 {
+h2 {
   font-size: 1em;
+}
+
+h3 {
+  font-size: 1.5em;
 }
 
 .card, .card-header, .card-body {
@@ -213,7 +217,7 @@ a img {
 }
 
 .cipInfoLabel {
-  font-size: 25px;
+  font-size: 1.2em;
 }
 
 .tab-content>.active {
