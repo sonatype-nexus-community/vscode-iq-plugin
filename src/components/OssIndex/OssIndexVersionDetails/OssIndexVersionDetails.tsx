@@ -18,7 +18,7 @@ import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import OssIndexComponentInfo from './OssIndexComponentInfo/OssIndexComponentInfo';
 import OssIndexSecurityInfo from './OssIndexSecurityInfo/OssIndexSecurityInfo';
-import { OssIndexContextConsumer } from 'src/context/ossindex-context';
+import { OssIndexContextConsumer } from '../../../context/ossindex-context';
 import { Alert } from 'react-bootstrap';
 
 type Props = {

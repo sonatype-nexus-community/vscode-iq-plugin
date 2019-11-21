@@ -22,11 +22,8 @@ import { OssIndexContextProvider } from './context/ossindex-context';
 import { ExtScanType } from './utils/ExtScanType';
 import OssIndexVersionDetails from './components/OssIndex/OssIndexVersionDetails/OssIndexVersionDetails';
 
-// add workarounds to call VSCode
-declare var acquireVsCodeApi: any;
-const vscode: any = acquireVsCodeApi();
-
 type AppProps = {
+  acquireVsCodeApi: any
 };
 
 type AppState = {
@@ -44,8 +41,14 @@ type AppState = {
 };
 
 class App extends React.Component<AppProps, AppState> {
+  private vscode: any;
+
   constructor(props: AppProps) {
     super(props);
+
+    // add workarounds to call VSCode
+    this.vscode = this.props.acquireVsCodeApi();
+
     console.debug("App constructing, props:", props);
     this.state = {
       component: {},
@@ -65,7 +68,7 @@ class App extends React.Component<AppProps, AppState> {
     console.debug("App received version change", newSelection);
     this.setState({selectedVersionDetails: undefined})
 
-    vscode.postMessage({
+    this.vscode.postMessage({
       command: 'selectVersion',
       version: newSelection,
       package: this.state.component
@@ -76,12 +79,12 @@ class App extends React.Component<AppProps, AppState> {
     console.debug("App received remediation request", nexusArtifact);
     this.setState({remediation: undefined})
 
-    vscode.postMessage({
+    this.vscode.postMessage({
       command: 'getRemediation',
       nexusArtifact: nexusArtifact
     });
 
-    vscode.postMessage({
+    this.vscode.postMessage({
       command: 'getCVEDetails',
       cve: cve,
       nexusArtifact: nexusArtifact
@@ -97,8 +100,8 @@ class App extends React.Component<AppProps, AppState> {
         <Loader
           type="Puff"
           color="#00BFFF"
-          height="100"
-          width="100"
+          height={100}
+          width={100}
         />
       );
     } else if ( this.state.scanType === ExtScanType.OssIndex){

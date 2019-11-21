@@ -18,7 +18,10 @@ import * as ReactDOM from 'react-dom';
 import App from './App';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+// add workarounds to call VSCode
+declare var acquireVsCodeApi: any;
+
 ReactDOM.render(
-  <App  />,
+  <App acquireVsCodeApi={acquireVsCodeApi}/>,
   document.getElementById('root') as HTMLElement
 );
