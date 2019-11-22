@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { exec } from "../../exec";
+import { exec } from "../../utils/exec";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { PyPIPackage } from './PyPIPackage';
 

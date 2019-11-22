@@ -19,10 +19,10 @@ import { NpmPackage } from "./NpmPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { NpmCoordinate } from "./NpmCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { RequestService } from "../../RequestService";
+import { RequestService } from "../../services/RequestService";
 import { NpmUtils } from './NpmUtils';
-import { ScanType } from "../../ScanType";
-import { ComponentEntry } from "../../ComponentEntry";
+import { ScanType } from "../../types/ScanType";
+import { ComponentEntry } from "../../models/ComponentEntry";
 
 export class NpmDependencies implements PackageDependencies {
   Dependencies: Array<NpmPackage> = [];

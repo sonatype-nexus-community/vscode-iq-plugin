@@ -17,12 +17,12 @@ import * as _ from "lodash";
 
 import { PyPIPackage } from "./PyPIPackage";
 import { PackageDependencies } from "../PackageDependencies";
-import { ComponentEntry } from "../../ComponentEntry";
+import { ComponentEntry } from "../../models/ComponentEntry";
 import { PyPICoordinate } from "./PyPICoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { RequestService } from "../../RequestService";
+import { RequestService } from "../../services/RequestService";
 import { PyPiUtils } from "./PyPiUtils";
-import { ScanType } from "../../ScanType";
+import { ScanType } from "../../types/ScanType";
 
 export class PyPIDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<PyPIPackage> = [];

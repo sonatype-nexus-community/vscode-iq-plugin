@@ -18,7 +18,7 @@ import { MavenDependencies } from "./maven/MavenDependencies";
 import { NpmDependencies } from "./npm/NpmDependencies";
 import { GolangDependencies } from "./golang/GolangDependencies";
 import { PyPIDependencies } from "./pypi/PyPIDependencies";
-import { RequestService } from "../RequestService";
+import { RequestService } from "../services/RequestService";
 
 export class ComponentContainer {
   Implementation: Array<PackageDependencies> = [];

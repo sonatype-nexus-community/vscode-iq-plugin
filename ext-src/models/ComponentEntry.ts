@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { PolicyViolation } from "./PolicyViolation";
-import { ScanType } from "./ScanType";
+import { PolicyViolation } from "../types/PolicyViolation";
+import { ScanType } from "../types/ScanType";
 
 export class ComponentEntry {
   scope: string = "";

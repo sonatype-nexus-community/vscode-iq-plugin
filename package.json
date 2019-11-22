@@ -2,12 +2,12 @@
 	"name": "vscode-iq-plugin",
 	"displayName": "Sonatype Nexus IQ Extension for VSCode",
 	"description": "Sonatype Nexus IQ Extension for VSCode",
-	"version": "0.1.0",
+	"version": "0.0.3",
 	"author": {
-		"name": "ctownshend"
+		"name": "community-group"
 	},
 	"icon": "resources/SON_logo_favicon.png",
-	"publisher": "cameronsonatype",
+	"publisher": "sonatype-community",
 	"license": "SEE LICENSE IN LICENSE.txt",
 	"repository": {
 		"type": "git",
@@ -16,7 +16,7 @@
 	"homepage": "https://github.com/sonatype-nexus-community/vscode-iq-plugin/blob/master/README.md",
 	"bugs": {
 		"url": "https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues",
-		"email": "ctownshend@sonatype.com"
+		"email": "community-group@sonatype.com"
 	},
 	"keywords": [
 		"Sonatype",
