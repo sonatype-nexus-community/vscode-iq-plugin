@@ -4,7 +4,7 @@ Scan your libraries against either the free [OSS Index](https://ossindex.sonatyp
 
 ## Features
 
-* Scan npm, Maven, Go or PyPi projects
+* Scan npm, Maven, Golang or PyPi projects
 * See all components with vulnerable components highlighted
 
 ## ![1574377213618](media/ossindex-scan-dark.png)
