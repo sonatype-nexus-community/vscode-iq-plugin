@@ -3,46 +3,33 @@ Scan your libraries against either the free [OSS Index](https://ossindex.sonatyp
 
 ## Features
 
-* Scan npm, Maven, Go or PyPi projects
+* Scan npm, Maven, Go or PyPi projects (Go is only supported on Linux or OS/X)
 * See all components with vulnerable components highlighted
 
-## ![1574377213618](media/ossindex-scan-dark.png)
-
-* OSS Index Component Details
-
-![1574377423550](media/ossindex=lodash-componentinfo-dark.png)
-
-* OSS Index Security Details
-
-![1574377522418](media/ossindex-lodash-security-dark.png)
-
-* IQ Server Component Info with version graph
-
-![1574377675885](media/iqserver-lodash-componentinfo-dark.png)
-
-* IQ Server Policy Info
-
-![1574377830232](media/iqserver-lodash-policy-dark.png)
-
-* IQ Server Security
-
-![1574377984965](media/iqserver-lodash-security-dark.png)
-
-* IQ Server License browser
-
-![1574378068914](media/iqserver-lodash-licensing-dark.png)
 
 
+### Sonatype Nexus IQ Scan
 
+ ![1574377213618](media/iq-animated-scan.gif)
+
+
+### OSS Index Scan
+
+![1574377213618](media/ossindex-animated-scan.gif)
+
+### Themes
+
+![1574377213618](media/animated-themes.gif)
 
 ## Requirements
-To enable the IQ Scan, you will need a Sonatype Nexus IQ Lifecycle License but the OSS Index scan will work for all users.
+* To enable the IQ Scan, you will need a Sonatype Nexus IQ Lifecycle License but the OSS Index scan will work for all users
+* The plugin requires npm, golang, maven or python and pip to be installed, depending on which language you are using. It will not install these as a part of the plugin
 
 
 ## Extension Settings
 * Configuration is done in the VSCode `Preferences > Settings > Sonatype Explorer`
- 
-![VSCode Settings](media/Settings.png)
+
+![VS Code Settings](media/animated-settings.gif)
 
 If you are using IQ Server, you can enter your password which will be stored in cleartext, or for additional security you can leave this blank and whenever you start VS Code (and if you have the Nexus Explorer Data Source set to `iqServer`) you will be prompted for a password:
 
@@ -50,4 +37,6 @@ If you are using IQ Server, you can enter your password which will be stored in 
 
 If you are using IQ Server v76 or above, you can create a [user token](https://help.sonatype.com/iqserver/automating/rest-apis/user-token-rest-api---v2) and save this in the password field instead. The added benefit of doing this is that you are not storing your IQ Server password in plaintext, and rather a user token that can be deleted, etc... if need be.
 
+## Outstanding Issues
 
+* GoLang support is only for Linux or OS/X but not for Windows.
