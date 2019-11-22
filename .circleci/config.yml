@@ -12,7 +12,7 @@ jobs:
       - restore_cache: 
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
-          name: install-npm-wee
+          name: Install npm dependencies...weeeeee
           command: npm install
       - save_cache: 
           key: dependency-cache-{{ checksum "package-lock.json" }}
@@ -42,8 +42,12 @@ jobs:
       - run: 
           name: Attempt publish to GitHub
           command: npx semantic-release -b master
-      - run: vsce package
-      - run: vsce publish -p VSCODE_TOKEN
+      - run: 
+          name: Package for Visual Studio Code Extension Marketplace
+          command: vsce package
+      - run: 
+          name: Publish to Visual Studio Code Extension Marketplace
+          command: vsce publish -p VSCODE_TOKEN
 
 workflows:
   version: 2.1
