@@ -41,7 +41,7 @@ jobs:
           command: npm install -g vsce semantic-release @semantic-release/git@7.0.17
       - run: 
           name: Attempt publish to GitHub
-          command: npx semantic-release -d -b semver
+          command: npx semantic-release -d -b master
       # - run: vsce package
       # - run: vsce publish -p VSCODE_TOKEN
 
@@ -51,6 +51,9 @@ workflows:
     jobs:
       - build
       - release:
+          filters:
+            branches:
+              only: master
           context: vscode-plugin
           requires:
             - build
