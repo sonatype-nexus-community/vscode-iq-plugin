@@ -98,7 +98,10 @@
 					"nexusExplorer.dataSource": {
 						"type": "string",
 						"default": "ossindex",
-						"enum": ["ossindex", "iqServer"],
+						"enum": [
+							"ossindex",
+							"iqServer"
+						],
 						"enumDescriptions": [
 							"Use publicly available OSS Index data",
 							"Use commercial Sonatype IQ Server data"
