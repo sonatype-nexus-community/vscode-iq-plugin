@@ -27,14 +27,21 @@ jobs:
       - image: circleci/node:10.16.3 
     steps:
       - checkout
-      - run: sudo chown -R circleci:circleci /usr/local/lib
-      - run: sudo chown -R circleci:circleci /usr/local/bin
-      - run: sudo npm install -g npm@latest
-      - run: sudo npm install
-      - run: npm install -g vsce
-      - run: npm install -g semantic-release
-      - run: npm install -g @semantic-release/git@7.0.17
-      - run: npx semantic-release -d -b semver
+      - run: 
+          name: Allow global installs of npm packages
+          command: sudo chown -R circleci:circleci /usr/local/lib && sudo chown -R circleci:circleci /usr/local/bin
+      - run:
+          name: Install dependencies
+          command: npm install
+      - run:
+          name: Build extension
+          command: npm run build
+      - run: 
+          name: Install publishing packages 
+          command: npm install -g vsce semantic-release @semantic-release/git@7.0.17
+      - run: 
+          name: Attempt publish to GitHub
+          command: npx semantic-release -d -b semver
       # - run: vsce package
       # - run: vsce publish -p VSCODE_TOKEN
 
