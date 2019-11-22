@@ -42,8 +42,8 @@ jobs:
       - run: 
           name: Attempt publish to GitHub
           command: npx semantic-release -b master
-      # - run: vsce package
-      # - run: vsce publish -p VSCODE_TOKEN
+      - run: vsce package
+      - run: vsce publish -p VSCODE_TOKEN
 
 workflows:
   version: 2.1
