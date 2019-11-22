@@ -17,7 +17,7 @@ import * as path from "path";
 import * as fs from "fs";
 import * as _ from "lodash";
 
-import { exec } from "../../exec";
+import { exec } from "../../utils/exec";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { NpmPackage } from "./NpmPackage";
 

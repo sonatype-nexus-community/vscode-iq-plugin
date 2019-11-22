@@ -13,14 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { BaseRequestService } from "./BaseRequestService";
 
- import { ConstraintViolation } from "./ConstraintViolation";
-
-export class PolicyViolation {
-  constructor(
-    readonly policyId: string,
-    readonly policyName: string,
-    readonly threatLevel: number,
-    readonly constraintViolations: Array<ConstraintViolation>
-  ) {}
+export interface LiteRequestService extends BaseRequestService {
+  getResultsFromPurls(purls: Array<String>): Promise<any>;
 }

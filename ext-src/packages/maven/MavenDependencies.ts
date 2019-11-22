@@ -19,10 +19,10 @@ import { MavenPackage } from "./MavenPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { MavenCoordinate } from "./MavenCoordinate";
-import { RequestService } from "../../RequestService";
+import { RequestService } from "../../services/RequestService";
 import { MavenUtils } from "./MavenUtils";
-import { ScanType } from "../../ScanType";
-import { ComponentEntry } from "../../ComponentEntry";
+import { ScanType } from "../../types/ScanType";
+import { ComponentEntry } from "../../models/ComponentEntry";
 
 export class MavenDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<MavenPackage> = [];

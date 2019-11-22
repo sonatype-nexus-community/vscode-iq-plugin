@@ -19,10 +19,10 @@ import { GolangPackage } from "./GolangPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { GolangCoordinate } from "./GolangCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { RequestService } from "../../RequestService";
+import { RequestService } from "../../services/RequestService";
 import { GolangUtils } from "./GolangUtils";
-import { ScanType } from "../../ScanType";
-import { ComponentEntry } from "../../ComponentEntry";
+import { ScanType } from "../../types/ScanType";
+import { ComponentEntry } from "../../models/ComponentEntry";
 
 export class GolangDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<GolangPackage> = [];

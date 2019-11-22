@@ -19,10 +19,10 @@ import * as _ from "lodash";
 import * as dependencyTree from "dependency-tree";
 
 import { ComponentInfoPanel } from "./ComponentInfoPanel";
-import { IqComponentModel } from "./IqComponentModel";
-import { OssIndexComponentModel } from "./OssIndexComponentModel";
-import { ComponentModel } from "./ComponentModel";
-import { ComponentEntry } from "./ComponentEntry";
+import { IqComponentModel } from "./models/IqComponentModel";
+import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
+import { ComponentModel } from "./models/ComponentModel";
+import { ComponentEntry } from "./models/ComponentEntry";
 
 export class NexusExplorerProvider
   implements vscode.TreeDataProvider<ComponentEntry> {

@@ -16,7 +16,7 @@
 import * as path from "path";
 import * as fs from "fs";
 
-import { exec } from "../../exec";
+import { exec } from "../../utils/exec";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { MavenPackage } from "./MavenPackage";
 
