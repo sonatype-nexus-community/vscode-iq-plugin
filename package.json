@@ -7,7 +7,7 @@
     "name": "community-group"
   },
   "icon": "resources/SON_logo_favicon.png",
-  "publisher": "sonatype-community",
+  "publisher": "SonatypeCommunity",
   "license": "SEE LICENSE IN LICENSE.txt",
   "repository": {
     "type": "git",
