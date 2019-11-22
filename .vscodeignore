@@ -4,6 +4,5 @@ out/
 src/
 public/
 tsconfig.json
-ext-src/
 .circleci/
 types/
