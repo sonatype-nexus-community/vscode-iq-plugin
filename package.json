@@ -1,8 +1,8 @@
 {
-	"name": "vscode-security-plugin",
-	"displayName": "Sonatype Nexus Security Extension for VSCode",
-	"description": "Sonatype Nexus Security Extension for VSCode",
-	"version": "0.0.1",
+	"name": "vscode-iq-plugin",
+	"displayName": "Sonatype Nexus IQ Extension for VSCode",
+	"description": "Sonatype Nexus IQ Extension for VSCode",
+	"version": "0.1.0",
 	"author": {
 		"name": "community-group"
 	},
@@ -43,7 +43,7 @@
 			"explorer": [
 				{
 					"id": "nexusExplorer",
-					"name": "Nexus IQ"
+					"name": "Sonatype Scan Results"
 				}
 			]
 		},
@@ -89,17 +89,26 @@
 		},
 		"configuration": [
 			{
-				"title": "Nexus IQ Explorer",
+				"title": "Sonatype Explorer",
 				"properties": {
 					"nexusExplorer.autorefresh": {
 						"type": "boolean",
 						"default": false
+					},
+					"nexusExplorer.dataSource": {
+						"type": "string",
+						"default": "ossindex",
+						"enum": ["ossindex", "iqServer"],
+						"enumDescriptions": [
+							"Use publicly available OSS Index data",
+							"Use commercial Sonatype IQ Server data"
+						]
 					}
 				}
 			},
 			{
 				"type": "object",
-				"title": "Nexus IQ configuration",
+				"title": "Sonatype Nexus IQ configuration",
 				"properties": {
 					"nexusiq.url": {
 						"type": "string",

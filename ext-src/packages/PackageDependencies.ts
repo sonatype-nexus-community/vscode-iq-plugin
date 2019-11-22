@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { PackageType } from "./PackageType";
-import { ComponentEntry } from "../ComponentInfoPanel";
+import { ComponentEntry } from "../ComponentEntry";
 import { RequestService } from "../RequestService";
 
 export interface PackageDependencies {

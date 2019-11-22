@@ -31,6 +31,10 @@ export class NpmPackage implements PackageType {
     return `${this.Name}@${this.Version}`;
   }
 
+  public toPurl() {
+    return `pkg:npm/${this.Name.replace("@", "")}@${this.Version}`;
+  }
+
   public toCoordValueType(): string {
     return `${this.Name} - ${this.Version}`;
   }

@@ -13,29 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Uri, window } from "vscode";
+import { Uri, window, WorkspaceConfiguration } from "vscode";
 
-import { ComponentEntry, PolicyViolation } from "./ComponentInfoPanel";
 import { ComponentContainer } from "./packages/ComponentContainer";
 import { RequestService } from "./RequestService";
 import { IqRequestService } from "./IqRequestService";
+import { ComponentModel } from "./ComponentModel";
+import { ComponentEntry } from "./ComponentEntry";
+import { PolicyViolation } from "./PolicyViolation";
 
-export class IqComponentModel {
-    components: Array<ComponentEntry> = [];
+export class IqComponentModel implements ComponentModel {
+    components = new Array<ComponentEntry>();
     coordsToComponent: Map<string, ComponentEntry> = new Map<
       string,
       ComponentEntry
     >();
     requestService: RequestService;
+    dataSourceType: string;
+    applicationPublicId: string;
   
     constructor(
-      readonly url: string,
-      private user: string,
-      private password: string,
-      private applicationPublicId: string,
-      private getmaximumEvaluationPollAttempts: number
+      configuration: WorkspaceConfiguration
     ) {
-      this.requestService = new IqRequestService(this.url, this.user, this.password, this.getmaximumEvaluationPollAttempts);
+      
+      this.dataSourceType = configuration.get("nexusExplorer.dataSource", "ossindex");
+      let url = configuration.get("nexusiq.url") + "";
+      let username = configuration.get("nexusiq.username") + "";
+      let maximumEvaluationPollAttempts = parseInt(
+        configuration.get("nexusiq.maximumEvaluationPollAttempts") + "", 10);
+      this.applicationPublicId = configuration.get("nexusiq.applicationPublicId") + "";
+      let password = configuration.get("nexusiq.password") + "";
+      this.requestService = new IqRequestService(url, username, password, maximumEvaluationPollAttempts);
     }
   
     public getContent(resource: Uri): Thenable<string> {

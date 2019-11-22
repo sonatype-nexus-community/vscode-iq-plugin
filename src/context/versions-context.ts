@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 import * as React from 'react';
+import { ExtScanType } from 'src/utils/ExtScanType';
 
 export interface VersionsContextInterface {
+  scanType?: ExtScanType,
   allVersions: any[],
   component: any,
   selectedVersionDetails?: any,
@@ -23,6 +25,7 @@ export interface VersionsContextInterface {
   initialVersion: string,
   remediation?: any,
   cvedetails?: any,
+  policyViolations?: any[],
   handleGetRemediation(o: any, s: string): void
 }
 
@@ -31,3 +34,5 @@ const ctxt = React.createContext<VersionsContextInterface | undefined>(undefined
 export const VersionsContextProvider = ctxt.Provider;
 
 export const VersionsContextConsumer = ctxt.Consumer;
+
+export const VersionsContext = ctxt;
