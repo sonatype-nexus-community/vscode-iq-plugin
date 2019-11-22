@@ -15,11 +15,11 @@
  */
 import * as vscode from "vscode";
 import * as path from "path";
-import { IqComponentModel } from "./IqComponentModel";
-import { ScanType } from "./ScanType";
-import { ComponentModel } from "./ComponentModel";
-import { OssIndexComponentModel } from "./OssIndexComponentModel";
-import { ComponentEntry } from "./ComponentEntry";
+import { IqComponentModel } from "./models/IqComponentModel";
+import { ScanType } from "./types/ScanType";
+import { ComponentModel } from "./models/ComponentModel";
+import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
+import { ComponentEntry } from "./models/ComponentEntry";
 
 
 

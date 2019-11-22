@@ -16,11 +16,11 @@
 import { window, WorkspaceConfiguration } from "vscode";
 import * as _ from "lodash";
 
-import { LiteComponentContainer } from './packages/LiteComponentContainer';
-import { LiteRequestService } from "./LiteRequestService";
-import { OssIndexRequestService } from "./OssIndexRequestService";
+import { LiteComponentContainer } from '../packages/LiteComponentContainer';
+import { LiteRequestService } from "../services/LiteRequestService";
+import { OssIndexRequestService } from "../services/OssIndexRequestService";
 import { ComponentModel } from "./ComponentModel";
-import { ScanType } from "./ScanType";
+import { ScanType } from "../types/ScanType";
 import { ComponentEntry } from "./ComponentEntry";
 
 export class OssIndexComponentModel implements ComponentModel {

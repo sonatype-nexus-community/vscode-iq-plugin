@@ -1,4 +1,5 @@
 # Sonatype Nexus IQ Plugin for VS Code
+
 Scan your libraries against either the free [OSS Index](https://ossindex.sonatype.org/) vulnerability database or the [Sonatype Nexus IQ Server](https://www.sonatype.com/nexus-iq-server). Drill down into all of your dependencies to examine each package version for security vulnerabilities. With IQ Server, it also provides policy and license details.[](https://github.com/sonatype-nexus-community/vscode-iq-plugin)
 
 ## Features
@@ -25,7 +26,6 @@ Scan your libraries against either the free [OSS Index](https://ossindex.sonatyp
 * To enable the IQ Scan, you will need a Sonatype Nexus IQ Lifecycle License but the OSS Index scan will work for all users
 * The plugin requires npm, golang, maven or python and pip to be installed, depending on which language you are using. It will not install these as a part of the plugin
 
-
 ## Extension Settings
 * Configuration is done in the VSCode `Preferences > Settings > Sonatype Explorer`
 
@@ -40,3 +40,4 @@ If you are using IQ Server v76 or above, you can create a [user token](https://h
 ## Outstanding Issues
 
 * GoLang support is only for Linux or OS/X but not for Windows.
+

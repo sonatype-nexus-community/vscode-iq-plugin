@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { exec } from "../../exec";
+import { exec } from "../../utils/exec";
 
 import { GolangPackage } from "./GolangPackage";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
