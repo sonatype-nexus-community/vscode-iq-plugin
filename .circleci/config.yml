@@ -47,7 +47,7 @@ jobs:
           command: vsce package
       - run: 
           name: Publish to Visual Studio Code Extension Marketplace
-          command: vsce publish -p VSCODE_TOKEN
+          command: vsce publish -p $VSCODE_TOKEN
 
 workflows:
   version: 2.1
