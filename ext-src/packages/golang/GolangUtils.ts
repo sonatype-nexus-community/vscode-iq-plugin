@@ -19,7 +19,7 @@ import { GolangPackage } from "./GolangPackage";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 
 export class GolangUtils {
-  public async getDependencyArray(): Promise<any> {
+  public async getDependencyArray(): Promise<Array<GolangPackage>> {
     try {
       // TODO: When running this command, Golang is now using the workspace root to establish a GOCACHE, we should use some other temporary area or try and suss out the real one
       let { stdout, stderr } = await exec(`go list -m all`, {
@@ -31,7 +31,7 @@ export class GolangUtils {
       });
 
       if (stdout != "" && stderr === "") {
-        this.parseGolangDependencies(stdout);
+        return Promise.resolve(this.parseGolangDependencies(stdout));
       } else {
         return Promise.reject(
           new Error(
@@ -39,8 +39,6 @@ export class GolangUtils {
           )
         );
       }
-
-      return Promise.resolve();
     } catch (e) {
       return Promise.reject(
         "go list -m all failed, please try running locally to see why: " +
