@@ -27,7 +27,7 @@ export class RequestHelpers {
   }
 
   private static getExtensionVersion() {
-    let extension = extensions.getExtension('cameronsonatype.vscode-iq-plugin');
+    let extension = extensions.getExtension('SonatypeCommunity.vscode-iq-plugin');
     if (extension != undefined) {
       return extension.packageJSON.version;
     } else {
