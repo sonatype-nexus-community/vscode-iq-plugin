@@ -46,7 +46,7 @@ export class OssIndexRequestService implements LiteRequestService {
       for (var purlList of newPurls) {
         let err, res = await this.callOssIndex(purlList);
         if (err != null) {
-          console.log(err);
+          reject(err);
         } else {
           response = response.concat(res);
         }
@@ -56,7 +56,7 @@ export class OssIndexRequestService implements LiteRequestService {
         resolve(response);
         return;
       } else {
-        reject("Uh oh");
+        reject("Something has gone wrong, check Debug Console/logs.");
         return;
       }
     })

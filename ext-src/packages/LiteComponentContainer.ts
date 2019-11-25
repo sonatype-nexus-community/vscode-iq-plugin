@@ -19,6 +19,7 @@ import { NpmLiteDependencies } from "./npm/NpmLiteDependencies";
 import { PyPiLiteDependencies } from "./pypi/PyPiLiteDependencies";
 import { GolangLiteDependencies } from "./golang/GolangLiteDependencies";
 import { MavenLiteDependencies } from "./maven/MavenLiteDependencies";
+import { RubyGemLiteDependencies } from "./rubygems/RubyGemsLiteDependencies";
 
 export class LiteComponentContainer {
   Implementation: Array<LitePackageDependencies> = [];
@@ -26,6 +27,7 @@ export class LiteComponentContainer {
 
   constructor() {
     // To add a new format, you just need to push another implementation to this list
+    this.Implementation.push(new RubyGemLiteDependencies());
     this.Implementation.push(new NpmLiteDependencies());
     this.Implementation.push(new PyPiLiteDependencies());
     this.Implementation.push(new GolangLiteDependencies());
