@@ -21,9 +21,7 @@ import { RPackage } from './RPackage';
 export class RUtils {
   public async getDependencyArray(): Promise<Array<RPackage>> {
     try {
-      let {stdout, stderr } = await exec(
-        `echo "str(ip <- installed.packages(fields = "Version"))
-        ip[, c(1,3:5)]" | R --slave`
+      let {stdout, stderr } = await exec(`RScript ` + PackageDependenciesHelper.getExtensionPath() + `/scripts/installed.r`
         , {
         cwd: PackageDependenciesHelper.getWorkspaceRoot(),
         env: {
@@ -60,13 +58,12 @@ export class RUtils {
       console.debug(dep);
       if (dep.trim()) {
         //ignore comments
-        if (dep.startsWith("R packages included in your environment:")) {
-          console.debug("Found comment, skipping");
+        if (dep.includes("Package Version")) {
+          console.debug("Found headers, skipping");
         } else {
-          let dependencyParts: string[] = dep.trim().split(" (");
-          let realName: string = dependencyParts[0].substring(2, dependencyParts[0].length);
-          const name: string = realName;
-          const version: string = dependencyParts[1].replace(")", "");
+          let dependencyParts: string[] = dep.replace(/\s{2,}/g,' ').trim().split(" ");
+          const name: string = dependencyParts[0];
+          const version: string = dependencyParts[2];
           if (name && version) {
             const dependencyObject: RPackage = new RPackage(
               name,
