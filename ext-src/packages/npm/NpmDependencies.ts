@@ -39,7 +39,7 @@ export class NpmDependencies implements PackageDependencies {
   public async packageForIq(): Promise<any> {
     try {
       let npmUtils = new NpmUtils();
-      this.Dependencies = await npmUtils.getDependencyArray();
+      this.Dependencies = await npmUtils.getDependencyArray(["npmNew", "file"]);
       Promise.resolve();
     }
     catch (e) {

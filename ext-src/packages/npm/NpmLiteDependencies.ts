@@ -21,19 +21,29 @@ import { NpmUtils } from "./NpmUtils";
 export class NpmLiteDependencies implements LitePackageDependencies {
   dependencies: Array<NpmPackage> = [];
   format: string = "npm";
-  manifestName: string = "package.json"
+  manifestName: string = "package.json";
+  private manifestTypes: Map<string, string> = new Map<string, string>();
+  private manifestType: [string, string] = ["", ""];
 
   constructor() {
+    this.manifestTypes.set("yarn", "yarn.lock");
+    this.manifestTypes.set("npmOld", "npm-shrinkwrap.json");
+    this.manifestTypes.set("npmNew", "package-lock.json");
   }
 
   public checkIfValid(): boolean {
-    return PackageDependenciesHelper.checkIfValid(this.manifestName, this.format);
+    this.manifestType = PackageDependenciesHelper.checkIfValidWithArray(this.manifestTypes, this.format);
+    if (this.manifestType != ["", ""]) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public async packageForService(): Promise<any> {
     try {
       let npmUtils = new NpmUtils();
-      this.dependencies = await npmUtils.getDependencyArray();
+      this.dependencies = await npmUtils.getDependencyArray(this.manifestType);
 
       Promise.resolve();
     }

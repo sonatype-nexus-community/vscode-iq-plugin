@@ -22,32 +22,103 @@ import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { NpmPackage } from "./NpmPackage";
 
 export class NpmUtils {
-  public async getDependencyArray(): Promise<Array<NpmPackage>> {
+  public async getDependencyArray(manifestType: [string, string]): Promise<Array<NpmPackage>> {
     try {
-      const npmShrinkwrapFilename = path.join(
-        PackageDependenciesHelper.getWorkspaceRoot(),
-        "npm-shrinkwrap.json"
-      );
-      if (!fs.existsSync(npmShrinkwrapFilename)) {
-        let { stdout, stderr } = await exec("npm shrinkwrap", {
+      if (manifestType[0] == "yarn") {
+        let {stdout, stderr} = await exec(`yarn list`, {
           cwd: PackageDependenciesHelper.getWorkspaceRoot()
         });
-        let npmShrinkWrapFile = "npm-shrinkwrap.json";
-        let shrinkWrapSucceeded =
-          stdout || stderr.search(npmShrinkWrapFile) > -1;
-        if (!shrinkWrapSucceeded) {
-          return Promise.reject("Unable to run npm shrinkwrap");
+
+        if (stdout != "" && stderr == "") {
+          return Promise.resolve(this.parseYarnList(stdout));
         }
+      } else if (manifestType[0] == "npmOld") {
+        // We don't really need to do this, since we check if it exists further up the food chain
+        const npmShrinkwrapFilename = path.join(
+          PackageDependenciesHelper.getWorkspaceRoot(),
+          "npm-shrinkwrap.json"
+        );
+
+        if (!fs.existsSync(npmShrinkwrapFilename)) {
+          let { stdout, stderr } = await exec("npm shrinkwrap", {
+            cwd: PackageDependenciesHelper.getWorkspaceRoot()
+          });
+          let npmShrinkWrapFile = "npm-shrinkwrap.json";
+          let shrinkWrapSucceeded =
+            stdout || stderr.search(npmShrinkWrapFile) > -1;
+          if (!shrinkWrapSucceeded) {
+            return Promise.reject("Unable to run npm shrinkwrap");
+          }
+        }
+        //read npm-shrinkwrap.json
+        let obj = JSON.parse(fs.readFileSync(npmShrinkwrapFilename, "utf8"));
+        
+        return Promise.resolve(this.flattenAndUniqDependencies(obj));
+      } else if (manifestType[0] == "npmNew") {
+        let {stdout, stderr} = await exec(`npm list`, {
+          cwd: PackageDependenciesHelper.getWorkspaceRoot()
+        });
+
+        if (stdout != "" && stderr == "") {
+          return Promise.resolve(this.parseNpmList(stdout));
+        }
+      } else {
+        return Promise.reject();
       }
-      //read npm-shrinkwrap.json
-      let obj = JSON.parse(fs.readFileSync(npmShrinkwrapFilename, "utf8"));
-      
-      return Promise.resolve(this.flattenAndUniqDependencies(obj));
     } catch (e) {
       return Promise.reject(
         "npm shrinkwrap failed, try running it manually to see what went wrong:" +
           e.message
       );
+    }
+    return Promise.reject();
+  }
+
+  private parseYarnList(output: string) {
+    console.debug(output);
+
+    return new Array<NpmPackage>();
+  }
+
+  private parseNpmList(output: string) {
+    let dependencyList: NpmPackage[] = [];
+    console.debug(output);
+    let results = output.split("\n");
+
+    results.forEach((dep, index) => {
+      if (index == 0) {
+        console.debug("Skipping first line");
+      } else {
+        let splitParts = dep.trim().split(" ");
+
+        if (splitParts[splitParts.length - 1] === "deduped") {
+          console.debug("Skipping");
+        } else {
+          let newName = this.removeScopeSymbolFromName(splitParts[splitParts.length - 1]);
+          let newSplit = newName.split("@");
+          const name = newSplit[0];
+          const version = newSplit[1];
+          if (name != "" && version != undefined) {
+            dependencyList.push(new NpmPackage(name, version, ""));
+          } else {
+            console.debug("No valid information, skipping dependency", newName);
+          }
+        }
+      }
+    });
+
+    return dependencyList.sort((a, b) => {
+      if (a.Name > b.Name) { return 1; }
+      if (a.Name < b.Name) { return -1; }
+      return 0;
+    });
+  }
+
+  private removeScopeSymbolFromName(name: string): string {
+    if (name.substr(0, 1) === "@") {
+      return "%40" + name.substr(1, name.length);
+    } else {
+      return name;
     }
   }
 
