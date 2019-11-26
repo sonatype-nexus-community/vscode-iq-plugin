@@ -48,6 +48,9 @@ We try and use other tooling whenever possible, to avoid reinventing the wheel (
   * This includes test dependencies, so it might be noisy
   * It would seem due to this running in VS Code, it runs in a slightly different shell/user, and thus it downloads your dependencies. We set this to `/tmp/gocache` in code, which may not work on Windows (PRs welcome!), so it might be slowish on it's first run
 
+* R support depends on R being available, and your project needs a `.Rbuildignore` file otherwise we cannot determine it's an R project
+  * This extension also runs an R script to get your installed packages (currently the best way we know of to do this), the way we get these can be seen at `scripts/installed.r` in our GitHub repo
+
 * Projects with both RubyGems and NPM (Gemfile.lock, and package.json), or similar
   * This extension currently picks one format, and scans for it. We haven't built a path to scan multiple project types, but that would be lovely. PRs welcome :)
 

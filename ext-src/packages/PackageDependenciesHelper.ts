@@ -15,7 +15,7 @@
  */
 import * as fs from "fs";
 import * as path from "path";
-import { workspace } from "vscode";
+import { workspace, extensions, Extension } from "vscode";
 
 export class PackageDependenciesHelper {
   public static doesPathExist(workspaceRoot: string, filename: string): boolean {
@@ -37,6 +37,16 @@ export class PackageDependenciesHelper {
       throw new TypeError("No workspace opened");
     }
     return workspaceRoot;
+  }
+
+  public static getExtensionPath(): string {
+    console.debug("Getting extension path");
+    let extension: Extension<any> | undefined = extensions.getExtension("SonatypeCommunity.vscode-iq-plugin");
+    if (extension != undefined) {
+      return extension.extensionPath;
+    } else {
+      throw new TypeError("No extension found");
+    }
   }
   
   public static checkIfValid(manifest: string, format: string): boolean {
