@@ -31,15 +31,20 @@ export class NpmDependencies implements PackageDependencies {
     ComponentEntry
   >();
   RequestService: RequestService;
+  private manifestTypes: Map<string, string> = new Map<string, string>();
+  private manifestType: [string, string] = ["", ""];
 
   constructor(private requestService: RequestService) {
+    this.manifestTypes.set("yarn", "yarn.lock");
+    this.manifestTypes.set("npmOld", "npm-shrinkwrap.json");
+    this.manifestTypes.set("npmNew", "package-lock.json");
     this.RequestService = this.requestService;
   }
 
   public async packageForIq(): Promise<any> {
     try {
       let npmUtils = new NpmUtils();
-      this.Dependencies = await npmUtils.getDependencyArray(["npmNew", "file"]);
+      this.Dependencies = await npmUtils.getDependencyArray(this.manifestType);
       Promise.resolve();
     }
     catch (e) {
@@ -48,7 +53,12 @@ export class NpmDependencies implements PackageDependencies {
   }
 
   public CheckIfValid(): boolean {
-    return PackageDependenciesHelper.checkIfValid("package.json", "npm");
+    this.manifestType = PackageDependenciesHelper.checkIfValidWithArray(this.manifestTypes, "npm");
+    if (this.manifestType != ["", ""]) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public ConvertToComponentEntry(resultEntry: any): string {
