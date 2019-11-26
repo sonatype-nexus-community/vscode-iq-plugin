@@ -75,14 +75,61 @@ export class NpmUtils {
   }
 
   private parseYarnList(output: string) {
-    console.debug(output);
+    let dependencyList: NpmPackage[] = [];
+    let results = output.split("\n");
 
-    return new Array<NpmPackage>();
+    results.forEach((dep, index) => {
+      if (index == 0) {
+        console.debug("Skipping line");
+      } else {
+        let splitParts = dep.trim().split(" ");
+        if (!this.isRegularVersion(splitParts[splitParts.length - 1])) {
+          console.debug("Skipping since version range");
+        } else {
+          let newName = this.removeScopeSymbolFromName(splitParts[splitParts.length - 1]);
+          let newSplit = newName.split("@");
+          const name = newSplit[0];
+          const version = newSplit[1];
+          if (name != "" && version != undefined) {
+            dependencyList.push(new NpmPackage(name, version, ""));
+          } else {
+            console.debug("No valid information, skipping dependency", newName);
+          }
+        }
+      }
+    });
+
+    return dependencyList.sort((a, b) => {
+      if (a.Name > b.Name) { return 1; }
+      if (a.Name < b.Name) { return -1; }
+      return 0;
+    });
+  }
+
+  private isRegularVersion(version: string): boolean {
+    if (version.includes("^")) {
+      return false;
+    }
+    if (version.includes(">=")) {
+      return false;
+    }
+    if (version.includes("<=")) {
+      return false;
+    }
+    if (version.includes("~")) {
+      return false;
+    }
+    if (version.includes("<")) {
+      return false;
+    }
+    if (version.includes(">")) {
+      return false;
+    }
+    return true;
   }
 
   private parseNpmList(output: string) {
     let dependencyList: NpmPackage[] = [];
-    console.debug(output);
     let results = output.split("\n");
 
     results.forEach((dep, index) => {
