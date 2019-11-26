@@ -4,7 +4,7 @@ Scan your libraries against either the free [OSS Index](https://ossindex.sonatyp
 
 ## Features
 
-* Scan npm, Maven, RubyGems, Go or PyPi projects (Go is only supported on Linux or OS/X)
+* Scan npm, Maven, RubyGems, Go, R (see known quirks) or PyPi projects (Go is only supported on Linux or OS/X)
 * See all components with vulnerable components highlighted
 
 ### Sonatype Nexus IQ Scan
@@ -50,6 +50,7 @@ We try and use other tooling whenever possible, to avoid reinventing the wheel (
 
 * R support depends on R being available, and your project needs a `.Rbuildignore` file otherwise we cannot determine it's an R project
   * This extension also runs an R script to get your installed packages (currently the best way we know of to do this), the way we get these can be seen at `scripts/installed.r` in our GitHub repo
+  * The way the R script runs, it finds all of the packages you've installed in the R environment, so not just for your project. This is because there is really no way to query for project specific packages, and appears to be a limitation of R. 
 
 * Projects with both RubyGems and NPM (Gemfile.lock, and package.json), or similar
   * This extension currently picks one format, and scans for it. We haven't built a path to scan multiple project types, but that would be lovely. PRs welcome :)
