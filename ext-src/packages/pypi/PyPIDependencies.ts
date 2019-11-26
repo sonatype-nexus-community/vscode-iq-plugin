@@ -57,23 +57,8 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
     return {
       components: _.map(
         this.Dependencies,
-        (d: {
-          Hash: any;
-          Name: any;
-          Qualifier: any;
-          Extension: any;
-          Version: any;
-        }) => ({
-          hash: null,
-          componentIdentifier: {
-            format: "pypi",
-            coordinates: {
-              name: d.Name,
-              version: d.Version,              
-              qualifier: d.Qualifier, // "py2.py3-none-any"
-              extension: d.Extension // "whl"              
-            }
-          }
+        (d) => ({
+          packageUrl: d.toPurl() + `?extension=tar.gz`
         })
       )
     };
@@ -82,20 +67,24 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
   public toComponentEntries(data: any): Array<ComponentEntry> {
     let components = new Array<ComponentEntry>();
     for (let entry of data.components) {
+      const purl: string = entry.packageUrl;
+      const parts: string[] = purl.substr(9, purl.length).split("@");
       const packageId =
-        entry.componentIdentifier.coordinates.name;
+        parts[0];
+
+      const version: string = parts[1].split("?")[0];
 
       let componentEntry = new ComponentEntry(
         packageId,
-        entry.componentIdentifier.coordinates.version,
+        version,
         ScanType.NexusIq
       );
       components.push(componentEntry);
       let coordinates = new PyPICoordinate(
-        entry.componentIdentifier.coordinates.name,
-        entry.componentIdentifier.coordinates.version,
-        entry.componentIdentifier.coordinates.extension,
-        entry.componentIdentifier.coordinates.qualifier
+        parts[0],
+        version,
+        "",
+        ""
       );
       this.CoordinatesToComponents.set(
         coordinates.asCoordinates(),
