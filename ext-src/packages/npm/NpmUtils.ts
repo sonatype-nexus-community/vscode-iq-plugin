@@ -13,49 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as path from "path";
+import * as path from 'path';
 import * as fs from "fs";
 import * as _ from "lodash";
 
 import { exec } from "../../utils/exec";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { NpmPackage } from "./NpmPackage";
+import { NPM_SHRINKWRAP_JSON, YARN_LOCK, PACKAGE_LOCK_JSON } from "./NpmScanType";
+
+const NPM_SHRINKWRAP_COMMAND = `npm shrinkwrap`;
+const YARN_LIST_COMMAND = `yarn list`;
+const NPM_LIST_COMMAND = `npm list`;
 
 export class NpmUtils {
-  public async getDependencyArray(manifestType: [string, string]): Promise<Array<NpmPackage>> {
+  public async getDependencyArray(manifestType: string): Promise<Array<NpmPackage>> {
     try {
-      if (manifestType[0] == "yarn") {
-        let {stdout, stderr} = await exec(`yarn list`, {
+      if (manifestType === YARN_LOCK) {
+        let {stdout, stderr} = await exec(YARN_LIST_COMMAND, {
           cwd: PackageDependenciesHelper.getWorkspaceRoot()
         });
 
         if (stdout != "" && stderr == "") {
           return Promise.resolve(this.parseYarnList(stdout));
         }
-      } else if (manifestType[0] == "npmOld") {
-        // We don't really need to do this, since we check if it exists further up the food chain
-        const npmShrinkwrapFilename = path.join(
-          PackageDependenciesHelper.getWorkspaceRoot(),
-          "npm-shrinkwrap.json"
-        );
-
-        if (!fs.existsSync(npmShrinkwrapFilename)) {
-          let { stdout, stderr } = await exec("npm shrinkwrap", {
-            cwd: PackageDependenciesHelper.getWorkspaceRoot()
-          });
-          let npmShrinkWrapFile = "npm-shrinkwrap.json";
-          let shrinkWrapSucceeded =
-            stdout || stderr.search(npmShrinkWrapFile) > -1;
-          if (!shrinkWrapSucceeded) {
-            return Promise.reject("Unable to run npm shrinkwrap");
-          }
+      } else if (manifestType === NPM_SHRINKWRAP_JSON) {
+        let { stdout, stderr } = await exec(NPM_SHRINKWRAP_COMMAND, {
+          cwd: PackageDependenciesHelper.getWorkspaceRoot()
+        });
+        let npmShrinkWrapFile = NPM_SHRINKWRAP_JSON;
+        let shrinkWrapSucceeded =
+          stdout || stderr.search(npmShrinkWrapFile) > -1;
+        if (!shrinkWrapSucceeded) {
+          return Promise.reject(`Unable to run ${NPM_SHRINKWRAP_COMMAND}`);
         }
-        //read npm-shrinkwrap.json
-        let obj = JSON.parse(fs.readFileSync(npmShrinkwrapFilename, "utf8"));
+        let obj = JSON.parse(fs.readFileSync(path.join(PackageDependenciesHelper.getWorkspaceRoot(), NPM_SHRINKWRAP_JSON), "utf8"));
         
         return Promise.resolve(this.flattenAndUniqDependencies(obj));
-      } else if (manifestType[0] == "npmNew") {
-        let {stdout, stderr} = await exec(`npm list`, {
+      } else if (manifestType === PACKAGE_LOCK_JSON) {
+        let {stdout, stderr} = await exec(NPM_LIST_COMMAND, {
           cwd: PackageDependenciesHelper.getWorkspaceRoot()
         });
 
@@ -63,12 +59,12 @@ export class NpmUtils {
           return Promise.resolve(this.parseNpmList(stdout));
         }
       } else {
-        return Promise.reject();
+        return Promise.reject(`No valid command supplied, have you implemented it? Manifest type supplied: ${manifestType}`);
       }
     } catch (e) {
       return Promise.reject(
-        "npm shrinkwrap failed, try running it manually to see what went wrong:" +
-          e.message
+        `${manifestType} read failed, try running it manually to see what went wrong:` +
+          e.stderr
       );
     }
     return Promise.reject();
@@ -86,20 +82,34 @@ export class NpmUtils {
         if (!this.isRegularVersion(splitParts[splitParts.length - 1])) {
           console.debug("Skipping since version range");
         } else {
-          let newName = this.removeScopeSymbolFromName(splitParts[splitParts.length - 1]);
-          let newSplit = newName.split("@");
-          const name = newSplit[0];
-          const version = newSplit[1];
-          if (name != "" && version != undefined) {
-            dependencyList.push(new NpmPackage(name, version, ""));
-          } else {
-            console.debug("No valid information, skipping dependency", newName);
+          try {
+            dependencyList.push(this.setAndReturnNpmPackage(splitParts));
+          }
+          catch (e) {
+            console.debug(e.stderr);
           }
         }
       }
     });
 
-    return dependencyList.sort((a, b) => {
+    return this.sortDependencyList(dependencyList);
+  }
+
+  private setAndReturnNpmPackage(splitParts: string[]): NpmPackage {
+    let newName = this.removeScopeSymbolFromName(splitParts[splitParts.length - 1]);
+    let newSplit = newName.split("@");
+    const name = newSplit[0];
+    const version = newSplit[1];
+    if (name != "" && version != undefined) {
+      return new NpmPackage(name, version, "");
+    }
+    else {
+      throw new Error(`No valid information, skipping dependency: ${newName}`);
+    }
+  }
+
+  private sortDependencyList(list: NpmPackage[]): NpmPackage[] {
+    return list.sort((a, b) => {
       if (a.Name > b.Name) { return 1; }
       if (a.Name < b.Name) { return -1; }
       return 0;
@@ -141,24 +151,17 @@ export class NpmUtils {
         if (splitParts[splitParts.length - 1] === "deduped") {
           console.debug("Skipping");
         } else {
-          let newName = this.removeScopeSymbolFromName(splitParts[splitParts.length - 1]);
-          let newSplit = newName.split("@");
-          const name = newSplit[0];
-          const version = newSplit[1];
-          if (name != "" && version != undefined) {
-            dependencyList.push(new NpmPackage(name, version, ""));
-          } else {
-            console.debug("No valid information, skipping dependency", newName);
+          try {
+            dependencyList.push(this.setAndReturnNpmPackage(splitParts));
+          }
+          catch (e) {
+            console.debug(e.stderr);
           }
         }
       }
     });
 
-    return dependencyList.sort((a, b) => {
-      if (a.Name > b.Name) { return 1; }
-      if (a.Name < b.Name) { return -1; }
-      return 0;
-    });
+    return this.sortDependencyList(dependencyList);
   }
 
   private removeScopeSymbolFromName(name: string): string {
@@ -169,9 +172,7 @@ export class NpmUtils {
     }
   }
 
-  private flattenAndUniqDependencies(
-    npmShrinkwrapContents: any
-  ): Array<NpmPackage> {
+  private flattenAndUniqDependencies(npmShrinkwrapContents: any): Array<NpmPackage> {
     console.debug("flattenAndUniqDependencies");
     //first level in npm-shrinkwrap is our project package, we go a level deeper not to include it in the results
     // TODO: handle case where npmShrinkwrapContents does not have a 'dependencies' element defined (eg: simple projects)

@@ -23,6 +23,7 @@ import { RequestService } from "../../services/RequestService";
 import { NpmUtils } from './NpmUtils';
 import { ScanType } from "../../types/ScanType";
 import { ComponentEntry } from "../../models/ComponentEntry";
+import { NpmScanType } from "./NpmScanType";
 
 export class NpmDependencies implements PackageDependencies {
   Dependencies: Array<NpmPackage> = [];
@@ -31,20 +32,16 @@ export class NpmDependencies implements PackageDependencies {
     ComponentEntry
   >();
   RequestService: RequestService;
-  private manifestTypes: Map<string, string> = new Map<string, string>();
-  private manifestType: [string, string] = ["", ""];
+  private scanType: string = "";
 
   constructor(private requestService: RequestService) {
-    this.manifestTypes.set("yarn", "yarn.lock");
-    this.manifestTypes.set("npmOld", "npm-shrinkwrap.json");
-    this.manifestTypes.set("npmNew", "package-lock.json");
     this.RequestService = this.requestService;
   }
 
   public async packageForIq(): Promise<any> {
     try {
       let npmUtils = new NpmUtils();
-      this.Dependencies = await npmUtils.getDependencyArray(this.manifestType);
+      this.Dependencies = await npmUtils.getDependencyArray(this.scanType);
       Promise.resolve();
     }
     catch (e) {
@@ -53,12 +50,8 @@ export class NpmDependencies implements PackageDependencies {
   }
 
   public CheckIfValid(): boolean {
-    this.manifestType = PackageDependenciesHelper.checkIfValidWithArray(this.manifestTypes, "npm");
-    if (this.manifestType != ["", ""]) {
-      return true;
-    } else {
-      return false;
-    }
+    this.scanType = PackageDependenciesHelper.checkIfValidWithArray(NpmScanType, "npm");
+    return this.scanType === "" ? false : true;
   }
 
   public ConvertToComponentEntry(resultEntry: any): string {

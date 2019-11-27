@@ -47,15 +47,15 @@ export class PackageDependenciesHelper {
     return false;
   }
 
-  public static checkIfValidWithArray(manifests: Map<string, string>, format: string): [string, string] {
-    let result: [string, string] = ["", ""];
-    manifests.forEach((element, index, map) => {
-      if(this.doesPathExist(this.getWorkspaceRoot(), element)) {
+  public static checkIfValidWithArray(manifests: Array<string>, format: string): string {
+    let result: string = "";
+    manifests.forEach((element) => {
+      if (this.doesPathExist(this.getWorkspaceRoot(), element)) {
         console.debug(`Valid for ${format}`);
-        result[0] = index;
-        result[1] = this.valueOrEmpty(map, index);
+        result = element;
       }
-    });
+    })
+
     return result;
   }
 

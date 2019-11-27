@@ -17,33 +17,26 @@ import { LitePackageDependencies } from "../LitePackageDependencies";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { NpmPackage } from "./NpmPackage";
 import { NpmUtils } from "./NpmUtils";
+import { NpmScanType } from "./NpmScanType";
 
 export class NpmLiteDependencies implements LitePackageDependencies {
   dependencies: Array<NpmPackage> = [];
   format: string = "npm";
   manifestName: string = "package.json";
-  private manifestTypes: Map<string, string> = new Map<string, string>();
-  private manifestType: [string, string] = ["", ""];
+  private scanType: string = "";
 
   constructor() {
-    this.manifestTypes.set("yarn", "yarn.lock");
-    this.manifestTypes.set("npmOld", "npm-shrinkwrap.json");
-    this.manifestTypes.set("npmNew", "package-lock.json");
   }
 
   public checkIfValid(): boolean {
-    this.manifestType = PackageDependenciesHelper.checkIfValidWithArray(this.manifestTypes, this.format);
-    if (this.manifestType != ["", ""]) {
-      return true;
-    } else {
-      return false;
-    }
+    this.scanType = PackageDependenciesHelper.checkIfValidWithArray(NpmScanType, this.format);
+    return this.scanType === "" ? false : true;
   }
 
   public async packageForService(): Promise<any> {
     try {
       let npmUtils = new NpmUtils();
-      this.dependencies = await npmUtils.getDependencyArray(this.manifestType);
+      this.dependencies = await npmUtils.getDependencyArray(this.scanType);
 
       Promise.resolve();
     }
