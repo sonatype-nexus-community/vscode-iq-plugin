@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 import { extensions, version } from "vscode";
-import * as platform from "platform";
+import * as os from 'os';
 
 export class RequestHelpers {
   public static getUserAgentHeader() {
     let nodeVersion = process.versions;
     let environment = 'NodeJS';
     let environmentVersion = nodeVersion.node;
-    let os = platform.os;
+    let system = `${os.type()} ${os.release()}`;
 
-    return { 'User-Agent': `Nexus_IQ_Visual_Studio_Code/${this.getExtensionVersion()} (${environment} ${environmentVersion}; ${os}; VSCode: ${version})` };
+    return { 'User-Agent': `Nexus_IQ_Visual_Studio_Code/${this.getExtensionVersion()} (${environment} ${environmentVersion}; ${system}; VSCode: ${version})` };
   }
 
   private static getExtensionVersion() {
