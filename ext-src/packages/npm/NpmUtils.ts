@@ -62,10 +62,7 @@ export class NpmUtils {
         return Promise.reject(`No valid command supplied, have you implemented it? Manifest type supplied: ${manifestType}`);
       }
     } catch (e) {
-      return Promise.reject(
-        `${manifestType} read failed, try running it manually to see what went wrong:` +
-          e.stderr
-      );
+      return Promise.reject(`${manifestType} read failed, try running it manually to see what went wrong: ${e.stderr}`);
     }
     return Promise.reject();
   }
