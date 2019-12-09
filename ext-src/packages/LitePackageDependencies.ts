@@ -20,5 +20,5 @@ export interface LitePackageDependencies {
   format: string;
   manifestName: string;
   checkIfValid(): boolean;
-  packageForService(): Promise<undefined>;
+  packageForService(): Promise<any>;
 }
