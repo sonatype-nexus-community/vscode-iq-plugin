@@ -22,9 +22,9 @@ import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { NpmPackage } from "./NpmPackage";
 import { NPM_SHRINKWRAP_JSON, YARN_LOCK, PACKAGE_LOCK_JSON } from "./NpmScanType";
 
-const NPM_SHRINKWRAP_COMMAND = `npm shrinkwrap`;
-const YARN_LIST_COMMAND = `yarn list`;
-const NPM_LIST_COMMAND = `npm list`;
+const NPM_SHRINKWRAP_COMMAND = 'npm shrinkwrap';
+const YARN_LIST_COMMAND = 'yarn list';
+const NPM_LIST_COMMAND = 'npm list';
 
 export class NpmUtils {
   public async getDependencyArray(manifestType: string): Promise<Array<NpmPackage>> {
