@@ -17,23 +17,26 @@ import { LitePackageDependencies } from "../LitePackageDependencies";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { NpmPackage } from "./NpmPackage";
 import { NpmUtils } from "./NpmUtils";
+import { NpmScanType } from "./NpmScanType";
 
 export class NpmLiteDependencies implements LitePackageDependencies {
   dependencies: Array<NpmPackage> = [];
   format: string = "npm";
-  manifestName: string = "package.json"
+  manifestName: string = "package.json";
+  private scanType: string = "";
 
   constructor() {
   }
 
   public checkIfValid(): boolean {
-    return PackageDependenciesHelper.checkIfValid(this.manifestName, this.format);
+    this.scanType = PackageDependenciesHelper.checkIfValidWithArray(NpmScanType, this.format);
+    return this.scanType === "" ? false : true;
   }
 
   public async packageForService(): Promise<any> {
     try {
       let npmUtils = new NpmUtils();
-      this.dependencies = await npmUtils.getDependencyArray();
+      this.dependencies = await npmUtils.getDependencyArray(this.scanType);
 
       Promise.resolve();
     }

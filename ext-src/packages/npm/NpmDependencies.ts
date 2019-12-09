@@ -23,6 +23,7 @@ import { RequestService } from "../../services/RequestService";
 import { NpmUtils } from './NpmUtils';
 import { ScanType } from "../../types/ScanType";
 import { ComponentEntry } from "../../models/ComponentEntry";
+import { NpmScanType } from "./NpmScanType";
 
 export class NpmDependencies implements PackageDependencies {
   Dependencies: Array<NpmPackage> = [];
@@ -31,6 +32,7 @@ export class NpmDependencies implements PackageDependencies {
     ComponentEntry
   >();
   RequestService: RequestService;
+  private scanType: string = "";
 
   constructor(private requestService: RequestService) {
     this.RequestService = this.requestService;
@@ -39,7 +41,7 @@ export class NpmDependencies implements PackageDependencies {
   public async packageForIq(): Promise<any> {
     try {
       let npmUtils = new NpmUtils();
-      this.Dependencies = await npmUtils.getDependencyArray();
+      this.Dependencies = await npmUtils.getDependencyArray(this.scanType);
       Promise.resolve();
     }
     catch (e) {
@@ -48,7 +50,8 @@ export class NpmDependencies implements PackageDependencies {
   }
 
   public CheckIfValid(): boolean {
-    return PackageDependenciesHelper.checkIfValid("package.json", "npm");
+    this.scanType = PackageDependenciesHelper.checkIfValidWithArray(NpmScanType, "npm");
+    return this.scanType === "" ? false : true;
   }
 
   public ConvertToComponentEntry(resultEntry: any): string {

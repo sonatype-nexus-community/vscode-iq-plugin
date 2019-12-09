@@ -56,4 +56,24 @@ export class PackageDependenciesHelper {
     }
     return false;
   }
+
+  public static checkIfValidWithArray(manifests: Array<string>, format: string): string {
+    let result: string = "";
+    manifests.forEach((element) => {
+      if (this.doesPathExist(this.getWorkspaceRoot(), element)) {
+        console.debug(`Valid for ${format}`);
+        result = element;
+      }
+    })
+
+    return result;
+  }
+
+  private static valueOrEmpty(map: Map<string, string>, key: string): string {
+    if (map.has(key)) {
+      let val = map.get(key);
+      return val === undefined ? "" : val;
+    }
+    return "";
+  }
 }
