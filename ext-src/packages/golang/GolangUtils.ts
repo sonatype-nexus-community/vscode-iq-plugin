@@ -14,30 +14,47 @@
  * limitations under the License.
  */
 import { exec } from "../../utils/exec";
+import { join } from 'path';
+import { readFileSync } from 'fs';
+import { parse } from 'toml';
 
 import { GolangPackage } from "./GolangPackage";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
+import { GO_MOD_SUM, DEP_LOCK } from "./GolangScanType";
 
 export class GolangUtils {
-  public async getDependencyArray(): Promise<Array<GolangPackage>> {
+  public async getDependencyArray(scanType: string): Promise<Array<GolangPackage>> {
     try {
-      // TODO: When running this command, Golang is now using the workspace root to establish a GOCACHE, we should use some other temporary area or try and suss out the real one
-      let { stdout, stderr } = await exec(`go list -m all`, {
-        cwd: PackageDependenciesHelper.getWorkspaceRoot(),
-        env: {
-          PATH: process.env.PATH,
-          HOME: this.getGoCacheDirectory()
-        }
-      });
+      if (scanType === GO_MOD_SUM) {
+        // TODO: When running this command, Golang is now using the workspace root to establish a GOCACHE, we should use some other temporary area or try and suss out the real one
+        let { stdout, stderr } = await exec(`go list -m all`, {
+          cwd: PackageDependenciesHelper.getWorkspaceRoot(),
+          env: {
+            PATH: process.env.PATH,
+            HOME: this.getGoCacheDirectory()
+          }
+        });
 
-      if (stdout != "" && stderr === "") {
-        return Promise.resolve(this.parseGolangDependencies(stdout));
+        if (stdout != "" && stderr === "") {
+          return Promise.resolve(this.parseGolangDependencies(stdout));
+        } else {
+          return Promise.reject(
+            new Error(
+              "Error occurred in generating dependency tree. Please check that golang is on your PATH."
+            )
+          );
+        }
+      }
+      if (scanType === DEP_LOCK) {
+        let goPkgLockPath: string = join(PackageDependenciesHelper.getWorkspaceRoot(), DEP_LOCK);
+        let goPkgContents: string = readFileSync(goPkgLockPath, "utf8");
+        let depList: any = parse(goPkgContents);
+
+        console.log(depList);
+
+        return Promise.resolve(this.parseGolangDepDependencies(depList.projects));
       } else {
-        return Promise.reject(
-          new Error(
-            "Error occurred in generating dependency tree. Please check that golang is on your PATH."
-          )
-        );
+        return Promise.reject("Type not implemented");
       }
     } catch (e) {
       return Promise.reject(
@@ -50,6 +67,18 @@ export class GolangUtils {
   private getGoCacheDirectory(): string {
     // TODO: This will only work on OS X/Linux, need to find a valid GOCACHE dir and set it for Windows
     return "/tmp/gocache/";
+  }
+
+  private parseGolangDepDependencies(projectList: [any]): Array<GolangPackage> {
+    let dependencyList: GolangPackage[] = [];
+
+    projectList.forEach((project) => {
+      if (project.version && project.name) {
+        dependencyList.push(new GolangPackage(project.name, project.version));
+      }
+    });
+
+    return dependencyList;
   }
 
   private parseGolangDependencies(dependencyTree: string): Array<GolangPackage> {

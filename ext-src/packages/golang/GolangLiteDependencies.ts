@@ -17,20 +17,23 @@ import { LitePackageDependencies } from "../LitePackageDependencies";
 import { GolangPackage } from "./GolangPackage";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { GolangUtils } from "./GolangUtils";
+import { GolangScanType } from "./GolangScanType";
 
 export class GolangLiteDependencies implements LitePackageDependencies {
   dependencies: Array<GolangPackage> = [];
   manifestName: string = "go.sum";
   format: string = "golang";
+  private scanType: string = "";
   
   public checkIfValid(): boolean {
-    return PackageDependenciesHelper.checkIfValid(this.manifestName, this.format);
+    this.scanType =  PackageDependenciesHelper.checkIfValidWithArray(GolangScanType, this.format);
+    return this.scanType === "" ? false : true;
   }
 
   public async packageForService(): Promise<any> {
     try {
       let golangUtils = new GolangUtils();
-      this.dependencies = await golangUtils.getDependencyArray();
+      this.dependencies = await golangUtils.getDependencyArray(this.scanType);
 
       Promise.resolve();
     }
