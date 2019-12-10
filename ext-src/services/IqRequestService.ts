@@ -89,7 +89,6 @@ export class IqRequestService implements RequestService {
           auth: { user: this.user, pass: this.password }
         },
         (err: any, response: any, body: any) => {
-          // console.log(response.statusCode, body);
           if (err) {
             reject(`Unable to perform IQ scan: ${err}`);
             return;

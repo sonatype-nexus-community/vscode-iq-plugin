@@ -94,6 +94,10 @@ export class NpmUtils {
       }
     });
 
+    dependencyList = _.uniqBy(dependencyList, (x) => {
+      return x.toPurl();
+    });
+
     return this.sortDependencyList(dependencyList);
   }
 
@@ -103,7 +107,7 @@ export class NpmUtils {
     const name = newSplit[0];
     const version = newSplit[1];
     if (name != "" && version != undefined) {
-      return new NpmPackage(name, version, "");
+      return new NpmPackage(name.replace("%40", "@"), version, "");
     }
     else {
       throw new Error(`No valid information, skipping dependency: ${newName}`);
@@ -157,10 +161,14 @@ export class NpmUtils {
             dependencyList.push(this.setAndReturnNpmPackage(splitParts));
           }
           catch (e) {
-            console.debug(e.stderr);
+            console.debug(e);
           }
         }
       }
+    });
+
+    dependencyList = _.uniqBy(dependencyList, (x) => {
+      return x.toPurl();
     });
 
     return this.sortDependencyList(dependencyList);

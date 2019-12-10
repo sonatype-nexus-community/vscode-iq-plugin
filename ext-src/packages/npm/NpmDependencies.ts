@@ -45,7 +45,7 @@ export class NpmDependencies implements PackageDependencies {
       Promise.resolve();
     }
     catch (e) {
-      Promise.reject();
+      throw new TypeError(e);
     }
   }
 
