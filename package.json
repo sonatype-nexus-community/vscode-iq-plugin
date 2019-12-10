@@ -163,7 +163,8 @@
     "react-dom": "^16.11.0",
     "react-icons": "^3.7.0",
     "react-loader-spinner": "^3.1.2",
-    "request": "^2.88.0"
+    "request": "^2.88.0",
+    "toml": "^3.0.0"
   },
   "devDependencies": {
     "@types/bootstrap": "^4.3.1",

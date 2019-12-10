@@ -13,31 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const DEP_LOCK = "Gopkg.lock";
+const GO_MOD_SUM = "go.sum";
 
-import { PackageType } from "../PackageType";
+const GolangScanType: Array<string> = [DEP_LOCK, GO_MOD_SUM];
 
-export class GolangPackage implements PackageType {
-  constructor(
-    readonly Name: string,
-    readonly Version: string,
-    readonly Hash?: string
-  ) {
-    if (Version.startsWith("v")) {
-      this.Version = Version;
-    } else {
-      this.Version = `v${Version}`;
-    }
-  }
-
-  public toCoordinates() {
-    return `${this.Name}:${this.Version}`;
-  }
-
-  public toPurl() {
-    return `pkg:golang/${this.Name}@${this.Version}`;
-  }
-
-  public toCoordValueType(): string {
-    return `${this.Name} - ${this.Version}`;
-  }
-}
+export { GolangScanType, DEP_LOCK, GO_MOD_SUM };

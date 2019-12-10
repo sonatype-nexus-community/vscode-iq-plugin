@@ -23,6 +23,7 @@ import { RequestService } from "../../services/RequestService";
 import { GolangUtils } from "./GolangUtils";
 import { ScanType } from "../../types/ScanType";
 import { ComponentEntry } from "../../models/ComponentEntry";
+import { GolangScanType } from "./GolangScanType";
 
 export class GolangDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<GolangPackage> = [];
@@ -31,6 +32,7 @@ export class GolangDependencies extends PackageDependenciesHelper implements Pac
     ComponentEntry
   >();
   RequestService: RequestService;
+  private scanType: string = "";
 
   constructor(private requestService: RequestService) {
     super();
@@ -38,11 +40,8 @@ export class GolangDependencies extends PackageDependenciesHelper implements Pac
   }
 
   public CheckIfValid(): boolean {
-    if (PackageDependenciesHelper.doesPathExist(PackageDependenciesHelper.getWorkspaceRoot(), "go.sum")) {
-      console.debug("Valid for Golang");
-      return true;
-    }
-    return false;
+    this.scanType =  PackageDependenciesHelper.checkIfValidWithArray(GolangScanType, "golang");
+    return this.scanType === "" ? false : true;
   }
 
   public ConvertToComponentEntry(resultEntry: any): string {
@@ -96,7 +95,7 @@ export class GolangDependencies extends PackageDependenciesHelper implements Pac
   public async packageForIq(): Promise<any> {
     try {
       let golangUtils = new GolangUtils();
-      this.Dependencies = await golangUtils.getDependencyArray();
+      this.Dependencies = await golangUtils.getDependencyArray(this.scanType);
       Promise.resolve();
     }
     catch (e) {
