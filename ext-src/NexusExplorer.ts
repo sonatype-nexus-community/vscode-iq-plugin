@@ -69,7 +69,7 @@ export class NexusExplorerProvider
     });
   }
 
-  private async reloadComponentModel() {
+  private async reloadComponentModel(): Promise<any> {
     await this.componentModel.evaluateComponents();
   }
 

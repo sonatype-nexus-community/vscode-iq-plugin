@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Uri, window, WorkspaceConfiguration } from "vscode";
+import { Uri, window, WorkspaceConfiguration, ProgressLocation } from "vscode";
 
 import { ComponentContainer } from "../packages/ComponentContainer";
 import { RequestService } from "../services/RequestService";
@@ -50,62 +50,79 @@ export class IqComponentModel implements ComponentModel {
       return new Promise((c, e) => "my stubbed content entry");
     }
   
-    public async evaluateComponents() {
+    public async evaluateComponents(): Promise<any> {
       console.debug("evaluateComponents");
-      await this.performIqScan();
+      return await this.performIqScan();
     }
   
-    private async performIqScan() {
-      try {
-        let componentContainer = new ComponentContainer(this.requestService);
+    private async performIqScan(): Promise<any> {
+      return new Promise((resolve, reject) => {
+        try {
+          let componentContainer = new ComponentContainer(this.requestService);
 
-        let data: any;
+          window.withProgress(
+            {
+              location: ProgressLocation.Notification, 
+              title: "Running Nexus IQ Server Scan"
+            }, async (progress, token) => {
+              let data: any;
+              if (componentContainer.PackageMuncher != undefined) {
+                progress.report({message: "Starting to package your dependencies for IQ Server", increment: 5});
+                await componentContainer.PackageMuncher.packageForIq();
 
-        if (componentContainer.PackageMuncher != undefined) {
-          await componentContainer.PackageMuncher.packageForIq();
-  
-          data = await componentContainer.PackageMuncher.convertToNexusFormat();
-          this.components = componentContainer.PackageMuncher.toComponentEntries(data);
-          this.coordsToComponent = componentContainer.PackageMuncher.CoordinatesToComponents;
-        } else {
-          throw new TypeError("Unable to instantiate Package Muncher");
-        }
-
-        if (undefined == data) {
-          throw new RangeError("Attempted to generated dependency list but received an empty collection. NexusIQ will not be invoked for this project.");
-        }
-  
-        console.debug("getting applicationInternalId", this.applicationPublicId);
-        let response: string = await this.requestService.getApplicationId(this.applicationPublicId) as string;
-  
-        let appRep = JSON.parse(response);
-        console.debug("appRep", appRep);
-  
-        this.requestService.setApplicationId(appRep.applications[0].id)
-        console.debug("applicationInternalId", this.requestService.getApplicationInternalId());
-  
-        let resultId = await this.requestService.submitToIqForEvaluation(data, this.requestService.getApplicationInternalId());
-  
-        console.debug("report", resultId);
-        let resultDataString = await this.requestService.asyncPollForEvaluationResults(this.requestService.getApplicationInternalId(), resultId);
-        let resultData = JSON.parse(resultDataString as string);
-  
-        console.debug(`Received results from IQ scan:`, resultData);
-
-        for (let resultEntry of resultData.results) {
-          let componentEntry: ComponentEntry | undefined;
-
-          componentEntry = this.coordsToComponent.get(
-            componentContainer.PackageMuncher.ConvertToComponentEntry(resultEntry)
-          );
+                progress.report({message: "Reticulating splines...", increment: 25});
+                data = await componentContainer.PackageMuncher.convertToNexusFormat();
+                this.components = componentContainer.PackageMuncher.toComponentEntries(data);
+                this.coordsToComponent = componentContainer.PackageMuncher.CoordinatesToComponents;
+                progress.report({message: "Packaging ready", increment: 35});
+              } else {
+                throw new TypeError("Unable to instantiate Package Muncher");
+              }
+      
+              if (undefined == data) {
+                throw new RangeError("Attempted to generated dependency list but received an empty collection. NexusIQ will not be invoked for this project.");
+              }
         
-          componentEntry!.policyViolations = resultEntry.policyData.policyViolations as Array<PolicyViolation>;
-          componentEntry!.hash = resultEntry.component.hash;
-          componentEntry!.nexusIQData = resultEntry;
+              console.debug("getting applicationInternalId", this.applicationPublicId);
+              progress.report({message: "Getting IQ Server Internal Application ID", increment: 40});
+              let response: string = await this.requestService.getApplicationId(this.applicationPublicId) as string;
+        
+              let appRep = JSON.parse(response);
+              console.debug("appRep", appRep);
+        
+              this.requestService.setApplicationId(appRep.applications[0].id)
+              console.debug("applicationInternalId", this.requestService.getApplicationInternalId());
+
+              progress.report({message: "Submitting to IQ Server for evaluation", increment: 50});
+              let resultId = await this.requestService.submitToIqForEvaluation(data, this.requestService.getApplicationInternalId());
+        
+              console.debug("report", resultId);
+              progress.report({message: "Polling IQ Server for report results", increment: 60});
+              let resultDataString = await this.requestService.asyncPollForEvaluationResults(this.requestService.getApplicationInternalId(), resultId);
+              progress.report({message: "Report retrieved, parsing", increment: 80});
+              let resultData = JSON.parse(resultDataString as string);
+        
+              console.debug(`Received results from IQ scan:`, resultData);
+
+              progress.report({message: "Morphing results into something usable", increment: 90});
+              for (let resultEntry of resultData.results) {
+                let componentEntry: ComponentEntry | undefined;
+      
+                componentEntry = this.coordsToComponent.get(
+                  componentContainer.PackageMuncher.ConvertToComponentEntry(resultEntry)
+                );
+              
+                componentEntry!.policyViolations = resultEntry.policyData.policyViolations as Array<PolicyViolation>;
+                componentEntry!.hash = resultEntry.component.hash;
+                componentEntry!.nexusIQData = resultEntry;
+              }
+              resolve();
+            })
+        } catch (e) {
+          window.showErrorMessage("Nexus IQ extension: " + e);
+          reject(e);
+          return;
         }
-      } catch (e) {
-        window.showErrorMessage("Nexus IQ extension: " + e);
-        return;
-      }
+      });
   }
 }
