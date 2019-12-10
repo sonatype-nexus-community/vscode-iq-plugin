@@ -32,11 +32,14 @@ export class PackageDependenciesHelper {
   }
 
   public static getWorkspaceRoot(): string {
-    let workspaceRoot = workspace.rootPath;
+    // TODO: This is mostly to address a deprecation warning on using rootPath
+    // VS Code plans to allow multiple folders to be opened as multiple workspaces in
+    // the future, so we will need to address this in a more robust way
+    let workspaceRoot = workspace.workspaceFolders;
     if (workspaceRoot === undefined) {
-      throw new TypeError("No workspace opened");
+      throw new TypeError("No workspaces opened");
     }
-    return workspaceRoot;
+    return workspaceRoot[0].uri.path;
   }
 
   public static getExtensionPath(): string {
