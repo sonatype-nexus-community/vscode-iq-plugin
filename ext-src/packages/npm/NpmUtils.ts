@@ -36,8 +36,11 @@ export class NpmUtils {
 
         if (stdout != "" && stderr == "") {
           return Promise.resolve(this.parseYarnList(stdout));
+        } else {
+          return Promise.reject(`Error running ${YARN_LIST_COMMAND}, err: ${stderr}`);
         }
-      } else if (manifestType === NPM_SHRINKWRAP_JSON) {
+      }
+      if (manifestType === NPM_SHRINKWRAP_JSON) {
         let { stdout, stderr } = await exec(NPM_SHRINKWRAP_COMMAND, {
           cwd: PackageDependenciesHelper.getWorkspaceRoot()
         });
@@ -50,13 +53,16 @@ export class NpmUtils {
         let obj = JSON.parse(fs.readFileSync(path.join(PackageDependenciesHelper.getWorkspaceRoot(), NPM_SHRINKWRAP_JSON), "utf8"));
         
         return Promise.resolve(this.flattenAndUniqDependencies(obj));
-      } else if (manifestType === PACKAGE_LOCK_JSON) {
+      } 
+      if (manifestType === PACKAGE_LOCK_JSON) {
         let {stdout, stderr} = await exec(NPM_LIST_COMMAND, {
           cwd: PackageDependenciesHelper.getWorkspaceRoot()
         });
 
         if (stdout != "" && stderr == "") {
           return Promise.resolve(this.parseNpmList(stdout));
+        } else {
+          return Promise.reject(`Error running ${NPM_LIST_COMMAND}, err: ${stderr}`);
         }
       } else {
         return Promise.reject(`No valid command supplied, have you implemented it? Manifest type supplied: ${manifestType}`);
@@ -64,7 +70,6 @@ export class NpmUtils {
     } catch (e) {
       return Promise.reject(`${manifestType} read failed, try running it manually to see what went wrong: ${e.stderr}`);
     }
-    return Promise.reject();
   }
 
   private parseYarnList(output: string) {
