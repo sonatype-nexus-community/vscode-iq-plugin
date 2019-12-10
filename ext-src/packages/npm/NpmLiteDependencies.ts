@@ -41,7 +41,7 @@ export class NpmLiteDependencies implements LitePackageDependencies {
       Promise.resolve();
     }
     catch (e) {
-      Promise.reject(e);
+      throw new TypeError(`There are problems, please check this error: ${e}`);
     }
   }
 }
