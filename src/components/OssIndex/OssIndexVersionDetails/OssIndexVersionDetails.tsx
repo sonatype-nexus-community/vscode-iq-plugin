@@ -18,29 +18,40 @@ import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import OssIndexComponentInfo from './OssIndexComponentInfo/OssIndexComponentInfo';
 import OssIndexSecurityInfo from './OssIndexSecurityInfo/OssIndexSecurityInfo';
-import { OssIndexContextConsumer } from '../../../context/ossindex-context';
+import { OssIndexContext } from '../../../context/ossindex-context';
 import { Alert } from 'react-bootstrap';
+import OssIndexSupplementalInfo from './OssIndexSupplementalInfo/OssIndexSupplementalInfo';
 
 type Props = {
+  handleGetSupplementalInfo: (p: any) => void
 }
 
 type State = {
 }
 
 class OssIndexVersionDetails extends React.Component<Props, State> {
+  static contextType = OssIndexContext;
+  
   public render() {
-    console.log("OssIndexSelectedVersionDetails page rendering")
+    console.log("OssIndexSelectedVersionDetails page rendering");
+    let component = this.context.component;
+
     return (
-      <Tabs id="selected-version-tabs" defaultActiveKey="info">
+      <Tabs 
+        id="selected-version-tabs" 
+        defaultActiveKey="info" 
+        onClick={this.props.handleGetSupplementalInfo.bind(this, component)}
+        >
         <Tab title="Component Info" eventKey="info">
           <OssIndexComponentInfo />
         </Tab>
         <Tab title="Security" eventKey="security">
-          <OssIndexContextConsumer>
-            {context => context && context.vulnerabilities && (
-              <OssIndexSecurityInfo vulnerabilities={context.vulnerabilities}/>
+            {this.context && this.context.vulnerabilities && (
+              <OssIndexSecurityInfo vulnerabilities={this.context.vulnerabilities}/>
             )}
-          </OssIndexContextConsumer>
+        </Tab>
+        <Tab title="Supplemental Info" eventKey="supplemental">
+          <OssIndexSupplementalInfo />
         </Tab>
         <Tab title="Policy" eventKey="policy">
           <Alert variant="info">

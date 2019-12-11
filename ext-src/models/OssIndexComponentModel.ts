@@ -22,9 +22,11 @@ import { OssIndexRequestService } from "../services/OssIndexRequestService";
 import { ComponentModel } from "./ComponentModel";
 import { ScanType } from "../types/ScanType";
 import { ComponentEntry } from "./ComponentEntry";
+import { PackageType } from "../packages/PackageType";
 
 export class OssIndexComponentModel implements ComponentModel {
   components = new Array<ComponentEntry>();
+  componentContainer: LiteComponentContainer;
   requestService: LiteRequestService;
   dataSourceType: string = "ossindex";
   
@@ -34,6 +36,7 @@ export class OssIndexComponentModel implements ComponentModel {
     let username = configuration.get("ossindex.username") + "";
     let password = configuration.get("ossindex.password") + "";
     this.requestService = new OssIndexRequestService(username, password);
+    this.componentContainer = new LiteComponentContainer();
   }
   
   public evaluateComponents(): Promise<any> {
@@ -44,19 +47,18 @@ export class OssIndexComponentModel implements ComponentModel {
   private async performOssIndexScan(): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
-        let componentContainer = new LiteComponentContainer();
         window.withProgress(
           {
             location: ProgressLocation.Notification, 
             title: "Running OSS Index Scan"
           }, async (progress, token) => {
-          if (componentContainer.PackageMuncher != undefined) {
+          if (this.componentContainer.PackageMuncher != undefined) {
             progress.report({message: "Starting to package your dependencies", increment: 10});
-            await componentContainer.PackageMuncher.packageForService();
+            await this.componentContainer.PackageMuncher.packageForService();
   
             progress.report({message: "Reticulating splines...", increment: 30});
 
-            let purls = _.map(componentContainer.PackageMuncher.dependencies, (x => x.toPurl()));
+            let purls = _.map(this.componentContainer.PackageMuncher.dependencies, (x => x.toPurl()));
             
             progress.report({message: "Talking to OSS Index", increment: 50});
             let results = await this.requestService.getResultsFromPurls(purls) as Array<any>;
@@ -88,6 +90,12 @@ export class OssIndexComponentModel implements ComponentModel {
         return;
       }
     });
+  }
+
+  public async getSupplementalInfo(pkg: any): Promise<any> {
+    if (this.componentContainer.PackageMuncher != undefined) {
+      return await this.componentContainer.PackageMuncher.getSupplementalInfo(pkg);
+    }
   }
 
   private parsePackageName(pkg: string): string {

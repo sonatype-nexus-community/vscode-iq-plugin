@@ -17,7 +17,6 @@ import * as request from "request";
 import * as HttpStatus from 'http-status-codes';
 import { RequestService } from "./RequestService";
 import { RequestHelpers } from "./RequestHelpers";
-import { constants } from 'os';
 
 export class IqRequestService implements RequestService {
   readonly evaluationPollDelayMs = 2000;

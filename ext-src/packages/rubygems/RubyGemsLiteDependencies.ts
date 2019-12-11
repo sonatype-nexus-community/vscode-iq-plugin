@@ -38,4 +38,8 @@ export class RubyGemLiteDependencies implements LitePackageDependencies {
       Promise.reject(e);
     }
   }
+
+  public getSupplementalInfo(p: any): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
 }

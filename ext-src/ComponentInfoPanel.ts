@@ -151,6 +151,9 @@ export class ComponentInfoPanel {
               JSON.stringify(message.artifact)
             );
             return;
+          case 'getSupplementalInfo':
+            this.showSupplementalInfo(message.artifact);
+            return;
           case "getRemediation":
             this.showRemediation(message.nexusArtifact);
             return;
@@ -209,6 +212,20 @@ export class ComponentInfoPanel {
       this._panel.webview.postMessage({
         command: "cveDetails",
         cvedetails: cvedetails
+      });
+    }
+  }
+
+  private async showSupplementalInfo(artifact: any) {
+    console.debug("showSupplementalInfo", artifact);
+    if (this.componentModel instanceof OssIndexComponentModel) {
+      var ossIndexComponentModel = this.componentModel as OssIndexComponentModel
+      let supplementalInfo = await ossIndexComponentModel.getSupplementalInfo(artifact);
+      
+      console.debug("posting message: supplementalArtifactInfo", supplementalInfo);
+      this._panel.webview.postMessage({
+        command: "supplementalArtifactInfo",
+        supplementalInfo: supplementalInfo
       });
     }
   }

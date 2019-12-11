@@ -13,13 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PackageType } from "./PackageType";
+import * as React from 'react';
+import { OssIndexContext } from '../../../../context/ossindex-context';
 
-export interface LitePackageDependencies {
-  dependencies: Array<PackageType>;
-  format: string;
-  manifestName: string;
-  checkIfValid(): boolean;
-  packageForService(): Promise<any>;
-  getSupplementalInfo(p: any): Promise<any>;
+type Props = {
+};
+
+type State = {
+};
+
+class OssIndexSupplementalInfo extends React.Component<Props, State> {
+  static contextType = OssIndexContext;
+
+  constructor(props: Props) {
+    super(props);
+  }
+
+  public render() {
+    return (
+      <React.Fragment>
+        {
+          this.context && this.context.supplementalInfo && (
+            this.context.supplementalInfo 
+          )
+        }
+      </React.Fragment>
+    );
+  }
 }
+
+export default OssIndexSupplementalInfo;

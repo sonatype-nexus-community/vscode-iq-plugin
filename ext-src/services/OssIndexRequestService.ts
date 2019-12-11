@@ -18,6 +18,7 @@ import * as HttpStatus from "http-status-codes";
 
 import { LiteRequestService } from "./LiteRequestService";
 import { RequestHelpers } from "./RequestHelpers";
+import { PackageType } from "../packages/PackageType";
 
 const MAX_COORDS: number = 128;
 

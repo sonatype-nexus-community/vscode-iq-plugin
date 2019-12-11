@@ -18,6 +18,7 @@ import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { NpmPackage } from "./NpmPackage";
 import { NpmUtils } from "./NpmUtils";
 import { NpmScanType } from "./NpmScanType";
+import { exec } from "../../utils/exec";
 
 export class NpmLiteDependencies implements LitePackageDependencies {
   dependencies: Array<NpmPackage> = [];
@@ -42,6 +43,19 @@ export class NpmLiteDependencies implements LitePackageDependencies {
     }
     catch (e) {
       throw new TypeError(`There are problems, please check this error: ${e}`);
+    }
+  }
+
+  public async getSupplementalInfo(pkg: any): Promise<any> {
+    let {stdout, stderr} = await exec(`npm ls ${pkg.name}`, 
+      { 
+        cwd: PackageDependenciesHelper.getWorkspaceRoot()
+      }
+    );
+    if (stdout === "" && stderr != "") {
+      throw new TypeError("Something went wrong with running npm ls");
+    } else {
+      return stdout;
     }
   }
 }

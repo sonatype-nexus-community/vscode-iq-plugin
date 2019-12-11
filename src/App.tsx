@@ -40,7 +40,9 @@ type AppState = {
   remediation?: any,
   policyViolations?: any[],
   cvedetails?: any,
+  supplementalInfo?: any,
   handleGetRemediation(o: any, s: string): void
+  handleGetSupplementalInfo(o: any): void
 };
 
 class App extends React.Component<AppProps, AppState> {
@@ -57,7 +59,9 @@ class App extends React.Component<AppProps, AppState> {
       remediation: undefined,
       policyViolations: undefined,
       cvedetails: undefined,
-      handleGetRemediation: this.handleGetRemediation.bind(this)
+      supplementalInfo: undefined,
+      handleGetRemediation: this.handleGetRemediation.bind(this),
+      handleGetSupplementalInfo: this.handleGetSupplementalInfo.bind(this)
     }
   }
 
@@ -69,6 +73,16 @@ class App extends React.Component<AppProps, AppState> {
       command: 'selectVersion',
       version: newSelection,
       package: this.state.component
+    });
+  }
+
+  public handleGetSupplementalInfo(artifact: any) {
+    console.debug("App received request for artifact supplemental info", artifact);
+    this.setState({supplementalInfo: undefined})
+
+    vscode.postMessage({
+      command: 'getSupplementalInfo',
+      artifact: artifact
     });
   }
 
@@ -105,7 +119,7 @@ class App extends React.Component<AppProps, AppState> {
       console.log("Attempting to render OSS Index");
       return (
         <OssIndexContextProvider value={this.state}>
-          <OssIndexVersionDetails />
+          <OssIndexVersionDetails handleGetSupplementalInfo={this.handleGetSupplementalInfo} />
         </OssIndexContextProvider>
       )
     }
@@ -182,6 +196,10 @@ class App extends React.Component<AppProps, AppState> {
         case 'cveDetails':
           console.debug("App handling cveDetails message", message.cvedetails);
           this.setState({cvedetails: message.cvedetails});
+          break;
+        case 'supplementalArtifactInfo':
+          console.debug("App handling supplementalArtifactInfo message", message.supplementalInfo);
+          this.setState({supplementalInfo: message.supplementalInfo});
           break;
         }
     });

@@ -38,4 +38,8 @@ export class PyPiLiteDependencies implements LitePackageDependencies {
       Promise.reject(e);
     }
   }
+
+  getSupplementalInfo(p: any): Promise<any> {
+    throw new Error("Method not implemented.");
+  }
 }

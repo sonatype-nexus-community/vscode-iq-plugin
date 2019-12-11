@@ -19,7 +19,8 @@ import { ExtScanType } from '../utils/ExtScanType';
 export interface OssIndexContextInterface {
   scanType?: ExtScanType,
   vulnerabilities?: any[],
-  component?: any
+  component?: any,
+  supplementalInfo?: any
 }
 
 const ctxt = React.createContext<OssIndexContextInterface | undefined>(undefined);
