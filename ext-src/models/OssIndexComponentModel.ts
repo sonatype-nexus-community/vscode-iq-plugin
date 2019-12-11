@@ -36,9 +36,9 @@ export class OssIndexComponentModel implements ComponentModel {
     this.requestService = new OssIndexRequestService(username, password);
   }
   
-  public async evaluateComponents(): Promise<any> {
+  public evaluateComponents(): Promise<any> {
     console.debug("evaluateComponents");
-    return await this.performOssIndexScan();
+    return this.performOssIndexScan();
   }
   
   private async performOssIndexScan(): Promise<any> {
