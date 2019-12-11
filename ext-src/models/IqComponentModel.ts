@@ -116,7 +116,7 @@ export class IqComponentModel implements ComponentModel {
                 componentEntry!.hash = resultEntry.component.hash;
                 componentEntry!.nexusIQData = resultEntry;
               }
-              resolve();
+              resolve("x");
             })
         } catch (e) {
           window.showErrorMessage("Nexus IQ extension: " + e);
