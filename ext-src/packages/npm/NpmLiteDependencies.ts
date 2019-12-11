@@ -47,7 +47,7 @@ export class NpmLiteDependencies implements LitePackageDependencies {
   }
 
   public async getSupplementalInfo(pkg: any): Promise<any> {
-    let {stdout, stderr} = await exec(`npm ls ${pkg.name}`, 
+    let {stdout, stderr} = await exec(`npm ls ${pkg.name}@${pkg.version}`, 
       { 
         cwd: PackageDependenciesHelper.getWorkspaceRoot()
       }
