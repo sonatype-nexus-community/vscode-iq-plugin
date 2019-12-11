@@ -15,12 +15,17 @@
  */
 import * as React from 'react';
 import { OssIndexContext } from '../../../../context/ossindex-context';
+import CSS from 'csstype';
 
 type Props = {
 };
 
 type State = {
 };
+
+const spanStyle: CSS.Properties = {
+  whiteSpace: 'pre'
+}
 
 class OssIndexSupplementalInfo extends React.Component<Props, State> {
   static contextType = OssIndexContext;
@@ -37,10 +42,10 @@ class OssIndexSupplementalInfo extends React.Component<Props, State> {
           this.context && this.context.supplementalInfo && (
             this.context.supplementalInfo.split("\n").map((x: string) => {
               return (
-                <React.Fragment>
-                  {x}
+                <span style={spanStyle}>
+                  { x }
                   <br />
-                </React.Fragment>
+                </span>
               )
             })
           )
