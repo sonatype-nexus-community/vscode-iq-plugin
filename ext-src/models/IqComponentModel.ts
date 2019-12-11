@@ -50,9 +50,9 @@ export class IqComponentModel implements ComponentModel {
       return new Promise((c, e) => "my stubbed content entry");
     }
   
-    public async evaluateComponents(): Promise<any> {
+    public evaluateComponents(): Promise<any> {
       console.debug("evaluateComponents");
-      return await this.performIqScan();
+      return this.performIqScan();
     }
   
     private async performIqScan(): Promise<any> {
@@ -80,13 +80,14 @@ export class IqComponentModel implements ComponentModel {
               }
       
               if (undefined == data) {
-                throw new RangeError("Attempted to generated dependency list but received an empty collection. NexusIQ will not be invoked for this project.");
+                throw new RangeError("Attempted to generate dependency list but received an empty collection. NexusIQ will not be invoked for this project.");
               }
         
               console.debug("getting applicationInternalId", this.applicationPublicId);
               progress.report({message: "Getting IQ Server Internal Application ID", increment: 40});
-              let response: string = await this.requestService.getApplicationId(this.applicationPublicId) as string;
-        
+              
+              let response: string = await this.requestService.getApplicationId(this.applicationPublicId);
+              
               let appRep = JSON.parse(response);
               console.debug("appRep", appRep);
         
@@ -116,12 +117,16 @@ export class IqComponentModel implements ComponentModel {
                 componentEntry!.hash = resultEntry.component.hash;
                 componentEntry!.nexusIQData = resultEntry;
               }
-              resolve("x");
-            })
+              resolve();
+            }).then(() => {
+              window.setStatusBarMessage("Nexus IQ Server Results in, build with confidence!", 5000);
+            }, 
+            (failure) => {
+              window.showErrorMessage(`Nexus IQ extension failure: ${failure}`);
+            });
         } catch (e) {
-          window.showErrorMessage("Nexus IQ extension: " + e);
+          console.log(e);
           reject(e);
-          return;
         }
       });
   }

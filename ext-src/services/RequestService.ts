@@ -16,7 +16,7 @@ import { BaseRequestService } from "./BaseRequestService";
  * limitations under the License.
  */
 export interface RequestService extends BaseRequestService {
-  getApplicationId(applicationPublicId: string): Promise<any>;
+  getApplicationId(applicationPublicId: string): Promise<string>;
   submitToIqForEvaluation(data: any, applicationInternalId: string): Promise<any>;
   asyncPollForEvaluationResults(applicationInternalId: string, resultId: string): Promise<any>;
   getAllVersions(component: any, iqApplicationPublicId: string): Promise<any>;
