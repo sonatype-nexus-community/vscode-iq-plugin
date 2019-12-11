@@ -32,9 +32,17 @@ class OssIndexSupplementalInfo extends React.Component<Props, State> {
   public render() {
     return (
       <React.Fragment>
+        <h2>Dependency Graph</h2>
         {
           this.context && this.context.supplementalInfo && (
-            this.context.supplementalInfo 
+            this.context.supplementalInfo.split("\n").map((x: string) => {
+              return (
+                <React.Fragment>
+                  {x}
+                  <br />
+                </React.Fragment>
+              )
+            })
           )
         }
       </React.Fragment>
