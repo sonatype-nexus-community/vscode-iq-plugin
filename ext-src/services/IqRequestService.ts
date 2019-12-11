@@ -17,6 +17,7 @@ import * as request from "request";
 import * as HttpStatus from 'http-status-codes';
 import { RequestService } from "./RequestService";
 import { RequestHelpers } from "./RequestHelpers";
+import { constants } from 'os';
 
 export class IqRequestService implements RequestService {
   readonly evaluationPollDelayMs = 2000;
@@ -48,7 +49,7 @@ export class IqRequestService implements RequestService {
     return this.applicationId;
   }
 
-  public async getApplicationId(applicationPublicId: string) {
+  public getApplicationId(applicationPublicId: string): Promise<string> {
     console.debug("getApplicationId", applicationPublicId);
 
     return new Promise((resolve, reject) => {
@@ -58,20 +59,28 @@ export class IqRequestService implements RequestService {
           url: `${this.url}/api/v2/applications?publicId=${applicationPublicId}`,
           headers: RequestHelpers.getUserAgentHeader(),
           auth: { user: this.user, pass: this.password }
-        },
-        (err: any, response: any, body: any) => {
-          if (err) {            
-            reject(`Unable to retrieve Application ID: ${err}`);
+        })
+        .on('response', (res) => {
+          console.log(res.statusCode);
+
+          if (res.statusCode != HttpStatus.OK) {            
+            reject(`Unable to retrieve Application ID. Could not communicate with server. Server error: ${res.statusCode}`);
             return;
           }
-          if (response.statusCode != HttpStatus.OK) {            
-            reject(`Unable to retrieve Application ID. Could not communicate with server. Server error: ${response.statusCode}`);
+
+          res.on('data', (data) => {
+            resolve(data);
+            return;
+          });
+        }).on('error', (err) => {
+          console.debug(err);
+          if (err.message.includes('ECONNREFUSED')) {
+            reject("Unable to reach Nexus IQ Server, please check that your config is correct, and that the server is reachable.");
             return;
           }
-          resolve(body);
+          reject(err.message);
           return;
-        }
-      );
+        });
     });
   }
 

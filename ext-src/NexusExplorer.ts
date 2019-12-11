@@ -62,15 +62,16 @@ export class NexusExplorerProvider
   }
 
   doRefresh(): void {
-    this.reloadComponentModel().then(v => {
-      if (this.componentModel.components.length > 0) {
-        this._onDidChangeTreeData.fire();
-      }
-    });
+    this.reloadComponentModel()
+      .then(() => {
+        if (this.componentModel.components.length > 0) {
+          this._onDidChangeTreeData.fire();
+        }
+      });
   }
 
-  private async reloadComponentModel() {
-    await this.componentModel.evaluateComponents();
+  private reloadComponentModel(): Promise<any> {
+    return this.componentModel.evaluateComponents();
   }
 
   getDependencies(entry: ComponentEntry) {
