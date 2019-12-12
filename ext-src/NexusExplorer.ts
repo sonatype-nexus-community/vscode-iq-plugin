@@ -69,6 +69,10 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
       });
   }
 
+  doSoftRefresh(): void {
+    this._onDidChangeTreeData.fire();
+  }
+
   private reloadComponentModel(): Promise<any> {
     return this.componentModel.evaluateComponents();
   }
@@ -147,10 +151,20 @@ export class NexusExplorer {
       this.nexusExplorerProvider.doRefresh()
     );
 
-    vscode.commands.registerCommand("nexusExplorer.sortByPolicy",  () => {
+    vscode.commands.registerCommand("nexusExplorer.sortByPolicy", () => {
       this.componentModel.components.sort((a, b) => {
-        return a.maxPolicy() - b.maxPolicy();
+        return b.maxPolicy() - a.maxPolicy();
       });
+
+      this.nexusExplorerProvider.doSoftRefresh();
+    });
+
+    vscode.commands.registerCommand("nexusExplorer.sortByName", () => {
+      this.componentModel.components.sort((a, b) => {
+        return (b.name > a.name ? -1 : 1);
+      });
+      
+      this.nexusExplorerProvider.doSoftRefresh();
     });
 
     vscode.commands.registerCommand("nexusExplorer.revealResource", () =>

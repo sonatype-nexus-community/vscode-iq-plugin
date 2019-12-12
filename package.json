@@ -62,7 +62,7 @@
         }
       },
       {
-        "command": "nexusExplorer.sortNodes",
+        "command": "nexusExplorer.sortByName",
         "title": "Sort by name"
       },
       {
@@ -94,7 +94,7 @@
           "group": "navigation"
         },
         {
-          "command": "nexusExplorer.sortNodes",
+          "command": "nexusExplorer.sortByName",
           "when": "view == nexusExplorer"
         },
         {
