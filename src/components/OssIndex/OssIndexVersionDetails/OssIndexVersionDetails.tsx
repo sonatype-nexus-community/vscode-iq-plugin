@@ -23,7 +23,7 @@ import { Alert } from 'react-bootstrap';
 import OssIndexSupplementalInfo from './OssIndexSupplementalInfo/OssIndexSupplementalInfo';
 
 type Props = {
-  handleGetSupplementalInfo: (p: any) => void
+  handleGetSupplementalInfo: (p: any, e: any) => void
 }
 
 type State = {
@@ -35,12 +35,13 @@ class OssIndexVersionDetails extends React.Component<Props, State> {
   public render() {
     console.log("OssIndexSelectedVersionDetails page rendering");
     let component = this.context.component;
+    console.log(component);
 
     return (
       <Tabs 
         id="selected-version-tabs" 
         defaultActiveKey="info" 
-        onClick={this.props.handleGetSupplementalInfo.bind(this, component)}
+        onSelect={this.props.handleGetSupplementalInfo.bind(this, component)}
         >
         <Tab title="Component Info" eventKey="info">
           <OssIndexComponentInfo />

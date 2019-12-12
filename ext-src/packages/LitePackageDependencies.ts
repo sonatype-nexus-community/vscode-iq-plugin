@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import { PackageType } from "./PackageType";
+import { SupplementalInfo } from "../types/SupplementalInfo";
 
 export interface LitePackageDependencies {
   dependencies: Array<PackageType>;
@@ -21,5 +22,5 @@ export interface LitePackageDependencies {
   manifestName: string;
   checkIfValid(): boolean;
   packageForService(): Promise<any>;
-  getSupplementalInfo(p: any): Promise<any>;
+  getSupplementalInfo(p: any): Promise<SupplementalInfo>;
 }

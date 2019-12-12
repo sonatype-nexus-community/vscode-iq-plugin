@@ -17,13 +17,16 @@ import { LitePackageDependencies } from "../LitePackageDependencies";
 import { GolangPackage } from "./GolangPackage";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { GolangUtils } from "./GolangUtils";
-import { GolangScanType } from "./GolangScanType";
+import { GolangScanType, GO_MOD_SUM } from "./GolangScanType";
+import { exec } from "../../utils/exec";
+import { GolangDepGraph } from "./GolangDepGraph";
 
 export class GolangLiteDependencies implements LitePackageDependencies {
   dependencies: Array<GolangPackage> = [];
   manifestName: string = "go.sum";
   format: string = "golang";
   private scanType: string = "";
+  private graph: GolangDepGraph = new GolangDepGraph();
   
   public checkIfValid(): boolean {
     this.scanType =  PackageDependenciesHelper.checkIfValidWithArray(GolangScanType, this.format);
@@ -42,7 +45,34 @@ export class GolangLiteDependencies implements LitePackageDependencies {
     }
   }
 
-  public getSupplementalInfo(p: any): Promise<any> {
-    throw new Error("Method not implemented.");
+  public async getSupplementalInfo(pkg: any): Promise<any> {
+    if (this.scanType === GO_MOD_SUM) {
+      let { stdout, stderr } = await exec(`go mod graph`, 
+        { 
+          cwd: PackageDependenciesHelper.getWorkspaceRoot()
+        }
+      );
+      if (stdout === "" && stderr != "") {
+        throw new TypeError("Something went wrong with running go mod graph");
+      } else {
+        this.buildGraph(stdout.split("\n"));
+
+        return "";
+      }
+    }
+    else {
+      throw new Error("Not implemented");
+    }
+  }
+
+  private buildGraph(output: string[]) {
+    output.forEach((x) => {
+      let splitItem = x.split(" ");
+      this.graph.addVertex(splitItem[0]);
+      this.graph.addVertex(splitItem[1]);
+      this.graph.addEdge(splitItem[0], splitItem[1]);
+    })
+
+    console.log("Hello");
   }
 }

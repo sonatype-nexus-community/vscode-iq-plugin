@@ -17,8 +17,9 @@ import { LitePackageDependencies } from "../LitePackageDependencies";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { NpmPackage } from "./NpmPackage";
 import { NpmUtils } from "./NpmUtils";
-import { NpmScanType } from "./NpmScanType";
+import { NpmScanType, PACKAGE_LOCK_JSON, YARN_LOCK } from "./NpmScanType";
 import { exec } from "../../utils/exec";
+import { SupplementalInfo } from "../../types/SupplementalInfo";
 
 export class NpmLiteDependencies implements LitePackageDependencies {
   dependencies: Array<NpmPackage> = [];
@@ -46,16 +47,33 @@ export class NpmLiteDependencies implements LitePackageDependencies {
     }
   }
 
-  public async getSupplementalInfo(pkg: any): Promise<any> {
-    let {stdout, stderr} = await exec(`npm ls ${pkg.name}@${pkg.version}`, 
+  public async getSupplementalInfo(pkg: any): Promise<SupplementalInfo> {
+    if (this.scanType === PACKAGE_LOCK_JSON) {
+        let { stdout, stderr } = await exec(`npm ls ${pkg.name}@${pkg.version}`, 
+        { 
+          cwd: PackageDependenciesHelper.getWorkspaceRoot()
+        }
+      );
+      if (stdout === "" && stderr != "") {
+        throw new TypeError(`Something went wrong with running npm ls: ${stderr}`);
+      } else {
+        return new SupplementalInfo(stdout, PACKAGE_LOCK_JSON);
+      }
+    }
+    if (this.scanType === YARN_LOCK) {
+      let { stdout, stderr } = await exec(`yarn list ${pkg.name}@${pkg.version}`, 
       { 
         cwd: PackageDependenciesHelper.getWorkspaceRoot()
       }
-    );
-    if (stdout === "" && stderr != "") {
-      throw new TypeError("Something went wrong with running npm ls");
-    } else {
-      return stdout;
+      );
+      if (stdout === "" && stderr != "") {
+        throw new TypeError(`Something went wrong with running yarn list: ${stderr}`);
+      } else {
+        return new SupplementalInfo(stdout, YARN_LOCK);
+      }
+    }
+    else {
+      throw new Error(`Not implemented for this type: ${this.scanType}`);
     }
   }
 }

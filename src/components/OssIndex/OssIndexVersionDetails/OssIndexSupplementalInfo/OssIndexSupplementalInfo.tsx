@@ -15,17 +15,14 @@
  */
 import * as React from 'react';
 import { OssIndexContext } from '../../../../context/ossindex-context';
-import CSS from 'csstype';
+import NpmList from '../../../Shared/SupplementalInfo/JavaScript/NpmList/NpmList';
+import Loader from 'react-loader-spinner';
 
 type Props = {
 };
 
 type State = {
 };
-
-const spanStyle: CSS.Properties = {
-  whiteSpace: 'pre'
-}
 
 class OssIndexSupplementalInfo extends React.Component<Props, State> {
   static contextType = OssIndexContext;
@@ -35,23 +32,26 @@ class OssIndexSupplementalInfo extends React.Component<Props, State> {
   }
 
   public render() {
-    return (
-      <React.Fragment>
-        <h2>Dependency Graph</h2>
-        {
-          this.context && this.context.supplementalInfo && (
-            this.context.supplementalInfo.split("\n").map((x: string) => {
-              return (
-                <span style={spanStyle}>
-                  { x }
-                  <br />
-                </span>
-              )
-            })
-          )
-        }
-      </React.Fragment>
-    );
+    if (this.context.supplementalInfo == undefined ) {
+      return (
+        <Loader
+          type="MutatingDots"
+          color="#00BFFF"
+          height={100}
+          width={100}
+        />
+      )
+    } else {
+      if (this.context.supplementalInfo && this.context.supplementalInfo.packageType === "package-lock.json") {
+        return (
+          <NpmList />
+        )
+      } else {
+        return (
+          <h1>Nothing implemented for this Type</h1>
+        )
+      }
+    }
   }
 }
 

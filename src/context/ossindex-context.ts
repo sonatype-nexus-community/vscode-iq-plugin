@@ -15,12 +15,13 @@
  */
 import * as React from 'react';
 import { ExtScanType } from '../utils/ExtScanType';
+import { SupplementalInfo } from '../types/SupplementalInfo';
 
 export interface OssIndexContextInterface {
   scanType?: ExtScanType,
   vulnerabilities?: any[],
   component?: any,
-  supplementalInfo?: any
+  supplementalInfo?: SupplementalInfo
 }
 
 const ctxt = React.createContext<OssIndexContextInterface | undefined>(undefined);

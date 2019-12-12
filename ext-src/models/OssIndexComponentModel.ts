@@ -23,6 +23,7 @@ import { ComponentModel } from "./ComponentModel";
 import { ScanType } from "../types/ScanType";
 import { ComponentEntry } from "./ComponentEntry";
 import { PackageType } from "../packages/PackageType";
+import { SupplementalInfo } from "../types/SupplementalInfo";
 
 export class OssIndexComponentModel implements ComponentModel {
   components = new Array<ComponentEntry>();
@@ -92,10 +93,11 @@ export class OssIndexComponentModel implements ComponentModel {
     });
   }
 
-  public async getSupplementalInfo(pkg: any): Promise<any> {
+  public async getSupplementalInfo(pkg: any): Promise<SupplementalInfo> {
     if (this.componentContainer.PackageMuncher != undefined) {
       return await this.componentContainer.PackageMuncher.getSupplementalInfo(pkg);
     }
+    throw new Error("Package Muncher undefined");
   }
 
   private parsePackageName(pkg: string): string {

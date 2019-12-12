@@ -20,6 +20,7 @@ import { ScanType } from "./types/ScanType";
 import { ComponentModel } from "./models/ComponentModel";
 import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
 import { ComponentEntry } from "./models/ComponentEntry";
+import { SupplementalInfo } from "./types/SupplementalInfo";
 
 
 
@@ -220,7 +221,7 @@ export class ComponentInfoPanel {
     console.debug("showSupplementalInfo", artifact);
     if (this.componentModel instanceof OssIndexComponentModel) {
       var ossIndexComponentModel = this.componentModel as OssIndexComponentModel
-      let supplementalInfo = await ossIndexComponentModel.getSupplementalInfo(artifact);
+      let supplementalInfo: SupplementalInfo = await ossIndexComponentModel.getSupplementalInfo(artifact);
       
       console.debug("posting message: supplementalArtifactInfo", supplementalInfo);
       this._panel.webview.postMessage({

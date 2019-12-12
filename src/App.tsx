@@ -21,6 +21,7 @@ import { VersionsContextProvider } from './context/versions-context';
 import { OssIndexContextProvider } from './context/ossindex-context';
 import { ExtScanType } from './utils/ExtScanType';
 import OssIndexVersionDetails from './components/OssIndex/OssIndexVersionDetails/OssIndexVersionDetails';
+import { SupplementalInfo } from './types/SupplementalInfo';
 
 // add workarounds to call VSCode
 declare var acquireVsCodeApi: any;
@@ -40,9 +41,9 @@ type AppState = {
   remediation?: any,
   policyViolations?: any[],
   cvedetails?: any,
-  supplementalInfo?: any,
+  supplementalInfo?: SupplementalInfo,
   handleGetRemediation(o: any, s: string): void
-  handleGetSupplementalInfo(o: any): void
+  handleGetSupplementalInfo(o: any, e: any): void
 };
 
 class App extends React.Component<AppProps, AppState> {
@@ -76,14 +77,18 @@ class App extends React.Component<AppProps, AppState> {
     });
   }
 
-  public handleGetSupplementalInfo(artifact: any) {
+  public handleGetSupplementalInfo(artifact: any, event: any) {
     console.debug("App received request for artifact supplemental info", artifact);
-    this.setState({supplementalInfo: undefined})
+    if (event === "supplemental") {
+      this.setState({supplementalInfo: undefined});
 
-    vscode.postMessage({
-      command: 'getSupplementalInfo',
-      artifact: artifact
-    });
+      vscode.postMessage({
+        command: 'getSupplementalInfo',
+        artifact: artifact
+      });
+    } else {
+      this.setState({supplementalInfo: undefined});
+    }
   }
 
   public handleGetRemediation(nexusArtifact: any, cve: string): void {
@@ -199,7 +204,7 @@ class App extends React.Component<AppProps, AppState> {
           break;
         case 'supplementalArtifactInfo':
           console.debug("App handling supplementalArtifactInfo message", message.supplementalInfo);
-          this.setState({supplementalInfo: message.supplementalInfo});
+          this.setState({supplementalInfo: message.supplementalInfo });
           break;
         }
     });
