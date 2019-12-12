@@ -71,7 +71,7 @@ class NpmList extends React.Component<Props, State> {
     } else {
       return (
         <p>
-        To update <span style={spanPreStyle}>{otherName}</span>, you can attempt to upgrade using the following command.
+          To update <span style={spanPreStyle}>{otherName}</span>, you can attempt to upgrade using the following command.
         </p>
       )
     }
