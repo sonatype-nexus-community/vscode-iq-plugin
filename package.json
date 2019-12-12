@@ -62,6 +62,14 @@
         }
       },
       {
+        "command": "nexusExplorer.sortNodes",
+        "title": "Sort by name"
+      },
+      {
+        "command": "nexusExplorer.sortByPolicy",
+        "title": "Sort by policy violations"
+      },
+      {
         "command": "nexusExplorer.refreshNode",
         "title": "Nexus Refresh",
         "icon": {
@@ -84,6 +92,14 @@
           "command": "nexusExplorer.refresh",
           "when": "view == nexusExplorer",
           "group": "navigation"
+        },
+        {
+          "command": "nexusExplorer.sortNodes",
+          "when": "view == nexusExplorer"
+        },
+        {
+          "command": "nexusExplorer.sortByPolicy",
+          "when": "view == nexusExplorer"
         }
       ]
     },
