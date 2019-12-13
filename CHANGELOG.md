@@ -1,3 +1,10 @@
+## [0.6.1](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.6.0...v0.6.1) (2019-12-13)
+
+
+### Bug Fixes
+
+* Improve changelog ([4a2033c](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/4a2033cc13e7742a63d475c2f4c6ae4a008167b6))
+
 # Change Log
 ## Unreleased
 - GUI for configuring Application
@@ -18,6 +25,3 @@
 - Version history
 - License Id
 - link to Wikipedia license article
-
-
-  
