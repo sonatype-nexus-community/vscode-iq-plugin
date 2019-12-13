@@ -161,7 +161,7 @@ export class NexusExplorer {
 
     vscode.commands.registerCommand("nexusExplorer.sortByName", () => {
       this.componentModel.components.sort((a, b) => {
-        return (b.name > a.name ? -1 : 1);
+        return (b.name.toLowerCase() > a.name.toLowerCase() ? -1 : 1);
       });
       
       this.nexusExplorerProvider.doSoftRefresh();
