@@ -1,3 +1,10 @@
+## [0.6.6](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.6.5...v0.6.6) (2019-12-13)
+
+
+### Bug Fixes
+
+* tiny tweak ([02b3f60](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/02b3f60aa904e0d4357feadf6674ec774662d16d))
+
 ## [0.6.5](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.6.4...v0.6.5) (2019-12-13)
 
 
