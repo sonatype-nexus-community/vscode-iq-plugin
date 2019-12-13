@@ -1,3 +1,10 @@
+## [0.6.5](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.6.4...v0.6.5) (2019-12-13)
+
+
+### Bug Fixes
+
+* dag nabbit, fix badge ([635c0c8](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/635c0c8edc8ea0022a1f10d0366c193e17b0430f))
+
 ## [0.6.4](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.6.3...v0.6.4) (2019-12-13)
 
 
