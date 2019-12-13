@@ -24,7 +24,8 @@ import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
 import { ComponentModel } from "./models/ComponentModel";
 import { ComponentEntry } from "./models/ComponentEntry";
 
-export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentEntry> {
+export class NexusExplorerProvider
+  implements vscode.TreeDataProvider<ComponentEntry> {
   private editor?: vscode.TextEditor;
 
   private _onDidChangeTreeData: vscode.EventEmitter<
@@ -43,15 +44,14 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
   checkPassword(): void {
     if (this.componentModel instanceof OssIndexComponentModel) {
       this.doRefresh();
-    }
-    else if (this.componentModel.requestService.isPasswordSet()) {
+    } else if (this.componentModel.requestService.isPasswordSet()) {
       this.doRefresh();
     } else {
       let options: vscode.InputBoxOptions = {
         prompt: "Nexus IQ Password: ",
         placeHolder: "password",
         password: true
-      }
+      };
 
       vscode.window.showInputBox(options).then(value => {
         this.componentModel.requestService.setPassword(value + "");
@@ -61,12 +61,11 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
   }
 
   doRefresh(): void {
-    this.reloadComponentModel()
-      .then(() => {
-        if (this.componentModel.components.length > 0) {
-          this._onDidChangeTreeData.fire();
-        }
-      });
+    this.reloadComponentModel().then(() => {
+      if (this.componentModel.components.length > 0) {
+        this._onDidChangeTreeData.fire();
+      }
+    });
   }
 
   doSoftRefresh(): void {
@@ -132,7 +131,10 @@ export class NexusExplorer {
   constructor(readonly context: vscode.ExtensionContext) {
     /////////CPT/////////////
     let configuration = vscode.workspace.getConfiguration();
-    if (configuration.get("nexusExplorer.dataSource", 'ossindex') + "" == 'iqServer') {
+    if (
+      configuration.get("nexusExplorer.dataSource", "ossindex") + "" ==
+      "iqServer"
+    ) {
       this.componentModel = new IqComponentModel(configuration);
     } else {
       this.componentModel = new OssIndexComponentModel(configuration);
@@ -159,11 +161,27 @@ export class NexusExplorer {
       this.nexusExplorerProvider.doSoftRefresh();
     });
 
+    vscode.commands.registerCommand("nexusExplorer.sortByPolicyAsc", () => {
+      this.componentModel.components.sort((a, b) => {
+        return a.maxPolicy() - b.maxPolicy();
+      });
+
+      this.nexusExplorerProvider.doSoftRefresh();
+    });
+
     vscode.commands.registerCommand("nexusExplorer.sortByName", () => {
       this.componentModel.components.sort((a, b) => {
-        return (b.name.toLowerCase() > a.name.toLowerCase() ? -1 : 1);
+        return b.name.toLowerCase() > a.name.toLowerCase() ? -1 : 1;
       });
-      
+
+      this.nexusExplorerProvider.doSoftRefresh();
+    });
+
+    vscode.commands.registerCommand("nexusExplorer.sortByNameDesc", () => {
+      this.componentModel.components.sort((a, b) => {
+        return b.name.toLowerCase() > a.name.toLowerCase() ? 1 : -1;
+      });
+
       this.nexusExplorerProvider.doSoftRefresh();
     });
 
@@ -192,6 +210,10 @@ export class NexusExplorer {
   }
 
   private viewNode(entry: ComponentEntry) {
-    ComponentInfoPanel.createOrShow(this.context.extensionPath, entry, this.componentModel);
+    ComponentInfoPanel.createOrShow(
+      this.context.extensionPath,
+      entry,
+      this.componentModel
+    );
   }
 }

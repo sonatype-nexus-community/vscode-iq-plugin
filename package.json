@@ -63,18 +63,34 @@
       },
       {
         "command": "nexusExplorer.sortByName",
-        "title": "Sort by name",
+        "title": "Sort by name asc",
         "icon": {
           "light": "resources/light/sort-alpha-down-solid.svg",
           "dark": "resources/dark/sort-alpha-down-solid.svg"
         }
       },
       {
+        "command": "nexusExplorer.sortByNameDesc",
+        "title": "Sort by name desc",
+        "icon": {
+          "light": "resources/light/sort-alpha-up-solid.svg",
+          "dark": "resources/dark/sort-alpha-up-solid.svg"
+        }
+      },
+      {
         "command": "nexusExplorer.sortByPolicy",
-        "title": "Sort by policy violations",
+        "title": "Sort by policy violations descending",
         "icon": {
           "light": "resources/light/sort-numeric-down-alt-solid.svg",
           "dark": "resources/dark/sort-numeric-down-alt-solid.svg"
+        }
+      },
+      {
+        "command": "nexusExplorer.sortByPolicyAsc",
+        "title": "Sort by policy violations descending ascending",
+        "icon": {
+          "light": "resources/light/sort-numeric-up-alt-solid.svg",
+          "dark": "resources/dark/sort-numeric-up-alt-solid.svg"
         }
       },
       {
@@ -108,6 +124,16 @@
         },
         {
           "command": "nexusExplorer.sortByPolicy",
+          "when": "view == nexusExplorer",
+          "group": "navigation"
+        },
+        {
+          "command": "nexusExplorer.sortByNameDesc",
+          "when": "view == nexusExplorer",
+          "group": "navigation"
+        },
+        {
+          "command": "nexusExplorer.sortByPolicyAsc",
           "when": "view == nexusExplorer",
           "group": "navigation"
         }
