@@ -2,7 +2,7 @@
   "name": "vscode-iq-plugin",
   "displayName": "Sonatype Nexus IQ Extension for VSCode",
   "description": "Sonatype Nexus IQ Extension for VSCode",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "author": {
     "name": "community-group"
   },
@@ -74,7 +74,7 @@
         "title": "Sort by policy violations",
         "icon": {
           "light": "resources/light/sort-numeric-down-alt-solid.svg",
-          "dark" : "resources/dark/sort-numeric-down-alt-solid.svg"
+          "dark": "resources/dark/sort-numeric-down-alt-solid.svg"
         }
       },
       {
