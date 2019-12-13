@@ -55,7 +55,7 @@
       },
       {
         "command": "nexusExplorer.refresh",
-        "title": "Nexus Refresh",
+        "title": "Rescan dependencies",
         "icon": {
           "light": "resources/light/refresh.svg",
           "dark": "resources/dark/refresh.svg"
@@ -63,11 +63,19 @@
       },
       {
         "command": "nexusExplorer.sortByName",
-        "title": "Sort by name"
+        "title": "Sort by name",
+        "icon": {
+          "light": "resources/light/sort-alpha-down-solid.svg",
+          "dark": "resources/dark/sort-alpha-down-solid.svg"
+        }
       },
       {
         "command": "nexusExplorer.sortByPolicy",
-        "title": "Sort by policy violations"
+        "title": "Sort by policy violations",
+        "icon": {
+          "light": "resources/light/sort-numeric-down-alt-solid.svg",
+          "dark" : "resources/dark/sort-numeric-down-alt-solid.svg"
+        }
       },
       {
         "command": "nexusExplorer.refreshNode",
@@ -95,11 +103,13 @@
         },
         {
           "command": "nexusExplorer.sortByName",
-          "when": "view == nexusExplorer"
+          "when": "view == nexusExplorer",
+          "group": "navigation"
         },
         {
           "command": "nexusExplorer.sortByPolicy",
-          "when": "view == nexusExplorer"
+          "when": "view == nexusExplorer",
+          "group": "navigation"
         }
       ]
     },
