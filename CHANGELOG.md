@@ -1,3 +1,10 @@
+## [0.6.4](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.6.3...v0.6.4) (2019-12-13)
+
+
+### Bug Fixes
+
+* Fix link for VS Code Marketplace badge ([4d44b6d](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/4d44b6d5b7df9966b22d740ba39da56872b9cb51))
+
 ## [0.6.3](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.6.2...v0.6.3) (2019-12-13)
 
 ## [0.6.2](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.6.1...v0.6.2) (2019-12-13)
