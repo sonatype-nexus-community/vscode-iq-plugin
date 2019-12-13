@@ -1,5 +1,7 @@
 # Sonatype Nexus IQ Plugin for VS Code
 
+[![CircleCI](https://circleci.com/gh/sonatype-nexus-community/vscode-iq-plugin.svg?style=svg)](https://circleci.com/gh/sonatype-nexus-community/vscode-iq-plugin)
+
 Scan your libraries against either the free [OSS Index](https://ossindex.sonatype.org/) vulnerability database or the [Sonatype Nexus IQ Server](https://www.sonatype.com/nexus-iq-server). Drill down into all of your dependencies to examine each package version for security vulnerabilities. With IQ Server, it also provides policy and license details.[](https://github.com/sonatype-nexus-community/vscode-iq-plugin)
 
 ## Features
