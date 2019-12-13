@@ -24,8 +24,7 @@ import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
 import { ComponentModel } from "./models/ComponentModel";
 import { ComponentEntry } from "./models/ComponentEntry";
 
-export class NexusExplorerProvider
-  implements vscode.TreeDataProvider<ComponentEntry> {
+export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentEntry> {
   private editor?: vscode.TextEditor;
 
   private _onDidChangeTreeData: vscode.EventEmitter<
@@ -68,6 +67,10 @@ export class NexusExplorerProvider
           this._onDidChangeTreeData.fire();
         }
       });
+  }
+
+  doSoftRefresh(): void {
+    this._onDidChangeTreeData.fire();
   }
 
   private reloadComponentModel(): Promise<any> {
@@ -147,6 +150,22 @@ export class NexusExplorer {
     vscode.commands.registerCommand("nexusExplorer.refresh", () =>
       this.nexusExplorerProvider.doRefresh()
     );
+
+    vscode.commands.registerCommand("nexusExplorer.sortByPolicy", () => {
+      this.componentModel.components.sort((a, b) => {
+        return b.maxPolicy() - a.maxPolicy();
+      });
+
+      this.nexusExplorerProvider.doSoftRefresh();
+    });
+
+    vscode.commands.registerCommand("nexusExplorer.sortByName", () => {
+      this.componentModel.components.sort((a, b) => {
+        return (b.name.toLowerCase() > a.name.toLowerCase() ? -1 : 1);
+      });
+      
+      this.nexusExplorerProvider.doSoftRefresh();
+    });
 
     vscode.commands.registerCommand("nexusExplorer.revealResource", () =>
       this.reveal()
