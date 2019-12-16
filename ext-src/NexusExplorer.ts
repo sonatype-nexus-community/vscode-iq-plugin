@@ -63,7 +63,6 @@ export class NexusExplorerProvider
   doRefresh(): void {
     this.reloadComponentModel().then(() => {
       if (this.componentModel.components.length > 0) {
-        this.doSoftRefresh();
         this.sortByPolicy(true);
       }
     });
