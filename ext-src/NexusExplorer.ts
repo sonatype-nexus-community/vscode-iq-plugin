@@ -63,13 +63,36 @@ export class NexusExplorerProvider
   doRefresh(): void {
     this.reloadComponentModel().then(() => {
       if (this.componentModel.components.length > 0) {
-        this._onDidChangeTreeData.fire();
+        this.doSoftRefresh();
+        this.sortByPolicy(true);
       }
     });
   }
 
   doSoftRefresh(): void {
     this._onDidChangeTreeData.fire();
+  }
+
+  sortByName(sortNameAscending: boolean): void {
+    this.componentModel.components.sort((a, b) => {
+      if (sortNameAscending) {
+        return b.name.toLowerCase() > a.name.toLowerCase() ? -1 : 1;
+      } else {
+        return b.name.toLowerCase() > a.name.toLowerCase() ? 1 : -1;
+      }
+    });
+    this.doSoftRefresh();
+  }
+
+  sortByPolicy(sortPolicyDescending: boolean): void {
+    this.componentModel.components.sort((a, b) => {
+      if (sortPolicyDescending) {
+        return b.maxPolicy() - a.maxPolicy();
+      } else {
+        return a.maxPolicy() - b.maxPolicy();
+      }
+    });
+    this.doSoftRefresh();
   }
 
   private reloadComponentModel(): Promise<any> {
@@ -124,12 +147,13 @@ export class NexusExplorerProvider
 }
 
 export class NexusExplorer {
+  private sortPolicyDescending: boolean = true;
+  private sortNameAscending: boolean = true;
   private nexusViewer: vscode.TreeView<ComponentEntry>;
   private componentModel: ComponentModel;
   private nexusExplorerProvider: NexusExplorerProvider;
 
   constructor(readonly context: vscode.ExtensionContext) {
-    /////////CPT/////////////
     let configuration = vscode.workspace.getConfiguration();
     if (
       configuration.get("nexusExplorer.dataSource", "ossindex") + "" ==
@@ -149,49 +173,43 @@ export class NexusExplorer {
       treeDataProvider: this.nexusExplorerProvider
     });
 
-    vscode.commands.registerCommand("nexusExplorer.refresh", () =>
-      this.nexusExplorerProvider.doRefresh()
-    );
-
-    vscode.commands.registerCommand("nexusExplorer.sortByPolicy", () => {
-      this.componentModel.components.sort((a, b) => {
-        return b.maxPolicy() - a.maxPolicy();
-      });
-
-      this.nexusExplorerProvider.doSoftRefresh();
+    vscode.commands.registerCommand("nexusExplorer.refresh", () => {
+      this.nexusExplorerProvider.doRefresh();
+      this.sortPolicyDescending = true;
+      this.sortByPolicy();
     });
 
-    vscode.commands.registerCommand("nexusExplorer.sortByPolicyAsc", () => {
-      this.componentModel.components.sort((a, b) => {
-        return a.maxPolicy() - b.maxPolicy();
-      });
-
-      this.nexusExplorerProvider.doSoftRefresh();
+    vscode.commands.registerCommand("nexusExplorer.sortByPolicy", () => {
+      this.sortByPolicy();
     });
 
     vscode.commands.registerCommand("nexusExplorer.sortByName", () => {
-      this.componentModel.components.sort((a, b) => {
-        return b.name.toLowerCase() > a.name.toLowerCase() ? -1 : 1;
-      });
-
-      this.nexusExplorerProvider.doSoftRefresh();
+      this.sortByName();
     });
 
-    vscode.commands.registerCommand("nexusExplorer.sortByNameDesc", () => {
-      this.componentModel.components.sort((a, b) => {
-        return b.name.toLowerCase() > a.name.toLowerCase() ? 1 : -1;
-      });
-
-      this.nexusExplorerProvider.doSoftRefresh();
+    vscode.commands.registerCommand("nexusExplorer.revealResource", () => {
+      this.reveal();
     });
-
-    vscode.commands.registerCommand("nexusExplorer.revealResource", () =>
-      this.reveal()
-    );
     vscode.commands.registerCommand(
       "nexusExplorer.viewNode",
       (node: ComponentEntry) => this.viewNode(node)
     );
+  }
+
+  private sortByName() {
+    this.nexusExplorerProvider.sortByName(this.sortNameAscending);
+    this.sortNameAscending = !this.sortNameAscending;
+    this.sortPolicyDescending = true;
+    //vscode.commands.getCommands("nexusExplorer.sortByName");
+    //change the icon to descending icon
+    // this.nexusExplorerProvider.doSoftRefresh();
+  }
+
+  private sortByPolicy() {
+    this.nexusExplorerProvider.sortByPolicy(this.sortPolicyDescending);
+    this.sortPolicyDescending = !this.sortPolicyDescending;
+    this.sortNameAscending = true;
+    // this.nexusExplorerProvider.doSoftRefresh();
   }
 
   private reveal(): Thenable<void> | undefined {
