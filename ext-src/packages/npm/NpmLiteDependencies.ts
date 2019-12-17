@@ -61,19 +61,36 @@ export class NpmLiteDependencies implements LitePackageDependencies {
       }
     }
     if (this.scanType === YARN_LOCK) {
-      let { stdout, stderr } = await exec(`yarn list ${pkg.name}@${pkg.version}`, 
+      let { stdout, stderr } = await exec(`yarn why ${pkg.name}`, 
       { 
         cwd: PackageDependenciesHelper.getWorkspaceRoot()
       }
       );
       if (stdout === "" && stderr != "") {
-        throw new TypeError(`Something went wrong with running yarn list: ${stderr}`);
+        throw new TypeError(`Something went wrong with running yarn why: ${stderr}`);
       } else {
-        return new SupplementalInfo(stdout, YARN_LOCK);
+        return new SupplementalInfo(this.parseYarnWhy(stdout, pkg.name, pkg.version), YARN_LOCK);
       }
     }
     else {
       throw new Error(`Not implemented for this type: ${this.scanType}`);
     }
+  }
+
+  private parseYarnWhy(stdout: string, pkgName: string, pkgVersion: string): string {
+    let res: string = "";
+    let start: boolean = true;
+    let end: boolean = false;
+    stdout.split("\n").forEach((x) => {
+      if (start && x.includes(`${pkgName}@${pkgVersion}`)) {
+        start = false;
+      } else if (!start && !end && !x.includes("Found")) {
+        res += x + "\n";
+      } else if (!start && !end && x.includes("Found") && !x.includes(`${pkgName}@${pkgVersion}`)){
+        end = true;
+      }
+    });
+
+    return res;
   }
 }

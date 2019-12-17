@@ -16,6 +16,7 @@
 import * as React from 'react';
 import { OssIndexContext } from '../../../../context/ossindex-context';
 import NpmList from '../../../Shared/SupplementalInfo/JavaScript/NpmList/NpmList';
+import YarnList from '../../../Shared/SupplementalInfo/JavaScript/YarnList/YarnList';
 import Loader from 'react-loader-spinner';
 
 type Props = {
@@ -46,7 +47,13 @@ class OssIndexSupplementalInfo extends React.Component<Props, State> {
         return (
           <NpmList />
         )
-      } else {
+      } 
+      else if (this.context.supplementalInfo && this.context.supplementalInfo.packageType === "yarn.lock") {
+        return (
+          <YarnList />
+        )
+      }
+      else {
         return (
           <h1>Nothing implemented for this Type</h1>
         )
