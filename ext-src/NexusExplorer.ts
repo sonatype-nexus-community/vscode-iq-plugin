@@ -61,6 +61,7 @@ export class NexusExplorerProvider
   }
 
   doRefresh(): void {
+    //default to sorting descending on refresh and open of the GUI
     let sortPolicyDescending: boolean = true;
     this.reloadComponentModel().then(() => {
       if (this.componentModel.components.length > 0) {
