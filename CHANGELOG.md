@@ -1,3 +1,10 @@
+# [0.7.0](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.6.6...v0.7.0) (2019-12-17)
+
+
+### Features
+
+* **sorting:** default sort policy descending ([#75](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/75)) ([9a6e209](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/9a6e209545d5113555d156fa6abb1c5e18dbe82b))
+
 ## [0.6.6](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.6.5...v0.6.6) (2019-12-13)
 
 ### Bug Fixes
