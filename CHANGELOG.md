@@ -1,3 +1,10 @@
+## [0.7.1](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.7.0...v0.7.1) (2019-12-17)
+
+
+### Bug Fixes
+
+* Fix market place link ([#76](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/76)) ([72ff663](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/72ff663f5caa0c115bf83fd2ed1f0c296945ad6b))
+
 # [0.7.0](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.6.6...v0.7.0) (2019-12-17)
 
 
