@@ -61,9 +61,10 @@ export class NexusExplorerProvider
   }
 
   doRefresh(): void {
+    let sortPolicyDescending: boolean = true;
     this.reloadComponentModel().then(() => {
       if (this.componentModel.components.length > 0) {
-        this.sortByPolicy(true);
+        this.sortByPolicy(sortPolicyDescending);
       }
     });
   }
@@ -75,7 +76,7 @@ export class NexusExplorerProvider
   sortByName(sortNameAscending: boolean): void {
     this.componentModel.components.sort((a, b) => {
       if (sortNameAscending) {
-        return b.name.toLowerCase() > a.name.toLowerCase() ? -1 : 1;
+        return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1;
       } else {
         return b.name.toLowerCase() > a.name.toLowerCase() ? 1 : -1;
       }
@@ -173,9 +174,10 @@ export class NexusExplorer {
     });
 
     vscode.commands.registerCommand("nexusExplorer.refresh", () => {
-      this.nexusExplorerProvider.doRefresh();
       this.sortPolicyDescending = true;
-      this.sortByPolicy();
+      this.sortNameAscending = true;
+      this.nexusExplorerProvider.doRefresh();
+      // this.sortByPolicy();
     });
 
     vscode.commands.registerCommand("nexusExplorer.sortByPolicy", () => {
