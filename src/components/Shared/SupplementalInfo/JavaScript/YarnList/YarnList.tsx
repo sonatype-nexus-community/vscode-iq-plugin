@@ -38,6 +38,7 @@ class YarnList extends React.Component<Props, State> {
   }
 
   public render() {
+    let component = this.getUpgradeMessage(this.context.supplementalInfo.depGraph, this.context.component.name);
     return (
       <React.Fragment>
         {this.context && this.context.supplementalInfo && (
@@ -51,25 +52,48 @@ class YarnList extends React.Component<Props, State> {
             })
           )
         }
+        { component }
       </React.Fragment>
     )
   }
 
-  // private getUpgradeMessage(name: string, otherName: string) {
-  //   if (name === otherName) {
-  //     return (
-  //       <p>
-  //         To update <span style={spanPreStyle}>{name}</span>, you can attempt to upgrade <span style={spanPreStyle}>{otherName}</span>, using the following command.
-  //       </p>
-  //     )
-  //   } else {
-  //     return (
-  //       <p>
-  //         To update <span style={spanPreStyle}>{otherName}</span>, you can attempt to upgrade using the following command.
-  //       </p>
-  //     )
-  //   }
-  // }
+  private getUpgradeMessage(stdout: string, name: string) {
+    let dependency: string = name;
+    if (stdout) {
+      stdout.split("\n").forEach((x) => {
+        if (x.includes("depends on it")) {
+          let newStr = x
+            .replace("\" depends on it", "")
+            .replace("- \"", "");
+
+          dependency = newStr;
+        }
+      });
+    }
+    if (dependency == name) {
+      return (
+        <React.Fragment>
+          <p>
+            To update <span style={spanPreStyle}>{name}</span>, you can attempt to upgrade <span style={spanPreStyle}>{dependency}</span>, using the following command.
+          </p>
+          <p>
+            <span style={spanPreStyle}>yarn upgrade {dependency} --latest</span>
+          </p>
+        </React.Fragment>
+      )
+    } else {
+      return (
+        <React.Fragment>
+          <p>
+            To update <span style={spanPreStyle}>{dependency}</span>, you can attempt to upgrade using the following command.
+          </p>
+          <p>
+            <span style={spanPreStyle}>yarn upgrade {dependency} --latest</span>
+          </p>
+        </React.Fragment>
+      )
+    }
+  }
 }
 
 export default YarnList;
