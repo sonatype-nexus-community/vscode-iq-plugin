@@ -16,6 +16,7 @@
 import * as React from 'react';
 import { OssIndexContext } from '../../../../../context/ossindex-context';
 import CSS from 'csstype';
+import _ from 'lodash';
 
 const spanPreStyle: CSS.Properties = {
   display: 'inline',
@@ -58,37 +59,53 @@ class YarnList extends React.Component<Props, State> {
   }
 
   private getUpgradeMessage(stdout: string, name: string) {
-    let dependency: string = name;
+    let dependencies: string[][] = new Array();
     if (stdout) {
       stdout.split("\n").forEach((x) => {
         if (x.includes("depends on it")) {
-          let newStr = x
+          let newStr: string[] = x
+            .trim()
             .replace("\" depends on it", "")
-            .replace("- \"", "");
+            .replace("- \"", "")
+            .replace("info This module exists because \"", "")
+            .split("#");
 
-          dependency = newStr;
+          dependencies.push(newStr);
         }
       });
+      dependencies = _.uniqBy(dependencies, (x) => {
+        return x;
+      });
     }
-    if (dependency == name) {
+    if (dependencies.length >= 1) {
       return (
-        <React.Fragment>
-          <p>
-            To update <span style={spanPreStyle}>{name}</span>, you can attempt to upgrade <span style={spanPreStyle}>{dependency}</span>, using the following command.
-          </p>
-          <p>
-            <span style={spanPreStyle}>yarn upgrade {dependency} --latest</span>
-          </p>
-        </React.Fragment>
+        dependencies.map((x) => {
+          let mainDependency = x[0].replace("@", "");
+          return (
+            <React.Fragment>
+              <p>
+              To update <span style={spanPreStyle}>{name}</span>, you can attempt to upgrade <span style={spanPreStyle}>{mainDependency}</span>, using the following command.
+              </p>
+              <p>
+                <span style={spanPreStyle}>yarn upgrade {mainDependency} --latest</span>
+              </p>
+              <span style={spanPreStyle}>
+                {x.map((y, i) => {
+                  return <React.Fragment>{"--".repeat(i) + y.replace("@", "")}<br/></React.Fragment>
+                })}
+              </span>
+            </React.Fragment>
+          )
+        })
       )
     } else {
       return (
         <React.Fragment>
           <p>
-            To update <span style={spanPreStyle}>{dependency}</span>, you can attempt to upgrade using the following command.
+            To update <span style={spanPreStyle}>{name}</span>, you can attempt to upgrade using the following command.
           </p>
           <p>
-            <span style={spanPreStyle}>yarn upgrade {dependency} --latest</span>
+            <span style={spanPreStyle}>yarn upgrade {name} --latest</span>
           </p>
         </React.Fragment>
       )
