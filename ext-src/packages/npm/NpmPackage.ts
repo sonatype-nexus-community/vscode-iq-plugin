@@ -13,18 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PackageType } from '../PackageType';
+import { PackageType } from "../PackageType";
 
 export class NpmPackage implements PackageType {
   Hash: string;
   Name: string;
   Version: string;
-    
-  constructor(name: string, version: string, hash: string
+  IsTransitive: boolean;
+  DependencyType: string;
+
+  constructor(
+    name: string,
+    version: string,
+    hash: string,
+    isTransitive?: boolean,
+    dependencyType?: string
   ) {
     this.Hash = hash;
     this.Name = name;
     this.Version = version;
+    this.DependencyType = dependencyType || "";
+    this.IsTransitive = isTransitive || true;
   }
 
   public toCoordinates() {
@@ -36,6 +45,10 @@ export class NpmPackage implements PackageType {
   }
 
   public toCoordValueType(): string {
+    return `${this.Name} - ${this.Version}`;
+  }
+
+  public toString(): string {
     return `${this.Name} - ${this.Version}`;
   }
 }

@@ -78,6 +78,14 @@
         }
       },
       {
+        "command": "nexusExplorer.filterDependencyType",
+        "title": "Filter by DependencyType",
+        "icon": {
+          "light": "resources/light/filter-solid.svg",
+          "dark": "resources/dark/filter-solid.svg"
+        }
+      },
+      {
         "command": "nexusExplorer.refreshNode",
         "title": "Nexus Refresh",
         "icon": {
@@ -108,6 +116,11 @@
         },
         {
           "command": "nexusExplorer.sortByPolicy",
+          "when": "view == nexusExplorer",
+          "group": "navigation"
+        },
+        {
+          "command": "nexusExplorer.filterDependencyType",
           "when": "view == nexusExplorer",
           "group": "navigation"
         }

@@ -23,4 +23,6 @@ export interface PackageType {
   toCoordinates(): string;
   toPurl(): string;
   toCoordValueType(coordinate: CoordinateType): string;
+  IsTransitive?: boolean;
+  DependencyType?: string;
 }
