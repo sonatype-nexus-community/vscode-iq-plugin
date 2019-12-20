@@ -37,6 +37,16 @@ export class ComponentEntry {
     return `${this.name} @ ${this.version}`;
   }
 
+  public toTooltip(): string {
+    return `Name: ${this.name}\nVersion: ${this.version}\nHash: ${
+      this.hash
+    }\nPolicy: ${this.maxPolicy()}\nType: ${
+      this.dependencyType === "dependency"
+        ? "Production dependency"
+        : "Dev dependency"
+    }\nDeclared: ${this.isTransitive ? "Transitive" : "Yes"}`;
+  }
+
   public maxPolicy(): number {
     let maxThreatLevel = 0;
     if (this.scanType == ScanType.NexusIq) {

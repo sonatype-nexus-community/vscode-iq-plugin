@@ -27,7 +27,7 @@ import { ComponentEntry } from "./models/ComponentEntry";
 export class NexusExplorerProvider
   implements vscode.TreeDataProvider<ComponentEntry> {
   private editor?: vscode.TextEditor;
-  private myClonedArray: ComponentEntry[] = new Array();
+  private clonedComponentModel: ComponentEntry[] = new Array();
   private _onDidChangeTreeData: vscode.EventEmitter<
     any
   > = new vscode.EventEmitter<any>();
@@ -65,8 +65,8 @@ export class NexusExplorerProvider
     let sortPolicyDescending: boolean = true;
     this.reloadComponentModel().then(() => {
       if (this.componentModel.components.length > 0) {
+        this.clonedComponentModel = [...this.componentModel.components];
         this.sortByPolicy(sortPolicyDescending);
-        this.myClonedArray = [...this.componentModel.components];
       }
     });
   }
@@ -97,14 +97,34 @@ export class NexusExplorerProvider
     this.doSoftRefresh();
   }
 
-  filterDependencyType(showAll: boolean): void {
+  filterShowAll(): void {
+    console.log("FilterDependencyType");
+    this.componentModel.components = [...this.clonedComponentModel];
+    this.doSoftRefresh();
+  }
+
+  filterDependencyType(showAllDependencyType: boolean): void {
     console.log("FilterDependencyType");
 
-    if (showAll) {
-      this.componentModel.components = [...this.myClonedArray];
+    if (showAllDependencyType) {
+      this.componentModel.components = [...this.clonedComponentModel];
     } else {
-      let filteredArray = this.myClonedArray.filter(
+      let filteredArray = this.clonedComponentModel.filter(
         ce => ce.dependencyType === "dependency"
+      );
+      this.componentModel.components = [...filteredArray];
+    }
+    this.doSoftRefresh();
+  }
+
+  filterIsDeclared(showAllIsTransitive: boolean): void {
+    console.log("filterIsDeclared");
+
+    if (showAllIsTransitive) {
+      this.componentModel.components = [...this.clonedComponentModel];
+    } else {
+      let filteredArray = this.clonedComponentModel.filter(
+        ce => !ce.isTransitive
       );
       this.componentModel.components = [...filteredArray];
     }
@@ -134,13 +154,13 @@ export class NexusExplorerProvider
       entry.toString(),
       vscode.TreeItemCollapsibleState.None
     );
-    if (entry.dependencyType === "devDependency") {
-      treeItem.label!.italics();
-      treeItem.label!.fontcolor("grey");
-    } else {
-      treeItem.label!.blink();
-      treeItem.label!.fontcolor("black");
-    }
+    // if (entry.dependencyType === "devDependency") {
+    //   treeItem.label!.italics();
+    //   treeItem.label!.fontcolor("grey");
+    // } else {
+    //   treeItem.label!.blink();
+    //   treeItem.label!.fontcolor("black");
+    // }
     treeItem.iconPath = this.context.asAbsolutePath(
       path.join("resources", entry.iconName())
     );
@@ -150,13 +170,7 @@ export class NexusExplorerProvider
       arguments: [entry]
     };
     let maxThreat = entry.maxPolicy();
-    treeItem.tooltip = `Name: ${entry.name}\nVersion: ${entry.version}\nHash: ${
-      entry.hash
-    }\nPolicy: ${maxThreat}\nType: ${
-      entry.dependencyType === "dependency"
-        ? "Deployed dependency"
-        : "Dev dependency"
-    }\nIsTransitive: ${entry.isTransitive ? "Yes" : "No"}`;
+    treeItem.tooltip = entry.toTooltip();
 
     return treeItem;
   }
@@ -178,10 +192,12 @@ export class NexusExplorerProvider
 export class NexusExplorer {
   private sortPolicyDescending: boolean = true;
   private sortNameAscending: boolean = true;
-  private showAll: boolean = false;
+  private showAllDependencyType: boolean = false;
+  private showAllIsTransitive: boolean = false;
   private nexusViewer: vscode.TreeView<ComponentEntry>;
   private componentModel: ComponentModel;
   private nexusExplorerProvider: NexusExplorerProvider;
+  private activeSort: number = 0;
 
   constructor(readonly context: vscode.ExtensionContext) {
     let configuration = vscode.workspace.getConfiguration();
@@ -205,9 +221,10 @@ export class NexusExplorer {
     vscode.commands.registerCommand("nexusExplorer.refresh", () => {
       this.sortPolicyDescending = true;
       this.sortNameAscending = true;
-      this.showAll = false;
+      this.activeSort = 0;
+      this.showAllDependencyType = false;
+      this.showAllIsTransitive = false;
       this.nexusExplorerProvider.doRefresh();
-      // this.sortByPolicy();
     });
 
     vscode.commands.registerCommand("nexusExplorer.sortByPolicy", () => {
@@ -219,11 +236,29 @@ export class NexusExplorer {
     });
 
     vscode.commands.registerCommand(
+      "nexusExplorer.sortByNameDescending",
+      () => {
+        this.sortNameAscending = false;
+        this.sortByName();
+      }
+    );
+
+    vscode.commands.registerCommand("nexusExplorer.filterShowAll", () => {
+      this.filterShowAll();
+      this.showAllDependencyType = false;
+      this.showAllIsTransitive = false;
+    });
+
+    vscode.commands.registerCommand(
       "nexusExplorer.filterDependencyType",
       () => {
         this.filterDependencyType();
       }
     );
+
+    vscode.commands.registerCommand("nexusExplorer.filterIsDeclared", () => {
+      this.filterIsDeclared();
+    });
 
     vscode.commands.registerCommand("nexusExplorer.revealResource", () => {
       this.reveal();
@@ -232,6 +267,21 @@ export class NexusExplorer {
       "nexusExplorer.viewNode",
       (node: ComponentEntry) => this.viewNode(node)
     );
+  }
+  public NameSortState() {
+    return this.sortNameAscending;
+  }
+
+  public PolicySortState() {
+    return this.sortPolicyDescending;
+  }
+
+  public FilterDependencyTypeState() {
+    return this.showAllDependencyType;
+  }
+
+  public filterIsDeclaredState() {
+    return this.showAllIsTransitive;
   }
 
   private sortByName() {
@@ -246,10 +296,22 @@ export class NexusExplorer {
     this.sortNameAscending = true;
   }
 
+  private filterShowAll() {
+    console.log("filterShowAll");
+    this.nexusExplorerProvider.filterShowAll();
+    this.sortByPolicy();
+  }
+
   private filterDependencyType() {
     console.log("filterDependencyType");
-    this.nexusExplorerProvider.filterDependencyType(this.showAll);
-    this.showAll = !this.showAll;
+    this.nexusExplorerProvider.filterDependencyType(this.showAllDependencyType);
+    this.showAllDependencyType = !this.showAllDependencyType;
+  }
+
+  private filterIsDeclared() {
+    console.log("filterIsDeclared");
+    this.nexusExplorerProvider.filterIsDeclared(this.showAllIsTransitive);
+    this.showAllIsTransitive = !this.showAllIsTransitive;
   }
 
   private reveal(): Thenable<void> | undefined {

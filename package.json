@@ -78,8 +78,27 @@
         }
       },
       {
+        "command": "nexusExplorer.filterShowAll",
+        "title": "Clear Filter",
+        "category": "Filter",
+        "icon": {
+          "light": "resources/light/filter-solid.svg",
+          "dark": "resources/dark/filter-solid.svg"
+        }
+      },
+      {
         "command": "nexusExplorer.filterDependencyType",
-        "title": "Filter by DependencyType",
+        "title": "Filter for Production Dependencies",
+        "category": "Filter",
+        "icon": {
+          "light": "resources/light/filter-solid.svg",
+          "dark": "resources/dark/filter-solid.svg"
+        }
+      },
+      {
+        "command": "nexusExplorer.filterIsDeclared",
+        "title": "Filter for Declared Dependency",
+        "category": "Filter",
         "icon": {
           "light": "resources/light/filter-solid.svg",
           "dark": "resources/dark/filter-solid.svg"
@@ -120,9 +139,19 @@
           "group": "navigation"
         },
         {
+          "command": "nexusExplorer.filterShowAll",
+          "when": "view == nexusExplorer",
+          "group": "filter"
+        },
+        {
           "command": "nexusExplorer.filterDependencyType",
           "when": "view == nexusExplorer",
-          "group": "navigation"
+          "group": "filter"
+        },
+        {
+          "command": "nexusExplorer.filterIsDeclared",
+          "when": "view == nexusExplorer",
+          "group": "filter"
         }
       ]
     },

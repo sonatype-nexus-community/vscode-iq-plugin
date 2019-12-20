@@ -264,7 +264,6 @@ export class NpmUtils {
         ) {
           const elementflatDependencies =
             flatDependencies[indexflatDependencies];
-          elementflatDependencies.IsTransitive = true;
 
           if (elementflatDependencies.Name === elementTopLevel.Name) {
             //update the is transitive to false as this is a top level dependency
@@ -295,7 +294,6 @@ export class NpmUtils {
         ) {
           const elementflatDependencies =
             flatDependencies[indexflatDependencies];
-          elementflatDependencies.IsTransitive = true;
           if (elementflatDependencies.Name === element.Name) {
             elementflatDependencies.DependencyType = "devDependency";
             elementflatDependencies.IsTransitive = false;
