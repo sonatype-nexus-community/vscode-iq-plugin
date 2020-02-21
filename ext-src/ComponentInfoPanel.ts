@@ -262,10 +262,10 @@ export class ComponentInfoPanel {
       var iqComponentModel = this.componentModel as IqComponentModel
       let allversions = await iqComponentModel.requestService.getAllVersions(this.component!.nexusIQData.component, ComponentInfoPanel.iqApplicationPublicId);
       
-      console.debug("posting message: allversions", allversions.allVersions);
+      console.debug("posting message: allversions", allversions);
       this._panel.webview.postMessage({
         command: "allversions",
-        allversions: allversions.allVersions
+        allversions: (allversions.allVersions) ? allversions.allVersions : allversions
       });
     }
   }
