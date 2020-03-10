@@ -1,3 +1,13 @@
+## [0.7.2](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.7.1...v0.7.2) (2020-02-21)
+
+
+### Bug Fixes
+
+* make it work for both, why not ([9f14d50](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/9f14d50b764abb66fb3664e43312086b52ed7756))
+* Update CircleCI to newer node ([12a25db](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/12a25db19e419abea588030f66e5e13425cadd6b))
+* version history fixed for newer IQ clients ([62f9348](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/62f93489c005c9e8d31b4a1c024510cda5c38767))
+
+
 ## [0.7.1](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.7.0...v0.7.1) (2019-12-17)
 
 
