@@ -39,7 +39,7 @@ export class PackageDependenciesHelper {
     if (workspaceRoot === undefined) {
       throw new TypeError("No workspaces opened");
     }
-    return workspaceRoot[0].uri.path;
+    return workspaceRoot[0].uri.fsPath;
   }
 
   public static getExtensionPath(): string {
