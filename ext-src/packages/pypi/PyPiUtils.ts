@@ -17,14 +17,14 @@
 import { exec } from "../../utils/exec";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { PyPIPackage } from './PyPIPackage';
-import * as os from 'os';
+import { type } from 'os';
 
 export class PyPiUtils {
   public async getDependencyArray(): Promise<Array<PyPIPackage>> {
     const WINDOWS = "Windows_NT"
     try {
       let command: string = "cat requirements.txt"
-      if (os.type() === WINDOWS) {
+      if (type() === WINDOWS) {
         command = "type requirements.txt"
       }
       let {stdout, stderr } = await exec(command, {
