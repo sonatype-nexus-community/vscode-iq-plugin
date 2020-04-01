@@ -1,3 +1,10 @@
+## [0.7.4](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.7.3...v0.7.4) (2020-04-01)
+
+
+### Bug Fixes
+
+* Make Python work for Windows ([#88](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/88)) ([5a0fe66](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/5a0fe668edcb13d2feea2fd7d772b757450e1664))
+
 ## [0.7.3](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.7.2...v0.7.3) (2020-03-10)
 
 
