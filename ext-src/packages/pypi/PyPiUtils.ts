@@ -17,11 +17,17 @@
 import { exec } from "../../utils/exec";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { PyPIPackage } from './PyPIPackage';
+import * as os from 'os';
 
 export class PyPiUtils {
   public async getDependencyArray(): Promise<Array<PyPIPackage>> {
+    const WINDOWS = "Windows_NT"
     try {
-      let {stdout, stderr } = await exec(`cat requirements.txt`, {
+      let command: string = "cat requirements.txt"
+      if (os.type() === WINDOWS) {
+        command = "type requirements.txt"
+      }
+      let {stdout, stderr } = await exec(command, {
         cwd: PackageDependenciesHelper.getWorkspaceRoot(),
         env: {
           PATH: process.env.PATH
