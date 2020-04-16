@@ -15,7 +15,7 @@
  */
 
 export class DependencyType {
-  dependencyType: string = "";
+  // dependencyType: string = "";
 
   constructor(readonly dependencyType: string) {}
 
