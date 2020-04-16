@@ -3,7 +3,7 @@ jobs:
   build: 
     working_directory: ~/vscode-iq-plugin 
     docker: 
-      - image: circleci/node:10.16.3 
+      - image: circleci/node:10.19.0
     steps: 
       - checkout
       - run:
@@ -24,7 +24,7 @@ jobs:
   release:
     working_directory: ~/vscode-iq-plugin 
     docker: 
-      - image: circleci/node:10.16.3 
+      - image: circleci/node:10.19.0
     steps:
       - checkout
       - run: 
@@ -38,7 +38,7 @@ jobs:
           command: npm run build
       - run: 
           name: Install publishing packages 
-          command: npm install -g vsce semantic-release @semantic-release/changelog @semantic-release/git@7.0.17 @semantic-release/npm
+          command: npm install -g vsce semantic-release @semantic-release/changelog @semantic-release/git@7.1.0-beta.11 @semantic-release/npm
       - run: 
           name: Attempt publish to GitHub
           command: npx semantic-release -b master

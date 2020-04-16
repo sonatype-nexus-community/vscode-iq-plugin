@@ -265,7 +265,7 @@ export class ComponentInfoPanel {
       console.debug("posting message: allversions", allversions);
       this._panel.webview.postMessage({
         command: "allversions",
-        allversions: allversions
+        allversions: (allversions.allVersions) ? allversions.allVersions : allversions
       });
     }
   }
