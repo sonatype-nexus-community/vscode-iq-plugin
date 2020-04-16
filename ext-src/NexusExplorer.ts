@@ -193,7 +193,7 @@ export class NexusExplorer {
   private sortPolicyDescending: boolean = true;
   private sortNameAscending: boolean = true;
   private showAllDependencyType: boolean = false;
-  private showAllIsTransitive: boolean = false;
+  private showAllIsDeclared: boolean = false;
   private nexusViewer: vscode.TreeView<ComponentEntry>;
   private componentModel: ComponentModel;
   private nexusExplorerProvider: NexusExplorerProvider;
@@ -223,7 +223,7 @@ export class NexusExplorer {
       this.sortNameAscending = true;
       this.activeSort = 0;
       this.showAllDependencyType = false;
-      this.showAllIsTransitive = false;
+      this.showAllIsDeclared = false;
       this.nexusExplorerProvider.doRefresh();
     });
 
@@ -246,7 +246,7 @@ export class NexusExplorer {
     vscode.commands.registerCommand("nexusExplorer.filterShowAll", () => {
       this.filterShowAll();
       this.showAllDependencyType = false;
-      this.showAllIsTransitive = false;
+      this.showAllIsDeclared = false;
     });
 
     vscode.commands.registerCommand(
@@ -281,7 +281,7 @@ export class NexusExplorer {
   }
 
   public filterIsDeclaredState() {
-    return this.showAllIsTransitive;
+    return this.showAllIsDeclared;
   }
 
   private sortByName() {
@@ -299,19 +299,30 @@ export class NexusExplorer {
   private filterShowAll() {
     console.log("filterShowAll");
     this.nexusExplorerProvider.filterShowAll();
+    this.sortPolicyDescending = true;
+    this.sortNameAscending = true;
     this.sortByPolicy();
   }
 
   private filterDependencyType() {
     console.log("filterDependencyType");
     this.nexusExplorerProvider.filterDependencyType(this.showAllDependencyType);
+    this.showAllIsDeclared = false;
     this.showAllDependencyType = !this.showAllDependencyType;
+    this.sortPolicyDescending = true;
+    this.sortNameAscending = true;
+    this.sortByPolicy();
   }
 
   private filterIsDeclared() {
     console.log("filterIsDeclared");
-    this.nexusExplorerProvider.filterIsDeclared(this.showAllIsTransitive);
-    this.showAllIsTransitive = !this.showAllIsTransitive;
+    this.nexusExplorerProvider.filterIsDeclared(this.showAllIsDeclared);
+    this.showAllIsDeclared = !this.showAllIsDeclared;
+    this.showAllDependencyType = false;
+    this.sortNameAscending = true;
+    this.sortPolicyDescending = true;
+
+    this.sortByPolicy();
   }
 
   private reveal(): Thenable<void> | undefined {

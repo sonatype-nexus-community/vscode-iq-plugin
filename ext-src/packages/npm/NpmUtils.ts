@@ -144,8 +144,16 @@ export class NpmUtils {
     let newSplit = newName.split("@");
     const name = newSplit[0];
     const version = newSplit[1];
+    let isTransitive = false;
+    let dependencyType = "productionDependency";
     if (name != "" && version != undefined) {
-      return new NpmPackage(name.replace("%40", "@"), version, "");
+      return new NpmPackage(
+        name.replace("%40", "@"),
+        version,
+        "",
+        isTransitive,
+        dependencyType
+      );
     } else {
       throw new Error(`No valid information, skipping dependency: ${newName}`);
     }
@@ -245,9 +253,6 @@ export class NpmUtils {
       return x.Name;
     });
 
-    //I have the array here of all dependencies
-    //I have an array of dependencies
-    //I have an array of devdependencies
     let dependenciesTopLevel: Array<NpmPackage> = this.extractPackageJsonInfo(
       npmPackageContents.dependencies
     );
