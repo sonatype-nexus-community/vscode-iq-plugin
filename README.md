@@ -60,7 +60,7 @@ We try and use other tooling whenever possible, to avoid reinventing the wheel (
 ##### go mod
 
 - Golang support depends on an installation of Golang
-- We run `go mod list -m all` to get your dependency list
+- We run `go list -m all` to get your dependency list
 - This includes test dependencies, so it might be noisy
 - It would seem due to this running in VS Code, it runs in a slightly different shell/user, and thus it downloads your dependencies. We set this to `/tmp/gocache` in code, which may not work on Windows (PRs welcome!), so it might be slowish on it's first run
 
