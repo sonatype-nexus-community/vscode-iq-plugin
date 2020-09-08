@@ -154,13 +154,14 @@ export class NexusExplorerProvider
       entry.toString(),
       vscode.TreeItemCollapsibleState.None
     );
-    // if (entry.dependencyType === "devDependency") {
-    //   treeItem.label!.italics();
-    //   treeItem.label!.fontcolor("grey");
-    // } else {
-    //   treeItem.label!.blink();
-    //   treeItem.label!.fontcolor("black");
-    // }
+    if (entry.isTransitive) {
+      treeItem.label!.italics();
+      treeItem.label!.fontcolor("grey");
+    } else {
+      treeItem.label!.blink();
+      treeItem.label!.bold;
+      treeItem.label!.fontcolor("black");
+    }
     treeItem.iconPath = this.context.asAbsolutePath(
       path.join("resources", entry.iconName())
     );
