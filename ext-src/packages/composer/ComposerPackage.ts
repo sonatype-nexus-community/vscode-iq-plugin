@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2019-present Sonatype, Inc.
  *
@@ -13,19 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export class PHPCoordinate implements CoordinateType {
-  Name: string;
-  Version: string;
+import { PackageType } from "../PackageType";
 
+export class ComposerPackage implements PackageType {
   constructor(
-    name: string,
-    version: string, 
-  ) {
-    this.Name = name;
-    this.Version = version; 
+    readonly Name: string,
+    readonly Version: string,
+    readonly Hash?: string
+  ) {}
+
+  public toCoordinates() {
+    return `${this.Name}:${this.Version}`;
   }
 
-  public asCoordinates(): string {
+  public toPurl() {
+    return `pkg:composer/${this.Name}@${this.Version}`;
+  }
+
+  public toCoordValueType(): string {
     return `${this.Name} - ${this.Version}`;
   }
 }

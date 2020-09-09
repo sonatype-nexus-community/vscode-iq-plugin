@@ -15,19 +15,19 @@
  */
 import * as _ from "lodash";
 
-import { PHPPackage } from "./PHPPackage";
+import { ComposerPackage } from "./ComposerPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../models/ComponentEntry";
-import { PHPCoordinate } from "./PHPCoordinate";
+import { ComposerCoordinate } from "./ComposerCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { RequestService } from "../../services/RequestService";
-import { PHPUtils } from "./PHPUtils";
+import { ComposerUtils } from "./ComposerUtils";
 import { ScanType } from "../../types/ScanType";
 
-export class PHPDependencies
+export class ComposerDependencies
   extends PackageDependenciesHelper
   implements PackageDependencies {
-  Dependencies: Array<PHPPackage> = [];
+  Dependencies: Array<ComposerPackage> = [];
   CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
     string,
     ComponentEntry
@@ -53,7 +53,7 @@ export class PHPDependencies
   }
 
   public ConvertToComponentEntry(resultEntry: any): string {
-    let coordinates = new PHPCoordinate(
+    let coordinates = new ComposerCoordinate(
       resultEntry.component.componentIdentifier.coordinates.name,
       resultEntry.component.componentIdentifier.coordinates.version
     );
@@ -84,7 +84,7 @@ export class PHPDependencies
         ScanType.NexusIq
       );
       components.push(componentEntry);
-      let coordinates = new PHPCoordinate(parts[0], version);
+      let coordinates = new ComposerCoordinate(parts[0], version);
       this.CoordinatesToComponents.set(
         coordinates.asCoordinates(),
         componentEntry
@@ -95,8 +95,8 @@ export class PHPDependencies
 
   public async packageForIq(): Promise<any> {
     try {
-      let phpUtils = new PHPUtils();
-      this.Dependencies = await phpUtils.getDependencyArray();
+      let composerUtils = new ComposerUtils();
+      this.Dependencies = await composerUtils.getDependencyArray();
       Promise.resolve();
     } catch (e) {
       Promise.reject();

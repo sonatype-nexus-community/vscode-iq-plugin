@@ -16,10 +16,10 @@
 
 import { exec } from "../../utils/exec";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { PHPPackage } from './PHPPackage';
+import { ComposerPackage } from './ComposerPackage';
 
-export class PHPUtils {
-  public async getDependencyArray(): Promise<Array<PHPPackage>> {
+export class ComposerUtils {
+  public async getDependencyArray(): Promise<Array<ComposerPackage>> {
     try {
       let {stdout, stderr } = await exec(`cat ` + PackageDependenciesHelper.getExtensionPath() + `composer.lock`
         , {
@@ -30,28 +30,28 @@ export class PHPUtils {
       });
 
       if (stdout != "" && stderr === "") {
-        return Promise.resolve(this.parsePHPInstall(stdout));
+        return Promise.resolve(this.parseComposerInstall(stdout));
       } else {
         return Promise.reject(
           new Error(
-            "Error occurred in generating dependency list. Check that you have php installed/"
+            "Error occurred in generating dependency list. Check that you have Composer installed/"
           )
         );
       }
     } catch (e) {
       return Promise.reject(
-        `PHP script failed, try running it manually to see what went wrong: ${e.error}`
+        `Composer.lock read script failed, try running it manually to see what went wrong: ${e.error}`
       );
     }
   }
 
-  private parsePHPInstall(dependencyTree: string): Array<PHPPackage> {
+  private parseComposerInstall(dependencyTree: string): Array<ComposerPackage> {
     const dependencies: string = dependencyTree;
     console.debug(dependencies);
     console.debug(
       "------------------------------------------------------------------------------"
     );
-    let dependencyList: PHPPackage[] = [];
+    let dependencyList: ComposerPackage[] = [];
 
     const dependencyLines = dependencies.split("\n");
     dependencyLines.forEach((dep) => {  
@@ -65,7 +65,7 @@ export class PHPUtils {
           const name: string = dependencyParts[0];
           const version: string = dependencyParts[2];
           if (name && version) {
-            const dependencyObject: PHPPackage = new PHPPackage(
+            const dependencyObject: ComposerPackage = new ComposerPackage(
               name,
               version
             );

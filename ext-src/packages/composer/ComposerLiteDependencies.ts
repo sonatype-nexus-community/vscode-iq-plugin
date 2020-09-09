@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 import { LitePackageDependencies } from "../LitePackageDependencies";
-import { PHPPackage } from "./PHPPackage";
-import { PHPUtils } from './PHPUtils';
+import { ComposerPackage } from "./ComposerPackage";
+import { ComposerUtils } from './ComposerUtils';
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 
-export class PHPLiteDependencies implements LitePackageDependencies {
-  dependencies: Array<PHPPackage> = [];
-  format: string = "php";
+export class ComposerLiteDependencies implements LitePackageDependencies {
+  dependencies: Array<ComposerPackage> = [];
+  format: string = "composer";
   manifestName: string = "composer.lock";
 
   public checkIfValid(): boolean {
@@ -29,8 +29,8 @@ export class PHPLiteDependencies implements LitePackageDependencies {
 
   public async packageForService(): Promise<any> {
     try {
-      let phpUtils = new PHPUtils();
-      this.dependencies = await phpUtils.getDependencyArray();
+      let composerUtils = new ComposerUtils();
+      this.dependencies = await composerUtils.getDependencyArray();
 
       Promise.resolve();
     }
