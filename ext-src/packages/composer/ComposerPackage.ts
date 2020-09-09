@@ -19,8 +19,7 @@ import { PackageType } from "../PackageType";
 export class ComposerPackage implements PackageType {
   constructor(
     readonly Name: string,
-    readonly Version: string,
-    readonly Hash?: string
+    readonly Version: string
   ) {}
 
   public toCoordinates() {

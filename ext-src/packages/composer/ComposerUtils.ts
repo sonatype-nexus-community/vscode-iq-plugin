@@ -18,15 +18,14 @@ import { exec } from "../../utils/exec";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { ComposerPackage } from './ComposerPackage';
 
+const COMPOSER_SHOW_COMMAND = "composer show";
+
 export class ComposerUtils {
   public async getDependencyArray(): Promise<Array<ComposerPackage>> {
+    console.debug(`running '${COMPOSER_SHOW_COMMAND}'`);
     try {
-      let {stdout, stderr } = await exec(`cat ` + PackageDependenciesHelper.getExtensionPath() + `composer.lock`
-        , {
-        cwd: PackageDependenciesHelper.getWorkspaceRoot(),
-        env: {
-          PATH: process.env.PATH
-        }
+      let { stdout, stderr } = await exec(COMPOSER_SHOW_COMMAND, {
+        cwd: PackageDependenciesHelper.getWorkspaceRoot()
       });
 
       if (stdout != "" && stderr === "") {
@@ -34,13 +33,13 @@ export class ComposerUtils {
       } else {
         return Promise.reject(
           new Error(
-            "Error occurred in generating dependency list. Check that you have Composer installed/"
+            "Error occurred in generating dependency list. Check that you have Composer installed"
           )
         );
       }
     } catch (e) {
       return Promise.reject(
-        `Composer.lock read script failed, try running it manually to see what went wrong: ${e.error}`
+        `"composer show" failed, try running it manually to see what went wrong: ${e.error}`
       );
     }
   }
@@ -54,29 +53,23 @@ export class ComposerUtils {
     let dependencyList: ComposerPackage[] = [];
 
     const dependencyLines = dependencies.split("\n");
-    dependencyLines.forEach((dep) => {  
-      console.debug(dep);
+    dependencyLines.forEach((dep) => {
       if (dep.trim()) {
-        //ignore comments
-        if (dep.includes("Package Version")) {
-          console.debug("Found headers, skipping");
+        let dependencyParts: string[] = dep.replace(/\s{2,}/g,' ').trim().split(" ");
+        const name: string = dependencyParts[0];
+        const version: string = dependencyParts[1];
+        if (name && version) {
+          const dependencyObject: ComposerPackage = new ComposerPackage(
+            name,
+            version
+          );
+          dependencyList.push(dependencyObject);
         } else {
-          let dependencyParts: string[] = dep.replace(/\s{2,}/g,' ').trim().split(" ");
-          const name: string = dependencyParts[0];
-          const version: string = dependencyParts[2];
-          if (name && version) {
-            const dependencyObject: ComposerPackage = new ComposerPackage(
-              name,
-              version
-            );
-            dependencyList.push(dependencyObject);
-          } else {
-            console.warn(
-              "Skipping dependency: " +
-                dep +
-                " due to missing data (name, version)"
-            );
-          }
+          console.warn(
+            "Skipping dependency: " +
+              dep +
+              " due to missing data (name, version)"
+          );
         }
       }
     });

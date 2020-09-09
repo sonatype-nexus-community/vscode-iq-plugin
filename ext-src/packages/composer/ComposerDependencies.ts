@@ -43,10 +43,10 @@ export class ComposerDependencies
     if (
       PackageDependenciesHelper.doesPathExist(
         PackageDependenciesHelper.getWorkspaceRoot(),
-        "composer.lock"
+        "composer.json"
       )
     ) {
-      console.debug("Valid for PHP");
+      console.debug("Valid for PHP Composer");
       return true;
     }
     return false;
