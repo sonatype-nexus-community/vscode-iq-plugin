@@ -48,6 +48,11 @@ We try and use other tooling whenever possible, to avoid reinventing the wheel (
 - If we are unable to parse your dependencies, it's likely one of those commands is throwing an error, and you should make sure it isn't.
 - Projects that use both `npm` and `yarn` can be confusing to a program, as we have to pick one to work with. If you experience issues, bear this in mind, it's likely that you have both a `package-lock.json` and a `yarn.lock`, and our lil extension is going "OH NOES!" because one is out of date, etc...
 
+#### PHP Composer
+
+- PHP Composer support depends on the installation of PHP and Composer
+- We run `composer show` to get your dependency list
+
 #### RubyGems
 
 - Ruby Gems support depends on the installation of ruby, and bundler
