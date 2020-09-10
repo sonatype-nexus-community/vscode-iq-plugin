@@ -6,7 +6,7 @@ Scan your libraries against either the free [OSS Index](https://ossindex.sonatyp
 
 ## Features
 
-- Scan npm, Maven, RubyGems, Go (`dep` and `go mod`), R (see known quirks) or PyPi projects (Go is only supported on Linux or OS/X)
+- Scan npm, Maven, RubyGems, Go (`dep` and `go mod`), PHP Composer, R (see known quirks) or PyPi projects (Go is only supported on Linux or OS/X)
 - See all components with vulnerable components highlighted
 
 ### Sonatype Nexus IQ Scan
