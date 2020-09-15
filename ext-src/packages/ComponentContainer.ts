@@ -18,6 +18,9 @@ import { MavenDependencies } from "./maven/MavenDependencies";
 import { NpmDependencies } from "./npm/NpmDependencies";
 import { GolangDependencies } from "./golang/GolangDependencies";
 import { PyPIDependencies } from "./pypi/PyPIDependencies";
+import { ComposerDependencies } from "./composer/ComposerDependencies";
+
+
 import { RequestService } from "../services/RequestService";
 
 export class ComponentContainer {
@@ -30,6 +33,7 @@ export class ComponentContainer {
     this.Implementation.push(new NpmDependencies(this.requestService));
     this.Implementation.push(new GolangDependencies(this.requestService));
     this.Implementation.push(new PyPIDependencies(this.requestService));
+    this.Implementation.push(new ComposerDependencies(this.requestService));
 
     // Bit of an odd side effect, if a project has multiple dependency types, the PackageMuncher will get set to the last one it encounters currently
     this.Implementation.forEach(i => {

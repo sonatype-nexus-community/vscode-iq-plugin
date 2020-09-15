@@ -6,7 +6,7 @@ Scan your libraries against either the free [OSS Index](https://ossindex.sonatyp
 
 ## Features
 
-- Scan npm, Maven, RubyGems, Go (`dep` and `go mod`), R (see known quirks) or PyPi projects (Go is only supported on Linux or OS/X)
+- Scan npm, Maven, RubyGems, Go (`dep` and `go mod`), PHP Composer, R (see known quirks) or PyPi projects (Go is only supported on Linux or OS/X)
 - See all components with vulnerable components highlighted
 
 ### Sonatype Nexus IQ Scan
@@ -47,6 +47,11 @@ We try and use other tooling whenever possible, to avoid reinventing the wheel (
 - We run either npm shrinkwrap, npm list, or yarn list depending on what tool chain you are using.
 - If we are unable to parse your dependencies, it's likely one of those commands is throwing an error, and you should make sure it isn't.
 - Projects that use both `npm` and `yarn` can be confusing to a program, as we have to pick one to work with. If you experience issues, bear this in mind, it's likely that you have both a `package-lock.json` and a `yarn.lock`, and our lil extension is going "OH NOES!" because one is out of date, etc...
+
+#### PHP Composer
+
+- PHP Composer support depends on the installation of PHP and Composer
+- We run `composer show` to get your dependency list
 
 #### RubyGems
 

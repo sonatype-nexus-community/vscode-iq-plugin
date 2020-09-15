@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2019-present Sonatype, Inc.
  *
@@ -13,16 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { PackageType } from "../PackageType";
 
-export interface PackageType {
-  Name: string;
-  Version: string;
-  Group?: string;
-  Hash?: string;
-  Extension?: string;
-  toCoordinates(): string;
-  toPurl(): string;
-  toCoordValueType(coordinate: CoordinateType): string;
-  IsTransitive?: boolean;
-  DependencyType?: string;
+export class ComposerPackage implements PackageType {
+  constructor(
+    readonly Name: string,
+    readonly Version: string
+  ) {}
+
+  public toCoordinates() {
+    return `${this.Name}:${this.Version}`;
+  }
+
+  public toPurl() {
+    return `pkg:composer/${this.Name}@${this.Version}`;
+  }
+
+  public toCoordValueType(): string {
+    return `${this.Name} - ${this.Version}`;
+  }
 }

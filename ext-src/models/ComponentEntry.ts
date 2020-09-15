@@ -24,12 +24,27 @@ export class ComponentEntry {
   hash: string = "";
   nexusIQData: any = undefined;
   ossIndexData: any = undefined;
+  dependencyType: string = "";
+  isTransitive: boolean = true;
 
-  constructor(readonly name: string, readonly version: string, readonly scanType: ScanType) {
-  }
+  constructor(
+    readonly name: string,
+    readonly version: string,
+    readonly scanType: ScanType
+  ) {}
 
   public toString(): string {
     return `${this.name} @ ${this.version}`;
+  }
+
+  public toTooltip(): string {
+    return `Name: ${this.name}\nVersion: ${this.version}\nHash: ${
+      this.hash
+    }\nPolicy: ${this.maxPolicy()}\nType: ${
+      this.dependencyType === "dependency"
+        ? "Production dependency"
+        : "Dev dependency"
+    }\nDeclared: ${this.isTransitive ? "Transitive" : "Yes"}`;
   }
 
   public maxPolicy(): number {
@@ -62,8 +77,11 @@ export class ComponentEntry {
     return maxThreatLevel;
   }
   public iconName(): string {
-    if ((this.scanType == ScanType.NexusIq && (!this.policyViolations || !this.nexusIQData)) ||
-      (this.scanType == ScanType.OssIndex && !this.ossIndexData )) {
+    if (
+      (this.scanType == ScanType.NexusIq &&
+        (!this.policyViolations || !this.nexusIQData)) ||
+      (this.scanType == ScanType.OssIndex && !this.ossIndexData)
+    ) {
       return "loading.gif";
     }
     let maxThreatLevel = this.maxPolicy();

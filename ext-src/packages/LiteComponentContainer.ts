@@ -21,6 +21,7 @@ import { GolangLiteDependencies } from "./golang/GolangLiteDependencies";
 import { MavenLiteDependencies } from "./maven/MavenLiteDependencies";
 import { RubyGemLiteDependencies } from "./rubygems/RubyGemsLiteDependencies";
 import { RLiteDependencies } from "./r/RLiteDependencies";
+import { ComposerLiteDependencies } from "./composer/ComposerLiteDependencies";
 
 export class LiteComponentContainer {
   Implementation: Array<LitePackageDependencies> = [];
@@ -34,6 +35,8 @@ export class LiteComponentContainer {
     this.Implementation.push(new GolangLiteDependencies());
     this.Implementation.push(new MavenLiteDependencies());
     this.Implementation.push(new RLiteDependencies());
+    this.Implementation.push(new ComposerLiteDependencies());
+    
 
     // Bit of an odd side effect, if a project has multiple dependency types, the PackageMuncher will get set to the last one it encounters currently
     this.Implementation.forEach(i => {

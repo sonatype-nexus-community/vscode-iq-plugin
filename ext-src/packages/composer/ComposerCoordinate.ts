@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-export interface PackageType {
+export class ComposerCoordinate implements CoordinateType {
   Name: string;
   Version: string;
-  Group?: string;
-  Hash?: string;
-  Extension?: string;
-  toCoordinates(): string;
-  toPurl(): string;
-  toCoordValueType(coordinate: CoordinateType): string;
-  IsTransitive?: boolean;
-  DependencyType?: string;
+
+  constructor(
+    name: string,
+    version: string, 
+  ) {
+    this.Name = name;
+    this.Version = version; 
+  }
+
+  public asCoordinates(): string {
+    return `${this.Name} - ${this.Version}`;
+  }
 }

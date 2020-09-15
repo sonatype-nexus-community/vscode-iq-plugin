@@ -13,31 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as path from 'path';
+import * as path from "path";
 import * as fs from "fs";
 import * as _ from "lodash";
 
 import { exec } from "../../utils/exec";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { NpmPackage } from "./NpmPackage";
-import { NPM_SHRINKWRAP_JSON, YARN_LOCK, PACKAGE_LOCK_JSON } from "./NpmScanType";
+import {
+  NPM_SHRINKWRAP_JSON,
+  YARN_LOCK,
+  PACKAGE_LOCK_JSON
+} from "./NpmScanType";
 
-const NPM_SHRINKWRAP_COMMAND = 'npm shrinkwrap';
-const YARN_LIST_COMMAND = 'yarn list';
-const NPM_LIST_COMMAND = 'npm list';
+const NPM_SHRINKWRAP_COMMAND = "npm shrinkwrap";
+const YARN_LIST_COMMAND = "yarn list";
+const NPM_LIST_COMMAND = "npm list";
 
 export class NpmUtils {
-  public async getDependencyArray(manifestType: string): Promise<Array<NpmPackage>> {
+  public async getDependencyArray(
+    manifestType: string
+  ): Promise<Array<NpmPackage>> {
     try {
       if (manifestType === YARN_LOCK) {
-        let {stdout, stderr} = await exec(YARN_LIST_COMMAND, {
+        let { stdout, stderr } = await exec(YARN_LIST_COMMAND, {
           cwd: PackageDependenciesHelper.getWorkspaceRoot()
         });
 
         if (stdout != "" && stderr == "") {
           return Promise.resolve(this.parseYarnList(stdout));
         } else {
-          return Promise.reject(`Error running ${YARN_LIST_COMMAND}, err: ${stderr}`);
+          return Promise.reject(
+            `Error running ${YARN_LIST_COMMAND}, err: ${stderr}`
+          );
         }
       }
       if (manifestType === NPM_SHRINKWRAP_JSON) {
@@ -50,25 +58,54 @@ export class NpmUtils {
         if (!shrinkWrapSucceeded) {
           return Promise.reject(`Unable to run ${NPM_SHRINKWRAP_COMMAND}`);
         }
-        let obj = JSON.parse(fs.readFileSync(path.join(PackageDependenciesHelper.getWorkspaceRoot(), NPM_SHRINKWRAP_JSON), "utf8"));
-        
-        return Promise.resolve(this.flattenAndUniqDependencies(obj));
-      } 
+        let obj = JSON.parse(
+          fs.readFileSync(
+            path.join(
+              PackageDependenciesHelper.getWorkspaceRoot(),
+              NPM_SHRINKWRAP_JSON
+            ),
+            "utf8"
+          )
+        );
+        //get the top level ones
+        let npmPackageContents = fs.readFileSync(
+          path.join(
+            PackageDependenciesHelper.getWorkspaceRoot(),
+            "package.json"
+          ),
+          "utf8"
+        );
+        let objTopLevel = JSON.parse(npmPackageContents);
+        console.log("objTopLevel", objTopLevel);
+        let dependencies = objTopLevel.dependencies;
+        let devDependencies = objTopLevel.devDependencies;
+        let flatDependencies = this.flattenAndUniqDependencies(
+          obj,
+          objTopLevel
+        );
+        return Promise.resolve(flatDependencies);
+      }
       if (manifestType === PACKAGE_LOCK_JSON) {
-        let {stdout, stderr} = await exec(NPM_LIST_COMMAND, {
+        let { stdout, stderr } = await exec(NPM_LIST_COMMAND, {
           cwd: PackageDependenciesHelper.getWorkspaceRoot()
         });
 
         if (stdout != "" && stderr == "") {
           return Promise.resolve(this.parseNpmList(stdout));
         } else {
-          return Promise.reject(`Error running ${NPM_LIST_COMMAND}, err: ${stderr}`);
+          return Promise.reject(
+            `Error running ${NPM_LIST_COMMAND}, err: ${stderr}`
+          );
         }
       } else {
-        return Promise.reject(`No valid command supplied, have you implemented it? Manifest type supplied: ${manifestType}`);
+        return Promise.reject(
+          `No valid command supplied, have you implemented it? Manifest type supplied: ${manifestType}`
+        );
       }
     } catch (e) {
-      return Promise.reject(`${manifestType} read failed, try running it manually to see what went wrong: ${e.stderr}`);
+      return Promise.reject(
+        `${manifestType} read failed, try running it manually to see what went wrong: ${e.stderr}`
+      );
     }
   }
 
@@ -86,15 +123,14 @@ export class NpmUtils {
         } else {
           try {
             dependencyList.push(this.setAndReturnNpmPackage(splitParts));
-          }
-          catch (e) {
+          } catch (e) {
             console.debug(e.stderr);
           }
         }
       }
     });
 
-    dependencyList = _.uniqBy(dependencyList, (x) => {
+    dependencyList = _.uniqBy(dependencyList, x => {
       return x.toPurl();
     });
 
@@ -102,22 +138,35 @@ export class NpmUtils {
   }
 
   private setAndReturnNpmPackage(splitParts: string[]): NpmPackage {
-    let newName = this.removeScopeSymbolFromName(splitParts[splitParts.length - 1]);
+    let newName = this.removeScopeSymbolFromName(
+      splitParts[splitParts.length - 1]
+    );
     let newSplit = newName.split("@");
     const name = newSplit[0];
     const version = newSplit[1];
+    let isTransitive = false;
+    let dependencyType = "productionDependency";
     if (name != "" && version != undefined) {
-      return new NpmPackage(name.replace("%40", "@"), version, "");
-    }
-    else {
+      return new NpmPackage(
+        name.replace("%40", "@"),
+        version,
+        "",
+        isTransitive,
+        dependencyType
+      );
+    } else {
       throw new Error(`No valid information, skipping dependency: ${newName}`);
     }
   }
 
   private sortDependencyList(list: NpmPackage[]): NpmPackage[] {
     return list.sort((a, b) => {
-      if (a.Name > b.Name) { return 1; }
-      if (a.Name < b.Name) { return -1; }
+      if (a.Name > b.Name) {
+        return 1;
+      }
+      if (a.Name < b.Name) {
+        return -1;
+      }
       return 0;
     });
   }
@@ -159,15 +208,14 @@ export class NpmUtils {
         } else {
           try {
             dependencyList.push(this.setAndReturnNpmPackage(splitParts));
-          }
-          catch (e) {
+          } catch (e) {
             console.debug(e);
           }
         }
       }
     });
 
-    dependencyList = _.uniqBy(dependencyList, (x) => {
+    dependencyList = _.uniqBy(dependencyList, x => {
       return x.toPurl();
     });
 
@@ -182,21 +230,85 @@ export class NpmUtils {
     }
   }
 
-  private flattenAndUniqDependencies(npmShrinkwrapContents: any): Array<NpmPackage> {
-    console.debug("flattenAndUniqDependencies");
+  private flattenAndUniqDependencies(
+    npmShrinkwrapContents: any,
+    npmPackageContents: any
+  ): Array<NpmPackage> {
+    console.debug(
+      "flattenAndUniqDependencies",
+      npmShrinkwrapContents,
+      npmPackageContents
+    );
     //first level in npm-shrinkwrap is our project package, we go a level deeper not to include it in the results
     // TODO: handle case where npmShrinkwrapContents does not have a 'dependencies' element defined (eg: simple projects)
-    if (npmShrinkwrapContents.dependencies === undefined) {
+    let npmShrinkwrapContentsDependencies: Array<NpmPackage> =
+      npmShrinkwrapContents.dependencies;
+    if (npmShrinkwrapContentsDependencies === undefined) {
       return new Array();
     }
     let flatDependencies = this.flattenDependencies(
-      this.extractInfo(npmShrinkwrapContents.dependencies)
+      this.extractInfo(npmShrinkwrapContentsDependencies)
     );
     let newflatDependencies = _.uniqBy(flatDependencies, function(x) {
       return x.Name;
     });
 
-    console.log(newflatDependencies);
+    let dependenciesTopLevel: Array<NpmPackage> = this.extractPackageJsonInfo(
+      npmPackageContents.dependencies
+    );
+    if (dependenciesTopLevel !== undefined) {
+      //do nothing
+      for (let index = 0; index < dependenciesTopLevel.length; index++) {
+        const elementTopLevel: NpmPackage = dependenciesTopLevel[index];
+        console.log(elementTopLevel);
+        //update flatDependencies
+        for (
+          let indexflatDependencies = 0;
+          indexflatDependencies < flatDependencies.length;
+          indexflatDependencies++
+        ) {
+          const elementflatDependencies =
+            flatDependencies[indexflatDependencies];
+
+          if (elementflatDependencies.Name === elementTopLevel.Name) {
+            //update the is transitive to false as this is a top level dependency
+            elementflatDependencies.IsTransitive = false;
+            //also dependencyType is toplevel
+            elementflatDependencies.DependencyType = "dependency";
+            break;
+          }
+        }
+      }
+    }
+    let devDependencies: Array<NpmPackage> = this.extractPackageJsonInfo(
+      npmPackageContents.devDependencies
+    );
+    if (devDependencies !== undefined) {
+      //do nothing
+      for (
+        let indexdevDependencies = 0;
+        indexdevDependencies < devDependencies.length;
+        indexdevDependencies++
+      ) {
+        const element = devDependencies[indexdevDependencies];
+        console.log(element);
+        for (
+          let indexflatDependencies = 0;
+          indexflatDependencies < flatDependencies.length;
+          indexflatDependencies++
+        ) {
+          const elementflatDependencies =
+            flatDependencies[indexflatDependencies];
+          if (elementflatDependencies.Name === element.Name) {
+            elementflatDependencies.DependencyType = "devDependency";
+            elementflatDependencies.IsTransitive = false;
+            break;
+          }
+        }
+      }
+    }
+
+    console.log("newflatDependencies", newflatDependencies);
     return flatDependencies;
   }
 
@@ -215,8 +327,27 @@ export class NpmUtils {
 
   //extracts array with name, version, dependencies from a dictionary
   private extractInfo(array: any): Array<NpmPackage> {
+    let isTransitive = true;
+    let hash = "";
     return Object.keys(array).map(
-      k => new NpmPackage(k, array[k].version, array[k].dependencies)
+      k =>
+        new NpmPackage(
+          k,
+          array[k].version,
+          hash,
+          isTransitive,
+          array[k].dev ? "devDependency" : "dependency"
+        )
+    );
+  }
+
+  //extracts array with name, version, dependencies from a dictionary
+  private extractPackageJsonInfo(array: any): Array<NpmPackage> {
+    let isTransitive = false;
+    let scope = "";
+    let hash = "";
+    return Object.keys(array).map(
+      k => new NpmPackage(k, array[k].split(":")[1], hash, isTransitive)
     );
   }
 }

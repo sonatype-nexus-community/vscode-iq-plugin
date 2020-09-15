@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-export interface PackageType {
-  Name: string;
-  Version: string;
-  Group?: string;
-  Hash?: string;
-  Extension?: string;
-  toCoordinates(): string;
-  toPurl(): string;
-  toCoordValueType(coordinate: CoordinateType): string;
-  IsTransitive?: boolean;
-  DependencyType?: string;
+export class DependencyType {
+  // dependencyType: string = "";
+
+  constructor(readonly dependencyType: string) {}
+
+  public toString(): string {
+    return `${this.dependencyType}`;
+  }
+
+  public toTooltip(): string {
+    return `${
+      this.dependencyType === "dependency"
+        ? "Production dependency"
+        : "Dev dependency"
+    }`;
+  }
 }
