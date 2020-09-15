@@ -2,7 +2,7 @@
   "name": "vscode-iq-plugin",
   "displayName": "Sonatype Nexus IQ Extension for VSCode",
   "description": "Sonatype Nexus IQ Extension for VSCode",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "author": {
     "name": "community-group"
   },

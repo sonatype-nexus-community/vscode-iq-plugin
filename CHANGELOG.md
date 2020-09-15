@@ -1,3 +1,10 @@
+## [0.7.5](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.7.4...v0.7.5) (2020-09-15)
+
+
+### Bug Fixes
+
+* Remove yarn.lock, run npm i ([#96](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/96)) ([96194e0](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/96194e01e1276f7299816a152c137a9affb4e0e2))
+
 ## [0.7.4](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.7.3...v0.7.4) (2020-04-01)
 
 
