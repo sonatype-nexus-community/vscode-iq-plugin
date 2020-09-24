@@ -1,3 +1,38 @@
+## [0.7.5](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.7.4...v0.7.5) (2020-09-15)
+
+
+### Bug Fixes
+
+* Remove yarn.lock, run npm i ([#96](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/96)) ([96194e0](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/96194e01e1276f7299816a152c137a9affb4e0e2))
+
+## [0.7.4](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.7.3...v0.7.4) (2020-04-01)
+
+
+### Bug Fixes
+
+* Make Python work for Windows ([#88](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/88)) ([5a0fe66](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/5a0fe668edcb13d2feea2fd7d772b757450e1664))
+
+## [0.7.3](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.7.2...v0.7.3) (2020-03-10)
+
+
+### Bug Fixes
+
+* update changelog.md to 0.7.2 ([bfc1057](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/bfc10572705f11cb035f58750b49d6ea5da961f3))
+* update package-lock.json to 0.7.2 ([bbfe78e](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/bbfe78e0d415a2a96367079c04c19c0c234d16c4))
+* update package.json for 0.7.2 manually ([78e11aa](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/78e11aafff6385dc4b418cd78a5e71fe2d332a8e))
+* update semantic-release git to 7.10.0-beta for now ([c7ca635](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/c7ca635ac83ec5dd3da66708521916cf19cd7228))
+* Updating getWorkspaceRoot ([#84](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/84)) ([1dafca8](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/1dafca812afd81db1edde6eb9d27483f781c0cb0))
+
+## [0.7.2](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.7.1...v0.7.2) (2020-02-21)
+
+
+### Bug Fixes
+
+* make it work for both, why not ([9f14d50](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/9f14d50b764abb66fb3664e43312086b52ed7756))
+* Update CircleCI to newer node ([12a25db](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/12a25db19e419abea588030f66e5e13425cadd6b))
+* version history fixed for newer IQ clients ([62f9348](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/62f93489c005c9e8d31b4a1c024510cda5c38767))
+
+
 ## [0.7.1](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.7.0...v0.7.1) (2019-12-17)
 
 
