@@ -7,7 +7,7 @@ Scan your libraries against either the free [OSS Index](https://ossindex.sonatyp
 ## Features
 
 - Scan npm, Maven, RubyGems, Go (`dep` and `go mod`), R (see known quirks) or PyPi projects (Go is only supported on Linux or OS/X)
-- See all components with vulnerable components highlighted
+- See all components, with vulnerable ones highlighted
 
 ### Sonatype Nexus IQ Scan
 
@@ -23,7 +23,7 @@ Scan your libraries against either the free [OSS Index](https://ossindex.sonatyp
 
 ## Requirements
 
-- To enable the IQ Scan, you will need a Sonatype Nexus IQ Lifecycle License but the OSS Index scan will work for all users
+- To enable the IQ scan, you will need a Sonatype Nexus IQ Lifecycle license but the OSS Index scan will work for all users
 - The plugin requires npm, golang, maven, ruby / bundler, or python and pip to be installed, depending on which language you are using. It will not install these as a part of the plugin
 
 ## Extension Settings
@@ -36,7 +36,7 @@ If you are using IQ Server, you can enter your password which will be stored in 
 
 ![VSCode Settings](media/iqserver-passwordprompt-dark.png)
 
-If you are using IQ Server v76 or above, you can create a [user token](https://help.sonatype.com/iqserver/automating/rest-apis/user-token-rest-api---v2) and save this in the password field instead. The added benefit of doing this is that you are not storing your IQ Server password in plaintext, and rather a user token that can be deleted, etc... if need be.
+If you are using IQ Server v76 or above, you can create a [user token](https://help.sonatype.com/iqserver/automating/rest-apis/user-token-rest-api---v2) and save this in the password field instead. The added benefit of doing this is that you are not storing your IQ Server password in plaintext, but rather a user token that can be deleted, etc... if need be.
 
 ### Known Quirks
 
@@ -44,14 +44,15 @@ We try and use other tooling whenever possible, to avoid reinventing the wheel (
 
 #### npm
 
-- We run either npm shrinkwrap, npm list, or yarn list depending on what tool chain you are using.
+- We run either `npm shrinkwrap`, `npm list`, or `yarn list` depending on what tool chain you are using.
 - If we are unable to parse your dependencies, it's likely one of those commands is throwing an error, and you should make sure it isn't.
 - Projects that use both `npm` and `yarn` can be confusing to a program, as we have to pick one to work with. If you experience issues, bear this in mind, it's likely that you have both a `package-lock.json` and a `yarn.lock`, and our lil extension is going "OH NOES!" because one is out of date, etc...
 
 #### RubyGems
 
-- Ruby Gems support depends on the installation of ruby, and bundler
-- If your ruby version mismatches what is declared in your Gemfile, bundler will not run properly
+- Ruby Gems support depends on the installation of Ruby, and Bundler
+- We run `bundle show` to get your dependency list
+- If your Ruby version mismatches what is declared in your Gemfile, Bundler will not run properly
 - If you use rbenv, ensure your `.ruby-version` file matches your Gemfile
 - In order for the command we use to get your dependency list to output to succeed, you need to have run `bundle install`, as `bundle show` cannot track down what you use locally otherwise
 
@@ -62,7 +63,7 @@ We try and use other tooling whenever possible, to avoid reinventing the wheel (
 - Golang support depends on an installation of Golang
 - We run `go list -m all` to get your dependency list
 - This includes test dependencies, so it might be noisy
-- It would seem due to this running in VS Code, it runs in a slightly different shell/user, and thus it downloads your dependencies. We set this to `/tmp/gocache` in code, which may not work on Windows (PRs welcome!), so it might be slowish on it's first run
+- It would seem due to this running in VS Code, it runs in a slightly different shell/user, and thus it downloads your dependencies. We set this to `/tmp/gocache` in code, which may not work on Windows (PRs welcome!), so it might be slowish on its first run
 
 ##### dep
 
@@ -77,8 +78,8 @@ We try and use other tooling whenever possible, to avoid reinventing the wheel (
 - The way the R script runs, it finds all of the packages you've installed in the R environment, so not just for your project. This is because there is really no way to query for project specific packages, and appears to be a limitation of R.
 
 #### Various and Sundry
-
-- Projects with both RubyGems and NPM (Gemfile.lock, and package.json), or similar, this extension currently picks one format, and scans for it. We haven't built a path to scan multiple project types, but that would be lovely. PRs welcome :)
+`
+- Projects with both RubyGems and NPM (`Gemfile.lock` and `package.json`), or similar, this VS Code extension currently picks one format, and scans for it. We haven't built a path to scan multiple types in one project, but that would be lovely. PRs welcome :)
 
 - "My project has 3,000 dependencies, why is this so slow?!?". We chunk up requests to OSS Index (free solution) in sections of 128 dependencies, so for 3,000 dependencies, you are making 24 https POST requests for information, and then it's merging those results, etc... We'd love to know your feedback on the tool, so if you do run into this, open up an issue and let us know! Same goes for IQ Server, there could be quite a bit to process.
 
@@ -104,7 +105,9 @@ Then:
 
 If you are working on functionality that requires IQ Server, you'll need an instance running, and configured in the settings for the project. OSS Index should work right out of the box.
 
-We highly suggest installing "Webview Developer Tools" for this project, as the front end is written in React, and it's nice to have that to see what's going on. All of the React specific code can be found in `src`. The rest of the code is contained within `ext-src` and this is what communicates with either OSS Index or IQ Server.
+All of the React specific code can be found in `src`. The rest of the code is contained within `ext-src` and this is what communicates with either OSS Index or IQ Server.
+
+We highly suggest installing "Webview Developer Tools" for this project, as the front end is written in React, and it's nice to have that to see what's going on.
 
 ## Contributing
 
