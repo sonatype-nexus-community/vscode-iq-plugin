@@ -24,11 +24,16 @@ export class IqRequestService implements RequestService {
   applicationId: string = "";
 
   constructor(
-    readonly url: string,
+    private url: string,
     private user: string,
     private password: string,
     private getmaximumEvaluationPollAttempts: number
-  ) {}
+  ) 
+  {
+    if (url.endsWith("/")) {
+      this.url = url.replace(/\/$/, "");
+    }
+  }
 
   public setPassword(password: string) {
     this.password = password;
