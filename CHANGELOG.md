@@ -1,3 +1,10 @@
+## [0.7.6](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.7.5...v0.7.6) (2020-10-06)
+
+
+### Bug Fixes
+
+* Trim trailing slash on construction of IQRequestService for [#122](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/122) ([#123](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/123)) ([d580634](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/d580634bde9dcffcdc6a9e5e57ddb935ab2a719e))
+
 ## [0.7.5](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.7.4...v0.7.5) (2020-09-15)
 
 
