@@ -15,9 +15,12 @@
  */
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { DEBUG, ERROR, logMessage } from './logger/loggerWrapper';
 import { NexusExplorer } from './NexusExplorer';
 
 export function activate(context: vscode.ExtensionContext) {
+
+	logMessage('Hello world', ERROR);
 
 	context.subscriptions.push(vscode.commands.registerCommand('react-webview.start', () => {
 		ReactPanel.createOrShow(context.extensionPath);
