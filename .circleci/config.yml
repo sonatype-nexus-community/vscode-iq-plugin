@@ -48,6 +48,9 @@ jobs:
       - run: 
           name: Publish to Visual Studio Code Extension Marketplace
           command: vsce publish -p $VSCODE_TOKEN
+      - run:
+          name: Publish to Open VSX
+          command: npx ovsx publish -p $VSX_TOKEN
 
 workflows:
   version: 2.1

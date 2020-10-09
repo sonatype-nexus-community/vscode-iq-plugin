@@ -23,3 +23,5 @@ yarn-error.log*
 
 # ci config for local ci build
 .circleci/local-config.yml
+
+*.vsix
