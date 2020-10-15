@@ -75,7 +75,7 @@ export class PyPiUtils {
             // artifactId, extension, and version are required fields. If a single dependency is missing any of the three, IQ will return a 400 response for the whole list
           if (name && version) {
             const dependencyObject: PyPIPackage = new PyPIPackage(
-              name,
+              name.toLowerCase(),
               version,
               extension,
               qualifier
