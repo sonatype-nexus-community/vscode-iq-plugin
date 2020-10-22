@@ -1,3 +1,17 @@
+## [0.7.8](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.7.7...v0.7.8) (2020-10-20)
+
+
+### Bug Fixes
+
+* 1) update mvn dep:tree to support multi-module projects. 2) add dedupe logic to the component list ([#99](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/99)) ([afaa7f4](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/afaa7f46bea96b0ace01562572729de202529e49))
+
+## [0.7.7](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.7.6...v0.7.7) (2020-10-09)
+
+
+### Bug Fixes
+
+* Add in ability to publish to Open VSX ([#126](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/126)) ([6421d21](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/6421d21de6d4719bbf7251ff2cb0943af3e02fe9))
+
 ## [0.7.6](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.7.5...v0.7.6) (2020-10-06)
 
 
