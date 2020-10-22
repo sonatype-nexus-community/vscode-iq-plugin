@@ -163,6 +163,11 @@
             "type": "number",
             "default": "300",
             "description": "Number of retries (every 2secs) to wait for the Evaluation report. "
+          },
+          "nexusiq.strictSSL": {
+            "type": "boolean",
+            "default": true,
+            "description": "Set this to false if you are using self signed certificates with Nexus IQ Server."
           }
         }
       }

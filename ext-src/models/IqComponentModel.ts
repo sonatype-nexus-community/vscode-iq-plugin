@@ -43,7 +43,8 @@ export class IqComponentModel implements ComponentModel {
         configuration.get("nexusiq.maximumEvaluationPollAttempts") + "", 10);
       this.applicationPublicId = configuration.get("nexusiq.applicationPublicId") + "";
       let password = configuration.get("nexusiq.password") + "";
-      this.requestService = new IqRequestService(url, username, password, maximumEvaluationPollAttempts);
+      let strictSSL = configuration.get("nexusiq.strictSSL") as boolean;
+      this.requestService = new IqRequestService(url, username, password, maximumEvaluationPollAttempts, strictSSL);
     }
   
     public getContent(resource: Uri): Thenable<string> {
