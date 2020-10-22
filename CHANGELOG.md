@@ -1,3 +1,10 @@
+# [0.8.0](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.7.8...v0.8.0) (2020-10-22)
+
+
+### Features
+
+* Allow for strict SSL to be controlled by config ([#133](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/133)) ([739bebe](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/739bebe06ed6679ba52bdf67896b02e41e14814d))
+
 ## [0.7.8](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.7.7...v0.7.8) (2020-10-20)
 
 
