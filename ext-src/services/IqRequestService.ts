@@ -27,7 +27,8 @@ export class IqRequestService implements RequestService {
     private url: string,
     private user: string,
     private password: string,
-    private getmaximumEvaluationPollAttempts: number
+    private getmaximumEvaluationPollAttempts: number,
+    private strictSSL: boolean = true
   ) 
   {
     if (url.endsWith("/")) {
@@ -63,6 +64,7 @@ export class IqRequestService implements RequestService {
           method: "GET",
           url: `${this.url}/api/v2/applications?publicId=${applicationPublicId}`,
           headers: RequestHelpers.getUserAgentHeader(),
+          strictSSL: this.strictSSL,
           auth: { user: this.user, pass: this.password }
         })
         .on('response', (res) => {
@@ -99,6 +101,7 @@ export class IqRequestService implements RequestService {
           method: "POST",
           url: `${this.url}/api/v2/evaluation/applications/${applicationInternalId}`,
           json: data,
+          strictSSL: this.strictSSL,
           headers: RequestHelpers.getUserAgentHeader(),
           auth: { user: this.user, pass: this.password }
         },
@@ -189,6 +192,7 @@ export class IqRequestService implements RequestService {
         method: "GET",
         url: `${this.url}/api/v2/evaluation/applications/${applicationInternalId}/results/${resultId}`,
         headers: RequestHelpers.getUserAgentHeader(),
+        strictSSL: this.strictSSL,
         auth: { user: this.user, pass: this.password }
       },
       (error: any, response: any, body: any) => {
@@ -218,6 +222,7 @@ export class IqRequestService implements RequestService {
           json: requestdata,
           url: url,
           headers: RequestHelpers.getUserAgentHeader(),
+          strictSSL: this.strictSSL,
           auth: { user: this.user, pass: this.password }
         },
         (err, response, body) => {
@@ -255,6 +260,7 @@ export class IqRequestService implements RequestService {
           method: "GET",
           url: url,
           headers: RequestHelpers.getUserAgentHeader(),
+          strictSSL: this.strictSSL,
           auth: {
             user: this.user,
             pass: this.password
@@ -300,6 +306,7 @@ export class IqRequestService implements RequestService {
           method: "GET",
           url: url,
           headers: RequestHelpers.getUserAgentHeader(),
+          strictSSL: this.strictSSL,
           auth: {
             user: this.user,
             pass: this.password
@@ -344,6 +351,7 @@ export class IqRequestService implements RequestService {
           json: detailsRequest,
           url: url,
           headers: RequestHelpers.getUserAgentHeader(),
+          strictSSL: this.strictSSL,
           auth: {
             user: this.user,
             pass: this.password
