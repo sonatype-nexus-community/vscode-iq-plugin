@@ -21,6 +21,22 @@ import { type } from 'os';
 
 export class PyPiUtils {
   public async getDependencyArray(): Promise<Array<PyPIPackage>> {
+    // Try to generate in fly the requirements content
+    try {
+      if (PackageDependenciesHelper.doesPathExist(PackageDependenciesHelper.getWorkspaceRoot(), "Pipfile.lock") &&
+      ! PackageDependenciesHelper.doesPathExist(PackageDependenciesHelper.getWorkspaceRoot(), "requirements.txt")) {
+        let requirements = await this.generateRequirements();
+        return Promise.resolve(this.parsePyPIDependencyTree(requirements));
+      }
+    } catch (e) {
+      console.log(`Unable to generate on fly the requirement : ${e}`)
+      return Promise.reject(
+        new Error(
+          "Error occurred in generating dependency tree. Check that there is not an issue with your requirements.txt"
+        )
+      );
+    }
+    // Continue
     const WINDOWS = "Windows_NT"
     try {
       let command: string = "cat requirements.txt"
@@ -35,7 +51,7 @@ export class PyPiUtils {
       });
 
       if (stdout != "" && stderr === "") {
-        return Promise.resolve(this.parsePyPIDependencyTree(stdout));
+        return Promise.resolve(this.parsePyPIDependencyTree(stdout.toLowerCase()));
       } else {
         return Promise.reject(
           new Error(
@@ -46,6 +62,31 @@ export class PyPiUtils {
     } catch (e) {
       return Promise.reject(
         `cat requirements.txt failed, try running it manually to see what went wrong: ${e.error}`
+      );
+    }
+  }
+
+  private async generateRequirements(): Promise<string> {
+
+    try {
+      let {stdout, stderr } = await exec("pipenv run pip freeze", {
+        cwd: PackageDependenciesHelper.getWorkspaceRoot(),
+        env: {
+          PATH: process.env.PATH
+        }
+      });
+      if (stdout != "" && stderr === "") {
+        return Promise.resolve(stdout.toLowerCase());
+      } 
+      return Promise.reject(
+        new Error(
+          `Generate requirements.txt content failed, try running it manually to see what went wrong: ${stderr}`
+        )
+      );
+
+    } catch (e) {
+      return Promise.reject(
+        `Generate requirements.txt content failed, try running it manually to see what went wrong: ${e.error}`
       );
     }
   }
