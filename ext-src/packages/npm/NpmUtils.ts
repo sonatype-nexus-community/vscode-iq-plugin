@@ -28,8 +28,10 @@ const NPM_LIST_COMMAND = 'npm list';
 
 export class NpmUtils {
   public async getDependencyArray(manifestType: string): Promise<Array<NpmPackage>> {
+    let command = '';
     try {
       if (manifestType === YARN_LOCK) {
+        command = YARN_LIST_COMMAND;
         let {stdout, stderr} = await exec(YARN_LIST_COMMAND, {
           cwd: PackageDependenciesHelper.getWorkspaceRoot()
         });
@@ -41,6 +43,7 @@ export class NpmUtils {
         }
       }
       if (manifestType === NPM_SHRINKWRAP_JSON) {
+        command = NPM_SHRINKWRAP_COMMAND;
         let { stdout, stderr } = await exec(NPM_SHRINKWRAP_COMMAND, {
           cwd: PackageDependenciesHelper.getWorkspaceRoot()
         });
@@ -55,6 +58,7 @@ export class NpmUtils {
         return Promise.resolve(this.flattenAndUniqDependencies(obj));
       } 
       if (manifestType === PACKAGE_LOCK_JSON) {
+        command = NPM_LIST_COMMAND;
         let {stdout, stderr} = await exec(NPM_LIST_COMMAND, {
           cwd: PackageDependenciesHelper.getWorkspaceRoot()
         });
@@ -68,7 +72,7 @@ export class NpmUtils {
         return Promise.reject(`No valid command supplied, have you implemented it? Manifest type supplied: ${manifestType}`);
       }
     } catch (e) {
-      return Promise.reject(`${manifestType} read failed, try running it manually to see what went wrong: ${e.stderr}`);
+      return Promise.reject(`${manifestType} read failed, try running the command [${command}] manually to see what went wrong: ${e.stderr}`);
     }
   }
 
