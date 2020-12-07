@@ -62,7 +62,10 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
       components: _.map(
         this.Dependencies,
         (d) => ({
-          packageUrl: d.toPurl() + `?extension=tar.gz`
+          componentIdentifier:{
+            format: "pypi",
+            coordinates:{extension:"tar.gz",name:d.Name,version:d.Version}
+          }
         })
       )
     };
@@ -71,12 +74,8 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
   public toComponentEntries(data: any): Array<ComponentEntry> {
     let components = new Array<ComponentEntry>();
     for (let entry of data.components) {
-      const purl: string = entry.packageUrl;
-      const parts: string[] = purl.substr(9, purl.length).split("@");
-      const packageId =
-        parts[0];
-
-      const version: string = parts[1].split("?")[0];
+      const packageId = entry.componentIdentifier.coordinates.name;
+      const version = entry.componentIdentifier.coordinates.version;
 
       let componentEntry = new ComponentEntry(
         packageId,
@@ -85,7 +84,7 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
       );
       components.push(componentEntry);
       let coordinates = new PyPICoordinate(
-        parts[0],
+        packageId,
         version,
         "",
         ""
