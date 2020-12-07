@@ -51,7 +51,7 @@ export class PyPiUtils {
       });
 
       if (stdout != "" && stderr === "") {
-        return Promise.resolve(this.parsePyPIDependencyTree(stdout.toLowerCase()));
+        return Promise.resolve(this.parsePyPIDependencyTree(stdout));
       } else {
         return Promise.reject(
           new Error(
@@ -76,7 +76,7 @@ export class PyPiUtils {
         }
       });
       if (stdout != "" && stderr === "") {
-        return Promise.resolve(stdout.toLowerCase());
+        return Promise.resolve(stdout);
       } 
       return Promise.reject(
         new Error(
