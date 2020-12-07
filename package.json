@@ -139,35 +139,35 @@
         "type": "object",
         "title": "Sonatype Nexus IQ configuration",
         "properties": {
-          "nexusiq.url": {
+          "nexusIQ.applicationId": {
+            "type": "string",
+            "default": "sandbox-application",
+            "description": "Your Nexus IQ Application Id"
+          },
+          "nexusIQ.maximumEvaluationPollAttempts": {
+            "type": "number",
+            "default": "300",
+            "description": "Number of retries (every 2secs) to wait for the evaluation report"
+          },
+          "nexusIQ.serverUrl": {
             "type": "string",
             "default": "http://127.0.0.1:8070",
-            "description": "URL including port of the Nexus IQ server"
+            "description": "URL (including port) of the Nexus IQ Server"
           },
-          "nexusiq.username": {
+          "nexusIQ.strictSSL": {
+            "type": "boolean",
+            "default": true,
+            "description": "Set this to false if you are using self signed certificates with Nexus IQ Server"
+          },
+          "nexusIQ.username": {
             "type": "string",
             "default": "admin",
             "description": "Your Nexus IQ user name"
           },
-          "nexusiq.password": {
+          "nexusIQ.userPassword": {
             "type": "string",
             "default": "admin123",
             "description": "Your Nexus IQ password"
-          },
-          "nexusiq.applicationPublicId": {
-            "type": "string",
-            "default": "sandbox-application",
-            "description": "Your Nexus IQ Application Public Id"
-          },
-          "nexusiq.maximumEvaluationPollAttempts": {
-            "type": "number",
-            "default": "300",
-            "description": "Number of retries (every 2secs) to wait for the Evaluation report. "
-          },
-          "nexusiq.strictSSL": {
-            "type": "boolean",
-            "default": true,
-            "description": "Set this to false if you are using self signed certificates with Nexus IQ Server."
           }
         }
       }
