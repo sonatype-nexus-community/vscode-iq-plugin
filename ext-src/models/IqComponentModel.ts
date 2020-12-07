@@ -113,10 +113,11 @@ export class IqComponentModel implements ComponentModel {
                 componentEntry = this.coordsToComponent.get(
                   componentContainer.PackageMuncher.ConvertToComponentEntry(resultEntry)
                 );
-              
-                componentEntry!.policyViolations = resultEntry.policyData.policyViolations as Array<PolicyViolation>;
-                componentEntry!.hash = resultEntry.component.hash;
-                componentEntry!.nexusIQData = resultEntry;
+                if (componentEntry != undefined) {
+                  componentEntry!.policyViolations = resultEntry.policyData.policyViolations as Array<PolicyViolation>;
+                  componentEntry!.hash = resultEntry.component.hash;
+                  componentEntry!.nexusIQData = resultEntry;
+                }
               }
               resolve();
             }).then(() => {
