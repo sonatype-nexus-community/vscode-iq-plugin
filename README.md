@@ -120,7 +120,7 @@ We use [semantic-release](https://github.com/semantic-release/semantic-release) 
 to perform a "patch" release, add a commit to master with a comment like:
 
 ```
-fix(127): `policyViolations of undefined` when loading a python project with requirements.txt
+fix: `policyViolations of undefined` when loading a python project with requirements.txt (see Issue #127) 
 ```
 
 Without such a commit comment, commits to the `master` branch will cause a build failure during the release
