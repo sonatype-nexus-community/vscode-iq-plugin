@@ -1,3 +1,10 @@
+## [0.8.2](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.8.1...v0.8.2) (2020-12-08)
+
+
+### Bug Fixes
+
+* CWE-20: Improper Input Validation (fixes [#140](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/140)) ([2450e60](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/2450e60e488793404e03e394c89c685a3cb31150))
+
 ## [0.8.1](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.8.0...v0.8.1) (2020-12-08)
 
 
