@@ -128,7 +128,6 @@ process due to the reuse of an existing version number.
 
 To avoid such build failures without preforming a release, be sure your commit message includes `[skip ci] `.
 
-
 ## The Fine Print
 
 It is worth noting that this is **NOT SUPPORTED** by Sonatype, and is a contribution of ours
