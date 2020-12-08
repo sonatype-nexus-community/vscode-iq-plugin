@@ -123,8 +123,8 @@ to perform a "patch" release, add a commit to master with a comment like:
 fix(127): `policyViolations of undefined` when loading a python project with requirements.txt
 ```
 
-Without such a commit comment, commits to the `master` branch will result cause a build failure during the release
-process due to the reuse of an existing version number.
+Without such a commit comment, commits to the `master` branch will cause a build failure during the release
+process due to an attempted to reuse an existing version number.
 
 To avoid such build failures without preforming a release, be sure your commit message includes `[skip ci] `.
 
