@@ -114,6 +114,21 @@ We highly suggest installing "Webview Developer Tools" for this project, as the 
 
 We care a lot about making the world a safer place, and that's why we created this extension. If you as well want to speed up the pace of software development by working on this project, jump on in! Before you start work, create a new issue, or comment on an existing issue, to let others know you are!
 
+## Releasing
+
+We use [semantic-release](https://github.com/semantic-release/semantic-release) to generate releases. For example,
+to perform a "patch" release, add a commit to master with a comment like:
+
+```
+fix(127): `policyViolations of undefined` when loading a python project with requirements.txt
+```
+
+Without such a commit comment, commits to the `master` branch will result cause a build failure during the release
+process due to the reuse of an existing version number.
+
+To avoid such build failures without preforming a release, be sure your commit message includes `[skip ci] `.
+
+
 ## The Fine Print
 
 It is worth noting that this is **NOT SUPPORTED** by Sonatype, and is a contribution of ours
