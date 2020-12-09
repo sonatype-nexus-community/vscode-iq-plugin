@@ -126,7 +126,7 @@ fix: `policyViolations of undefined` when loading a python project with requirem
 Without such a commit comment, commits to the `master` branch will cause a build failure during the release
 process due to an attempted to reuse an existing version number.
 
-To avoid such build failures without preforming a release, be sure your commit message includes `[skip ci] `.
+To avoid such build failures without performing a release, be sure your commit message includes `[skip ci] `.
 
 ## The Fine Print
 
