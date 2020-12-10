@@ -25,3 +25,7 @@ yarn-error.log*
 .circleci/local-config.yml
 
 *.vsix
+
+# samples
+composer.lock
+libraries/

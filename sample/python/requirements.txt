@@ -1,0 +1,16 @@
+Werkzeug==0.16.0
+Django==2.2.6
+django-enumfields==1.0.0
+django-admin-ip-restrictor==2.1.1
+django-jsonfallback==2.1.2
+django-storages==1.7.2
+django-extensions==2.2.5
+django-decorator-include==2.1
+django-sequences==2.4
+django-reversion==3.0.7
+pytz==2019.3
+python-dateutil==2.8.0
+python-dotenv[cli]==0.10.3
+requests==2.22.0
+dpath==2.0.1
+protobuf==3.10.0
