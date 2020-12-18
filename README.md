@@ -41,7 +41,7 @@ If you are using IQ Server v76 or above, you can create a [user token](https://h
 
 ### Known Quirks
 
-We try to use other tooling whenever possible, to avoid reinventing the wheel (that's what Open Source is about anyways, right!). However due to using this tooling, we are at the mercy of it, sometimes, so here's a list of quirks we've ran into while developing/using this extension ourself.
+We try to use other tooling whenever possible, to avoid reinventing the wheel (that's what Open Source is about anyways, right!). However, due to using this tooling, we are at the mercy of it, sometimes, so here's a list of quirks we've ran into while developing/using this extension ourself.
 
 #### npm
 
