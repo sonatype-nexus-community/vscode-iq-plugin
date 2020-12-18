@@ -24,7 +24,7 @@ Scan your libraries against either the free [OSS Index](https://ossindex.sonatyp
 
 ## Requirements
 
-- To enable the IQ scan, you will need a Sonatype Nexus IQ Lifecycle license but the OSS Index scan will work for all users
+- To enable the IQ scan, you will need a Sonatype Nexus IQ Lifecycle license, but the OSS Index scan will work for all users
 - The plugin requires npm, golang, maven, ruby / bundler, or python and pip to be installed, depending on which language you are using. It will not install these as a part of the plugin
 
 ## Extension Settings
