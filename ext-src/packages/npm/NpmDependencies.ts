@@ -24,6 +24,8 @@ import { NpmUtils } from './NpmUtils';
 import { ScanType } from "../../types/ScanType";
 import { ComponentEntry } from "../../models/ComponentEntry";
 import { NpmScanType } from "./NpmScanType";
+import { ComponentRequestEntry } from "../../types/ComponentRequestEntry";
+import { ComponentRequest } from "../../types/ComponentRequest";
 
 export class NpmDependencies implements PackageDependencies {
   Dependencies: Array<NpmPackage> = [];
@@ -61,28 +63,22 @@ export class NpmDependencies implements PackageDependencies {
     return coordinates.asCoordinates();
   }
 
-  public convertToNexusFormat() {
-    return {
-      components: _.map(
-        this.Dependencies,
-        (d: {
-          Hash: any;
-          Name: any;
-          Group: any;
-          Version: any;
-          Extension: any;
-        }) => ({
-          hash: null,
-          componentIdentifier: {
-            format: "npm",
-            coordinates: {
-              packageId: d.Name,
-              version: d.Version
-            }
+  public convertToNexusFormat(): ComponentRequest {
+    let comps = this.Dependencies.map(d => {
+      let entry: ComponentRequestEntry = {
+        componentIdentifier: {
+          format: "npm",
+          coordinates: {
+            name: d.Name,
+            version: d.Version
           }
-        })
-      )
-    };
+        }
+      }
+
+      return entry;
+    });
+
+    return new ComponentRequest(comps);
   }
 
   public toComponentEntries(data: any): Array<ComponentEntry> {

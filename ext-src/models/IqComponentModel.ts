@@ -21,6 +21,9 @@ import { IqRequestService } from "../services/IqRequestService";
 import { ComponentModel } from "./ComponentModel";
 import { ComponentEntry } from "./ComponentEntry";
 import { PolicyViolation } from "../types/PolicyViolation";
+import { ComponentRequest } from "../types/ComponentRequest";
+import { IQResponse } from "../types/IQResponse";
+import { ComponentEntryConversions } from '../utils/ComponentEntryConversions';
 
 export class IqComponentModel implements ComponentModel {
     components = new Array<ComponentEntry>();
@@ -66,15 +69,20 @@ export class IqComponentModel implements ComponentModel {
               location: ProgressLocation.Notification, 
               title: "Running Nexus IQ Server Scan"
             }, async (progress, token) => {
-              let data: any;
-              if (componentContainer.PackageMuncher != undefined) {
+              let data: ComponentRequest = new ComponentRequest([]);
+              if (componentContainer.Valid.length > 0) {
                 progress.report({message: "Starting to package your dependencies for IQ Server", increment: 5});
-                await componentContainer.PackageMuncher.packageForIq();
-
-                progress.report({message: "Reticulating splines...", increment: 25});
-                data = await componentContainer.PackageMuncher.convertToNexusFormat();
-                this.components = componentContainer.PackageMuncher.toComponentEntries(data);
-                this.coordsToComponent = componentContainer.PackageMuncher.CoordinatesToComponents;
+                for (let pm of componentContainer.Valid) {
+                  await pm.packageForIq();
+  
+                  progress.report({message: "Reticulating Splines", increment: 25});
+                  let result: ComponentRequest = await pm.convertToNexusFormat();
+                  data.components = new Array(...data.components, ...result.components);
+                  
+                  this.components = new Array(...this.components, ...pm.toComponentEntries(data));
+                  this.components.concat(pm.toComponentEntries(data));
+                  this.coordsToComponent = new Map([...this.coordsToComponent, ...pm.CoordinatesToComponents]);
+                }
                 progress.report({message: "Packaging ready", increment: 35});
               } else {
                 throw new TypeError("Unable to instantiate Package Muncher");
@@ -102,16 +110,17 @@ export class IqComponentModel implements ComponentModel {
               progress.report({message: "Polling IQ Server for report results", increment: 60});
               let resultDataString = await this.requestService.asyncPollForEvaluationResults(this.requestService.getApplicationInternalId(), resultId);
               progress.report({message: "Report retrieved, parsing", increment: 80});
-              let resultData = JSON.parse(resultDataString as string);
+              let resultData: IQResponse = JSON.parse(resultDataString);
         
               console.debug(`Received results from IQ scan:`, resultData);
 
               progress.report({message: "Morphing results into something usable", increment: 90});
               for (let resultEntry of resultData.results) {
                 let componentEntry: ComponentEntry | undefined;
-      
+                let format: string = resultEntry.component.componentIdentifier.format as string;
+                
                 componentEntry = this.coordsToComponent.get(
-                  componentContainer.PackageMuncher.ConvertToComponentEntry(resultEntry)
+                  ComponentEntryConversions.ConvertToComponentEntry(format, resultEntry)
                 );
                 if (componentEntry != undefined) {
                   componentEntry!.policyViolations = resultEntry.policyData.policyViolations as Array<PolicyViolation>;
@@ -119,6 +128,7 @@ export class IqComponentModel implements ComponentModel {
                   componentEntry!.nexusIQData = resultEntry;
                 }
               }
+
               resolve();
             }).then(() => {
               window.setStatusBarMessage("Nexus IQ Server Results in, build with confidence!", 5000);

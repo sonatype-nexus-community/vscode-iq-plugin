@@ -23,6 +23,8 @@ import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { RequestService } from "../../services/RequestService";
 import { PyPiUtils } from "./PyPiUtils";
 import { ScanType } from "../../types/ScanType";
+import { ComponentRequestEntry } from "../../types/ComponentRequestEntry";
+import { ComponentRequest } from "../../types/ComponentRequest";
 
 export class PyPIDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<PyPIPackage> = [];
@@ -53,18 +55,23 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
     return coordinates.asCoordinates();
   }
 
-  public convertToNexusFormat() {
-    return {
-      components: _.map(
-        this.Dependencies,
-        (d) => ({
-          componentIdentifier:{
-            format: "pypi",
-            coordinates:{extension:"tar.gz",name:d.Name,version:d.Version}
+  public convertToNexusFormat(): ComponentRequest {
+    let comps = this.Dependencies.map(d => {
+      let entry: ComponentRequestEntry = {
+        componentIdentifier: {
+          format: "pypi",
+          coordinates: {
+            name: d.Name,
+            version: d.Version,
+            extension: "tar.gz"
           }
-        })
-      )
-    };
+        }
+      }
+
+      return entry;
+    });
+
+    return new ComponentRequest(comps);
   }
 
   public toComponentEntries(data: any): Array<ComponentEntry> {

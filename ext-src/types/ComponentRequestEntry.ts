@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PackageType } from "./PackageType";
-import { ComponentEntry } from "../models/ComponentEntry";
-import { RequestService } from "../services/RequestService";
-import { ComponentRequest } from "../types/ComponentRequest";
+export interface ComponentRequestEntry {
+    hash?: string;
+    componentIdentifier: ComponentIdentifier;
+}
 
-export interface PackageDependencies {
-  Dependencies: Array<PackageType>;
-  CoordinatesToComponents: Map<string, ComponentEntry>;
-  RequestService: RequestService;
-  CheckIfValid(): boolean;
-  ConvertToComponentEntry(resultEntry: any): string;
-  convertToNexusFormat(): ComponentRequest;
-  toComponentEntries(data: any): Array<ComponentEntry>;
-  packageForIq(): Promise<undefined>;
+export interface ComponentIdentifier {
+    format: string;
+    coordinates: Coordinates;
+}
+
+export interface Coordinates {
+    name: String;
+    version: String;
+    group?: String;
+    extension?: String; 
 }

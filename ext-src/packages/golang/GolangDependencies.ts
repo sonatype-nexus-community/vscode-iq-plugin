@@ -24,6 +24,8 @@ import { GolangUtils } from "./GolangUtils";
 import { ScanType } from "../../types/ScanType";
 import { ComponentEntry } from "../../models/ComponentEntry";
 import { GolangScanType } from "./GolangScanType";
+import { ComponentIdentifier, ComponentRequestEntry, Coordinates } from "../../types/ComponentRequestEntry";
+import { ComponentRequest } from "../../types/ComponentRequest";
 
 export class GolangDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<GolangPackage> = [];
@@ -51,22 +53,22 @@ export class GolangDependencies extends PackageDependenciesHelper implements Pac
     return coordinates.asCoordinates();
   }
 
-  public convertToNexusFormat() {
-    return {
-      components: _.map(
-        this.Dependencies,
-        (d: { Hash: any; Name: any; Version: any }) => ({
-          hash: null,
-          componentIdentifier: {
-            format: "golang",
-            coordinates: {
-              name: d.Name,
-              version: d.Version
-            }
+  public convertToNexusFormat(): ComponentRequest {
+    let comps = this.Dependencies.map(d => {
+      let entry: ComponentRequestEntry = {
+        componentIdentifier: {
+          format: "golang",
+          coordinates: {
+            name: d.Name,
+            version: d.Version
           }
-        })
-      )
-    };
+        }
+      }
+
+      return entry;
+    });
+
+    return new ComponentRequest(comps);
   }
 
   public toComponentEntries(data: any): Array<ComponentEntry> {

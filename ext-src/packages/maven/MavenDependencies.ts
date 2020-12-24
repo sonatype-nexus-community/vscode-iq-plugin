@@ -23,6 +23,8 @@ import { RequestService } from "../../services/RequestService";
 import { MavenUtils } from "./MavenUtils";
 import { ScanType } from "../../types/ScanType";
 import { ComponentEntry } from "../../models/ComponentEntry";
+import { ComponentRequest } from "../../types/ComponentRequest";
+import { ComponentIdentifier, ComponentRequestEntry, Coordinates } from "../../types/ComponentRequestEntry";
 
 export class MavenDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<MavenPackage> = [];
@@ -50,30 +52,24 @@ export class MavenDependencies extends PackageDependenciesHelper implements Pack
     return coordinates.asCoordinates();
   }
 
-  public convertToNexusFormat() {
-    return {
-      components: _.map(
-        this.Dependencies,
-        (d: {
-          Hash: any;
-          Name: any;
-          Group: any;
-          Version: any;
-          Extension: any;
-        }) => ({
-          hash: null,
-          componentIdentifier: {
-            format: "maven",
-            coordinates: {
-              artifactId: d.Name,
-              groupId: d.Group,
-              version: d.Version,
-              extension: d.Extension
-            }
+  public convertToNexusFormat(): ComponentRequest {
+    let comps = this.Dependencies.map(d => {
+      let entry: ComponentRequestEntry = {
+        componentIdentifier: {
+          format: "golang",
+          coordinates: {
+            name: d.Name,
+            version: d.Version,
+            extension: d.Extension,
+            group: d.Group
           }
-        })
-      )
-    };
+        }
+      }
+
+      return entry;
+    });
+
+    return new ComponentRequest(comps);
   }
 
   public toComponentEntries(data: any): Array<ComponentEntry> {
