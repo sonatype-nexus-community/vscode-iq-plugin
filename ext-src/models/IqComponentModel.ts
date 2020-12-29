@@ -77,10 +77,8 @@ export class IqComponentModel implements ComponentModel {
   
                   progress.report({message: "Reticulating Splines", increment: 25});
                   let result: ComponentRequest = await pm.convertToNexusFormat();
-                  data.components = new Array(...data.components, ...result.components);
-                  
-                  this.components = new Array(...this.components, ...pm.toComponentEntries(data));
-                  this.components.concat(pm.toComponentEntries(data));
+                  data.components.push(...result.components);
+                  this.components.push(...pm.toComponentEntries(result));
                   this.coordsToComponent = new Map([...this.coordsToComponent, ...pm.CoordinatesToComponents]);
                 }
                 progress.report({message: "Packaging ready", increment: 35});
