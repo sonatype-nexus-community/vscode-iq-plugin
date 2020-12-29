@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as _ from "lodash";
-
 import { exec } from "../../exec";
 import { {{&format}}Package } from "./{{&format}}Package";
 import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../ComponentInfoPanel";
 import { {{&format}}Coordinate } from "./{{&format}}Coordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
+import { ComponentRequestEntry } from "../../types/ComponentRequestEntry";
+import { ComponentRequest } from "../../types/ComponentRequest";
 
 /**
 * @class {{&format}}Dependencies
@@ -48,26 +48,22 @@ export class {{&format}}Dependencies extends PackageDependenciesHelper implement
     return coordinates.asCoordinates();
   }
 
-  public convertToNexusFormat() {
-    return {
-      components: _.map(
-        this.Dependencies,
-        (d: {
-          Hash: any;
-          Name: any;
-          Version: any;
-        }) => ({
-          hash: null,
-          componentIdentifier: {
-            format: "{{&format}}",
-            coordinates: {
-              name: d.Name,
-              version: d.Version       
-            }
+  public convertToNexusFormat(): ComponentRequest {
+    let comps = this.Dependencies.map(d => {
+      let entry: ComponentRequestEntry = {
+        componentIdentifier: {
+          format: "",
+          coordinates: {
+            name: d.Name,
+            version: d.Version,
           }
-        })
-      )
-    };
+        }
+      }
+
+      return entry;
+    });
+
+    return new ComponentRequest(comps);
   }
 
   public toComponentEntries(data: any): Array<ComponentEntry> {
