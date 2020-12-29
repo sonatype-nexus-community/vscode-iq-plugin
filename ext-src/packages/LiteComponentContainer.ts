@@ -23,27 +23,27 @@ import { RubyGemLiteDependencies } from "./rubygems/RubyGemsLiteDependencies";
 import { RLiteDependencies } from "./r/RLiteDependencies";
 
 export class LiteComponentContainer {
-  Implementation: Array<LitePackageDependencies> = [];
+  Possible: Array<LitePackageDependencies> = [];
+  Valid: Array<LitePackageDependencies> = [];
   PackageMuncher: LitePackageDependencies | undefined;
 
   constructor() {
     // To add a new format, you just need to push another implementation to this list
-    this.Implementation.push(new RubyGemLiteDependencies());
-    this.Implementation.push(new NpmLiteDependencies());
-    this.Implementation.push(new PyPiLiteDependencies());
-    this.Implementation.push(new GolangLiteDependencies());
-    this.Implementation.push(new MavenLiteDependencies());
-    this.Implementation.push(new RLiteDependencies());
+    this.Possible.push(new RubyGemLiteDependencies());
+    this.Possible.push(new NpmLiteDependencies());
+    this.Possible.push(new PyPiLiteDependencies());
+    this.Possible.push(new GolangLiteDependencies());
+    this.Possible.push(new MavenLiteDependencies());
+    this.Possible.push(new RLiteDependencies());
 
-    // Bit of an odd side effect, if a project has multiple dependency types, the PackageMuncher will get set to the last one it encounters currently
-    this.Implementation.forEach(i => {
+    this.Possible.forEach(i => {
       if(i.checkIfValid()) {
-        this.PackageMuncher = i;
+        this.Valid.push(i);
       }
     });
 
-    if (this.PackageMuncher != undefined) {
-      console.debug("Package Muncher set");
+    if (this.Valid.length != 0) {
+      console.debug("Package Muncher(s) set");
     } else {
       throw new TypeError("No valid implementation exists for workspace");
     }

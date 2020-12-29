@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as _ from "lodash";
-
 import { GolangPackage } from "./GolangPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { GolangCoordinate } from "./GolangCoordinate";
@@ -24,7 +22,7 @@ import { GolangUtils } from "./GolangUtils";
 import { ScanType } from "../../types/ScanType";
 import { ComponentEntry } from "../../models/ComponentEntry";
 import { GolangScanType } from "./GolangScanType";
-import { ComponentIdentifier, ComponentRequestEntry, Coordinates } from "../../types/ComponentRequestEntry";
+import { ComponentRequestEntry } from "../../types/ComponentRequestEntry";
 import { ComponentRequest } from "../../types/ComponentRequest";
 
 export class GolangDependencies extends PackageDependenciesHelper implements PackageDependencies {

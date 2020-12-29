@@ -33,7 +33,6 @@ export class ComponentContainer {
     this.Possible.push(new GolangDependencies(this.requestService));
     this.Possible.push(new PyPIDependencies(this.requestService));
 
-    // Bit of an odd side effect, if a project has multiple dependency types, the PackageMuncher will get set to the last one it encounters currently
     this.Possible.forEach(i => {
       if(i.CheckIfValid()) {
         this.Valid.push(i);
@@ -41,7 +40,7 @@ export class ComponentContainer {
     });
 
     if (this.Valid.length != 0) {
-      console.debug("Package Muncher set");
+      console.debug("Package Muncher(s) set");
     } else {
       throw new TypeError("No valid implementation exists for workspace");
     }

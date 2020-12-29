@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as _ from "lodash";
-
 import { NpmPackage } from "./NpmPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { NpmCoordinate } from "./NpmCoordinate";

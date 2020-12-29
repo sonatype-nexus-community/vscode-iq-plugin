@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 import { window, WorkspaceConfiguration, ProgressLocation } from "vscode";
-import * as _ from "lodash";
 
 import { LiteComponentContainer } from '../packages/LiteComponentContainer';
 import { LiteRequestService } from "../services/LiteRequestService";
@@ -50,14 +49,16 @@ export class OssIndexComponentModel implements ComponentModel {
             location: ProgressLocation.Notification, 
             title: "Running OSS Index Scan"
           }, async (progress, token) => {
-          if (componentContainer.PackageMuncher != undefined) {
+          if (componentContainer.Valid.length > 0) {
+            let purls: string[] = [];
             progress.report({message: "Starting to package your dependencies", increment: 10});
-            await componentContainer.PackageMuncher.packageForService();
-  
-            progress.report({message: "Reticulating splines...", increment: 30});
+            for (let pm of componentContainer.Valid) {
+              await pm.packageForService();
+    
+              progress.report({message: "Reticulating splines...", increment: 30});
 
-            let purls = _.map(componentContainer.PackageMuncher.dependencies, (x => x.toPurl()));
-            
+              purls.push(...pm.dependencies.map(x => x.toPurl()));
+            }
             progress.report({message: "Talking to OSS Index", increment: 50});
             let results = await this.requestService.getResultsFromPurls(purls) as Array<any>;
             console.log("Result array from OSS Index", results);
@@ -70,7 +71,7 @@ export class OssIndexComponentModel implements ComponentModel {
               let componentEntry = new ComponentEntry(name, version, ScanType.OssIndex);
               componentEntry.ossIndexData = x;
               return componentEntry;
-            })
+            });
             progress.report({message: "Done!", increment: 100});
 
             resolve(this.components);

@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as _ from "lodash";
-
 import { MavenPackage } from "./MavenPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
@@ -24,7 +22,7 @@ import { MavenUtils } from "./MavenUtils";
 import { ScanType } from "../../types/ScanType";
 import { ComponentEntry } from "../../models/ComponentEntry";
 import { ComponentRequest } from "../../types/ComponentRequest";
-import { ComponentIdentifier, ComponentRequestEntry, Coordinates } from "../../types/ComponentRequestEntry";
+import { ComponentRequestEntry } from "../../types/ComponentRequestEntry";
 
 export class MavenDependencies extends PackageDependenciesHelper implements PackageDependencies {
   Dependencies: Array<MavenPackage> = [];
