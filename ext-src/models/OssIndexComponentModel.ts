@@ -66,7 +66,7 @@ export class OssIndexComponentModel implements ComponentModel {
             progress.report({message: "Morphing OSS Index results into something usable", increment: 75});
             this.components = results.map(x => {
               let coordinates = x.coordinates as string;
-              let name = this.parsePackageName(coordinates);
+              let name = this.parsePackageName(coordinates).replace("%40", "@");
               let version = coordinates.substring(coordinates.indexOf("@") + 1, coordinates.length);
               let componentEntry = new ComponentEntry(name, version, ScanType.OssIndex);
               componentEntry.ossIndexData = x;
