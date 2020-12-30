@@ -18,6 +18,7 @@ import { MavenDependencies } from "./maven/MavenDependencies";
 import { NpmDependencies } from "./npm/NpmDependencies";
 import { GolangDependencies } from "./golang/GolangDependencies";
 import { PyPIDependencies } from "./pypi/PyPIDependencies";
+import { RubyGemsDependencies } from "./rubygems/RubyGemsDependencies"; 
 import { RequestService } from "../services/RequestService";
 
 export class ComponentContainer {
@@ -32,6 +33,7 @@ export class ComponentContainer {
     this.Possible.push(new NpmDependencies(this.requestService));
     this.Possible.push(new GolangDependencies(this.requestService));
     this.Possible.push(new PyPIDependencies(this.requestService));
+    this.Possible.push(new RubyGemsDependencies(this.requestService));
 
     this.Possible.forEach(i => {
       if(i.CheckIfValid()) {

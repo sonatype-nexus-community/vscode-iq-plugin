@@ -2,6 +2,7 @@ import { GolangCoordinate } from "../packages/golang/GolangCoordinate";
 import { MavenCoordinate } from "../packages/maven/MavenCoordinate";
 import { NpmCoordinate } from "../packages/npm/NpmCoordinate";
 import { PyPICoordinate } from "../packages/pypi/PyPICoordinate";
+import { RubyGemsCoordinate } from "../packages/rubygems/RubyGemsCoordinate";
 
 export class ComponentEntryConversions {
     static ConvertToComponentEntry(format: string, entry: any): string {
@@ -14,6 +15,8 @@ export class ComponentEntryConversions {
                 return this.convertFromPyPi(entry);
             case 'npm':
                 return this.convertFromNpm(entry);
+            case 'gem':
+                return this.convertFromGem(entry);
             default:
                 console.debug('Unsupported format', format);
                 return "";
@@ -46,6 +49,13 @@ export class ComponentEntryConversions {
 
     private static convertFromNpm(entry: any): string {
         let coordinates = new NpmCoordinate(entry.component.componentIdentifier.coordinates.packageId, 
+            entry.component.componentIdentifier.coordinates.version);
+          
+        return coordinates.asCoordinates();
+    }
+
+    private static convertFromGem(entry: any): string {
+        let coordinates = new RubyGemsCoordinate(entry.component.componentIdentifier.coordinates.name, 
             entry.component.componentIdentifier.coordinates.version);
           
         return coordinates.asCoordinates();
