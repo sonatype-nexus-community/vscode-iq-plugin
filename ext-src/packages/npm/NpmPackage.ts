@@ -32,7 +32,7 @@ export class NpmPackage implements PackageType {
   }
 
   public toPurl() {
-    return `pkg:npm/${this.Name.replace("@", "")}@${this.Version}`;
+    return `pkg:npm/${this.Name.replace("@", "%40")}@${this.Version}`;
   }
 
   public toCoordValueType(): string {
