@@ -67,7 +67,7 @@ export class NpmDependencies implements PackageDependencies {
         componentIdentifier: {
           format: "npm",
           coordinates: {
-            name: d.Name,
+            packageId: d.Name,
             version: d.Version
           }
         }
