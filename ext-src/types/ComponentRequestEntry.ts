@@ -24,7 +24,8 @@ export interface ComponentIdentifier {
 }
 
 export interface Coordinates {
-    name: String;
+    name?: String;
+    packageId?: String;
     version: String;
     group?: String;
     extension?: String; 
