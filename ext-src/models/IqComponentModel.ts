@@ -73,13 +73,17 @@ export class IqComponentModel implements ComponentModel {
               if (componentContainer.Valid.length > 0) {
                 progress.report({message: "Starting to package your dependencies for IQ Server", increment: 5});
                 for (let pm of componentContainer.Valid) {
-                  await pm.packageForIq();
-  
-                  progress.report({message: "Reticulating Splines", increment: 25});
-                  let result: ComponentRequest = await pm.convertToNexusFormat();
-                  data.components.push(...result.components);
-                  this.components.push(...pm.toComponentEntries(result));
-                  this.coordsToComponent = new Map([...this.coordsToComponent, ...pm.CoordinatesToComponents]);
+                  try {
+                    await pm.packageForIq();
+                    progress.report({message: "Reticulating Splines", increment: 25});
+                    let result: ComponentRequest = await pm.convertToNexusFormat();
+                    data.components.push(...result.components);
+                    this.components.push(...pm.toComponentEntries(result));
+                    this.coordsToComponent = new Map([...this.coordsToComponent, ...pm.CoordinatesToComponents]);
+                  } catch (ex) {
+                    // Swallow exception and move forward in case there are other formats, log to debug for now
+                    console.debug(ex);
+                  }
                 }
                 progress.report({message: "Packaging ready", increment: 35});
               } else {

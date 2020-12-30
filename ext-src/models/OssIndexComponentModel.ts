@@ -53,11 +53,16 @@ export class OssIndexComponentModel implements ComponentModel {
             let purls: string[] = [];
             progress.report({message: "Starting to package your dependencies", increment: 10});
             for (let pm of componentContainer.Valid) {
-              await pm.packageForService();
+              try {
+                await pm.packageForService();
     
-              progress.report({message: "Reticulating splines...", increment: 30});
-
-              purls.push(...pm.dependencies.map(x => x.toPurl()));
+                progress.report({message: "Reticulating splines...", increment: 30});
+  
+                purls.push(...pm.dependencies.map(x => x.toPurl()));
+              } catch (ex) {
+                // Swallow exception and move forward, log it as debug for now
+                console.debug(ex);
+              }
             }
             progress.report({message: "Talking to OSS Index", increment: 50});
             let results = await this.requestService.getResultsFromPurls(purls) as Array<any>;
