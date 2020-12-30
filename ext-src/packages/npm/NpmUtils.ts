@@ -29,7 +29,7 @@ export class NpmUtils {
 
       return Promise.resolve(this.parseListInstalled(pkgs));
     } catch (ex) {
-      return Promise.reject(ex);
+      return Promise.reject(`Uh oh, spaghetti-o, something went wrong. Most likely you don't have your dependencies installed, so try running npm i or yarn and retrying! Exception message: ${ex}`);
     }
   }
 
