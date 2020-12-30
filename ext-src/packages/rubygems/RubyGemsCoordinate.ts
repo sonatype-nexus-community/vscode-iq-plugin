@@ -28,4 +28,3 @@ export class RubyGemsCoordinate implements CoordinateType {
         return `${this.Name} - ${this.Version}`;
     }
 }
-  
