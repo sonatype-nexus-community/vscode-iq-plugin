@@ -81,8 +81,7 @@ export class IqComponentModel implements ComponentModel {
                     this.components.push(...pm.toComponentEntries(result));
                     this.coordsToComponent = new Map([...this.coordsToComponent, ...pm.CoordinatesToComponents]);
                   } catch (ex) {
-                    // Swallow exception and move forward in case there are other formats, log to debug for now
-                    console.debug(ex);
+                    window.showErrorMessage(`Nexus IQ extension failure, moving forward, exception: ${ex}`);
                   }
                 }
                 progress.report({message: "Packaging ready", increment: 35});

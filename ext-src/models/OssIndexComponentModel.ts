@@ -60,8 +60,7 @@ export class OssIndexComponentModel implements ComponentModel {
   
                 purls.push(...pm.dependencies.map(x => x.toPurl()));
               } catch (ex) {
-                // Swallow exception and move forward, log it as debug for now
-                console.debug(ex);
+                window.showErrorMessage(`Nexus OSS Index extension failure, moving forward, exception: ${ex}`);
               }
             }
             progress.report({message: "Talking to OSS Index", increment: 50});
