@@ -81,6 +81,7 @@ export class MavenDependencies extends PackageDependenciesHelper implements Pack
       let componentEntry = new ComponentEntry(
         packageId,
         entry.componentIdentifier.coordinates.version,
+        "maven",
         ScanType.NexusIq
       );
       components.push(componentEntry);

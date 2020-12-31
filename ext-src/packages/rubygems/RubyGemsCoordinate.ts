@@ -25,6 +25,6 @@ export class RubyGemsCoordinate implements CoordinateType {
     }
 
     public asCoordinates(): string {
-        return `${this.Name} - ${this.Version}`;
+        return `gem - ${this.Name} - ${this.Version}`;
     }
 }

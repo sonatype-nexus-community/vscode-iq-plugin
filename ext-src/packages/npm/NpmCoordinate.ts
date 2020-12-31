@@ -25,6 +25,6 @@ export class NpmCoordinate implements CoordinateType {
   }
 
   public asCoordinates(): string {
-    return `${this.Name} - ${this.Version}`;
+    return `npm - ${this.Name} - ${this.Version}`;
   }
 }

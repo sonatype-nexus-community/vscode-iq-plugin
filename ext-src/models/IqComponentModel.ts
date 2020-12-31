@@ -117,10 +117,9 @@ export class IqComponentModel implements ComponentModel {
 
               progress.report({message: "Morphing results into something usable", increment: 90});
               for (let resultEntry of resultData.results) {
-                let componentEntry: ComponentEntry | undefined;
                 let format: string = resultEntry.component.componentIdentifier.format as string;
                 
-                componentEntry = this.coordsToComponent.get(
+                let componentEntry = this.coordsToComponent.get(
                   ComponentEntryConversions.ConvertToComponentEntry(format, resultEntry)
                 );
                 if (componentEntry != undefined) {

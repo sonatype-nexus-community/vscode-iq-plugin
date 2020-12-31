@@ -25,11 +25,11 @@ export class ComponentEntry {
   nexusIQData: any = undefined;
   ossIndexData: any = undefined;
 
-  constructor(readonly name: string, readonly version: string, readonly scanType: ScanType) {
+  constructor(readonly name: string, readonly version: string, readonly format: string, readonly scanType: ScanType) {
   }
 
   public toString(): string {
-    return `${this.name} @ ${this.version}`;
+    return `${this.format}: ${this.name} @ ${this.version}`;
   }
 
   public maxPolicy(): number {
@@ -61,6 +61,7 @@ export class ComponentEntry {
     }
     return maxThreatLevel;
   }
+
   public iconName(): string {
     if ((this.scanType == ScanType.NexusIq && (!this.policyViolations || !this.nexusIQData)) ||
       (this.scanType == ScanType.OssIndex && !this.ossIndexData )) {

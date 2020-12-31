@@ -77,6 +77,7 @@ export class GolangDependencies extends PackageDependenciesHelper implements Pac
       let componentEntry = new ComponentEntry(
         packageId,
         entry.componentIdentifier.coordinates.version,
+        "golang",
         ScanType.NexusIq
       );
       components.push(componentEntry);

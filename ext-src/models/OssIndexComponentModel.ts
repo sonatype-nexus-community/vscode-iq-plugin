@@ -21,6 +21,7 @@ import { OssIndexRequestService } from "../services/OssIndexRequestService";
 import { ComponentModel } from "./ComponentModel";
 import { ScanType } from "../types/ScanType";
 import { ComponentEntry } from "./ComponentEntry";
+import { PackageURL } from 'packageurl-js';
 
 export class OssIndexComponentModel implements ComponentModel {
   components = new Array<ComponentEntry>();
@@ -69,10 +70,11 @@ export class OssIndexComponentModel implements ComponentModel {
   
             progress.report({message: "Morphing OSS Index results into something usable", increment: 75});
             this.components = results.map(x => {
-              let coordinates = x.coordinates as string;
-              let name = this.parsePackageName(coordinates).replace("%40", "@");
-              let version = coordinates.substring(coordinates.indexOf("@") + 1, coordinates.length);
-              let componentEntry = new ComponentEntry(name, version, ScanType.OssIndex);
+              let purl: PackageURL = PackageURL.fromString(x.coordinates);
+              let name = purl.name;
+              let format = purl.type;
+              let version = purl.version;
+              let componentEntry = new ComponentEntry(name, version, format, ScanType.OssIndex);
               componentEntry.ossIndexData = x;
               return componentEntry;
             });

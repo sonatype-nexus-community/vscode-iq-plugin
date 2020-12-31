@@ -81,6 +81,7 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
       let componentEntry = new ComponentEntry(
         packageId,
         version,
+        "pypi",
         ScanType.NexusIq
       );
       components.push(componentEntry);

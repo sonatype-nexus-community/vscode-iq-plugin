@@ -85,6 +85,7 @@ export class NpmDependencies implements PackageDependencies {
       let componentEntry = new ComponentEntry(
         entry.componentIdentifier.coordinates.packageId,
         entry.componentIdentifier.coordinates.version,
+        "npm",
         ScanType.NexusIq
       );
       components.push(componentEntry);

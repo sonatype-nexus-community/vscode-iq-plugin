@@ -82,6 +82,7 @@ export class RubyGemsDependencies implements PackageDependencies {
       let componentEntry = new ComponentEntry(
         entry.componentIdentifier.coordinates.name,
         entry.componentIdentifier.coordinates.version,
+        "gem",
         ScanType.NexusIq
       );
       components.push(componentEntry);

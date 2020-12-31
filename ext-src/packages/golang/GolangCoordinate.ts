@@ -25,6 +25,6 @@ export class GolangCoordinate implements CoordinateType {
   }
 
   public asCoordinates(): string {
-    return `${this.Name} - ${this.Version}`;
+    return `golang - ${this.Name} - ${this.Version}`;
   }
 }
