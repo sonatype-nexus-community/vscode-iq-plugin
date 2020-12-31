@@ -22,6 +22,7 @@ import { GolangLiteDependencies } from "./golang/GolangLiteDependencies";
 import { MavenLiteDependencies } from "./maven/MavenLiteDependencies";
 import { RubyGemLiteDependencies } from "./rubygems/RubyGemsLiteDependencies";
 import { RLiteDependencies } from "./r/RLiteDependencies";
+import { ComposerLiteDependencies } from "./composer/ComposerLiteDependencies";
 
 export class LiteComponentContainer {
   Possible: Array<LitePackageDependencies> = [];
@@ -37,6 +38,7 @@ export class LiteComponentContainer {
     this.Possible.push(new MavenLiteDependencies());
     this.Possible.push(new RLiteDependencies());
     this.Possible.push(new PoetryLiteDependencies());
+    this.Possible.push(new ComposerLiteDependencies());
 
     this.Possible.forEach(i => {
       if(i.checkIfValid()) {

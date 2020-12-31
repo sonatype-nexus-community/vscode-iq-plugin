@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ComposerCoordinate } from "../packages/composer/ComposerCoordinate";
 import { GolangCoordinate } from "../packages/golang/GolangCoordinate";
 import { MavenCoordinate } from "../packages/maven/MavenCoordinate";
 import { NpmCoordinate } from "../packages/npm/NpmCoordinate";
@@ -32,6 +33,8 @@ export class ComponentEntryConversions {
                 return this.convertFromNpm(entry);
             case 'gem':
                 return this.convertFromGem(entry);
+            case 'composer':
+                return this.convertFromComposer(entry);
             default:
                 console.debug('Unsupported format', format);
                 return "";
@@ -71,6 +74,14 @@ export class ComponentEntryConversions {
 
     private static convertFromGem(entry: any): string {
         let coordinates = new RubyGemsCoordinate(entry.component.componentIdentifier.coordinates.name, 
+            entry.component.componentIdentifier.coordinates.version);
+          
+        return coordinates.asCoordinates();
+    }
+
+    private static convertFromComposer(entry: any): string {
+        let coordinates = new ComposerCoordinate(entry.component.componentIdentifier.coordinates.name, 
+            entry.component.componentIdentifier.coordinates.namespace,
             entry.component.componentIdentifier.coordinates.version);
           
         return coordinates.asCoordinates();

@@ -21,6 +21,7 @@ import { PyPIDependencies } from "./pypi/PyPIDependencies";
 import { RubyGemsDependencies } from "./rubygems/RubyGemsDependencies"; 
 import { RequestService } from "../services/RequestService";
 import { PoetryDependencies } from "./poetry/PoetryDependencies";
+import { ComposerDependencies } from './composer/ComposerDependencies';
 
 export class ComponentContainer {
   Possible: Array<PackageDependencies> = [];
@@ -36,6 +37,7 @@ export class ComponentContainer {
     this.Possible.push(new PyPIDependencies(this.requestService));
     this.Possible.push(new RubyGemsDependencies(this.requestService));
     this.Possible.push(new PoetryDependencies(this.requestService));
+    this.Possible.push(new ComposerDependencies(this.requestService));
 
     this.Possible.forEach(i => {
       if(i.CheckIfValid()) {

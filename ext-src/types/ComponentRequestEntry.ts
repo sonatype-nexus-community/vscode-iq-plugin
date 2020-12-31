@@ -15,7 +15,8 @@
  */
 export interface ComponentRequestEntry {
     hash?: string;
-    componentIdentifier: ComponentIdentifier;
+    componentIdentifier?: ComponentIdentifier;
+    packageUrl?: string;
 }
 
 export interface ComponentIdentifier {

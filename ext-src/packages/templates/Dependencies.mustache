@@ -31,6 +31,12 @@ export class {{&format}}Dependencies extends PackageDependenciesHelper implement
     string,
     ComponentEntry
   >();
+  RequestService: RequestService;
+
+  constructor(private requestService: RequestService) {
+    super();
+    this.RequestService = this.requestService;
+  }
 
   public CheckIfValid(): boolean {
     // TODO: Set filename to manifest file for format

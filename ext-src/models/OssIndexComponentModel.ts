@@ -53,13 +53,20 @@ export class OssIndexComponentModel implements ComponentModel {
           if (componentContainer.Valid.length > 0) {
             let purls: string[] = [];
             progress.report({message: "Starting to package your dependencies", increment: 10});
+            const regex: RegExp = /^(.*):(.*)@(.*)$/;
             for (let pm of componentContainer.Valid) {
               try {
                 await pm.packageForService();
     
                 progress.report({message: "Reticulating splines...", increment: 30});
   
-                purls.push(...pm.dependencies.map(x => x.toPurl()));
+                purls.push(...pm.dependencies.map((x) => {
+                  let matches = regex.exec(x.toPurl());
+                  if (matches && matches.length === 4) {
+                    return `${matches[1]}:${matches![2]}@${matches![3].replace("v", "")}`;
+                  }
+                  return "";
+                }));
               } catch (ex) {
                 window.showErrorMessage(`Nexus OSS Index extension failure, moving forward, exception: ${ex}`);
               }
@@ -95,9 +102,5 @@ export class OssIndexComponentModel implements ComponentModel {
         return;
       }
     });
-  }
-
-  private parsePackageName(pkg: string): string {
-    return pkg.substring(pkg.indexOf("/") + 1, pkg.indexOf("@"));
   }
 }

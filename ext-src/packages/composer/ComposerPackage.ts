@@ -14,23 +14,26 @@
  * limitations under the License.
  */
 import { PackageType } from "../PackageType";
+import { PackageURL } from 'packageurl-js';
 
-export class {{&format}}Package implements PackageType {
+export class ComposerPackage implements PackageType {
   constructor(
     readonly Name: string,
+    readonly Group: string,
     readonly Version: string,
     readonly Hash?: string
   ) {}
 
+  public toPurl(): string {
+    let purl: PackageURL = new PackageURL("composer", this.Group, this.Name, this.Version, {}, "");
+    return purl.toString().substring(0, purl.toString().length - 1);
+  }
+
   public toCoordinates(): string {
-    throw new Error("Not implemented");
+    return `${this.Group}:${this.Name}:${this.Version}`;
   }
 
   public toCoordValueType(): string {
-    throw new Error("Not implemented");
-  }
-
-  public toPurl(): string {
-    throw new Error("Not implemented");
+    return `${this.Group}:${this.Name} - ${this.Version}`;
   }
 }
