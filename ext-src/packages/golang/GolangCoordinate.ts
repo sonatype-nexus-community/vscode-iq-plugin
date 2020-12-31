@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { CoordinateType } from "../CoordinateType";
+
 export class GolangCoordinate implements CoordinateType {
   Name: string;
   Version: string;

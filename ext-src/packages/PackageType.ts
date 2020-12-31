@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { CoordinateType } from "./CoordinateType";
+
 export interface PackageType {
   Name: string;
   Version: string;

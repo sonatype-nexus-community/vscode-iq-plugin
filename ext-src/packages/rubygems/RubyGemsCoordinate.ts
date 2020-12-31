@@ -13,10 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export interface CoordinateType {
-  Name: string;
-  Version: string;
-  Group?: string;
-  Extension?: string;
-  asCoordinates(): string;
+import { CoordinateType } from '../CoordinateType';
+
+export class RubyGemsCoordinate implements CoordinateType {
+    Name: string;
+    Version: string;
+
+    constructor (name: string, version: string){
+        this.Name = name;
+        this.Version = version;
+    }
+
+    public asCoordinates(): string {
+        return `${this.Name} - ${this.Version}`;
+    }
 }
