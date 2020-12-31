@@ -28,6 +28,7 @@ export class PoetryUtils {
 
         if (poetry.package && poetry.package.length > 0) {
           let res: Array<PyPIPackage> = new Array();
+
           poetry.package.forEach(pkg => {
             res.push(new PyPIPackage(pkg.name, pkg.version, "", ""));
           });
@@ -37,7 +38,7 @@ export class PoetryUtils {
 
         return Promise.reject("No dependencies found, check your poetry.lock file!");
     } catch(ex) {
-        return Promise.reject(ex);
+        return Promise.reject(`Uh oh, spaghetti-o, an exception occurred while parsing poetry dependencies: ${ex}`);
     }
   }
 }
