@@ -17,6 +17,7 @@
 import { LitePackageDependencies } from "./LitePackageDependencies";
 import { NpmLiteDependencies } from "./npm/NpmLiteDependencies";
 import { PyPiLiteDependencies } from "./pypi/PyPiLiteDependencies";
+import { PoetryLiteDependencies } from "./poetry/PoetryLiteDependencies";
 import { GolangLiteDependencies } from "./golang/GolangLiteDependencies";
 import { MavenLiteDependencies } from "./maven/MavenLiteDependencies";
 import { RubyGemLiteDependencies } from "./rubygems/RubyGemsLiteDependencies";
@@ -35,6 +36,7 @@ export class LiteComponentContainer {
     this.Possible.push(new GolangLiteDependencies());
     this.Possible.push(new MavenLiteDependencies());
     this.Possible.push(new RLiteDependencies());
+    this.Possible.push(new PoetryLiteDependencies());
 
     this.Possible.forEach(i => {
       if(i.checkIfValid()) {
