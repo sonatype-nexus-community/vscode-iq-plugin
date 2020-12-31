@@ -26,5 +26,5 @@ export interface PackageDependencies {
   ConvertToComponentEntry(resultEntry: any): string;
   convertToNexusFormat(): ComponentRequest;
   toComponentEntries(data: any): Array<ComponentEntry>;
-  packageForIq(): Promise<undefined>;
+  packageForIq(): Promise<any>;
 }

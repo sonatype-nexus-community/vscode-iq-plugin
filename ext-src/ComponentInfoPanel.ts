@@ -21,9 +21,6 @@ import { ComponentModel } from "./models/ComponentModel";
 import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
 import { ComponentEntry } from "./models/ComponentEntry";
 
-
-
-
 export class ComponentInfoPanel {
   /**
    * Track the currently panel. Only allow a single panel to exist at a time.

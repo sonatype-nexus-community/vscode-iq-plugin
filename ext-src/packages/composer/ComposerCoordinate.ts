@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PackageType } from "../PackageType";
 
-export class {{&format}}Package implements PackageType {
-  constructor(
-    readonly Name: string,
-    readonly Version: string,
-    readonly Hash?: string
-  ) {}
+import { CoordinateType } from "../CoordinateType";
 
-  public toCoordinates(): string {
-    throw new Error("Not implemented");
+ /**
+ * @class ComposerCoordinate
+ */
+export class ComposerCoordinate implements CoordinateType {
+  Name: string;
+  Group: string;
+  Version: string;
+ 
+  constructor (name: string, group: string, version: string){
+    this.Name = name;
+    this.Group = group;
+    this.Version = version;
   }
 
-  public toCoordValueType(): string {
-    throw new Error("Not implemented");
-  }
-
-  public toPurl(): string {
-    throw new Error("Not implemented");
+  public asCoordinates(): string {
+    return `composer: ${this.Group}/${this.Name} @ ${this.Version}`;
   }
 }
