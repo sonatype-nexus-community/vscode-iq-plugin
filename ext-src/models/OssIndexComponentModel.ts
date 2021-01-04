@@ -77,10 +77,10 @@ export class OssIndexComponentModel implements ComponentModel {
                 window.showErrorMessage(`Nexus OSS Index extension failure, moving forward, exception: ${ex}`);
               }
             }
-            this.logger.log(LogLevel.TRACE, `Full list of purls in hand, off to OSS Index we go, purls: ${purls}`);
+            this.logger.log(LogLevel.TRACE, `Full list of purls in hand, off to OSS Index we go`, purls);
             progress.report({message: "Talking to OSS Index", increment: 50});
             let results = await this.requestService.getResultsFromPurls(purls) as Array<any>;
-            this.logger.log(LogLevel.TRACE, `Obtained results from OSS Index: ${JSON.stringify(results)}`);
+            this.logger.log(LogLevel.TRACE, `Obtained results from OSS Index`, results);
   
             progress.report({message: "Morphing OSS Index results into something usable", increment: 75});
             this.components = results.map(x => {
@@ -103,11 +103,11 @@ export class OssIndexComponentModel implements ComponentModel {
           window.setStatusBarMessage("Sonatype OSS Index results returned, now go build with confidence!", 5000);
         },
         (failure) => {
-          this.logger.log(LogLevel.ERROR, `Uh oh: ${failure}`);
+          this.logger.log(LogLevel.ERROR, `Uh oh`, failure);
           window.showErrorMessage(`Nexus IQ OSS Index extension failure: ${failure}`)
         });
       } catch (e) {
-        this.logger.log(LogLevel.ERROR, `Uh oh: ${e}`);
+        this.logger.log(LogLevel.ERROR, `Uh oh`, e);
         reject(e);
         return;
       }

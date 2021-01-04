@@ -77,13 +77,13 @@ export class IqComponentModel implements ComponentModel {
                     await pm.packageForIq();
                     progress.report({message: "Reticulating Splines", increment: 25});
                     let result: ComponentRequest = await pm.convertToNexusFormat();
-                    this.logger.log(LogLevel.TRACE, `Component Request for ${pm.constructor.name} obtained: ${JSON.stringify(result)}`);
+                    this.logger.log(LogLevel.TRACE, `Component Request for ${pm.constructor.name} obtained`, result);
 
                     data.components.push(...result.components);
                     this.components.push(...pm.toComponentEntries(result));
                     this.coordsToComponent = new Map([...this.coordsToComponent, ...pm.CoordinatesToComponents]);
                   } catch (ex) {
-                    this.logger.log(LogLevel.ERROR, `Nexus IQ Extension Failure moving forward: ${ex}`);
+                    this.logger.log(LogLevel.ERROR, `Nexus IQ Extension Failure moving forward`, ex);
                     window.showErrorMessage(`Nexus IQ extension failure, moving forward, exception: ${ex}`);
                   }
                 }
@@ -100,7 +100,7 @@ export class IqComponentModel implements ComponentModel {
               progress.report({message: "Getting IQ Server Internal Application ID", increment: 40});
               
               let response: string = await this.requestService.getApplicationId(this.applicationPublicId);
-              this.logger.log(LogLevel.TRACE, `Obtained app response: ${response}`);
+              this.logger.log(LogLevel.TRACE, `Obtained app response`, response);
               
               let appRep = JSON.parse(response);
         
@@ -119,7 +119,7 @@ export class IqComponentModel implements ComponentModel {
               progress.report({message: "Report retrieved, parsing", increment: 80});
               let resultData: IQResponse = JSON.parse(resultDataString);
         
-              this.logger.log(LogLevel.TRACE, `Recieved results from IQ Scan: ${JSON.stringify(resultData)}`);
+              this.logger.log(LogLevel.TRACE, `Recieved results from IQ Scan`, resultData);
 
               progress.report({message: "Morphing results into something usable", increment: 90});
               for (let resultEntry of resultData.results) {
@@ -140,11 +140,11 @@ export class IqComponentModel implements ComponentModel {
               window.setStatusBarMessage("Nexus IQ Server Results in, build with confidence!", 5000);
             }, 
             (failure) => {
-              this.logger.log(LogLevel.ERROR, `Nexus IQ extension failure: ${failure}`);
+              this.logger.log(LogLevel.ERROR, `Nexus IQ extension failure`, failure);
               window.showErrorMessage(`Nexus IQ extension failure: ${failure}`);
             });
         } catch (e) {
-          this.logger.log(LogLevel.ERROR, `Uh ohhhh: ${e}`);
+          this.logger.log(LogLevel.ERROR, `Uh ohhhh`, e);
           reject(e);
         }
       });

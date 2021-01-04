@@ -142,8 +142,8 @@ export class NexusExplorer {
     const _channel = vscode.window.createOutputChannel(`Sonatype IQ Extension`);
     context.subscriptions.push(_channel);
 
-    this.logger = new Logger({outputChannel: _channel});
-    this.logger.setLogLevel(LogLevel.ERROR);
+    this.logger = new Logger({outputChannel: _channel, logFilePath: context.storagePath!});
+    this.logger.setLogLevel(LogLevel.TRACE);
 
     if (
       configuration.get("nexusExplorer.dataSource", "ossindex") + "" ==
