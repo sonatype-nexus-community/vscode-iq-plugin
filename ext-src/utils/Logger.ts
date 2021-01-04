@@ -50,14 +50,12 @@ export class Logger {
             categories: {
                 default: {
                     appenders: ['sonatypeIQ'],
-                    level: 'trace',
+                    level: 'error',
                 }
             }
         });
 
         const _log: log4js.Logger = log4js.getLogger();
-
-        this._writeToOutputChannel(LogLevel.INFO, _log.level);
 
         this._writeToOutputChannel(LogLevel.INFO, `More logs can be found at: '${path}'`);
 
@@ -66,6 +64,9 @@ export class Logger {
 
     public setLogLevel(logLevel: LogLevel) {
         this._logLevel = logLevel;
+        this._fileLogger.level = LogLevel[logLevel].toLowerCase();
+
+        this._writeToOutputChannel(LogLevel.INFO, `Log Level set to: ${LogLevel[logLevel]}`);
     }
 
     public log(level: LogLevel, message: string, ...meta: any): void {
@@ -91,6 +92,18 @@ export class Logger {
             }
             case LogLevel.TRACE: {
                 this._fileLogger.trace(message, ...meta);
+                break;
+            }
+            case LogLevel.INFO: {
+                this._fileLogger.info(message, ...meta);
+                break;
+            }
+            case LogLevel.WARN: {
+                this._fileLogger.warn(message, ...meta);
+                break;
+            }
+            case LogLevel.FATAL: {
+                this._fileLogger.fatal(message, ...meta);
                 break;
             }
             default: {
