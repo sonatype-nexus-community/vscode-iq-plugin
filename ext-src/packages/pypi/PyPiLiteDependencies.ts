@@ -24,7 +24,7 @@ export class PyPiLiteDependencies implements LitePackageDependencies {
   manifestName: string = "requirements.txt";
 
   public checkIfValid(): boolean {
-    return PackageDependenciesHelper.checkIfValid(this.manifestName, this.format);
+    return "" != PackageDependenciesHelper.checkIfValidWithArray(["Pipefile.lock", this.manifestName], this.format);
   }
 
   public async packageForService(): Promise<any> {

@@ -196,6 +196,10 @@ export class NexusExplorer {
       "nexusExplorer.viewNode",
       (node: ComponentEntry) => this.viewNode(node)
     );
+      
+    vscode.workspace.createFileSystemWatcher('**/Pipfile.lock', false, false, false).onDidChange((event) => {
+      this.nexusExplorerProvider.doRefresh();
+    });
   }
 
   private sortByName() {

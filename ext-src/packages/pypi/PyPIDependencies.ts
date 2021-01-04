@@ -38,8 +38,12 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
   }
 
   public CheckIfValid(): boolean {
+    if (PackageDependenciesHelper.doesPathExist(PackageDependenciesHelper.getWorkspaceRoot(), "Pipfile.lock")) {
+      console.debug("Valid for PyPI with Pipfile");
+      return true;
+    }
     if (PackageDependenciesHelper.doesPathExist(PackageDependenciesHelper.getWorkspaceRoot(), "requirements.txt")) {
-      console.debug("Valid for PyPI");
+      console.debug("Valid for PyPI with requirements");
       return true;
     }
     return false;
