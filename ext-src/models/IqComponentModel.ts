@@ -54,10 +54,6 @@ export class IqComponentModel implements ComponentModel {
       this.logger = options.logger;
     }
   
-    public getContent(resource: Uri): Thenable<string> {
-      return new Promise((c, e) => "my stubbed content entry");
-    }
-  
     public evaluateComponents(): Promise<any> {
       this.logger.log(LogLevel.DEBUG, "Starting IQ Evaluation of Components");
       return this.performIqScan();

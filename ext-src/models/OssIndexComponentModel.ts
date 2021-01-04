@@ -96,15 +96,18 @@ export class OssIndexComponentModel implements ComponentModel {
 
             resolve(this.components);
           } else {
+            this.logger.log(LogLevel.ERROR, `No valid Package Munchers to work with!`);
             reject("Unable to instantiate Package Muncher");
           }
         }).then(() => {
           window.setStatusBarMessage("Sonatype OSS Index results returned, now go build with confidence!", 5000);
         },
         (failure) => {
+          this.logger.log(LogLevel.ERROR, `Uh oh: ${failure}`);
           window.showErrorMessage(`Nexus IQ OSS Index extension failure: ${failure}`)
         });
       } catch (e) {
+        this.logger.log(LogLevel.ERROR, `Uh oh: ${e}`);
         reject(e);
         return;
       }
