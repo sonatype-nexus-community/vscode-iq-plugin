@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { window, WorkspaceConfiguration, ProgressLocation } from "vscode";
+import { window, ProgressLocation } from "vscode";
 
 import { LiteComponentContainer } from '../packages/LiteComponentContainer';
 import { LiteRequestService } from "../services/LiteRequestService";
@@ -22,17 +22,21 @@ import { ComponentModel } from "./ComponentModel";
 import { ScanType } from "../types/ScanType";
 import { ComponentEntry } from "./ComponentEntry";
 import { PackageURL } from 'packageurl-js';
+import { ComponentModelOptions } from "./ComponentModelOptions";
+import { Logger } from "../utils/Logger";
 
 export class OssIndexComponentModel implements ComponentModel {
   components = new Array<ComponentEntry>();
   requestService: LiteRequestService;
   dataSourceType: string = "ossindex";
+  logger: Logger;
   
   constructor(
-    configuration: WorkspaceConfiguration
+    options: ComponentModelOptions
   ) {
-    let username = configuration.get("ossindex.username") + "";
-    let password = configuration.get("ossindex.password") + "";
+    let username = options.configuration.get("ossindex.username") + "";
+    let password = options.configuration.get("ossindex.password") + "";
+    this.logger = options.logger;
     this.requestService = new OssIndexRequestService(username, password);
   }
   
