@@ -15,7 +15,6 @@
  */
 import * as vscode from "vscode";
 import * as path from "path";
-import * as dependencyTree from "dependency-tree";
 
 import { ComponentInfoPanel } from "./ComponentInfoPanel";
 import { IqComponentModel } from "./models/IqComponentModel";

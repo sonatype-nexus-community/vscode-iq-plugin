@@ -185,7 +185,6 @@
     "@types/platform": "^1.3.2",
     "ansi-colors": "^4.1.1",
     "bootstrap": "^4.3.1",
-    "dependency-tree": "^7.0.2",
     "gemfile": "^1.1.0",
     "http-status-codes": "^1.3.2",
     "jquery": "^3.4.0",
@@ -201,7 +200,6 @@
   },
   "devDependencies": {
     "@types/bootstrap": "^4.3.1",
-    "@types/dependency-tree": "^6.1.0",
     "@types/jest": "^22.2.3",
     "@types/lodash": "^4.14.136",
     "@types/node": "^12.12.6",
