@@ -23,7 +23,7 @@ import { ScanType } from "../types/ScanType";
 import { ComponentEntry } from "./ComponentEntry";
 import { PackageURL } from 'packageurl-js';
 import { ComponentModelOptions } from "./ComponentModelOptions";
-import { Logger } from "../utils/Logger";
+import { Logger, LogLevel } from "../utils/Logger";
 
 export class OssIndexComponentModel implements ComponentModel {
   components = new Array<ComponentEntry>();
@@ -60,6 +60,8 @@ export class OssIndexComponentModel implements ComponentModel {
             const regex: RegExp = /^(.*):(.*)@(.*)$/;
             for (let pm of componentContainer.Valid) {
               try {
+
+                this.logger.log(LogLevel.DEBUG, `Packaging Dependencies for ${pm.constructor.name}`);
                 await pm.packageForService();
     
                 progress.report({message: "Reticulating splines...", increment: 30});
@@ -75,9 +77,10 @@ export class OssIndexComponentModel implements ComponentModel {
                 window.showErrorMessage(`Nexus OSS Index extension failure, moving forward, exception: ${ex}`);
               }
             }
+            this.logger.log(LogLevel.TRACE, `Full list of purls in hand, off to OSS Index we go, purls: ${purls}`);
             progress.report({message: "Talking to OSS Index", increment: 50});
             let results = await this.requestService.getResultsFromPurls(purls) as Array<any>;
-            console.log("Result array from OSS Index", results);
+            this.logger.log(LogLevel.TRACE, `Obtained results from OSS Index: ${JSON.stringify(results)}`);
   
             progress.report({message: "Morphing OSS Index results into something usable", increment: 75});
             this.components = results.map(x => {
