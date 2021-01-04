@@ -143,7 +143,7 @@ export class NexusExplorer {
     context.subscriptions.push(_channel);
 
     this.logger = new Logger({outputChannel: _channel});
-    this.logger.setLogLevel(LogLevel.TRACE);
+    this.logger.setLogLevel(LogLevel.ERROR);
 
     if (
       configuration.get("nexusExplorer.dataSource", "ossindex") + "" ==
