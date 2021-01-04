@@ -15,23 +15,19 @@
  */
 import * as vscode from "vscode";
 import * as path from "path";
-import * as dependencyTree from "dependency-tree";
 
 import { ComponentInfoPanel } from "./ComponentInfoPanel";
 import { IqComponentModel } from "./models/IqComponentModel";
 import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
 import { ComponentModel } from "./models/ComponentModel";
 import { ComponentEntry } from "./models/ComponentEntry";
+import { Logger, LogLevel} from './utils/Logger';
 
-export class NexusExplorerProvider
-  implements vscode.TreeDataProvider<ComponentEntry> {
+export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentEntry> {
   private editor?: vscode.TextEditor;
 
-  private _onDidChangeTreeData: vscode.EventEmitter<
-    any
-  > = new vscode.EventEmitter<any>();
-  readonly onDidChangeTreeData: vscode.Event<any> = this._onDidChangeTreeData
-    .event;
+  private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
+  readonly onDidChangeTreeData: vscode.Event<any> = this._onDidChangeTreeData.event;
 
   constructor(
     private context: vscode.ExtensionContext,
@@ -99,19 +95,6 @@ export class NexusExplorerProvider
     return this.componentModel.evaluateComponents();
   }
 
-  getDependencies(entry: ComponentEntry) {
-    var tree = dependencyTree({
-      filename: path.join("", entry.name),
-      directory: ".",
-      nodeModulesConfig: {
-        entry: "module"
-      }, // optional
-      filter: path => path.indexOf("node_modules") === -1, // optional
-      nonExistent: [] // optional
-    });
-    return tree;
-  }
-
   getTreeItem(entry: ComponentEntry): vscode.TreeItem {
     // TODO use collapsible state to handle transitive dependencies as a tree
     let treeItem: vscode.TreeItem = new vscode.TreeItem(
@@ -152,16 +135,23 @@ export class NexusExplorer {
   private nexusViewer: vscode.TreeView<ComponentEntry>;
   private componentModel: ComponentModel;
   private nexusExplorerProvider: NexusExplorerProvider;
+  private logger: Logger;
 
   constructor(readonly context: vscode.ExtensionContext) {
     let configuration = vscode.workspace.getConfiguration();
+    const _channel = vscode.window.createOutputChannel(`Sonatype IQ Extension`);
+    context.subscriptions.push(_channel);
+
+    this.logger = new Logger({outputChannel: _channel});
+    this.logger.setLogLevel(LogLevel.TRACE);
+
     if (
       configuration.get("nexusExplorer.dataSource", "ossindex") + "" ==
       "iqServer"
     ) {
-      this.componentModel = new IqComponentModel(configuration);
+      this.componentModel = new IqComponentModel({configuration: configuration, logger: this.logger});
     } else {
-      this.componentModel = new OssIndexComponentModel(configuration);
+      this.componentModel = new OssIndexComponentModel({configuration: configuration, logger: this.logger});
     }
 
     this.nexusExplorerProvider = new NexusExplorerProvider(

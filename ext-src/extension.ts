@@ -83,12 +83,6 @@ class ReactPanel {
 		}, null, this._disposables);
 	}
 
-	public doRefactor() {
-		// Send a message to the webview webview.
-		// You can send any JSON serializable data.
-		this._panel.webview.postMessage({ command: 'refactor' });
-	}
-
 	public dispose() {
 		ReactPanel.currentPanel = undefined;
 
