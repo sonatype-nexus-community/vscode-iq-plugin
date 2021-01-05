@@ -42,11 +42,7 @@ export class IqRequestService implements RequestService {
     }
     this.logger.log(LogLevel.TRACE, `Creating new IQ Request Service`, url);
 
-    let https: boolean = false;
-    if (url.startsWith('https')) {
-      https = true;
-    }
-    this.agent = this.getAgent(this.strictSSL, https);
+    this.agent = this.getAgent(this.strictSSL, url.startsWith('https'));
   }
 
   public setPassword(password: string) {
