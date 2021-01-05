@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Uri, window, ProgressLocation } from "vscode";
+import { window, ProgressLocation } from "vscode";
 
 import { ComponentContainer } from "../packages/ComponentContainer";
 import { RequestService } from "../services/RequestService";
@@ -25,7 +25,7 @@ import { ComponentRequest } from "../types/ComponentRequest";
 import { IQResponse } from "../types/IQResponse";
 import { ComponentEntryConversions } from '../utils/ComponentEntryConversions';
 import { ComponentModelOptions } from "./ComponentModelOptions";
-import { Logger, LogLevel } from "../utils/Logger";
+import { ILogger, LogLevel } from "../utils/Logger";
 
 export class IqComponentModel implements ComponentModel {
     components = new Array<ComponentEntry>();
@@ -36,7 +36,7 @@ export class IqComponentModel implements ComponentModel {
     requestService: RequestService;
     dataSourceType: string;
     applicationPublicId: string;
-    logger: Logger;
+    private logger: ILogger;
   
     constructor(
       options: ComponentModelOptions

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 import { WorkspaceConfiguration } from "vscode";
-import { Logger } from "../utils/Logger";
+import { ILogger } from "../utils/Logger";
 
 export interface ComponentModelOptions {
     configuration: WorkspaceConfiguration;
-    logger: Logger;
+    logger: ILogger;
 }

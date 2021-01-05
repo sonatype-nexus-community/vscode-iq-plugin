@@ -17,7 +17,12 @@ import { OutputChannel } from "vscode";
 import * as log4js from 'log4js';
 import { join } from "path";
 
-export class Logger {
+export interface ILogger {
+    setLogLevel(logLevel: LogLevel): void;
+    log(level: LogLevel, message: string, ...meta: any): void;
+} 
+
+export class Logger implements ILogger {
     private _outputChannel: OutputChannel;
     private _logLevel: LogLevel = LogLevel.ERROR;
     private _fileLogger: log4js.Logger;

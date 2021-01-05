@@ -23,13 +23,13 @@ import { ScanType } from "../types/ScanType";
 import { ComponentEntry } from "./ComponentEntry";
 import { PackageURL } from 'packageurl-js';
 import { ComponentModelOptions } from "./ComponentModelOptions";
-import { Logger, LogLevel } from "../utils/Logger";
+import { ILogger, LogLevel } from "../utils/Logger";
 
 export class OssIndexComponentModel implements ComponentModel {
   components = new Array<ComponentEntry>();
   requestService: LiteRequestService;
   dataSourceType: string = "ossindex";
-  logger: Logger;
+  logger: ILogger;
   
   constructor(
     options: ComponentModelOptions
