@@ -64,9 +64,10 @@ export class IqRequestService implements RequestService {
   public getApplicationId(applicationPublicId: string): Promise<string> {
     this.logger.log(LogLevel.TRACE, `Getting application ID from public ID: ${applicationPublicId}`);
 
+    let url = `${this.url}/api/v2/applications?publicId=${applicationPublicId}`;
     return new Promise((resolve, reject) => {
       fetch(
-        `${this.url}/api/v2/applications?publicId=${applicationPublicId}`, 
+        url, 
         {
           method: 'GET',
           headers: this.getHeaders(),
@@ -76,8 +77,17 @@ export class IqRequestService implements RequestService {
             let json = await res.json();
             resolve(JSON.stringify(json));
           }
+          let body = await res.text();
+          this.logger.log(
+            LogLevel.TRACE, 
+            `Non 200 response from getting application ID`, url, body, res.status
+            );
           reject(res.status);
         }).catch((ex) => {
+          this.logger.log(
+            LogLevel.ERROR, 
+            `Error getting application ID from public ID`, url, ex
+            );
           reject(ex);
         });
     });
@@ -110,6 +120,10 @@ export class IqRequestService implements RequestService {
             );
           reject(res.status);
         }).catch((ex) => {
+          this.logger.log(
+            LogLevel.ERROR, 
+            `Error submitting to 3rd Party API`, ex
+            );
           reject(ex);
         });
     });
