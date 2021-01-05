@@ -39,7 +39,7 @@ export class Logger {
         log4js.configure({
             appenders: {
                 sonatypeIQ: {
-                    type: 'file',
+                    type: 'fileSync',
                     maxLogSize: 2 * 1024 * 1024,
                     layout: {
                         type: 'json',
