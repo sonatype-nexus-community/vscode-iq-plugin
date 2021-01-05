@@ -50,7 +50,7 @@ export class IqComponentModel implements ComponentModel {
       this.applicationPublicId = options.configuration.get("nexusiq.applicationPublicId") + "";
       let password = options.configuration.get("nexusiq.password") + "";
       let strictSSL = options.configuration.get("nexusiq.strictSSL") as boolean;
-      this.requestService = new IqRequestService(url, username, password, maximumEvaluationPollAttempts, strictSSL);
+      this.requestService = new IqRequestService(url, username, password, maximumEvaluationPollAttempts, strictSSL, options.logger);
       this.logger = options.logger;
     }
   

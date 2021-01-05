@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as request from "request";
+import fetch from 'node-fetch';
+import { Headers } from 'node-fetch';
 import * as HttpStatus from 'http-status-codes';
 import { RequestService } from "./RequestService";
 import { RequestHelpers } from "./RequestHelpers";
-import { constants } from 'os';
+import { Agent as HttpsAgent }  from "https";
+import { Agent } from 'http';
+import { Logger, LogLevel } from '../utils/Logger';
 
 export class IqRequestService implements RequestService {
   readonly evaluationPollDelayMs = 2000;
+  private agent: Agent;
   applicationId: string = "";
 
   constructor(
@@ -28,9 +32,11 @@ export class IqRequestService implements RequestService {
     private user: string,
     private password: string,
     private getmaximumEvaluationPollAttempts: number,
-    private strictSSL: boolean = true
+    private strictSSL: boolean = true,
+    readonly logger: Logger
   ) 
   {
+    this.agent = this.getAgent(this.strictSSL);
     if (url.endsWith("/")) {
       this.url = url.replace(/\/$/, "");
     }
@@ -56,37 +62,23 @@ export class IqRequestService implements RequestService {
   }
 
   public getApplicationId(applicationPublicId: string): Promise<string> {
-    console.debug("getApplicationId", applicationPublicId);
+    this.logger.log(LogLevel.TRACE, `Getting application ID from public ID: ${applicationPublicId}`);
 
     return new Promise((resolve, reject) => {
-      request.get(
+      fetch(
+        `${this.url}/api/v2/applications?publicId=${applicationPublicId}`, 
         {
-          method: "GET",
-          url: `${this.url}/api/v2/applications?publicId=${applicationPublicId}`,
-          headers: RequestHelpers.getUserAgentHeader(),
-          strictSSL: this.strictSSL,
-          auth: { user: this.user, pass: this.password }
-        })
-        .on('response', (res) => {
-          console.log(res.statusCode);
-
-          if (res.statusCode != HttpStatus.OK) {            
-            reject(`Unable to retrieve Application ID. Could not communicate with server. Server error: ${res.statusCode}`);
-            return;
+          method: 'GET',
+          headers: this.getHeaders(),
+          agent: this.agent
+        }).then(async (res) => {
+          if (res.ok) {
+            let json = await res.json();
+            resolve(JSON.stringify(json));
           }
-
-          res.on('data', (data) => {
-            resolve(data);
-            return;
-          });
-        }).on('error', (err) => {
-          console.debug(err);
-          if (err.message.includes('ECONNREFUSED')) {
-            reject("Unable to reach Nexus IQ Server, please check that your config is correct, and that the server is reachable.");
-            return;
-          }
-          reject(err.message);
-          return;
+          reject(res.status);
+        }).catch((ex) => {
+          reject(ex);
         });
     });
   }
@@ -96,30 +88,22 @@ export class IqRequestService implements RequestService {
     applicationInternalId: string
   ): Promise<string> {
     return new Promise((resolve, reject) => {
-      request.post(
+      fetch(
+        `${this.url}/api/v2/evaluation/applications/${applicationInternalId}`, 
         {
-          method: "POST",
-          url: `${this.url}/api/v2/evaluation/applications/${applicationInternalId}`,
-          json: data,
-          strictSSL: this.strictSSL,
-          headers: RequestHelpers.getUserAgentHeader(),
-          auth: { user: this.user, pass: this.password }
-        },
-        (err: any, response: any, body: any) => {
-          if (err) {
-            reject(`Unable to perform IQ scan: ${err}`);
-            return;
+          method: 'POST',
+          agent: this.agent,
+          body: JSON.stringify(data),
+          headers: this.getHeadersWithApplicationJsonContentType()
+        }).then(async (res) => {
+          if(res.ok) {
+            let json = await res.json();
+            resolve(json.resultId);
           }
-          if (response.statusCode != HttpStatus.OK) {
-            reject(`Unable to perform IQ scan: ${body}`);
-            return;
-          }
-
-          let resultId = body.resultId;
-          resolve(resultId);
-          return;
-        }
-      );
+          reject(res.status);
+        }).catch((ex) => {
+          reject(ex);
+        });
     });
   }
 
@@ -187,61 +171,56 @@ export class IqRequestService implements RequestService {
     resolve: (body: string) => any,
     reject: (statusCode: number, message: string) => any
   ) {
-    request.get(
+    fetch(
+      `${this.url}/api/v2/evaluation/applications/${applicationInternalId}/results/${resultId}`, 
       {
-        method: "GET",
-        url: `${this.url}/api/v2/evaluation/applications/${applicationInternalId}/results/${resultId}`,
-        headers: RequestHelpers.getUserAgentHeader(),
-        strictSSL: this.strictSSL,
-        auth: { user: this.user, pass: this.password }
-      },
-      (error: any, response: any, body: any) => {
-        if (response && response.statusCode != HttpStatus.OK) {
-          reject(response.statusCode, error);
+        method: 'GET',
+        headers: this.getHeaders(),
+        agent: this.agent
+      }).then(async (res) => {
+        if (!res.ok) {
+          reject(res.status, 'uhh');
           return;
         }
-        if (error) {
-          reject(response.statusCode, error);
+        if (res.status == 404) {
+          reject(res.status, 'Polling');
           return;
         }
-        resolve(body);
-      }
-    );
+        let json = await res.json();
+        resolve(JSON.stringify(json));
+      }).catch((ex) => {
+        reject(ex, 'big issue');
+      });
   }
 
   public async getRemediation(nexusArtifact: any) {
     return new Promise((resolve, reject) => {
-      console.debug("begin getRemediation", nexusArtifact);
+      this.logger.log(LogLevel.TRACE, `Begin Get Remediation`);
       var requestdata = nexusArtifact.component;
-      console.debug("requestdata", requestdata);
+      this.logger.log(LogLevel.TRACE, `Begin Sending Request Data`);
       let url = `${this.url}/api/v2/components/remediation/application/${this.applicationId}`;
 
-      request.post(
+      fetch(
+        url, 
         {
-          method: "post",
-          json: requestdata,
-          url: url,
-          headers: RequestHelpers.getUserAgentHeader(),
-          strictSSL: this.strictSSL,
-          auth: { user: this.user, pass: this.password }
-        },
-        (err, response, body) => {
-          if (err) {
-            reject(`Unable to retrieve Component details: ${err}`);
-            return;
+          method: 'POST',
+          headers: this.getHeadersWithApplicationJsonContentType(),
+          body: JSON.stringify(requestdata),
+          agent: this.agent
+        }).then(async (res) => {
+          if (res.ok) {
+            resolve(await res.json());
           }
-          console.debug("response", response);
-          console.debug("body", body);
-          resolve(body);
-        }
-      );
+          reject(res.status);
+        }).catch((ex) => {
+          reject(ex);
+        });
     });
   }
 
   public async getCVEDetails(cve: any, nexusArtifact: any) {
-    //, settings) {
     return new Promise((resolve, reject) => {
-      console.log("begin GetCVEDetails", cve, nexusArtifact);
+      this.logger.log(LogLevel.TRACE, `Begin Get CVE Details`);
       let timestamp = Date.now();
       let hash = nexusArtifact.component.hash;
       let componentIdentifier = this.encodeComponentIdentifier(
@@ -255,30 +234,20 @@ export class IqRequestService implements RequestService {
       }
       let url = `${this.url}/rest/vulnerability/details/${vulnerability_source}/${cve}?componentIdentifier=${componentIdentifier}&hash=${hash}&timestamp=${timestamp}`;
 
-      request.get(
+      fetch(
+        url,
         {
-          method: "GET",
-          url: url,
-          headers: RequestHelpers.getUserAgentHeader(),
-          strictSSL: this.strictSSL,
-          auth: {
-            user: this.user,
-            pass: this.password
+          method: 'GET',
+          headers: this.getHeaders(),
+          agent: this.agent
+        }).then(async (res) => {
+          if (res.ok) {
+            resolve(await res.json());
           }
-        },
-        (err, response, body) => {
-          if (err) {
-            reject(`Unable to retrieve CVEData: ${err}`);
-            return;
-          }
-          console.debug("response", response);
-          console.debug("body", body);
-
-          let resp = JSON.parse(body) as any;
-
-          resolve(resp);
-        }
-      );
+          reject(res.status);
+        }).catch((ex) => {
+          reject(ex);
+        });
     });
   }
 
@@ -301,33 +270,26 @@ export class IqRequestService implements RequestService {
         `hash=${hash}&matchState=${matchstate}&` +
         `timestamp=${timestamp}&proprietary=false`;
 
-      request.get(
+      fetch(
+        url,
         {
-          method: "GET",
-          url: url,
-          headers: RequestHelpers.getUserAgentHeader(),
-          strictSSL: this.strictSSL,
-          auth: {
-            user: this.user,
-            pass: this.password
+          method: 'GET', 
+          headers: this.getHeaders(),
+          agent: this.agent
+        }).then(async (res) => {
+          if (res.ok) {
+            resolve(await res.json());
           }
-        },
-        (err, response, body) => {
-          if (err) {
-            reject(`Unable to retrieve GetAllVersions: ${err}`);
-            return;
-          }
-          const versionArray = JSON.parse(body) as any[];
-          console.debug("getAllVersions retrieved body", versionArray);
-          resolve(versionArray);
-        }
-      );
+          reject(res.status);
+        }).catch((ex) => {
+          reject(ex);
+        });
     });
   }
 
   public async showSelectedVersion(componentIdentifier: any, version: string) {
     return new Promise((resolve, reject) => {
-      console.debug("begin showSelectedVersion", componentIdentifier, version);
+      this.logger.log(LogLevel.TRACE, `Begin Show Selected Version`);
       var transmittingComponentIdentifier = { ...componentIdentifier };
 
       transmittingComponentIdentifier.coordinates = {
@@ -345,33 +307,57 @@ export class IqRequestService implements RequestService {
       };
       let url = `${this.url}/api/v2/components/details`;
 
-      request.post(
+      fetch(
+        url,
         {
-          method: "post",
-          json: detailsRequest,
-          url: url,
-          headers: RequestHelpers.getUserAgentHeader(),
-          strictSSL: this.strictSSL,
-          auth: {
-            user: this.user,
-            pass: this.password
+          method: 'POST',
+          headers: this.getHeadersWithApplicationJsonContentType(),
+          body: JSON.stringify(detailsRequest),
+          agent: this.agent
+        }).then(async (res) => {
+          if (res.ok) {
+            resolve(await res.json());
           }
-        },
-        (err, response, body) => {
-          if (err) {
-            reject(`Unable to retrieve selected version details: ${err}`);
-            return;
-          }
-
-          resolve(body);
-        }
-      );
+          reject(res.status);
+        }).catch((ex) => {
+          reject(ex);
+        });
     });
   }
 
   private encodeComponentIdentifier(componentIdentifier: string) {
     let actual = encodeURIComponent(JSON.stringify(componentIdentifier));
-    console.log("actual", actual);
+    this.logger.log(LogLevel.TRACE, `Actual: ${actual}`); 
     return actual;
+  }
+
+  private getHeadersWithApplicationJsonContentType(): Headers {
+    const headers = this.getHeaders();
+
+    headers.append('Content-Type', 'application/json');
+
+    return headers;
+  }
+
+  private getHeaders(): Headers {
+    const meta = RequestHelpers.getUserAgentHeader();
+
+    const headers = new Headers(meta);
+    headers.append('Authorization', this.getBasicAuth());
+
+    return headers;
+  }
+
+  private getBasicAuth(): string {
+    return `Basic ${Buffer.from(`${this.user}:${this.password}`).toString('base64')}`;
+  }
+
+  private getAgent(strictSSL: boolean): Agent {
+    if (!strictSSL) {
+      return new HttpsAgent({
+        rejectUnauthorized: strictSSL
+      });
+    }
+    return new Agent();
   }
 }

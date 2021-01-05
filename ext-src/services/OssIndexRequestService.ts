@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import fetch from 'node-fetch';
-import {Headers} from 'node-fetch';
+import { Headers } from 'node-fetch';
 import { Logger, LogLevel } from '../utils/Logger';
 
 import { LiteRequestService } from "./LiteRequestService";
@@ -50,7 +50,7 @@ export class OssIndexRequestService implements LiteRequestService {
       for (var purlList of newPurls) {
         let err, res = await this.callOssIndex(purlList);
         if (err != null) {
-          this.logger.log(LogLevel.ERROR, 'Uh oh', err);
+          this.logger.log(LogLevel.ERROR, 'Uh oh');
           reject(err);
         } else {
           response = response.concat(res);
@@ -70,7 +70,7 @@ export class OssIndexRequestService implements LiteRequestService {
   private async callOssIndex(purls: String[]): Promise<any> {
     const headers = new Headers(RequestHelpers.getUserAgentHeader());
     headers.append('Content-Type', 'application/json');
-    this.logger.log(LogLevel.TRACE, "Got User Agent", headers);
+    this.logger.log(LogLevel.TRACE, "Got User Agent");
 
     return new Promise((resolve, reject) => {
       fetch(URL,
