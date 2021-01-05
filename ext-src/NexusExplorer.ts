@@ -21,7 +21,7 @@ import { IqComponentModel } from "./models/IqComponentModel";
 import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
 import { ComponentModel } from "./models/ComponentModel";
 import { ComponentEntry } from "./models/ComponentEntry";
-import { Logger, LogLevel} from './utils/Logger';
+import { Logger, LogLevel } from './utils/Logger';
 
 export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentEntry> {
   private editor?: vscode.TextEditor;
@@ -142,8 +142,8 @@ export class NexusExplorer {
     const _channel = vscode.window.createOutputChannel(`Sonatype IQ Extension`);
     context.subscriptions.push(_channel);
 
-    this.logger = new Logger({outputChannel: _channel});
-    this.logger.setLogLevel(LogLevel.ERROR);
+    this.logger = new Logger({outputChannel: _channel, logFilePath: context.storagePath!});
+    this.logger.setLogLevel(LogLevel[configuration.get("nexusExplorer.loggingLevel", "ERROR")]);
 
     if (
       configuration.get("nexusExplorer.dataSource", "ossindex") + "" ==
