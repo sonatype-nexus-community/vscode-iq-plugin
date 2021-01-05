@@ -21,6 +21,7 @@ import { RequestHelpers } from "./RequestHelpers";
 import { Agent as HttpsAgent }  from "https";
 import { Agent } from 'http';
 import { ILogger, LogLevel } from '../utils/Logger';
+import { URL } from 'url';
 
 export class IqRequestService implements RequestService {
   readonly evaluationPollDelayMs = 2000;
@@ -36,10 +37,15 @@ export class IqRequestService implements RequestService {
     readonly logger: ILogger
   ) 
   {
-    this.agent = this.getAgent(this.strictSSL);
     if (url.endsWith("/")) {
       this.url = url.replace(/\/$/, "");
     }
+    let parts: URL = new URL(url);
+    let https: boolean = false;
+    if (parts.protocol === 'https' && parts.port != "") {
+      https = true;
+    }
+    this.agent = this.getAgent(this.strictSSL, https);
   }
 
   public setPassword(password: string) {
@@ -76,6 +82,7 @@ export class IqRequestService implements RequestService {
           if (res.ok) {
             let json = await res.json();
             resolve(JSON.stringify(json));
+            return;
           }
           let body = await res.text();
           this.logger.log(
@@ -83,6 +90,7 @@ export class IqRequestService implements RequestService {
             `Non 200 response from getting application ID`, url, body, res.status
             );
           reject(res.status);
+          return;
         }).catch((ex) => {
           this.logger.log(
             LogLevel.ERROR, 
@@ -110,6 +118,7 @@ export class IqRequestService implements RequestService {
           if(res.ok) {
             let json = await res.json();
             resolve(json.resultId);
+            return;
           }
           let body = await res.text();
           this.logger.log(
@@ -119,6 +128,7 @@ export class IqRequestService implements RequestService {
             res.status
             );
           reject(res.status);
+          return;
         }).catch((ex) => {
           this.logger.log(
             LogLevel.ERROR, 
@@ -210,6 +220,7 @@ export class IqRequestService implements RequestService {
         }
         let json = await res.json();
         resolve(JSON.stringify(json));
+        return;
       }).catch((ex) => {
         reject(ex, 'big issue');
       });
@@ -232,8 +243,10 @@ export class IqRequestService implements RequestService {
         }).then(async (res) => {
           if (res.ok) {
             resolve(await res.json());
+            return;
           }
           reject(res.status);
+          return;
         }).catch((ex) => {
           reject(ex);
         });
@@ -265,8 +278,10 @@ export class IqRequestService implements RequestService {
         }).then(async (res) => {
           if (res.ok) {
             resolve(await res.json());
+            return;
           }
           reject(res.status);
+          return;
         }).catch((ex) => {
           reject(ex);
         });
@@ -301,8 +316,10 @@ export class IqRequestService implements RequestService {
         }).then(async (res) => {
           if (res.ok) {
             resolve(await res.json());
+            return;
           }
           reject(res.status);
+          return;
         }).catch((ex) => {
           reject(ex);
         });
@@ -339,8 +356,10 @@ export class IqRequestService implements RequestService {
         }).then(async (res) => {
           if (res.ok) {
             resolve(await res.json());
+            return;
           }
           reject(res.status);
+          return;
         }).catch((ex) => {
           reject(ex);
         });
@@ -374,11 +393,14 @@ export class IqRequestService implements RequestService {
     return `Basic ${Buffer.from(`${this.user}:${this.password}`).toString('base64')}`;
   }
 
-  private getAgent(strictSSL: boolean): Agent {
-    if (!strictSSL) {
+  private getAgent(strictSSL: boolean, isHttps: boolean): Agent {
+    if (!strictSSL && isHttps) {
       return new HttpsAgent({
         rejectUnauthorized: strictSSL
       });
+    }
+    if (isHttps) {
+      return new HttpsAgent();
     }
     return new Agent();
   }
