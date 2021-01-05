@@ -41,7 +41,7 @@ export class IqRequestService implements RequestService {
       this.url = url.replace(/\/$/, "");
     }
     let parts: URL = new URL(url);
-    this.logger.log(LogLevel.TRACE, `Creating new IQ Request Service`, parts);
+    this.logger.log(LogLevel.TRACE, `Creating new IQ Request Service`, parts.protocol, parts.port);
     let strictHttps: boolean = false;
     if (parts.protocol === 'https' && parts.port === "443") {
       strictHttps = true;
