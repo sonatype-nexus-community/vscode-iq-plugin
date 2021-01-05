@@ -38,7 +38,7 @@ export class Logger {
 
         log4js.configure({
             appenders: {
-                'sonatypeIQ': {
+                sonatypeIQ: {
                     type: 'file',
                     maxLogSize: 2 * 1024 * 1024,
                     layout: {
@@ -55,7 +55,7 @@ export class Logger {
             }
         });
 
-        const _log: log4js.Logger = log4js.getLogger();
+        const _log: log4js.Logger = log4js.getLogger('sonatypeIQ');
 
         this._writeToOutputChannel(LogLevel.INFO, `More logs can be found at: '${path}'`);
 
@@ -65,12 +65,15 @@ export class Logger {
     public setLogLevel(logLevel: LogLevel) {
         this._logLevel = logLevel;
         this._fileLogger.level = LogLevel[logLevel].toLowerCase();
+        this._writeToOutputChannel(LogLevel.TRACE, `Output Channel Log Level: ${LogLevel[this._logLevel]}`);
+        this._writeToOutputChannel(LogLevel.TRACE, `File logger Log Level: ${this._fileLogger.level}`);
 
         this._writeToOutputChannel(LogLevel.INFO, `Log Level set to: ${LogLevel[logLevel]}`);
     }
 
     public log(level: LogLevel, message: string, ...meta: any): void {
         if (this._logLevel >= level) {
+            console.debug(LogLevel[level]);
             this._writeToOutputChannel(level, message);
             this._logMessage(level, message, ...meta);
         }
@@ -83,26 +86,32 @@ export class Logger {
     private _logMessage(level: LogLevel, message: string, ...meta: any) {
         switch (level) {
             case LogLevel.ERROR: {
+                console.debug('error log');
                 this._fileLogger.error(message, ...meta);
                 break;
             }
             case LogLevel.DEBUG: {
+                console.debug('debug log');
                 this._fileLogger.debug(message, ...meta);
                 break;
             }
             case LogLevel.TRACE: {
+                console.debug('trace log');
                 this._fileLogger.trace(message, ...meta);
                 break;
             }
             case LogLevel.INFO: {
+                console.debug('info log');
                 this._fileLogger.info(message, ...meta);
                 break;
             }
             case LogLevel.WARN: {
+                console.debug('warn log');
                 this._fileLogger.warn(message, ...meta);
                 break;
             }
             case LogLevel.FATAL: {
+                console.debug('fatal log');
                 this._fileLogger.fatal(message, ...meta);
                 break;
             }
