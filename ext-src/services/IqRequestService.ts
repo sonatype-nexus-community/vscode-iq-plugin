@@ -41,11 +41,12 @@ export class IqRequestService implements RequestService {
       this.url = url.replace(/\/$/, "");
     }
     let parts: URL = new URL(url);
-    let https: boolean = false;
-    if (parts.protocol === 'https' && parts.port != "") {
-      https = true;
+    this.logger.log(LogLevel.TRACE, `Creating new IQ Request Service`, parts);
+    let strictHttps: boolean = false;
+    if (parts.protocol === 'https' && parts.port === "443") {
+      strictHttps = true;
     }
-    this.agent = this.getAgent(this.strictSSL, https);
+    this.agent = this.getAgent(this.strictSSL, strictHttps);
   }
 
   public setPassword(password: string) {
