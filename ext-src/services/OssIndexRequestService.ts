@@ -15,7 +15,7 @@
  */
 import fetch from 'node-fetch';
 import { Headers } from 'node-fetch';
-import { Logger, LogLevel } from '../utils/Logger';
+import { ILogger, LogLevel } from '../utils/Logger';
 
 import { LiteRequestService } from "./LiteRequestService";
 import { RequestHelpers } from "./RequestHelpers";
@@ -29,7 +29,7 @@ export class OssIndexRequestService implements LiteRequestService {
   constructor(
     readonly username: string, 
     private password: string,
-    readonly logger: Logger) {}
+    readonly logger: ILogger) {}
 
   public isPasswordSet():boolean {
     if(this.password == "") {

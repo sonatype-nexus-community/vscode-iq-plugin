@@ -132,6 +132,18 @@
               "Use publicly available OSS Index data",
               "Use commercial Sonatype IQ Server data"
             ]
+          },
+          "nexusExplorer.loggingLevel": {
+            "type": "string",
+            "default": "ERROR",
+            "enum": [
+              "FATAL",
+              "ERROR",
+              "DEBUG",
+              "WARN",
+              "TRACE",
+              "INFO"
+            ]
           }
         }
       },
@@ -190,6 +202,7 @@
     "jquery": "^3.4.0",
     "list-installed": "^1.0.0",
     "node-fetch": "^2.6.1",
+    "log4js": "^6.3.0",
     "packageurl-js": "0.0.2",
     "react": "^16.11.0",
     "react-bootstrap": "^1.0.0-beta.14",

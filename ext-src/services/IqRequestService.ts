@@ -20,7 +20,7 @@ import { RequestService } from "./RequestService";
 import { RequestHelpers } from "./RequestHelpers";
 import { Agent as HttpsAgent }  from "https";
 import { Agent } from 'http';
-import { Logger, LogLevel } from '../utils/Logger';
+import { ILogger, LogLevel } from '../utils/Logger';
 
 export class IqRequestService implements RequestService {
   readonly evaluationPollDelayMs = 2000;
@@ -33,7 +33,7 @@ export class IqRequestService implements RequestService {
     private password: string,
     private getmaximumEvaluationPollAttempts: number,
     private strictSSL: boolean = true,
-    readonly logger: Logger
+    readonly logger: ILogger
   ) 
   {
     this.agent = this.getAgent(this.strictSSL);
@@ -87,6 +87,7 @@ export class IqRequestService implements RequestService {
     data: any,
     applicationInternalId: string
   ): Promise<string> {
+    this.logger.log(LogLevel.TRACE, `Data submitting to IQ Server`, data);
     return new Promise((resolve, reject) => {
       fetch(
         `${this.url}/api/v2/evaluation/applications/${applicationInternalId}`, 
@@ -100,6 +101,13 @@ export class IqRequestService implements RequestService {
             let json = await res.json();
             resolve(json.resultId);
           }
+          let body = await res.text();
+          this.logger.log(
+            LogLevel.TRACE, 
+            `Non 200 response from IQ Server on submitting to 3rd Party API`, 
+            body, 
+            res.status
+            );
           reject(res.status);
         }).catch((ex) => {
           reject(ex);

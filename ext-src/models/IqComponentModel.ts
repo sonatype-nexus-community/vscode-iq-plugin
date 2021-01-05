@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Uri, window, ProgressLocation } from "vscode";
+import { window, ProgressLocation } from "vscode";
 
 import { ComponentContainer } from "../packages/ComponentContainer";
 import { RequestService } from "../services/RequestService";
@@ -25,7 +25,7 @@ import { ComponentRequest } from "../types/ComponentRequest";
 import { IQResponse } from "../types/IQResponse";
 import { ComponentEntryConversions } from '../utils/ComponentEntryConversions';
 import { ComponentModelOptions } from "./ComponentModelOptions";
-import { Logger, LogLevel } from "../utils/Logger";
+import { ILogger, LogLevel } from "../utils/Logger";
 
 export class IqComponentModel implements ComponentModel {
     components = new Array<ComponentEntry>();
@@ -36,7 +36,7 @@ export class IqComponentModel implements ComponentModel {
     requestService: RequestService;
     dataSourceType: string;
     applicationPublicId: string;
-    logger: Logger;
+    private logger: ILogger;
   
     constructor(
       options: ComponentModelOptions
@@ -77,13 +77,13 @@ export class IqComponentModel implements ComponentModel {
                     await pm.packageForIq();
                     progress.report({message: "Reticulating Splines", increment: 25});
                     let result: ComponentRequest = await pm.convertToNexusFormat();
-                    this.logger.log(LogLevel.TRACE, `Component Request for ${pm.constructor.name} obtained: ${JSON.stringify(result)}`);
+                    this.logger.log(LogLevel.TRACE, `Component Request for ${pm.constructor.name} obtained`, result);
 
                     data.components.push(...result.components);
                     this.components.push(...pm.toComponentEntries(result));
                     this.coordsToComponent = new Map([...this.coordsToComponent, ...pm.CoordinatesToComponents]);
                   } catch (ex) {
-                    this.logger.log(LogLevel.ERROR, `Nexus IQ Extension Failure moving forward: ${ex}`);
+                    this.logger.log(LogLevel.ERROR, `Nexus IQ Extension Failure moving forward`, ex);
                     window.showErrorMessage(`Nexus IQ extension failure, moving forward, exception: ${ex}`);
                   }
                 }
@@ -100,7 +100,7 @@ export class IqComponentModel implements ComponentModel {
               progress.report({message: "Getting IQ Server Internal Application ID", increment: 40});
               
               let response: string = await this.requestService.getApplicationId(this.applicationPublicId);
-              this.logger.log(LogLevel.TRACE, `Obtained app response: ${response}`);
+              this.logger.log(LogLevel.TRACE, `Obtained app response`, response);
               
               let appRep = JSON.parse(response);
         
@@ -119,7 +119,7 @@ export class IqComponentModel implements ComponentModel {
               progress.report({message: "Report retrieved, parsing", increment: 80});
               let resultData: IQResponse = JSON.parse(resultDataString);
         
-              this.logger.log(LogLevel.TRACE, `Recieved results from IQ Scan: ${JSON.stringify(resultData)}`);
+              this.logger.log(LogLevel.TRACE, `Received results from IQ Scan`, resultData);
 
               progress.report({message: "Morphing results into something usable", increment: 90});
               for (let resultEntry of resultData.results) {
@@ -140,11 +140,11 @@ export class IqComponentModel implements ComponentModel {
               window.setStatusBarMessage("Nexus IQ Server Results in, build with confidence!", 5000);
             }, 
             (failure) => {
-              this.logger.log(LogLevel.ERROR, `Nexus IQ extension failure: ${failure}`);
+              this.logger.log(LogLevel.ERROR, `Nexus IQ extension failure`, failure);
               window.showErrorMessage(`Nexus IQ extension failure: ${failure}`);
             });
         } catch (e) {
-          this.logger.log(LogLevel.ERROR, `Uh ohhhh: ${e}`);
+          this.logger.log(LogLevel.ERROR, `Uh ohhhh`, e);
           reject(e);
         }
       });
