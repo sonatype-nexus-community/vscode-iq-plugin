@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { exec } from "../../exec";
 import { CargoPackage } from "./CargoPackage";
 import { PackageDependencies } from "../PackageDependencies";
-import { ComponentEntry } from "../../ComponentInfoPanel";
+import { ComponentEntry } from "../../models/ComponentEntry";
 import { CargoCoordinate } from "./CargoCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { ComponentRequestEntry } from "../../types/ComponentRequestEntry";
 import { ComponentRequest } from "../../types/ComponentRequest";
+import { RequestService } from "../../services/RequestService";
+import { ScanType } from "../../types/ScanType";
+import { PackageURL } from 'packageurl-js';
+import { CargoUtils } from "./CargoUtils";
 
 /**
 * @class CargoDependencies
@@ -39,16 +42,12 @@ export class CargoDependencies extends PackageDependenciesHelper implements Pack
   }
 
   public CheckIfValid(): boolean {
-    // TODO: Set filename to manifest file for format
-    if (this.doesPathExist(this.getWorkspaceRoot(), "")) {
-      console.debug("Valid for Cargo");
-      return true;
-    }
-    return false;
+    return PackageDependenciesHelper.checkIfValid("cargo.lock", "cargo");
   }
 
   public ConvertToComponentEntry(resultEntry: any): string {
     let coordinates = new CargoCoordinate(resultEntry.component.componentIdentifier.coordinates.name,
+      resultEntry.component.componentIdentifier.coordinates.namespace,
       resultEntry.component.componentIdentifier.coordinates.version);
     
     return coordinates.asCoordinates();
@@ -57,13 +56,7 @@ export class CargoDependencies extends PackageDependenciesHelper implements Pack
   public convertToNexusFormat(): ComponentRequest {
     let comps = this.Dependencies.map(d => {
       let entry: ComponentRequestEntry = {
-        componentIdentifier: {
-          format: "",
-          coordinates: {
-            name: d.Name,
-            version: d.Version,
-          }
-        }
+        packageUrl: d.toPurl()
       }
 
       return entry;
@@ -75,17 +68,22 @@ export class CargoDependencies extends PackageDependenciesHelper implements Pack
   public toComponentEntries(data: any): Array<ComponentEntry> {
     let components = new Array<ComponentEntry>();
     for (let entry of data.components) {
-      const packageId =
-        entry.componentIdentifier.coordinates.name;
+      const purl: PackageURL = PackageURL.fromString(entry.packageUrl);
+      const packageId = purl.name;
+      const namespace = purl.namespace;
+      const version = purl.version;
 
       let componentEntry = new ComponentEntry(
-        packageId,
-        entry.componentIdentifier.coordinates.version
+        namespace + ":" + packageId,
+        version,
+        "cargo",
+        ScanType.NexusIq
       );
       components.push(componentEntry);
       let coordinates = new CargoCoordinate(
-        entry.componentIdentifier.coordinates.name,
-        entry.componentIdentifier.coordinates.version
+        packageId,
+        namespace,
+        version
       );
       this.CoordinatesToComponents.set(
         coordinates.asCoordinates(),
@@ -96,50 +94,13 @@ export class CargoDependencies extends PackageDependenciesHelper implements Pack
   }
 
   public async packageForIq(): Promise<any> {
-    throw new Error("not Implemented");
-
     try {
-      // TODO: Fill in command to run to get list of dependencies
-      let {stdout, stderr } = await exec(``, {
-        cwd: this.getWorkspaceRoot(),
-        env: {
-          PATH: process.env.PATH
-        }
-      });
-
-      if (stdout != "" && stderr === "") {
-        this.parseCargoDependencyTree(stdout);
-      } else {
-        return Promise.reject(
-          new Error(
-            "Error occurred in generating dependency tree."
-          )
-        );
-      }
+      let composerUtils = new CargoUtils();
+      this.Dependencies = await composerUtils.getDependencyArray();
 
       return Promise.resolve();
-    } catch (e) {
-      return Promise.reject(
-        `Command failed, try running it manually to see what went wrong: ${e.error}`
-      );
+    } catch (ex) {
+      return Promise.reject(`Uh oh, spaghetti-o, an exception occurred while parsing your composer.lock file: ${ex}`);
     }
-  }
-
-  private parseCargoDependencyTree(dependencyTree: string) {
-    const dependencies: string = dependencyTree;
-    console.debug(dependencies);
-    console.debug(
-      "------------------------------------------------------------------------------"
-    );
-    let dependencyList: CargoPackage[] = [];
-
-    const dependencyLines = dependencies.split("\n");
-    dependencyLines.forEach((dep) => {  
-      console.debug(dep);
-      // TODO: Implement parsing of dependencies into appropriate list for pushing to IQ server
-      throw new Error("not Implemented");
-    });
-
-    this.Dependencies = dependencyList;
   }
 }

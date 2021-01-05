@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import { CoordinateType } from "../CoordinateType";
  /**
  * @class CargoCoordinate
  */
 export class CargoCoordinate implements CoordinateType {
   Name: string;
+  Group: string;
   Version: string;
  
-  constructor (name: string, version: string){
+  constructor (name: string, group: string, version: string){
     this.Name = name;
+    this.Group = group;
     this.Version = version;
   }
 
   public asCoordinates(): string {
-    throw new Error("not Implemented");
+    return `cargo: ${this.Group}/${this.Name} @ ${this.Version}`;
   }
 }

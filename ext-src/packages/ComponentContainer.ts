@@ -22,6 +22,7 @@ import { RubyGemsDependencies } from "./rubygems/RubyGemsDependencies";
 import { RequestService } from "../services/RequestService";
 import { PoetryDependencies } from "./poetry/PoetryDependencies";
 import { ComposerDependencies } from './composer/ComposerDependencies';
+import { CargoDependencies } from './cargo/CargoDependencies';
 
 export class ComponentContainer {
   Possible: Array<PackageDependencies> = [];
@@ -38,6 +39,7 @@ export class ComponentContainer {
     this.Possible.push(new RubyGemsDependencies(this.requestService));
     this.Possible.push(new PoetryDependencies(this.requestService));
     this.Possible.push(new ComposerDependencies(this.requestService));
+    this.Possible.push(new CargoDependencies(this.requestService));
 
     this.Possible.forEach(i => {
       if(i.CheckIfValid()) {
