@@ -21,7 +21,6 @@ import { RequestHelpers } from "./RequestHelpers";
 import { Agent as HttpsAgent }  from "https";
 import { Agent } from 'http';
 import { ILogger, LogLevel } from '../utils/Logger';
-import { URL } from 'url';
 
 export class IqRequestService implements RequestService {
   readonly evaluationPollDelayMs = 2000;
