@@ -50,7 +50,7 @@ export class IqComponentModel implements ComponentModel {
       this.applicationPublicId = options.configuration.get("nexusiq.applicationPublicId") + "";
       let password = options.configuration.get("nexusiq.password") + "";
       let strictSSL = options.configuration.get("nexusiq.strictSSL") as boolean;
-      this.requestService = new IqRequestService(url, username, password, maximumEvaluationPollAttempts, strictSSL);
+      this.requestService = new IqRequestService(url, username, password, maximumEvaluationPollAttempts, strictSSL, options.logger);
       this.logger = options.logger;
     }
   
@@ -119,7 +119,7 @@ export class IqComponentModel implements ComponentModel {
               progress.report({message: "Report retrieved, parsing", increment: 80});
               let resultData: IQResponse = JSON.parse(resultDataString);
         
-              this.logger.log(LogLevel.TRACE, `Recieved results from IQ Scan`, resultData);
+              this.logger.log(LogLevel.TRACE, `Received results from IQ Scan`, resultData);
 
               progress.report({message: "Morphing results into something usable", increment: 90});
               for (let resultEntry of resultData.results) {
