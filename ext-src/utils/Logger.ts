@@ -15,6 +15,7 @@
  */
 import { OutputChannel } from "vscode";
 import * as log4js from 'log4js';
+import { existsSync, mkdirSync } from 'fs';
 import { join } from "path";
 
 export interface ILogger {
@@ -33,6 +34,10 @@ export class Logger implements ILogger {
     }
 
     private _getAndConfigureFileLogger(filePath: string): log4js.Logger {
+        if (!existsSync(filePath)) {
+            mkdirSync(filePath);
+        }
+
         let path: string = join(filePath, '.sonatypeIQExtension.combined.log');
 
         log4js.addLayout('json', (config) => {

@@ -26,8 +26,8 @@ import { ILogger, Logger, LogLevel } from './utils/Logger';
 export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentEntry> {
   private editor?: vscode.TextEditor;
 
-  private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
-  readonly onDidChangeTreeData: vscode.Event<any> = this._onDidChangeTreeData.event;
+  private _onDidChangeTreeData: vscode.EventEmitter<any | undefined | null | void> = new vscode.EventEmitter<any | undefined | null | void>();
+  readonly onDidChangeTreeData: vscode.Event<any | undefined | null | void> = this._onDidChangeTreeData.event;
 
   constructor(
     private context: vscode.ExtensionContext,
@@ -66,7 +66,7 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
   }
 
   doSoftRefresh(): void {
-    this._onDidChangeTreeData.fire();
+    this._onDidChangeTreeData.fire(this.onDidChangeTreeData);
   }
 
   sortByName(sortNameAscending: boolean): void {
@@ -142,7 +142,7 @@ export class NexusExplorer {
     const _channel = vscode.window.createOutputChannel(`Sonatype IQ Extension`);
     context.subscriptions.push(_channel);
 
-    this.logger = new Logger({outputChannel: _channel, logFilePath: context.storagePath!});
+    this.logger = new Logger({outputChannel: _channel, logFilePath: context.globalStoragePath});
     this.logger.setLogLevel(LogLevel[configuration.get("nexusExplorer.loggingLevel", "ERROR")]);
 
     if (
