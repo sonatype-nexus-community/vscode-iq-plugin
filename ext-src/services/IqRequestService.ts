@@ -372,9 +372,21 @@ export class IqRequestService implements RequestService {
             resolve(await res.json());
             return;
           }
+          let body = await res.text();
+          this.logger.log(
+            LogLevel.TRACE, 
+            `Non 200 response from IQ Server on obtaining all versions of component`, 
+            nexusArtifact,
+            body, 
+            res.status
+            );
           reject(res.status);
           return;
         }).catch((ex) => {
+          this.logger.log(
+            LogLevel.ERROR, 
+            `Error obtaining all versions of component`, nexusArtifact, ex
+            );
           reject(ex);
         });
     });
