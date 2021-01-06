@@ -37,7 +37,7 @@ export class OssIndexComponentModel implements ComponentModel {
     let username = options.configuration.get("ossindex.username") + "";
     let password = options.configuration.get("ossindex.password") + "";
     this.logger = options.logger;
-    this.requestService = new OssIndexRequestService(username, password);
+    this.requestService = new OssIndexRequestService(username, password, options.logger);
   }
   
   public evaluateComponents(): Promise<any> {
