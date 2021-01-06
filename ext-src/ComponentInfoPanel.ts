@@ -21,7 +21,6 @@ import { ComponentModel } from "./models/ComponentModel";
 import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
 import { ComponentEntry, NexusIQData } from "./models/ComponentEntry";
 import { ReportComponent } from "./services/ReportResponse";
-import { VersionResponse } from "./services/AllVersionsResponse";
 import { ComponentEntryConversions } from "./utils/ComponentEntryConversions";
 import { PackageURL } from 'packageurl-js';
 
