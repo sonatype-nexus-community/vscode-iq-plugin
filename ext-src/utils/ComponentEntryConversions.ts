@@ -60,7 +60,7 @@ export class ComponentEntryConversions {
     private static convertFromPyPi(entry: any): string {
         let coordinates = new PyPICoordinate(entry.componentIdentifier.coordinates.name,
             entry.componentIdentifier.coordinates.version,
-            "", "");
+            "tar.gz", "");
           
         return coordinates.asCoordinates();
     }

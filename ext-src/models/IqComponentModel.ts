@@ -71,20 +71,16 @@ export class IqComponentModel implements ComponentModel {
               location: ProgressLocation.Notification, 
               title: "Running Nexus IQ Server Scan"
             }, async (progress, token) => {
-              let data: ComponentRequest = new ComponentRequest([]);
               const dependencies: Array<PackageType> = new Array();
               if (componentContainer.Valid.length > 0) {
                 progress.report({message: "Starting to package your dependencies for IQ Server", increment: 5});
                 for (let pm of componentContainer.Valid) {
                   try {
-                    await pm.packageForIq();
+                    const deps = await pm.packageForIq();
+                    dependencies.push(...deps);
                     progress.report({message: "Reticulating Splines", increment: 25});
-                    
-                    let result: ComponentRequest = await pm.convertToNexusFormat();
-                    this.logger.log(LogLevel.TRACE, `Component Request for ${pm.constructor.name} obtained`, result);
-                    dependencies.push(...pm.Dependencies);
-                    data.components.push(...result.components);
-                    this.components.push(...pm.toComponentEntries(result));
+
+                    this.components.push(...pm.toComponentEntries(deps));
                     this.coordsToComponent = new Map([...this.coordsToComponent, ...pm.CoordinatesToComponents]);
                   } catch (ex) {
                     this.logger.log(LogLevel.ERROR, `Nexus IQ Extension Failure moving forward`, ex);
@@ -94,10 +90,6 @@ export class IqComponentModel implements ComponentModel {
                 progress.report({message: "Packaging ready", increment: 35});
               } else {
                 throw new TypeError("Unable to instantiate Package Muncher");
-              }
-      
-              if (undefined == data) {
-                throw new RangeError("Attempted to generate dependency list but received an empty collection. NexusIQ will not be invoked for this project.");
               }
         
               this.logger.log(LogLevel.DEBUG, `Getting Internal ID from Public ID: ${this.applicationPublicId}`);
