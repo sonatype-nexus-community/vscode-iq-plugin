@@ -19,9 +19,10 @@ import { MavenCoordinate } from "../packages/maven/MavenCoordinate";
 import { NpmCoordinate } from "../packages/npm/NpmCoordinate";
 import { PyPICoordinate } from "../packages/pypi/PyPICoordinate";
 import { RubyGemsCoordinate } from "../packages/rubygems/RubyGemsCoordinate";
+import { ComponentCoordinate } from '../types/ComponentCoordinate';
 
 export class ComponentEntryConversions {
-    static ConvertToComponentEntry(format: string, entry: any): string {
+    static ConvertToComponentEntry(format: string, entry: ComponentCoordinate): string {
         switch(format) {
             case 'golang':
                 return this.convertFromGolang(entry);
@@ -41,49 +42,59 @@ export class ComponentEntryConversions {
         }
     }
 
-    private static convertFromGolang(entry: any): string {
-        let coordinates = new GolangCoordinate(entry.componentIdentifier.coordinates.name, 
-            entry.componentIdentifier.coordinates.version);
+    private static convertFromGolang(entry: ComponentCoordinate): string {
+        let coordinates = new GolangCoordinate(entry.name!, 
+            ComponentEntryConversions.convertGolangVersion(entry.version));
       
         return coordinates.asCoordinates();
     }
 
-    private static convertFromMaven(entry: any): string {
-        let coordinates = new MavenCoordinate(entry.componentIdentifier.coordinates.artifactId, 
-            entry.componentIdentifier.coordinates.groupId, 
-            entry.componentIdentifier.coordinates.version, 
-            entry.componentIdentifier.coordinates.extension);
+    private static convertFromMaven(entry: ComponentCoordinate): string {
+        let coordinates = new MavenCoordinate(entry.artifactId!, 
+            entry.groupId!, 
+            entry.version, 
+            entry.extension!);
       
         return coordinates.asCoordinates();
     }
 
-    private static convertFromPyPi(entry: any): string {
-        let coordinates = new PyPICoordinate(entry.componentIdentifier.coordinates.name,
-            entry.componentIdentifier.coordinates.version,
+    private static convertFromPyPi(entry: ComponentCoordinate): string {
+        let coordinates = new PyPICoordinate(entry.name!,
+            entry.version,
             "tar.gz", "");
           
         return coordinates.asCoordinates();
     }
 
-    private static convertFromNpm(entry: any): string {
-        let coordinates = new NpmCoordinate(entry.componentIdentifier.coordinates.packageId, 
-            entry.componentIdentifier.coordinates.version);
+    private static convertFromNpm(entry: ComponentCoordinate): string {
+        let coordinates = new NpmCoordinate(entry.packageId!, 
+            entry.version);
           
         return coordinates.asCoordinates();
     }
 
-    private static convertFromGem(entry: any): string {
-        let coordinates = new RubyGemsCoordinate(entry.componentIdentifier.coordinates.name, 
-            entry.componentIdentifier.coordinates.version);
+    private static convertFromGem(entry: ComponentCoordinate): string {
+        let coordinates = new RubyGemsCoordinate(entry.name!, 
+            entry.version);
           
         return coordinates.asCoordinates();
     }
 
-    private static convertFromComposer(entry: any): string {
-        let coordinates = new ComposerCoordinate(entry.componentIdentifier.coordinates.name, 
-            entry.componentIdentifier.coordinates.namespace,
-            entry.componentIdentifier.coordinates.version);
+    private static convertFromComposer(entry: ComponentCoordinate): string {
+        let coordinates = new ComposerCoordinate(entry.name!, 
+            entry.namespace!,
+            entry.version);
           
         return coordinates.asCoordinates();
+    }
+
+    public static convertGolangVersion(version: string) {
+        if (version.includes("incompatible")) {
+            let pos = version.lastIndexOf("incompatible");
+            let vers = version.substring(0, pos).trimEnd() + "+" + version.substring(pos);
+    
+            return vers;
+        }
+        return version;
     }
 }

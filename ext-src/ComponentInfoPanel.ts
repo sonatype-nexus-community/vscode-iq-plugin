@@ -20,6 +20,10 @@ import { ScanType } from "./types/ScanType";
 import { ComponentModel } from "./models/ComponentModel";
 import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
 import { ComponentEntry } from "./models/ComponentEntry";
+import { ReportComponent } from "./services/ReportResponse";
+import { VersionResponse } from "./services/AllVersionsResponse";
+import { ComponentEntryConversions } from "./utils/ComponentEntryConversions";
+import { PackageURL } from 'packageurl-js';
 
 export class ComponentInfoPanel {
   /**
@@ -256,15 +260,39 @@ export class ComponentInfoPanel {
   private async showAllVersions() {
     console.debug("showAllVersions", this.component);
     if (this.componentModel instanceof IqComponentModel) {
-      var iqComponentModel = this.componentModel as IqComponentModel
-      let allversions = await iqComponentModel.requestService.getAllVersions(this.component!.nexusIQData.component, ComponentInfoPanel.iqApplicationPublicId);
+      const iqComponentModel = this.componentModel as IqComponentModel
+      const component: ReportComponent = this.component!.nexusIQData!.component;
+      const purl: PackageURL = PackageURL.fromString(component.packageUrl);
+      purl.version = "";
+
+      let allVersions = await iqComponentModel.requestService.getAllVersionsArray(purl);
       
-      console.debug("posting message: allversions", allversions);
+      if (!allVersions.includes(component.componentIdentifier.coordinates.version)) {
+        allVersions.push(component.componentIdentifier.coordinates.version);
+      }
+
+      let versionsDetails = await iqComponentModel.requestService.getAllVersionDetails(allVersions, purl);
+
+      if (component.componentIdentifier.format === 'golang') {
+        versionsDetails.componentDetails = this.dealWithGolang(versionsDetails.componentDetails);
+      }
+
+      console.debug("posting message: allversions", versionsDetails.componentDetails);
       this._panel.webview.postMessage({
         command: "allversions",
-        allversions: (allversions.allVersions) ? allversions.allVersions : allversions
+        allversions: versionsDetails.componentDetails
       });
     }
+  }
+
+  private dealWithGolang(versions: any[]): any[] {
+    versions.forEach((version) => {
+      version.component.componentIdentifier.coordinates.version = ComponentEntryConversions.convertGolangVersion(
+        version.component.componentIdentifier.coordinates.version
+        );
+    });
+
+    return versions;
   }
 
   private loadHtmlForWebview() {

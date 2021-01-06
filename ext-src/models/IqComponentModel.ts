@@ -28,6 +28,8 @@ import { ComponentModelOptions } from "./ComponentModelOptions";
 import { ILogger, LogLevel } from "../utils/Logger";
 import { PackageType } from "../packages/PackageType";
 import { CycloneDXSbomCreator } from "../cyclonedx/CycloneDXGenerator";
+import { ComponentCoordinate } from "../types/ComponentCoordinate";
+import { ReportResponse } from "../services/ReportResponse";
 
 export class IqComponentModel implements ComponentModel {
     components = new Array<ComponentEntry>();
@@ -123,7 +125,7 @@ export class IqComponentModel implements ComponentModel {
 
               this.logger.log(LogLevel.TRACE, `Received results from Third Party API IQ Scan`, resultData);
               
-              let results: any;
+              let results: ReportResponse;
               if (resultData && resultData.reportHtmlUrl) {
                 let parts = /[^/]*$/.exec(resultData!.reportHtmlUrl!);
 
@@ -131,21 +133,23 @@ export class IqComponentModel implements ComponentModel {
                   results = await this.requestService.getReportResults(parts[0], this.applicationPublicId);
   
                   this.logger.log(LogLevel.TRACE, `Received results from Report API`, results);
-                }
-              }
 
-              progress.report({message: "Morphing results into something usable", increment: 90});
-              for (let resultEntry of results.components) {
-                let format: string = resultEntry.componentIdentifier.format as string;
-                
-                let componentEntry = this.coordsToComponent.get(
-                  ComponentEntryConversions.ConvertToComponentEntry(format, resultEntry)
-                );
-                if (componentEntry != undefined) {
-                  componentEntry!.policyViolations = resultEntry.violations as Array<PolicyViolation>;
-                  componentEntry!.hash = resultEntry.hash;
-                  componentEntry!.nexusIQData = {};
-                  componentEntry!.nexusIQData.component = resultEntry;
+                  progress.report({message: "Morphing results into something usable", increment: 90});
+
+                  for (let resultEntry of results.components) {                   
+                    let componentEntry = this.coordsToComponent.get(
+                      ComponentEntryConversions.ConvertToComponentEntry(
+                        resultEntry.componentIdentifier.format, 
+                        resultEntry.componentIdentifier.coordinates
+                        )
+                    );
+
+                    if (componentEntry != undefined) {
+                      componentEntry!.policyViolations = resultEntry.violations;
+                      componentEntry!.hash = resultEntry.hash;
+                      componentEntry!.nexusIQData = { component: resultEntry };
+                    }
+                  }
                 }
               }
 

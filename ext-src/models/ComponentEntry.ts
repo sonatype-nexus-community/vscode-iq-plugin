@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ReportComponent } from "../services/ReportResponse";
 import { PolicyViolation } from "../types/PolicyViolation";
 import { ScanType } from "../types/ScanType";
 
@@ -21,8 +22,8 @@ export class ComponentEntry {
   failure: string = "";
   policyViolations: Array<PolicyViolation> = [];
   hash: string = "";
-  nexusIQData: any = undefined;
-  ossIndexData: any = undefined;
+  nexusIQData?: NexusIQData = undefined;
+  ossIndexData?: any = undefined;
 
   constructor(readonly name: string, readonly version: string, readonly format: string, readonly scanType: ScanType) {
   }
@@ -81,4 +82,8 @@ export class ComponentEntry {
       return `threat-none.png`;
     }
   }
+}
+
+export interface NexusIQData {
+  component: ReportComponent
 }

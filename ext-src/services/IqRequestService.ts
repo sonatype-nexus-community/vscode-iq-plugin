@@ -22,6 +22,9 @@ import { Agent as HttpsAgent }  from "https";
 import { Agent } from 'http';
 import { ILogger, LogLevel } from '../utils/Logger';
 import { ThirdPartyAPIResponse } from './ThirdPartyApiResponse';
+import { AllVersionsResponse, ComponentIdentifier } from './AllVersionsResponse';
+import { ReportResponse } from './ReportResponse';
+import { PackageURL } from 'packageurl-js';
 
 export class IqRequestService implements RequestService {
   readonly evaluationPollDelayMs = 2000;
@@ -228,7 +231,7 @@ export class IqRequestService implements RequestService {
     );
   }
 
-  public getReportResults(reportID: string, applicationPublicId: string): Promise<any> {
+  public getReportResults(reportID: string, applicationPublicId: string): Promise<ReportResponse> {
     let url = `${this.url}/api/v2/applications/${applicationPublicId}/reports/${reportID}/policy`;
     
     return new Promise((resolve, reject) => {
@@ -240,7 +243,7 @@ export class IqRequestService implements RequestService {
           headers: this.getHeaders()
         }).then(async (res) => {
           if (res.ok) {
-            let body = await res.json();
+            let body: ReportResponse = await res.json();
             resolve(body);
             return;
           }
@@ -342,11 +345,93 @@ export class IqRequestService implements RequestService {
     });
   }
 
-  public async getAllVersions(nexusArtifact: any, iqApplicationPublicId: string): Promise<any[]> {
+  public async getAllVersionsArray(purl: PackageURL): Promise<Array<string>> {
+    let url = `${this.url}/api/v2/components/versions`;
+    
+    let request = {
+      packageUrl: purl.toString().replace("%2F", "/")
+    };
+
+    return new Promise((resolve, reject) => {
+      fetch(
+        url,
+        {
+          method: 'POST',
+          body: JSON.stringify(request),
+          agent: this.agent,
+          headers: this.getHeadersWithApplicationJsonContentType()
+        }).then(async (res) => {
+          if (res.ok) {
+            let versions: Array<string> = await res.json();
+            resolve(versions);
+            return;
+          }
+          let body = await res.text();
+          this.logger.log(
+            LogLevel.ERROR, 
+            `Non 200 response received getting versions array from IQ Server`, 
+            request,
+            res.status,
+            body);
+          reject(res.status);
+          return;
+        }).catch((ex) => {
+          this.logger.log(
+            LogLevel.ERROR, 
+            `General error getting versions array from IQ Server`, 
+            request,
+            ex);
+          reject(ex);
+        });
+    });
+  }
+
+  public async getAllVersionDetails(versions: Array<string>, purl: PackageURL): Promise<any> {
+    let url = `${this.url}/api/v2/components/details`;
+
+    return new Promise((resolve, reject) => {
+      let request: ComponentDetailsRequest = { components: []};
+      versions.forEach((version) => {
+        purl.version = version;
+        request.components.push({ packageUrl: purl.toString().replace("%2F", "/") });
+      });
+
+      let body = JSON.stringify(request);
+
+      fetch(
+        url,
+        {
+          method: 'POST',
+          body: body,
+          agent: this.agent,
+          headers: this.getHeadersWithApplicationJsonContentType()
+        }).then(async (res) => {
+          if (res.ok) {
+            let stuff = await res.json();
+            resolve(stuff);
+            return;
+          }
+          let body = await res.text();
+          this.logger.log(
+            LogLevel.ERROR, 
+            `Non 200 response received getting componet versions details from IQ Server`, 
+            request,
+            res.status,
+            body);
+          reject(res.status);
+          return;
+        }).catch((ex) => {
+          reject(ex);
+        });
+    });
+  }
+
+  public async getAllVersions(nexusArtifact: any, iqApplicationPublicId: string): Promise<AllVersionsResponse> {
     if (!nexusArtifact || !nexusArtifact.hash) {
-      return [];
+      return Promise.reject("Nothing to work with");
     }
-    return new Promise<any[]>((resolve, reject) => {
+
+    return new Promise((resolve, reject) => {
       let hash = nexusArtifact.hash;
       let comp = this.encodeComponentIdentifier(
         nexusArtifact.componentIdentifier
@@ -369,7 +454,8 @@ export class IqRequestService implements RequestService {
           agent: this.agent
         }).then(async (res) => {
           if (res.ok) {
-            resolve(await res.json());
+            let versions: AllVersionsResponse = await res.json();
+            resolve(versions);
             return;
           }
           let body = await res.text();
@@ -478,4 +564,8 @@ export class IqRequestService implements RequestService {
     }
     return new Agent();
   }
+}
+
+export interface ComponentDetailsRequest {
+  components: any[]
 }

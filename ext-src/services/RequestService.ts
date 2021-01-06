@@ -16,14 +16,19 @@ import { BaseRequestService } from "./BaseRequestService";
  * limitations under the License.
  */
 import { ThirdPartyAPIResponse } from './ThirdPartyApiResponse';
+import { ReportResponse } from './ReportResponse';
+import { AllVersionsResponse } from './AllVersionsResponse';
+import { PackageURL } from 'packageurl-js';
 
 export interface RequestService extends BaseRequestService {
   getApplicationId(applicationPublicId: string): Promise<string>;
   submitToIqForEvaluation(data: any, applicationInternalId: string): Promise<any>;
   submitToThirdPartyAPI(sbom: string, applicationInternalId: string): Promise<string>;
-  getReportResults(reportID: string, applicationPublicId: string): Promise<any>;
+  getReportResults(reportID: string, applicationPublicId: string): Promise<ReportResponse>;
   asyncPollForEvaluationResults(statusURL: string): Promise<ThirdPartyAPIResponse>;
-  getAllVersions(component: any, iqApplicationPublicId: string): Promise<any>;
+  getAllVersionDetails(versions: Array<string>, purl: PackageURL): Promise<any>;
+  getAllVersionsArray(purl: PackageURL): Promise<Array<string>>;
+  getAllVersions(component: any, iqApplicationPublicId: string): Promise<AllVersionsResponse>;
   getCVEDetails(cve: any, nexusArtifact: any): Promise<any>;
   getRemediation(nexusArtifact: any, iqApplicationId: string): Promise<any>;
   showSelectedVersion(componentIdentifier: any, version: string): Promise<any>
