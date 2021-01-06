@@ -149,7 +149,8 @@ export class IqComponentModel implements ComponentModel {
                 if (componentEntry != undefined) {
                   componentEntry!.policyViolations = resultEntry.violations as Array<PolicyViolation>;
                   componentEntry!.hash = resultEntry.hash;
-                  componentEntry!.nexusIQData = resultEntry;
+                  componentEntry!.nexusIQData = {};
+                  componentEntry!.nexusIQData.component = resultEntry;
                 }
               }
 

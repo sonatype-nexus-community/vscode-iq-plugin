@@ -29,6 +29,6 @@ export class PyPICoordinate implements CoordinateType {
   }
 
   public asCoordinates(): string {
-    return `pypi - ${this.Name} - ${this.Extension} - ${this.Qualifier} - ${this.Version}`;
+    return `pypi - ${this.Name} - ${this.Extension} - ${this.Qualifier} - ${this.Version}`.toLowerCase();
   }
 }

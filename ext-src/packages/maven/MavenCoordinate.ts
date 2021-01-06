@@ -29,6 +29,6 @@ export class MavenCoordinate implements CoordinateType {
   }
 
   public asCoordinates(): string {
-    return `maven - ${this.Group}:${this.Name} - ${this.Version}`;
+    return `maven - ${this.Group}:${this.Name} - ${this.Version}`.toLowerCase();
   }
 }

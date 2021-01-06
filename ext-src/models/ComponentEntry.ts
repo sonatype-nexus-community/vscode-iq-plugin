@@ -40,7 +40,7 @@ export class ComponentEntry {
       if (this.policyViolations && this.policyViolations.length > 0) {
         maxThreatLevel = this.policyViolations.reduce(
           (prevMax: number, a: PolicyViolation) => {
-            return a.threatLevel > prevMax ? a.threatLevel : prevMax;
+            return a.policyThreatLevel > prevMax ? a.policyThreatLevel : prevMax;
           },
           0
         );

@@ -94,15 +94,15 @@ class PolicyPage extends React.Component<Props, State> {
           </Accordion.Toggle>
           <Accordion.Collapse eventKey={ index.toString() }>
             <Card.Body>
-              Threat Level: { policyViolation.threatLevel }
-              { policyViolation.constraintViolations.map((x: any) => (
+              Threat Level: { policyViolation.policyThreatLevel }
+              { policyViolation.constraints.map((x: any) => (
                 <td>
                   <h5>Constraint: { x.constraintName }</h5>
                   <h5>Reasons:</h5>
                   <ol>
-                    { x.reasons.map((y: any) => (
+                    { x.conditions.map((y: any) => (
                       <li>
-                        { y.reason }
+                        { y.conditionReason }
                       </li>
                     ))}
                   </ol>

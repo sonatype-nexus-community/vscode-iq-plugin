@@ -31,6 +31,6 @@ export class ComposerCoordinate implements CoordinateType {
   }
 
   public asCoordinates(): string {
-    return `composer: ${this.Group}/${this.Name} @ ${this.Version}`;
+    return `composer: ${this.Group}/${this.Name} @ ${this.Version}`.toLowerCase();
   }
 }

@@ -56,7 +56,6 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
   }
 
   doRefresh(): void {
-    //default to sorting descending on refresh and open of the GUI
     let sortPolicyDescending: boolean = true;
     this.reloadComponentModel().then(() => {
       if (this.componentModel.components.length > 0) {
@@ -66,7 +65,7 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
   }
 
   doSoftRefresh(): void {
-    this._onDidChangeTreeData.fire(this.onDidChangeTreeData);
+    this._onDidChangeTreeData.fire(undefined);
   }
 
   sortByName(sortNameAscending: boolean): void {
@@ -189,9 +188,6 @@ export class NexusExplorer {
     this.nexusExplorerProvider.sortByName(this.sortNameAscending);
     this.sortNameAscending = !this.sortNameAscending;
     this.sortPolicyDescending = true;
-    //vscode.commands.getCommands("nexusExplorer.sortByName");
-    //change the icon to descending icon
-    // this.nexusExplorerProvider.doSoftRefresh();
   }
 
   private sortByPolicy() {
