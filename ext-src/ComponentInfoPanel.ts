@@ -172,6 +172,7 @@ export class ComponentInfoPanel {
       var iqComponentModel = this.componentModel as IqComponentModel
       let body = await iqComponentModel.requestService.showSelectedVersion(decodedPurl);
     
+      // Dirty ugly hack because IQ Server removes + signs from versions for whatever reason
       if (iqData.component.componentIdentifier.format === 'golang') {
         body.componentDetails = this.dealWithGolang(body.componentDetails);
       }

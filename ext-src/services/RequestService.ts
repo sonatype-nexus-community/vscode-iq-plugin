@@ -25,7 +25,7 @@ export interface RequestService extends BaseRequestService {
   submitToThirdPartyAPI(sbom: string, applicationInternalId: string): Promise<string>;
   getReportResults(reportID: string, applicationPublicId: string): Promise<ReportResponse>;
   asyncPollForEvaluationResults(statusURL: string): Promise<ThirdPartyAPIResponse>;
-  getAllVersionDetails(versions: Array<string>, purl: PackageURL): Promise<any>;
+  getAllVersionDetails(versions: Array<string>, purl: PackageURL): Promise<ComponentDetails>;
   getAllVersions(purl: PackageURL): Promise<Array<string>>;
   getCVEDetails(cve: any, nexusArtifact: any): Promise<any>;
   getRemediation(nexusArtifact: any, iqApplicationId: string): Promise<any>;
