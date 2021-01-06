@@ -97,7 +97,7 @@ export class CargoDependencies extends PackageDependenciesHelper implements Pack
 
       return Promise.resolve();
     } catch (ex) {
-      return Promise.reject(`Uh oh, spaghetti-o, an exception occurred while parsing your composer.lock file: ${ex}`);
+      return Promise.reject(`Uh oh, spaghetti-o, an exception occurred while parsing your Cargo.lock file: ${ex}`);
     }
   }
 }
