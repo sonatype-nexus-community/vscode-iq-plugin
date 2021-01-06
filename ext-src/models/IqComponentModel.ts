@@ -76,7 +76,9 @@ export class IqComponentModel implements ComponentModel {
                 progress.report({message: "Starting to package your dependencies for IQ Server", increment: 5});
                 for (let pm of componentContainer.Valid) {
                   try {
+                    this.logger.log(LogLevel.INFO, `Starting to Munch on ${pm.constructor.name} dependencies`);
                     const deps = await pm.packageForIq();
+                    this.logger.log(LogLevel.TRACE, `Obtained Dependencies from Muncher`, deps);
                     dependencies.push(...deps);
                     progress.report({message: "Reticulating Splines", increment: 25});
 
@@ -96,7 +98,7 @@ export class IqComponentModel implements ComponentModel {
               progress.report({message: "Getting IQ Server Internal Application ID", increment: 40});
               
               let response: string = await this.requestService.getApplicationId(this.applicationPublicId);
-              this.logger.log(LogLevel.TRACE, `Obtained app response`, response);
+              this.logger.log(LogLevel.TRACE, `Obtained internal application ID response`, response);
               
               let appRep = JSON.parse(response);
         
@@ -109,8 +111,9 @@ export class IqComponentModel implements ComponentModel {
               const sbomGenerator = new CycloneDXSbomCreator();
 
               let xml = await sbomGenerator.createBom(dependencies);
+              this.logger.log(LogLevel.TRACE, `Obtained XML from SBOM Creator`, xml);
 
-              progress.report({message: "Submitting to IQ Server for evaluation", increment: 50});
+              progress.report({message: "Submitting to IQ Server Third Party API", increment: 50});
               let resultId = await this.requestService.submitToThirdPartyAPI(xml, this.requestService.getApplicationInternalId());
         
               this.logger.log(LogLevel.DEBUG, `Report id obtained: ${resultId}`);
@@ -118,7 +121,7 @@ export class IqComponentModel implements ComponentModel {
               let resultData = await this.requestService.asyncPollForEvaluationResults(resultId);
               progress.report({message: "Report retrieved, parsing", increment: 80});
 
-              this.logger.log(LogLevel.TRACE, `Received results from IQ Scan`, resultData);
+              this.logger.log(LogLevel.TRACE, `Received results from Third Party API IQ Scan`, resultData);
               
               let results: any;
               if (resultData && resultData.reportHtmlUrl) {
