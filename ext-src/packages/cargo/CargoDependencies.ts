@@ -47,7 +47,6 @@ export class CargoDependencies extends PackageDependenciesHelper implements Pack
 
   public ConvertToComponentEntry(resultEntry: any): string {
     let coordinates = new CargoCoordinate(resultEntry.component.componentIdentifier.coordinates.name,
-      resultEntry.component.componentIdentifier.coordinates.namespace,
       resultEntry.component.componentIdentifier.coordinates.version);
     
     return coordinates.asCoordinates();
@@ -70,11 +69,10 @@ export class CargoDependencies extends PackageDependenciesHelper implements Pack
     for (let entry of data.components) {
       const purl: PackageURL = PackageURL.fromString(entry.packageUrl);
       const packageId = purl.name;
-      const namespace = purl.namespace;
       const version = purl.version;
 
       let componentEntry = new ComponentEntry(
-        namespace + ":" + packageId,
+        packageId,
         version,
         "cargo",
         ScanType.NexusIq
@@ -82,7 +80,6 @@ export class CargoDependencies extends PackageDependenciesHelper implements Pack
       components.push(componentEntry);
       let coordinates = new CargoCoordinate(
         packageId,
-        namespace,
         version
       );
       this.CoordinatesToComponents.set(
