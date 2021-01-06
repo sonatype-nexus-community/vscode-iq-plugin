@@ -20,20 +20,19 @@ export class CargoPackage implements PackageType {
   constructor(
     readonly Name: string,
     readonly Version: string,
-    readonly Group: string,
     readonly Hash?: string
   ) {}
 
   public toPurl(): string {
-    let purl: PackageURL = new PackageURL("cargo", this.Group, this.Name, this.Version, {}, "");
+    let purl: PackageURL = new PackageURL("cargo", "", this.Name, this.Version, {}, "");
     return purl.toString().substring(0, purl.toString().length - 1);
   }
 
   public toCoordinates(): string {
-    return `${this.Group}:${this.Name}:${this.Version}`;
+    return `${this.Name}:${this.Version}`;
   }
 
   public toCoordValueType(): string {
-    return `${this.Group}:${this.Name} - ${this.Version}`;
+    return `${this.Name} - ${this.Version}`;
   }
 }

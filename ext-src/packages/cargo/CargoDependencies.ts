@@ -42,7 +42,7 @@ export class CargoDependencies extends PackageDependenciesHelper implements Pack
   }
 
   public CheckIfValid(): boolean {
-    return PackageDependenciesHelper.checkIfValid("cargo.lock", "cargo");
+    return PackageDependenciesHelper.checkIfValid("Cargo.lock", "cargo");
   }
 
   public ConvertToComponentEntry(resultEntry: any): string {

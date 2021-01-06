@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { CargoPackage } from './CargoPackage';
-
+import { parse } from 'toml';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { PackageDependenciesHelper } from '../PackageDependenciesHelper';
@@ -22,16 +22,13 @@ import { PackageDependenciesHelper } from '../PackageDependenciesHelper';
 export class CargoUtils {
   public async getDependencyArray(): Promise<Array<CargoPackage>> {
     try {
-        const cargoLockFile = readFileSync(join(PackageDependenciesHelper.getWorkspaceRoot(), "cargo.lock"));
-        const cargoLock: CargoLock = JSON.parse(cargoLockFile.toString());
+        const cargoLockFile = readFileSync(join(PackageDependenciesHelper.getWorkspaceRoot(), "Cargo.lock"));
+        const cargoLock: CargoLock = parse(cargoLockFile.toString());
   
-        if (cargoLock.packages && cargoLock.packages.length > 0) {
+        if (cargoLock.package && cargoLock.package.length > 0) {
           let res: Array<CargoPackage> = new Array();
-          cargoLock.packages.forEach((pkg) => {
-            let namespaceName: string[] = pkg.name.split("/");
-            let name: string = namespaceName[1];
-            let namespace: string = namespaceName[0];
-            res.push(new CargoPackage(name, namespace, pkg.version, ""));
+          cargoLock.package.forEach((pkg) => {
+            res.push(new CargoPackage(pkg.name, pkg.version, ""));
           });
   
           return Promise.resolve(res);
@@ -45,7 +42,7 @@ export class CargoUtils {
 }
 
 interface CargoLock {
-    packages: CargoLockPackage[];
+    package: CargoLockPackage[];
 }
 
 interface CargoLockPackage {

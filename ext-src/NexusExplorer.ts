@@ -66,7 +66,7 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
   }
 
   doSoftRefresh(): void {
-    this._onDidChangeTreeData.fire(this.onDidChangeTreeData);
+    this._onDidChangeTreeData.fire(undefined);
   }
 
   sortByName(sortNameAscending: boolean): void {
