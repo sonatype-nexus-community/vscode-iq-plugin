@@ -24,8 +24,14 @@ import { ExtScanType } from "./utils/ExtScanType";
 import OssIndexVersionDetails from "./components/OssIndex/OssIndexVersionDetails/OssIndexVersionDetails";
 
 // add workarounds to call VSCode
-declare var acquireVsCodeApi: any;
+interface vscode {
+  postMessage(message: any): void;
+}
+// declare function acquireVsCodeApi(): vscode;
+declare const vscode: vscode;
+/* declare var acquireVsCodeApi: any;
 const vscode: any = acquireVsCodeApi();
+ */
 
 type AppProps = {};
 
