@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import { ComposerCoordinate } from "../packages/composer/ComposerCoordinate";
+import { CargoCoordinate } from "../packages/cargo/CargoCoordinate";
 import { GolangCoordinate } from "../packages/golang/GolangCoordinate";
 import { MavenCoordinate } from "../packages/maven/MavenCoordinate";
 import { NpmCoordinate } from "../packages/npm/NpmCoordinate";
@@ -35,6 +36,8 @@ export class ComponentEntryConversions {
                 return this.convertFromGem(entry);
             case 'composer':
                 return this.convertFromComposer(entry);
+            case 'cargo':
+                return this.convertFromCargo(entry);
             default:
                 console.debug('Unsupported format', format);
                 return "";
@@ -82,6 +85,13 @@ export class ComponentEntryConversions {
     private static convertFromComposer(entry: any): string {
         let coordinates = new ComposerCoordinate(entry.component.componentIdentifier.coordinates.name, 
             entry.component.componentIdentifier.coordinates.namespace,
+            entry.component.componentIdentifier.coordinates.version);
+          
+        return coordinates.asCoordinates();
+    }
+
+    private static convertFromCargo(entry: any): string {
+        let coordinates = new CargoCoordinate(entry.component.componentIdentifier.coordinates.name,
             entry.component.componentIdentifier.coordinates.version);
           
         return coordinates.asCoordinates();

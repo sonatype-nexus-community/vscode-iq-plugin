@@ -20,16 +20,14 @@ import { CoordinateType } from "../CoordinateType";
  */
 export class CargoCoordinate implements CoordinateType {
   Name: string;
-  Group: string;
   Version: string;
  
-  constructor (name: string, group: string, version: string){
+  constructor (name: string, version: string){
     this.Name = name;
-    this.Group = group;
     this.Version = version;
   }
 
   public asCoordinates(): string {
-    return `cargo: ${this.Group}/${this.Name} @ ${this.Version}`;
+    return `cargo: ${this.Name} @ ${this.Version}`;
   }
 }
