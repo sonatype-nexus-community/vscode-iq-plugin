@@ -189,7 +189,8 @@
     "vscode:prepublish": "./scripts/build-non-split.js && tsc -p tsconfig.extension.json",
     "start": "react-scripts start",
     "build": "./scripts/build-non-split.js && tsc -p tsconfig.extension.json",
-    "test": "react-scripts test --env=jsdom",
+    "test": "react-scripts test --env=jsdom && npm run test-ext",
+    "test-ext": "node ./build/ext-src/runTest.js",
     "eject": "react-scripts eject",
     "generate-format": "./generate-format.sh"
   },
@@ -212,19 +213,20 @@
     "toml": "^3.0.0"
   },
   "devDependencies": {
-    "@types/node-fetch": "^2.5.7",
     "@types/bootstrap": "^4.3.1",
     "@types/jest": "^22.2.3",
     "@types/lodash": "^4.14.136",
     "@types/node": "^12.12.6",
+    "@types/node-fetch": "^2.5.7",
     "@types/react": "^16.9.11",
     "@types/react-dom": "^16.9.3",
     "@types/vscode": "1.46.0",
     "mustache": "^3.1.0",
-    "react-scripts": "^2.1.3",
     "node-forge": "^0.10.0",
+    "react-scripts": "^2.1.3",
     "rewire": "^4.0.1",
-    "typescript": "^3.6.3"
+    "typescript": "^3.6.3",
+    "vscode-test": "^1.4.1"
   },
   "browserslist": [
     ">0.2%",
