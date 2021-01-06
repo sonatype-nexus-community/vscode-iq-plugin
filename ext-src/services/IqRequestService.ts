@@ -22,7 +22,6 @@ import { Agent as HttpsAgent }  from "https";
 import { Agent } from 'http';
 import { ILogger, LogLevel } from '../utils/Logger';
 import { ThirdPartyAPIResponse } from './ThirdPartyApiResponse';
-import { AllVersionsResponse, ComponentIdentifier } from './AllVersionsResponse';
 import { ReportResponse } from './ReportResponse';
 import { PackageURL } from 'packageurl-js';
 
@@ -345,7 +344,7 @@ export class IqRequestService implements RequestService {
     });
   }
 
-  public async getAllVersionsArray(purl: PackageURL): Promise<Array<string>> {
+  public async getAllVersions(purl: PackageURL): Promise<Array<string>> {
     let url = `${this.url}/api/v2/components/versions`;
     
     let request = {
@@ -421,58 +420,6 @@ export class IqRequestService implements RequestService {
           reject(res.status);
           return;
         }).catch((ex) => {
-          reject(ex);
-        });
-    });
-  }
-
-  public async getAllVersions(nexusArtifact: any, iqApplicationPublicId: string): Promise<AllVersionsResponse> {
-    if (!nexusArtifact || !nexusArtifact.hash) {
-      return Promise.reject("Nothing to work with");
-    }
-
-    return new Promise((resolve, reject) => {
-      let hash = nexusArtifact.hash;
-      let comp = this.encodeComponentIdentifier(
-        nexusArtifact.componentIdentifier
-      );
-      let d = new Date();
-      let timestamp = d.getDate();
-      let matchstate = "exact";
-      let url =
-        `${this.url}/rest/ide/componentDetails/application/` +
-        `${iqApplicationPublicId}/allVersions?` +
-        `componentIdentifier=${comp}&` +
-        `hash=${hash}&matchState=${matchstate}&` +
-        `timestamp=${timestamp}&proprietary=false`;
-
-      fetch(
-        url,
-        {
-          method: 'GET', 
-          headers: this.getHeaders(),
-          agent: this.agent
-        }).then(async (res) => {
-          if (res.ok) {
-            let versions: AllVersionsResponse = await res.json();
-            resolve(versions);
-            return;
-          }
-          let body = await res.text();
-          this.logger.log(
-            LogLevel.TRACE, 
-            `Non 200 response from IQ Server on obtaining all versions of component`, 
-            nexusArtifact,
-            body, 
-            res.status
-            );
-          reject(res.status);
-          return;
-        }).catch((ex) => {
-          this.logger.log(
-            LogLevel.ERROR, 
-            `Error obtaining all versions of component`, nexusArtifact, ex
-            );
           reject(ex);
         });
     });

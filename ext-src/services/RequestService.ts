@@ -17,7 +17,6 @@ import { BaseRequestService } from "./BaseRequestService";
  */
 import { ThirdPartyAPIResponse } from './ThirdPartyApiResponse';
 import { ReportResponse } from './ReportResponse';
-import { AllVersionsResponse } from './AllVersionsResponse';
 import { PackageURL } from 'packageurl-js';
 
 export interface RequestService extends BaseRequestService {
@@ -27,8 +26,7 @@ export interface RequestService extends BaseRequestService {
   getReportResults(reportID: string, applicationPublicId: string): Promise<ReportResponse>;
   asyncPollForEvaluationResults(statusURL: string): Promise<ThirdPartyAPIResponse>;
   getAllVersionDetails(versions: Array<string>, purl: PackageURL): Promise<any>;
-  getAllVersionsArray(purl: PackageURL): Promise<Array<string>>;
-  getAllVersions(component: any, iqApplicationPublicId: string): Promise<AllVersionsResponse>;
+  getAllVersions(purl: PackageURL): Promise<Array<string>>;
   getCVEDetails(cve: any, nexusArtifact: any): Promise<any>;
   getRemediation(nexusArtifact: any, iqApplicationId: string): Promise<any>;
   showSelectedVersion(componentIdentifier: any, version: string): Promise<any>

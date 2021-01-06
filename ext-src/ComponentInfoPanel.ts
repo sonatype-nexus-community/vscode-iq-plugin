@@ -265,7 +265,7 @@ export class ComponentInfoPanel {
       const purl: PackageURL = PackageURL.fromString(component.packageUrl);
       purl.version = "";
 
-      let allVersions = await iqComponentModel.requestService.getAllVersionsArray(purl);
+      let allVersions = await iqComponentModel.requestService.getAllVersions(purl);
       
       if (!allVersions.includes(component.componentIdentifier.coordinates.version)) {
         allVersions.push(component.componentIdentifier.coordinates.version);
