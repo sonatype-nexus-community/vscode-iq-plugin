@@ -29,7 +29,7 @@ export interface RequestService extends BaseRequestService {
   getAllVersions(purl: PackageURL): Promise<Array<string>>;
   getCVEDetails(cve: any, nexusArtifact: any): Promise<any>;
   getRemediation(nexusArtifact: any, iqApplicationId: string): Promise<any>;
-  showSelectedVersion(componentIdentifier: any, version: string): Promise<any>
+  showSelectedVersion(purl: string): Promise<any>
   setPassword(password: string): void;
   isPasswordSet(): boolean;
   setApplicationId(s: string): void;

@@ -19,7 +19,7 @@ import { IqComponentModel } from "./models/IqComponentModel";
 import { ScanType } from "./types/ScanType";
 import { ComponentModel } from "./models/ComponentModel";
 import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
-import { ComponentEntry } from "./models/ComponentEntry";
+import { ComponentEntry, NexusIQData } from "./models/ComponentEntry";
 import { ReportComponent } from "./services/ReportResponse";
 import { VersionResponse } from "./services/AllVersionsResponse";
 import { ComponentEntryConversions } from "./utils/ComponentEntryConversions";
@@ -165,10 +165,9 @@ export class ComponentInfoPanel {
   private async showSelectedVersion(message: any) {
     console.log("showSelectedVersion", message);
     if (this.componentModel instanceof IqComponentModel) {
-      var componentIdentifier = message.package.nexusIQData.component.componentIdentifier;
-      var version = message.version;
+      let iqData: NexusIQData = message.package.nexusIQData;
       var iqComponentModel = this.componentModel as IqComponentModel
-      let body: any = await iqComponentModel.requestService.showSelectedVersion(componentIdentifier, version);
+      let body: any = await iqComponentModel.requestService.showSelectedVersion(iqData.component.packageUrl);
     
       this._panel.webview.postMessage({
         command: "versionDetails",
@@ -183,7 +182,6 @@ export class ComponentInfoPanel {
         scanType: ScanType.OssIndex
       });
     }
-
   }
 
   private async showRemediation(nexusArtifact: any) {

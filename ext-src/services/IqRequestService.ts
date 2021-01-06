@@ -413,53 +413,58 @@ export class IqRequestService implements RequestService {
           let body = await res.text();
           this.logger.log(
             LogLevel.ERROR, 
-            `Non 200 response received getting componet versions details from IQ Server`, 
+            `Non 200 response received getting component versions details from IQ Server`, 
             request,
             res.status,
             body);
           reject(res.status);
           return;
         }).catch((ex) => {
+          this.logger.log(
+            LogLevel.ERROR, 
+            `General error getting component versions details from IQ Server`, 
+            request,
+            ex);
           reject(ex);
         });
     });
   }
 
-  public async showSelectedVersion(componentIdentifier: any, version: string) {
+  public async showSelectedVersion(purl: string) {
     return new Promise((resolve, reject) => {
       this.logger.log(LogLevel.TRACE, `Begin Show Selected Version`);
-      var transmittingComponentIdentifier = { ...componentIdentifier };
-
-      transmittingComponentIdentifier.coordinates = {
-        ...componentIdentifier.coordinates
-      };
-
-      transmittingComponentIdentifier.coordinates.version = version;
-      var detailsRequest = {
-        components: [
-          {
-            hash: null,
-            componentIdentifier: transmittingComponentIdentifier
-          }
-        ]
-      };
       let url = `${this.url}/api/v2/components/details`;
+
+      let request: ComponentDetailsRequest = {components: []};
+      request.components.push({packageUrl: purl});
 
       fetch(
         url,
         {
           method: 'POST',
           headers: this.getHeadersWithApplicationJsonContentType(),
-          body: JSON.stringify(detailsRequest),
+          body: JSON.stringify(request),
           agent: this.agent
         }).then(async (res) => {
           if (res.ok) {
             resolve(await res.json());
             return;
           }
+          let body = await res.text();
+          this.logger.log(
+            LogLevel.ERROR, 
+            `Non 200 response received getting component version details from IQ Server`, 
+            request,
+            res.status,
+            body);
           reject(res.status);
           return;
         }).catch((ex) => {
+          this.logger.log(
+            LogLevel.ERROR, 
+            `General error getting component version details from IQ Server`, 
+            request,
+            ex);
           reject(ex);
         });
     });
