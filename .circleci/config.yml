@@ -20,6 +20,7 @@ jobs:
             - ./node_modules
       - run: 
           name: test
+          // CI mimicks local command with env var, like: CI=true npm test
           command: npm test
       - run: 
           name: build
