@@ -165,9 +165,17 @@ export class ComponentInfoPanel {
     console.log("showSelectedVersion", message);
     if (this.componentModel instanceof IqComponentModel) {
       let iqData: NexusIQData = message.package.nexusIQData;
+      let purl: PackageURL = PackageURL.fromString(iqData.component.packageUrl);
+      purl.version = message.version;
+
+      let decodedPurl = unescape(purl.toString());
       var iqComponentModel = this.componentModel as IqComponentModel
-      let body: any = await iqComponentModel.requestService.showSelectedVersion(iqData.component.packageUrl);
+      let body = await iqComponentModel.requestService.showSelectedVersion(decodedPurl);
     
+      if (iqData.component.componentIdentifier.format === 'golang') {
+        body.componentDetails = this.dealWithGolang(body.componentDetails);
+      }
+
       this._panel.webview.postMessage({
         command: "versionDetails",
         componentDetails: body.componentDetails[0],

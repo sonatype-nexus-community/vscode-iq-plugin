@@ -22,6 +22,7 @@ import { Agent as HttpsAgent }  from "https";
 import { Agent } from 'http';
 import { ILogger, LogLevel } from '../utils/Logger';
 import { ThirdPartyAPIResponse } from './ThirdPartyApiResponse';
+import { ComponentDetails } from './ComponentDetails';
 import { ReportResponse } from './ReportResponse';
 import { PackageURL } from 'packageurl-js';
 
@@ -133,44 +134,6 @@ export class IqRequestService implements RequestService {
           this.logger.log(
             LogLevel.ERROR, 
             `Error submitting to 3rd Party API`, ex
-            );
-          reject(ex);
-        });
-    });
-  }
-
-  public async submitToIqForEvaluation(
-    data: any,
-    applicationInternalId: string
-  ): Promise<string> {
-    this.logger.log(LogLevel.TRACE, `Data submitting to IQ Server`, data);
-    return new Promise((resolve, reject) => {
-      fetch(
-        `${this.url}/api/v2/evaluation/applications/${applicationInternalId}`, 
-        {
-          method: 'POST',
-          agent: this.agent,
-          body: JSON.stringify(data),
-          headers: this.getHeadersWithApplicationJsonContentType()
-        }).then(async (res) => {
-          if(res.ok) {
-            let json = await res.json();
-            resolve(json.resultId);
-            return;
-          }
-          let body = await res.text();
-          this.logger.log(
-            LogLevel.TRACE, 
-            `Non 200 response from IQ Server on submitting to Component Eval API`, 
-            body, 
-            res.status
-            );
-          reject(res.status);
-          return;
-        }).catch((ex) => {
-          this.logger.log(
-            LogLevel.ERROR, 
-            `Error submitting to Component Eval API`, ex
             );
           reject(ex);
         });
@@ -385,7 +348,7 @@ export class IqRequestService implements RequestService {
     });
   }
 
-  public async getAllVersionDetails(versions: Array<string>, purl: PackageURL): Promise<any> {
+  public async getAllVersionDetails(versions: Array<string>, purl: PackageURL): Promise<ComponentDetails> {
     let url = `${this.url}/api/v2/components/details`;
 
     return new Promise((resolve, reject) => {
@@ -406,8 +369,8 @@ export class IqRequestService implements RequestService {
           headers: this.getHeadersWithApplicationJsonContentType()
         }).then(async (res) => {
           if (res.ok) {
-            let stuff = await res.json();
-            resolve(stuff);
+            let comps: ComponentDetails = await res.json();
+            resolve(comps);
             return;
           }
           let body = await res.text();
@@ -430,7 +393,7 @@ export class IqRequestService implements RequestService {
     });
   }
 
-  public async showSelectedVersion(purl: string) {
+  public async showSelectedVersion(purl: string): Promise<ComponentDetails> {
     return new Promise((resolve, reject) => {
       this.logger.log(LogLevel.TRACE, `Begin Show Selected Version`);
       let url = `${this.url}/api/v2/components/details`;
@@ -447,7 +410,8 @@ export class IqRequestService implements RequestService {
           agent: this.agent
         }).then(async (res) => {
           if (res.ok) {
-            resolve(await res.json());
+            let comp: ComponentDetails = await res.json();
+            resolve(comp);
             return;
           }
           let body = await res.text();

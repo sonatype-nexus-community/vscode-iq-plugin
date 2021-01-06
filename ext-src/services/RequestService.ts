@@ -17,11 +17,11 @@ import { BaseRequestService } from "./BaseRequestService";
  */
 import { ThirdPartyAPIResponse } from './ThirdPartyApiResponse';
 import { ReportResponse } from './ReportResponse';
+import { ComponentDetails } from './ComponentDetails';
 import { PackageURL } from 'packageurl-js';
 
 export interface RequestService extends BaseRequestService {
   getApplicationId(applicationPublicId: string): Promise<string>;
-  submitToIqForEvaluation(data: any, applicationInternalId: string): Promise<any>;
   submitToThirdPartyAPI(sbom: string, applicationInternalId: string): Promise<string>;
   getReportResults(reportID: string, applicationPublicId: string): Promise<ReportResponse>;
   asyncPollForEvaluationResults(statusURL: string): Promise<ThirdPartyAPIResponse>;
@@ -29,7 +29,7 @@ export interface RequestService extends BaseRequestService {
   getAllVersions(purl: PackageURL): Promise<Array<string>>;
   getCVEDetails(cve: any, nexusArtifact: any): Promise<any>;
   getRemediation(nexusArtifact: any, iqApplicationId: string): Promise<any>;
-  showSelectedVersion(purl: string): Promise<any>
+  showSelectedVersion(purl: string): Promise<ComponentDetails>
   setPassword(password: string): void;
   isPasswordSet(): boolean;
   setApplicationId(s: string): void;
