@@ -15,10 +15,14 @@ import { BaseRequestService } from "./BaseRequestService";
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ThirdPartyAPIResponse } from './ThirdPartyApiResponse';
+
 export interface RequestService extends BaseRequestService {
   getApplicationId(applicationPublicId: string): Promise<string>;
   submitToIqForEvaluation(data: any, applicationInternalId: string): Promise<any>;
-  asyncPollForEvaluationResults(applicationInternalId: string, resultId: string): Promise<any>;
+  submitToThirdPartyAPI(sbom: string, applicationInternalId: string): Promise<string>;
+  getReportResults(reportID: string, applicationPublicId: string): Promise<any>;
+  asyncPollForEvaluationResults(statusURL: string): Promise<ThirdPartyAPIResponse>;
   getAllVersions(component: any, iqApplicationPublicId: string): Promise<any>;
   getCVEDetails(cve: any, nexusArtifact: any): Promise<any>;
   getRemediation(nexusArtifact: any, iqApplicationId: string): Promise<any>;

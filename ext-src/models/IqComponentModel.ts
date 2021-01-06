@@ -26,6 +26,8 @@ import { IQResponse } from "../types/IQResponse";
 import { ComponentEntryConversions } from '../utils/ComponentEntryConversions';
 import { ComponentModelOptions } from "./ComponentModelOptions";
 import { ILogger, LogLevel } from "../utils/Logger";
+import { PackageType } from "../packages/PackageType";
+import { CycloneDXSbomCreator } from "../cyclonedx/CycloneDXGenerator";
 
 export class IqComponentModel implements ComponentModel {
     components = new Array<ComponentEntry>();
@@ -70,15 +72,17 @@ export class IqComponentModel implements ComponentModel {
               title: "Running Nexus IQ Server Scan"
             }, async (progress, token) => {
               let data: ComponentRequest = new ComponentRequest([]);
+              const dependencies: Array<PackageType> = new Array();
               if (componentContainer.Valid.length > 0) {
                 progress.report({message: "Starting to package your dependencies for IQ Server", increment: 5});
                 for (let pm of componentContainer.Valid) {
                   try {
                     await pm.packageForIq();
                     progress.report({message: "Reticulating Splines", increment: 25});
+                    
                     let result: ComponentRequest = await pm.convertToNexusFormat();
                     this.logger.log(LogLevel.TRACE, `Component Request for ${pm.constructor.name} obtained`, result);
-
+                    dependencies.push(...pm.Dependencies);
                     data.components.push(...result.components);
                     this.components.push(...pm.toComponentEntries(result));
                     this.coordsToComponent = new Map([...this.coordsToComponent, ...pm.CoordinatesToComponents]);
@@ -110,27 +114,41 @@ export class IqComponentModel implements ComponentModel {
                 `Set application internal ID: ${this.requestService.getApplicationInternalId()}`
                 );
 
+              const sbomGenerator = new CycloneDXSbomCreator();
+
+              let xml = await sbomGenerator.createBom(dependencies);
+
               progress.report({message: "Submitting to IQ Server for evaluation", increment: 50});
-              let resultId = await this.requestService.submitToIqForEvaluation(data, this.requestService.getApplicationInternalId());
+              let resultId = await this.requestService.submitToThirdPartyAPI(xml, this.requestService.getApplicationInternalId());
         
               this.logger.log(LogLevel.DEBUG, `Report id obtained: ${resultId}`);
               progress.report({message: "Polling IQ Server for report results", increment: 60});
-              let resultDataString = await this.requestService.asyncPollForEvaluationResults(this.requestService.getApplicationInternalId(), resultId);
+              let resultData = await this.requestService.asyncPollForEvaluationResults(resultId);
               progress.report({message: "Report retrieved, parsing", increment: 80});
-              let resultData: IQResponse = JSON.parse(resultDataString);
-        
+
               this.logger.log(LogLevel.TRACE, `Received results from IQ Scan`, resultData);
+              
+              let results: any;
+              if (resultData && resultData.reportHtmlUrl) {
+                let parts = /[^/]*$/.exec(resultData!.reportHtmlUrl!);
+
+                if (parts) {
+                  results = await this.requestService.getReportResults(parts[0], this.applicationPublicId);
+  
+                  this.logger.log(LogLevel.TRACE, `Received results from Report API`, results);
+                }
+              }
 
               progress.report({message: "Morphing results into something usable", increment: 90});
-              for (let resultEntry of resultData.results) {
-                let format: string = resultEntry.component.componentIdentifier.format as string;
+              for (let resultEntry of results.components) {
+                let format: string = resultEntry.componentIdentifier.format as string;
                 
                 let componentEntry = this.coordsToComponent.get(
                   ComponentEntryConversions.ConvertToComponentEntry(format, resultEntry)
                 );
                 if (componentEntry != undefined) {
-                  componentEntry!.policyViolations = resultEntry.policyData.policyViolations as Array<PolicyViolation>;
-                  componentEntry!.hash = resultEntry.component.hash;
+                  componentEntry!.policyViolations = resultEntry.violations as Array<PolicyViolation>;
+                  componentEntry!.hash = resultEntry.hash;
                   componentEntry!.nexusIQData = resultEntry;
                 }
               }

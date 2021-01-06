@@ -42,47 +42,47 @@ export class ComponentEntryConversions {
     }
 
     private static convertFromGolang(entry: any): string {
-        let coordinates = new GolangCoordinate(entry.component.componentIdentifier.coordinates.name, 
-            entry.component.componentIdentifier.coordinates.version);
+        let coordinates = new GolangCoordinate(entry.componentIdentifier.coordinates.name, 
+            entry.componentIdentifier.coordinates.version);
       
         return coordinates.asCoordinates();
     }
 
     private static convertFromMaven(entry: any): string {
-        let coordinates = new MavenCoordinate(entry.component.componentIdentifier.coordinates.artifactId, 
-            entry.component.componentIdentifier.coordinates.groupId, 
-            entry.component.componentIdentifier.coordinates.version, 
-            entry.component.componentIdentifier.coordinates.extension);
+        let coordinates = new MavenCoordinate(entry.componentIdentifier.coordinates.artifactId, 
+            entry.componentIdentifier.coordinates.groupId, 
+            entry.componentIdentifier.coordinates.version, 
+            entry.componentIdentifier.coordinates.extension);
       
         return coordinates.asCoordinates();
     }
 
     private static convertFromPyPi(entry: any): string {
-        let coordinates = new PyPICoordinate(entry.component.componentIdentifier.coordinates.name,
-            entry.component.componentIdentifier.coordinates.version,
+        let coordinates = new PyPICoordinate(entry.componentIdentifier.coordinates.name,
+            entry.componentIdentifier.coordinates.version,
             "", "");
           
         return coordinates.asCoordinates();
     }
 
     private static convertFromNpm(entry: any): string {
-        let coordinates = new NpmCoordinate(entry.component.componentIdentifier.coordinates.packageId, 
-            entry.component.componentIdentifier.coordinates.version);
+        let coordinates = new NpmCoordinate(entry.componentIdentifier.coordinates.packageId, 
+            entry.componentIdentifier.coordinates.version);
           
         return coordinates.asCoordinates();
     }
 
     private static convertFromGem(entry: any): string {
-        let coordinates = new RubyGemsCoordinate(entry.component.componentIdentifier.coordinates.name, 
-            entry.component.componentIdentifier.coordinates.version);
+        let coordinates = new RubyGemsCoordinate(entry.componentIdentifier.coordinates.name, 
+            entry.componentIdentifier.coordinates.version);
           
         return coordinates.asCoordinates();
     }
 
     private static convertFromComposer(entry: any): string {
-        let coordinates = new ComposerCoordinate(entry.component.componentIdentifier.coordinates.name, 
-            entry.component.componentIdentifier.coordinates.namespace,
-            entry.component.componentIdentifier.coordinates.version);
+        let coordinates = new ComposerCoordinate(entry.componentIdentifier.coordinates.name, 
+            entry.componentIdentifier.coordinates.namespace,
+            entry.componentIdentifier.coordinates.version);
           
         return coordinates.asCoordinates();
     }

@@ -21,6 +21,7 @@ import { RequestHelpers } from "./RequestHelpers";
 import { Agent as HttpsAgent }  from "https";
 import { Agent } from 'http';
 import { ILogger, LogLevel } from '../utils/Logger';
+import { ThirdPartyAPIResponse } from './ThirdPartyApiResponse';
 
 export class IqRequestService implements RequestService {
   readonly evaluationPollDelayMs = 2000;
@@ -97,6 +98,45 @@ export class IqRequestService implements RequestService {
     });
   }
 
+  public async submitToThirdPartyAPI(
+    sbom: string,
+    applicationInternalId: string
+  ): Promise<string> {
+    let url: string = `${this.url}/api/v2/scan/applications/${applicationInternalId}/sources/vscode-iq-extension?stageId=develop`
+
+    return new Promise((resolve, reject) => {
+      fetch(
+        url,
+        {
+          method: 'POST',
+          body: sbom,
+          agent: this.agent,
+          headers: this.getHeadersWithApplicationXmlContentType()
+        }).then(async (res) => {
+          if (res.ok) {
+            let body = await res.json();
+            resolve(body.statusUrl);
+            return;
+          }
+          let body = await res.text();
+          this.logger.log(
+            LogLevel.TRACE, 
+            `Non 200 response from IQ Server on submitting to 3rd Party API`, 
+            body, 
+            res.status
+            );
+          reject(res.status);
+          return;
+        }).catch((ex) => {
+          this.logger.log(
+            LogLevel.ERROR, 
+            `Error submitting to 3rd Party API`, ex
+            );
+          reject(ex);
+        });
+    });
+  }
+
   public async submitToIqForEvaluation(
     data: any,
     applicationInternalId: string
@@ -119,7 +159,7 @@ export class IqRequestService implements RequestService {
           let body = await res.text();
           this.logger.log(
             LogLevel.TRACE, 
-            `Non 200 response from IQ Server on submitting to 3rd Party API`, 
+            `Non 200 response from IQ Server on submitting to Component Eval API`, 
             body, 
             res.status
             );
@@ -128,7 +168,7 @@ export class IqRequestService implements RequestService {
         }).catch((ex) => {
           this.logger.log(
             LogLevel.ERROR, 
-            `Error submitting to 3rd Party API`, ex
+            `Error submitting to Component Eval API`, ex
             );
           reject(ex);
         });
@@ -136,13 +176,11 @@ export class IqRequestService implements RequestService {
   }
 
   public async asyncPollForEvaluationResults(
-    applicationInternalId: string,
-    resultId: string
-  ) {
+    statusURL: string
+  ): Promise<ThirdPartyAPIResponse> {
     return new Promise((resolve, reject) => {
       this.pollForEvaluationResults(
-        applicationInternalId,
-        resultId,
+        statusURL,
         body => resolve(body),
         (statusCode, message) =>
           reject(
@@ -153,15 +191,14 @@ export class IqRequestService implements RequestService {
   }
 
   public pollForEvaluationResults(
-    applicationInternalId: string,
-    resultId: string,
-    success: (body: string) => any,
+    statusURL: string,
+    success: (body: ThirdPartyAPIResponse) => any,
     failed: (statusCode: number, message: string) => any
   ) {
     let _this = this;
     let pollAttempts = 0;
 
-    let successHandler = function(value: string) {
+    let successHandler = function(value: ThirdPartyAPIResponse) {
       success(value);
     };
     let errorHandler = function(statusCode: number, message: string) {
@@ -174,8 +211,7 @@ export class IqRequestService implements RequestService {
         } else {
           setTimeout(() => {
             _this.getEvaluationResults(
-              applicationInternalId,
-              resultId,
+              statusURL,
               successHandler,
               errorHandler
             );
@@ -186,21 +222,43 @@ export class IqRequestService implements RequestService {
       }
     };
     this.getEvaluationResults(
-      applicationInternalId,
-      resultId,
+      statusURL,
       successHandler,
       errorHandler
     );
   }
 
+  public getReportResults(reportID: string, applicationPublicId: string): Promise<any> {
+    let url = `${this.url}/api/v2/applications/${applicationPublicId}/reports/${reportID}/policy`;
+    
+    return new Promise((resolve, reject) => {
+      fetch(
+        url,
+        {
+          method: 'GET',
+          agent: this.agent,
+          headers: this.getHeaders()
+        }).then(async (res) => {
+          if (res.ok) {
+            let body = await res.json();
+            resolve(body);
+            return;
+          }
+          reject(res.status);
+          return;
+        }).catch((ex) => {
+          reject(ex);
+        })
+    });
+  }
+
   public getEvaluationResults(
-    applicationInternalId: string,
-    resultId: string,
-    resolve: (body: string) => any,
+    statusURL: string,
+    resolve: (body: ThirdPartyAPIResponse) => any,
     reject: (statusCode: number, message: string) => any
   ) {
     fetch(
-      `${this.url}/api/v2/evaluation/applications/${applicationInternalId}/results/${resultId}`, 
+      `${this.url}/${statusURL}`, 
       {
         method: 'GET',
         headers: this.getHeaders(),
@@ -214,8 +272,8 @@ export class IqRequestService implements RequestService {
           reject(res.status, 'Polling');
           return;
         }
-        let json = await res.json();
-        resolve(JSON.stringify(json));
+        let json: ThirdPartyAPIResponse = await res.json();
+        resolve(json);
         return;
       }).catch((ex) => {
         reject(ex, 'big issue');
@@ -366,6 +424,14 @@ export class IqRequestService implements RequestService {
     let actual = encodeURIComponent(JSON.stringify(componentIdentifier));
     this.logger.log(LogLevel.TRACE, `Actual: ${actual}`); 
     return actual;
+  }
+
+  private getHeadersWithApplicationXmlContentType(): Headers {
+    const headers = this.getHeaders();
+
+    headers.append('Content-Type', 'application/xml');
+
+    return headers;
   }
 
   private getHeadersWithApplicationJsonContentType(): Headers {
