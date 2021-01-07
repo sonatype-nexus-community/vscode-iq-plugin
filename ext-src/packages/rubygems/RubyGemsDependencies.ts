@@ -48,13 +48,6 @@ export class RubyGemsDependencies implements PackageDependencies {
     return PackageDependenciesHelper.checkIfValid('Gemfile.lock', 'rubygems');
   }
 
-  public ConvertToComponentEntry(resultEntry: any): string {
-    let coordinates = new RubyGemsCoordinate(resultEntry.component.componentIdentifier.coordinates.name, 
-      resultEntry.component.componentIdentifier.coordinates.version);
-    
-    return coordinates.asCoordinates();
-  }
-
   public toComponentEntries(packages: Array<RubyGemsPackage>): Array<ComponentEntry> {
     let components = new Array<ComponentEntry>();
     for (let pkg of packages) {

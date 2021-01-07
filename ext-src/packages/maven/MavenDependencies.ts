@@ -38,15 +38,6 @@ export class MavenDependencies extends PackageDependenciesHelper implements Pack
     return PackageDependenciesHelper.checkIfValid("pom.xml", "maven");
   }
 
-  public ConvertToComponentEntry(resultEntry: any): string {
-    let coordinates = new MavenCoordinate(resultEntry.component.componentIdentifier.coordinates.artifactId, 
-      resultEntry.component.componentIdentifier.coordinates.groupId, 
-      resultEntry.component.componentIdentifier.coordinates.version, 
-      resultEntry.component.componentIdentifier.coordinates.extension);
-
-    return coordinates.asCoordinates();
-  }
-
   public toComponentEntries(packages: Array<MavenPackage>): Array<ComponentEntry> {
     let components = new Array<ComponentEntry>();
     for (let pkg of packages) {

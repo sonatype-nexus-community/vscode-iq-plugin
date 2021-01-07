@@ -41,14 +41,6 @@ export class ComposerDependencies extends PackageDependenciesHelper implements P
     return PackageDependenciesHelper.checkIfValid("composer.lock", "composer");
   }
 
-  public ConvertToComponentEntry(resultEntry: any): string {
-    let coordinates = new ComposerCoordinate(resultEntry.component.componentIdentifier.coordinates.name,
-      resultEntry.component.componentIdentifier.coordinates.namespace,
-      resultEntry.component.componentIdentifier.coordinates.version);
-    
-    return coordinates.asCoordinates();
-  }
-
   public toComponentEntries(packages: Array<ComposerPackage>): Array<ComponentEntry> {
     let components = new Array<ComponentEntry>();
     for (let pkg of packages) {

@@ -42,14 +42,6 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
     return false;
   }
 
-  public ConvertToComponentEntry(resultEntry: any): string {
-    let coordinates = new PyPICoordinate(resultEntry.component.componentIdentifier.coordinates.name,
-      resultEntry.component.componentIdentifier.coordinates.version,
-      "tar.gz", "");
-    
-    return coordinates.asCoordinates();
-  }
-
   public toComponentEntries(packages: Array<PyPIPackage>): Array<ComponentEntry> {
     let components = new Array<ComponentEntry>();
     for (let pkg of packages) {

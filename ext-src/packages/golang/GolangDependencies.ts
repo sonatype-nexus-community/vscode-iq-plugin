@@ -41,13 +41,6 @@ export class GolangDependencies extends PackageDependenciesHelper implements Pac
     return this.scanType === "" ? false : true;
   }
 
-  public ConvertToComponentEntry(resultEntry: any): string {
-    let coordinates = new GolangCoordinate(resultEntry.component.componentIdentifier.coordinates.name, 
-      resultEntry.component.componentIdentifier.coordinates.version);
-
-    return coordinates.asCoordinates();
-  }
-
   public toComponentEntries(packages: Array<GolangPackage>): Array<ComponentEntry> {
     let components = new Array<ComponentEntry>();
     for (let pkg of packages) {

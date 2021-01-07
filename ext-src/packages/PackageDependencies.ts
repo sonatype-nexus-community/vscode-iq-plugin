@@ -21,7 +21,6 @@ export interface PackageDependencies {
   CoordinatesToComponents: Map<string, ComponentEntry>;
   RequestService: RequestService;
   CheckIfValid(): boolean;
-  ConvertToComponentEntry(resultEntry: Array<PackageType>): string;
-  toComponentEntries(data: any): Array<ComponentEntry>;
+  toComponentEntries(data: Array<PackageType>): Array<ComponentEntry>;
   packageForIq(): Promise<Array<PackageType>>;
 }

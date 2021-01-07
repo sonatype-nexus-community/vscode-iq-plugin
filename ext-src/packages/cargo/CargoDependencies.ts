@@ -41,13 +41,6 @@ export class CargoDependencies extends PackageDependenciesHelper implements Pack
     return PackageDependenciesHelper.checkIfValid("Cargo.lock", "cargo");
   }
 
-  public ConvertToComponentEntry(resultEntry: any): string {
-    let coordinates = new CargoCoordinate(resultEntry.component.componentIdentifier.coordinates.name,
-      resultEntry.component.componentIdentifier.coordinates.version);
-    
-    return coordinates.asCoordinates();
-  }
-
   public toComponentEntries(packages: Array<CargoPackage>): Array<ComponentEntry> {
     let components = new Array<ComponentEntry>();
     for (let pkg of packages) {
