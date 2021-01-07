@@ -20,15 +20,11 @@ import { RequestService } from "../services/RequestService";
 import { IqRequestService } from "../services/IqRequestService";
 import { ComponentModel } from "./ComponentModel";
 import { ComponentEntry } from "./ComponentEntry";
-import { PolicyViolation } from "../types/PolicyViolation";
-import { ComponentRequest } from "../types/ComponentRequest";
-import { IQResponse } from "../types/IQResponse";
 import { ComponentEntryConversions } from '../utils/ComponentEntryConversions';
 import { ComponentModelOptions } from "./ComponentModelOptions";
 import { ILogger, LogLevel } from "../utils/Logger";
 import { PackageType } from "../packages/PackageType";
 import { CycloneDXSbomCreator } from "../cyclonedx/CycloneDXGenerator";
-import { ComponentCoordinate } from "../types/ComponentCoordinate";
 import { ReportResponse } from "../services/ReportResponse";
 
 export class IqComponentModel implements ComponentModel {
@@ -73,6 +69,10 @@ export class IqComponentModel implements ComponentModel {
               location: ProgressLocation.Notification, 
               title: "Running Nexus IQ Server Scan"
             }, async (progress, token) => {
+              // Clear state so that we don't create duplicates
+              this.components = [];
+              this.coordsToComponent.clear();
+
               const dependencies: Array<PackageType> = new Array();
               if (componentContainer.Valid.length > 0) {
                 progress.report({message: "Starting to package your dependencies for IQ Server", increment: 5});
