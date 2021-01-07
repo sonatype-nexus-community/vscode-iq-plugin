@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import { PackageType } from "../PackageType";
+import { PackageURL } from 'packageurl-js';
 
 export class RubyGemsPackage implements PackageType {
   constructor(
@@ -27,7 +28,9 @@ export class RubyGemsPackage implements PackageType {
   }
 
   public toPurl() {
-    return `pkg:gem/${this.Name}@${this.Version}`;
+    let purl: PackageURL = new PackageURL("gem", "", this.Name, this.Version, {}, "");
+    return purl.toString()
+    // return `pkg:gem/${this.Name}@${this.Version}`;
   }
 
   public toCoordValueType(): string {

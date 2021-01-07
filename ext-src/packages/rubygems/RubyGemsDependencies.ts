@@ -15,7 +15,6 @@
  */
 import { RubyGemsPackage } from './RubyGemsPackage';
 import { RubyGemsUtils } from './RubyGemsUtils';
-import { RubyGemsCoordinate } from './RubyGemsCoordinate';
 import { PackageDependencies } from "../PackageDependencies";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { ScanType } from "../../types/ScanType";
@@ -47,12 +46,8 @@ export class RubyGemsDependencies implements PackageDependencies {
         "gem",
         ScanType.NexusIq
       );
-      let coordinates = new RubyGemsCoordinate(
-        pkg.Name,
-        pkg.Version
-      );
       map.set(
-        coordinates.asCoordinates(),
+        pkg.toPurl(),
         componentEntry
       );
     }

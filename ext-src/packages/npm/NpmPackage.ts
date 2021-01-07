@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import { PackageType } from '../PackageType';
+import { PackageURL } from 'packageurl-js';
 
 export class NpmPackage implements PackageType {
   Hash: string;
@@ -32,7 +33,9 @@ export class NpmPackage implements PackageType {
   }
 
   public toPurl() {
-    return `pkg:npm/${this.Name.replace("@", "%40")}@${this.Version}`;
+    let purl: PackageURL = new PackageURL("npm", "", this.Name, this.Version, {}, "");
+    return purl.toString();
+    // return `pkg:npm/${this.Name.replace("@", "%40")}@${this.Version}`;
   }
 
   public toCoordValueType(): string {

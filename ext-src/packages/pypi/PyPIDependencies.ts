@@ -16,7 +16,6 @@
 import { PyPIPackage } from "./PyPIPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../models/ComponentEntry";
-import { PyPICoordinate } from "./PyPICoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { PyPiUtils } from "./PyPiUtils";
 import { ScanType } from "../../types/ScanType";
@@ -40,14 +39,8 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
         "pypi",
         ScanType.NexusIq
       );
-      let coordinates = new PyPICoordinate(
-        pkg.Name,
-        pkg.Version,
-        pkg.Extension,
-        pkg.Qualifier
-      );
       map.set(
-        coordinates.asCoordinates(),
+        pkg.toPurl(),
         componentEntry
       );
     }

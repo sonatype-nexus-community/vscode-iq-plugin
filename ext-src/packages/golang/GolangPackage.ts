@@ -34,7 +34,7 @@ export class GolangPackage implements PackageType {
   }
 
   public toPurl() {
-    return `pkg:golang/${this.Name}@${this.Version}`;
+    return `pkg:golang/${this.Name}@${this.Version}`.toLowerCase();
   }
 
   public toCoordValueType(): string {

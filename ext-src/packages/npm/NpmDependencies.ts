@@ -15,7 +15,6 @@
  */
 import { NpmPackage } from "./NpmPackage";
 import { PackageDependencies } from "../PackageDependencies";
-import { NpmCoordinate } from "./NpmCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { NpmUtils } from './NpmUtils';
 import { ScanType } from "../../types/ScanType";
@@ -50,12 +49,8 @@ export class NpmDependencies implements PackageDependencies {
         "npm",
         ScanType.NexusIq
       );
-      let coordinates = new NpmCoordinate(
-        pkg.Name,
-        pkg.Version
-      );
       map.set(
-        coordinates.asCoordinates(),
+        pkg.toPurl(),
         componentEntry
       );
     }
