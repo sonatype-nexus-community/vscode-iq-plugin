@@ -19,7 +19,6 @@ import { NpmDependencies } from "./npm/NpmDependencies";
 import { GolangDependencies } from "./golang/GolangDependencies";
 import { PyPIDependencies } from "./pypi/PyPIDependencies";
 import { RubyGemsDependencies } from "./rubygems/RubyGemsDependencies"; 
-import { RequestService } from "../services/RequestService";
 import { PoetryDependencies } from "./poetry/PoetryDependencies";
 import { ComposerDependencies } from './composer/ComposerDependencies';
 import { CargoDependencies } from './cargo/CargoDependencies';
@@ -29,17 +28,17 @@ export class ComponentContainer {
   Valid: Array<PackageDependencies> = [];
   PackageMuncher: PackageDependencies | undefined;
 
-  constructor(private requestService: RequestService) {
+  constructor() {
 
     // To add a new format, you just need to push another implementation to this list
-    this.Possible.push(new MavenDependencies(this.requestService));
-    this.Possible.push(new NpmDependencies(this.requestService));
-    this.Possible.push(new GolangDependencies(this.requestService));
-    this.Possible.push(new PyPIDependencies(this.requestService));
-    this.Possible.push(new RubyGemsDependencies(this.requestService));
-    this.Possible.push(new PoetryDependencies(this.requestService));
-    this.Possible.push(new ComposerDependencies(this.requestService));
-    this.Possible.push(new CargoDependencies(this.requestService));
+    this.Possible.push(new MavenDependencies());
+    this.Possible.push(new NpmDependencies());
+    this.Possible.push(new GolangDependencies());
+    this.Possible.push(new PyPIDependencies());
+    this.Possible.push(new RubyGemsDependencies());
+    this.Possible.push(new PoetryDependencies());
+    this.Possible.push(new ComposerDependencies());
+    this.Possible.push(new CargoDependencies());
 
     this.Possible.forEach(i => {
       if(i.CheckIfValid()) {

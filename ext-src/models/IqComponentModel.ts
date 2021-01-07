@@ -61,7 +61,7 @@ export class IqComponentModel implements ComponentModel {
     private async performIqScan(): Promise<any> {
       return new Promise((resolve, reject) => {
         try {
-          let componentContainer = new ComponentContainer(this.requestService);
+          let componentContainer = new ComponentContainer();
 
           window.withProgress(
             {
@@ -83,8 +83,7 @@ export class IqComponentModel implements ComponentModel {
                     dependencies.push(...deps);
                     progress.report({message: "Reticulating Splines", increment: 25});
 
-                    this.components.push(...pm.toComponentEntries(deps));
-                    this.coordsToComponent = new Map([...this.coordsToComponent, ...pm.CoordinatesToComponents]);
+                    this.coordsToComponent = new Map([...this.coordsToComponent, ...pm.toComponentEntries(deps)]);
                   } catch (ex) {
                     this.logger.log(LogLevel.ERROR, `Nexus IQ Extension Failure moving forward`, ex);
                     window.showErrorMessage(`Nexus IQ extension failure, moving forward, exception: ${ex}`);
@@ -160,6 +159,8 @@ export class IqComponentModel implements ComponentModel {
                     componentEntry!.nexusIQData = { component: resultEntry };
                   }
                 }
+
+                this.components.push(...Array.from(this.coordsToComponent, ([name, value]) => (value)));
               }
 
               resolve();

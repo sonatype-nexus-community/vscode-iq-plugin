@@ -18,7 +18,6 @@ import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../models/ComponentEntry";
 import { ComposerCoordinate } from "./ComposerCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { RequestService } from "../../services/RequestService";
 import { ScanType } from "../../types/ScanType";
 import { ComposerUtils } from "./ComposerUtils";
 
@@ -26,23 +25,13 @@ import { ComposerUtils } from "./ComposerUtils";
 * @class ComposerDependencies
 */
 export class ComposerDependencies extends PackageDependenciesHelper implements PackageDependencies {
-  CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
-    string,
-    ComponentEntry
-  >();
-  RequestService: RequestService;
-
-  constructor(private requestService: RequestService) {
-    super();
-    this.RequestService = this.requestService;
-  }
 
   public CheckIfValid(): boolean {
     return PackageDependenciesHelper.checkIfValid("composer.lock", "composer");
   }
 
-  public toComponentEntries(packages: Array<ComposerPackage>): Array<ComponentEntry> {
-    let components = new Array<ComponentEntry>();
+  public toComponentEntries(packages: Array<ComposerPackage>): Map<string, ComponentEntry> {
+    let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
         pkg.Group + ":" + pkg.Name,
@@ -50,18 +39,17 @@ export class ComposerDependencies extends PackageDependenciesHelper implements P
         "composer",
         ScanType.NexusIq
       );
-      components.push(componentEntry);
       let coordinates = new ComposerCoordinate(
         pkg.Name,
         pkg.Group,
         pkg.Version
       );
-      this.CoordinatesToComponents.set(
+      map.set(
         coordinates.asCoordinates(),
         componentEntry
       );
     }
-    return components;
+    return map;
   }
 
   public async packageForIq(): Promise<Array<ComposerPackage>> {

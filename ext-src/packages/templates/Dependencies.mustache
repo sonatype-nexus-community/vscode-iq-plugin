@@ -18,7 +18,6 @@ import { {{&format}}Package } from "./{{&format}}Package";
 import { PackageDependencies } from "../PackageDependencies";
 import { {{&format}}Coordinate } from "./{{&format}}Coordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { RequestService } from "../../services/RequestService";
 import { ComponentEntry } from "../../models/ComponentEntry";
 import { ScanType } from "../../types/ScanType";
 
@@ -26,24 +25,14 @@ import { ScanType } from "../../types/ScanType";
 * @class {{&format}}Dependencies
 */
 export class {{&format}}Dependencies extends PackageDependenciesHelper implements PackageDependencies {
-  CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
-    string,
-    ComponentEntry
-  >();
-  RequestService: RequestService;
-
-  constructor(private requestService: RequestService) {
-    super();
-    this.RequestService = this.requestService;
-  }
 
   public CheckIfValid(): boolean {
     // Provide a valid manifest name to check
     return PackageDependenciesHelper.checkIfValid("", "{{&lowerCaseFormat}}");
   }
 
-  public toComponentEntries(packages: Array<{{&format}}Package>): Array<ComponentEntry> {
-    let components = new Array<ComponentEntry>();
+  public toComponentEntries(packages: Array<{{&format}}Package>): Map<string, ComponentEntry> {
+    let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
         pkg.Name,
@@ -51,17 +40,16 @@ export class {{&format}}Dependencies extends PackageDependenciesHelper implement
         "{{&lowerCaseFormat}}",
         ScanType.NexusIq
       );
-      components.push(componentEntry);
       let coordinates = new {{&format}}Coordinate(
         pkg.Name,
         pkg.Version
       );
-      this.CoordinatesToComponents.set(
+      map.set(
         coordinates.asCoordinates(),
         componentEntry
       );
     }
-    return components;
+    return map;
   }
 
   public async packageForIq(): Promise<Array<{{&format}}Package>> {

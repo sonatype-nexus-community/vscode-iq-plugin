@@ -17,32 +17,21 @@ import { GolangPackage } from "./GolangPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { GolangCoordinate } from "./GolangCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { RequestService } from "../../services/RequestService";
 import { GolangUtils } from "./GolangUtils";
 import { ScanType } from "../../types/ScanType";
 import { ComponentEntry } from "../../models/ComponentEntry";
 import { GolangScanType } from "./GolangScanType";
 
 export class GolangDependencies extends PackageDependenciesHelper implements PackageDependencies {
-  CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
-    string,
-    ComponentEntry
-  >();
-  RequestService: RequestService;
   private scanType: string = "";
-
-  constructor(private requestService: RequestService) {
-    super();
-    this.RequestService = this.requestService;
-  }
 
   public CheckIfValid(): boolean {
     this.scanType =  PackageDependenciesHelper.checkIfValidWithArray(GolangScanType, "golang");
     return this.scanType === "" ? false : true;
   }
 
-  public toComponentEntries(packages: Array<GolangPackage>): Array<ComponentEntry> {
-    let components = new Array<ComponentEntry>();
+  public toComponentEntries(packages: Array<GolangPackage>): Map<string, ComponentEntry> {
+    let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
         pkg.Name,
@@ -50,17 +39,16 @@ export class GolangDependencies extends PackageDependenciesHelper implements Pac
         "golang",
         ScanType.NexusIq
       );
-      components.push(componentEntry);
       let coordinates = new GolangCoordinate(
         pkg.Name,
         pkg.Version
       );
-      this.CoordinatesToComponents.set(
+      map.set(
         coordinates.asCoordinates(),
         componentEntry
       );
     }
-    return components;
+    return map;
   }
 
   public async packageForIq(): Promise<Array<GolangPackage>> {

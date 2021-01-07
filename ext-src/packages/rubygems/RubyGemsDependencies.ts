@@ -18,20 +18,10 @@ import { RubyGemsUtils } from './RubyGemsUtils';
 import { RubyGemsCoordinate } from './RubyGemsCoordinate';
 import { PackageDependencies } from "../PackageDependencies";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { RequestService } from "../../services/RequestService";
 import { ScanType } from "../../types/ScanType";
 import { ComponentEntry } from "../../models/ComponentEntry";
 
 export class RubyGemsDependencies implements PackageDependencies {
-  CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
-    string,
-    ComponentEntry
-  >();
-  RequestService: RequestService;
-
-  constructor(private requestService: RequestService) {
-    this.RequestService = this.requestService;
-  }
 
   public async packageForIq(): Promise<any> {
     try {
@@ -48,8 +38,8 @@ export class RubyGemsDependencies implements PackageDependencies {
     return PackageDependenciesHelper.checkIfValid('Gemfile.lock', 'rubygems');
   }
 
-  public toComponentEntries(packages: Array<RubyGemsPackage>): Array<ComponentEntry> {
-    let components = new Array<ComponentEntry>();
+  public toComponentEntries(packages: Array<RubyGemsPackage>): Map<string, ComponentEntry> {
+    let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
         pkg.Name,
@@ -57,16 +47,15 @@ export class RubyGemsDependencies implements PackageDependencies {
         "gem",
         ScanType.NexusIq
       );
-      components.push(componentEntry);
       let coordinates = new RubyGemsCoordinate(
         pkg.Name,
         pkg.Version
       );
-      this.CoordinatesToComponents.set(
+      map.set(
         coordinates.asCoordinates(),
         componentEntry
       );
     }
-    return components;
+    return map;
   }
 }

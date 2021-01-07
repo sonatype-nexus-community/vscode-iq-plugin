@@ -17,29 +17,18 @@ import { MavenPackage } from "./MavenPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { MavenCoordinate } from "./MavenCoordinate";
-import { RequestService } from "../../services/RequestService";
 import { MavenUtils } from "./MavenUtils";
 import { ScanType } from "../../types/ScanType";
 import { ComponentEntry } from "../../models/ComponentEntry";
 
 export class MavenDependencies extends PackageDependenciesHelper implements PackageDependencies {
-  CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
-    string,
-    ComponentEntry
-  >();
-  RequestService: RequestService;
-
-  constructor(private requestService: RequestService) {
-    super();
-    this.RequestService = this.requestService;
-  }
 
   public CheckIfValid(): boolean {
     return PackageDependenciesHelper.checkIfValid("pom.xml", "maven");
   }
 
-  public toComponentEntries(packages: Array<MavenPackage>): Array<ComponentEntry> {
-    let components = new Array<ComponentEntry>();
+  public toComponentEntries(packages: Array<MavenPackage>): Map<string, ComponentEntry> {
+    let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
         pkg.Group + ":" + pkg.Name,
@@ -47,19 +36,18 @@ export class MavenDependencies extends PackageDependenciesHelper implements Pack
         "maven",
         ScanType.NexusIq
       );
-      components.push(componentEntry);
       let coordinates = new MavenCoordinate(
         pkg.Name,
         pkg.Group,
         pkg.Version,
         pkg.Extension
       );
-      this.CoordinatesToComponents.set(
+      map.set(
         coordinates.asCoordinates(),
         componentEntry
       );
     }
-    return components;
+    return map;
   }
 
   public async packageForIq(): Promise<Array<MavenPackage>> {

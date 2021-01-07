@@ -17,24 +17,13 @@
 import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../models/ComponentEntry";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { RequestService } from "../../services/RequestService";
 import { PyPIDependencies } from '../pypi/PyPIDependencies';
 import { ScanType } from "../../types/ScanType";
-import { ComponentRequestEntry } from "../../types/ComponentRequestEntry";
-import { ComponentRequest } from "../../types/ComponentRequest";
 import { PoetryUtils } from "./PoetryUtils";
 import { PyPIPackage } from '../pypi/PyPIPackage';
 import { PyPICoordinate } from "../pypi/PyPICoordinate";
 
 export class PoetryDependencies extends PyPIDependencies implements PackageDependencies {
-  CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
-    string,
-    ComponentEntry
-  >();
-
-  constructor(requestService: RequestService) {
-    super(requestService);
-  }
 
   public CheckIfValid(): boolean {
     if (PackageDependenciesHelper.doesPathExist(PackageDependenciesHelper.getWorkspaceRoot(), "poetry.lock")) {
@@ -44,8 +33,8 @@ export class PoetryDependencies extends PyPIDependencies implements PackageDepen
     return false;
   }
 
-  public toComponentEntries(packages: Array<PyPIPackage>): Array<ComponentEntry> {
-    let components = new Array<ComponentEntry>();
+  public toComponentEntries(packages: Array<PyPIPackage>): Map<string, ComponentEntry> {
+    let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
         pkg.Name,
@@ -53,19 +42,18 @@ export class PoetryDependencies extends PyPIDependencies implements PackageDepen
         "pypi",
         ScanType.NexusIq
       );
-      components.push(componentEntry);
       let coordinates = new PyPICoordinate(
         pkg.Name,
         pkg.Version,
         pkg.Extension,
         pkg.Qualifier
       );
-      this.CoordinatesToComponents.set(
+      map.set(
         coordinates.asCoordinates(),
         componentEntry
       );
     }
-    return components;
+    return map;
   }
 
   public async packageForIq(): Promise<Array<PyPIPackage>> {

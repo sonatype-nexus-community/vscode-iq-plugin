@@ -18,21 +18,10 @@ import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../models/ComponentEntry";
 import { PyPICoordinate } from "./PyPICoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { RequestService } from "../../services/RequestService";
 import { PyPiUtils } from "./PyPiUtils";
 import { ScanType } from "../../types/ScanType";
 
 export class PyPIDependencies extends PackageDependenciesHelper implements PackageDependencies {
-  CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
-    string,
-    ComponentEntry
-  >();
-  RequestService: RequestService;
-
-  constructor(private requestService: RequestService) {
-    super();
-    this.RequestService = this.requestService;
-  }
 
   public CheckIfValid(): boolean {
     if (PackageDependenciesHelper.doesPathExist(PackageDependenciesHelper.getWorkspaceRoot(), "requirements.txt")) {
@@ -42,8 +31,8 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
     return false;
   }
 
-  public toComponentEntries(packages: Array<PyPIPackage>): Array<ComponentEntry> {
-    let components = new Array<ComponentEntry>();
+  public toComponentEntries(packages: Array<PyPIPackage>): Map<string, ComponentEntry> {
+    let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
         pkg.Name,
@@ -51,19 +40,18 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
         "pypi",
         ScanType.NexusIq
       );
-      components.push(componentEntry);
       let coordinates = new PyPICoordinate(
         pkg.Name,
         pkg.Version,
         pkg.Extension,
         pkg.Qualifier
       );
-      this.CoordinatesToComponents.set(
+      map.set(
         coordinates.asCoordinates(),
         componentEntry
       );
     }
-    return components;
+    return map;
   }
 
   public async packageForIq(): Promise<Array<PyPIPackage>> {
