@@ -22,11 +22,8 @@ import { GolangUtils } from "./GolangUtils";
 import { ScanType } from "../../types/ScanType";
 import { ComponentEntry } from "../../models/ComponentEntry";
 import { GolangScanType } from "./GolangScanType";
-import { ComponentRequestEntry } from "../../types/ComponentRequestEntry";
-import { ComponentRequest } from "../../types/ComponentRequest";
 
 export class GolangDependencies extends PackageDependenciesHelper implements PackageDependencies {
-  Dependencies: Array<GolangPackage> = [];
   CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
     string,
     ComponentEntry
@@ -51,39 +48,19 @@ export class GolangDependencies extends PackageDependenciesHelper implements Pac
     return coordinates.asCoordinates();
   }
 
-  public convertToNexusFormat(): ComponentRequest {
-    let comps = this.Dependencies.map(d => {
-      let entry: ComponentRequestEntry = {
-        componentIdentifier: {
-          format: "golang",
-          coordinates: {
-            name: d.Name,
-            version: d.Version
-          }
-        }
-      }
-
-      return entry;
-    });
-
-    return new ComponentRequest(comps);
-  }
-
-  public toComponentEntries(data: any): Array<ComponentEntry> {
+  public toComponentEntries(packages: Array<GolangPackage>): Array<ComponentEntry> {
     let components = new Array<ComponentEntry>();
-    for (let entry of data.components) {
-      const packageId = entry.componentIdentifier.coordinates.name;
-
+    for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
-        packageId,
-        entry.componentIdentifier.coordinates.version,
+        pkg.Name,
+        pkg.Version,
         "golang",
         ScanType.NexusIq
       );
       components.push(componentEntry);
       let coordinates = new GolangCoordinate(
-        entry.componentIdentifier.coordinates.name,
-        entry.componentIdentifier.coordinates.version
+        pkg.Name,
+        pkg.Version
       );
       this.CoordinatesToComponents.set(
         coordinates.asCoordinates(),
@@ -93,14 +70,14 @@ export class GolangDependencies extends PackageDependenciesHelper implements Pac
     return components;
   }
 
-  public async packageForIq(): Promise<any> {
+  public async packageForIq(): Promise<Array<GolangPackage>> {
     try {
-      let golangUtils = new GolangUtils();
-      this.Dependencies = await golangUtils.getDependencyArray(this.scanType);
-      Promise.resolve();
+      const golangUtils = new GolangUtils();
+      const deps = await golangUtils.getDependencyArray(this.scanType);
+      return Promise.resolve(deps);
     }
     catch (e) {
-      Promise.reject();
+      return Promise.reject(e);
     }
   }
 }

@@ -26,8 +26,8 @@ import { ILogger, Logger, LogLevel } from './utils/Logger';
 export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentEntry> {
   private editor?: vscode.TextEditor;
 
-  private _onDidChangeTreeData: vscode.EventEmitter<any | undefined | null | void> = new vscode.EventEmitter<any | undefined | null | void>();
-  readonly onDidChangeTreeData: vscode.Event<any | undefined | null | void> = this._onDidChangeTreeData.event;
+  private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
+  readonly onDidChangeTreeData: vscode.Event<any> = this._onDidChangeTreeData.event;
 
   constructor(
     private context: vscode.ExtensionContext,
@@ -56,7 +56,6 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
   }
 
   doRefresh(): void {
-    //default to sorting descending on refresh and open of the GUI
     let sortPolicyDescending: boolean = true;
     this.reloadComponentModel().then(() => {
       if (this.componentModel.components.length > 0) {
@@ -96,7 +95,6 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
   }
 
   getTreeItem(entry: ComponentEntry): vscode.TreeItem {
-    // TODO use collapsible state to handle transitive dependencies as a tree
     let treeItem: vscode.TreeItem = new vscode.TreeItem(
       entry.toString(),
       vscode.TreeItemCollapsibleState.None
@@ -119,7 +117,6 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
     if (entry === undefined) {
       return this.componentModel.components;
     } else {
-      // support nesting
       return null;
     }
   }
@@ -191,16 +188,12 @@ export class NexusExplorer {
     this.nexusExplorerProvider.sortByName(this.sortNameAscending);
     this.sortNameAscending = !this.sortNameAscending;
     this.sortPolicyDescending = true;
-    //vscode.commands.getCommands("nexusExplorer.sortByName");
-    //change the icon to descending icon
-    // this.nexusExplorerProvider.doSoftRefresh();
   }
 
   private sortByPolicy() {
     this.nexusExplorerProvider.sortByPolicy(this.sortPolicyDescending);
     this.sortPolicyDescending = !this.sortPolicyDescending;
     this.sortNameAscending = true;
-    // this.nexusExplorerProvider.doSoftRefresh();
   }
 
   private reveal(): Thenable<void> | undefined {

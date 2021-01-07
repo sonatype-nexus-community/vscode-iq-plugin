@@ -15,5 +15,5 @@
  */
 
  export class ConstraintReason {
-  constructor(readonly reason: string) {}
+  constructor(readonly conditionSummary: string, readonly conditionReason: string) {}
 }

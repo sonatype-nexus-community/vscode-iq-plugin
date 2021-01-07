@@ -21,11 +21,8 @@ import { RequestService } from "../../services/RequestService";
 import { MavenUtils } from "./MavenUtils";
 import { ScanType } from "../../types/ScanType";
 import { ComponentEntry } from "../../models/ComponentEntry";
-import { ComponentRequest } from "../../types/ComponentRequest";
-import { ComponentRequestEntry } from "../../types/ComponentRequestEntry";
 
 export class MavenDependencies extends PackageDependenciesHelper implements PackageDependencies {
-  Dependencies: Array<MavenPackage> = [];
   CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
     string,
     ComponentEntry
@@ -50,46 +47,21 @@ export class MavenDependencies extends PackageDependenciesHelper implements Pack
     return coordinates.asCoordinates();
   }
 
-  public convertToNexusFormat(): ComponentRequest {
-    let comps = this.Dependencies.map(d => {
-      let entry: ComponentRequestEntry = {
-        componentIdentifier: {
-          format: "golang",
-          coordinates: {
-            name: d.Name,
-            version: d.Version,
-            extension: d.Extension,
-            group: d.Group
-          }
-        }
-      }
-
-      return entry;
-    });
-
-    return new ComponentRequest(comps);
-  }
-
-  public toComponentEntries(data: any): Array<ComponentEntry> {
+  public toComponentEntries(packages: Array<MavenPackage>): Array<ComponentEntry> {
     let components = new Array<ComponentEntry>();
-    for (let entry of data.components) {
-      const packageId =
-        entry.componentIdentifier.coordinates.groupId +
-        ":" +
-        entry.componentIdentifier.coordinates.artifactId;
-
+    for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
-        packageId,
-        entry.componentIdentifier.coordinates.version,
+        pkg.Group + ":" + pkg.Name,
+        pkg.Version,
         "maven",
         ScanType.NexusIq
       );
       components.push(componentEntry);
       let coordinates = new MavenCoordinate(
-        entry.componentIdentifier.coordinates.artifactId,
-        entry.componentIdentifier.coordinates.groupId,
-        entry.componentIdentifier.coordinates.version,
-        entry.componentIdentifier.coordinates.extension
+        pkg.Name,
+        pkg.Group,
+        pkg.Version,
+        pkg.Extension
       );
       this.CoordinatesToComponents.set(
         coordinates.asCoordinates(),
@@ -99,14 +71,14 @@ export class MavenDependencies extends PackageDependenciesHelper implements Pack
     return components;
   }
 
-  public async packageForIq(): Promise<any> {
+  public async packageForIq(): Promise<Array<MavenPackage>> {
     try {
-      let mavenUtils = new MavenUtils();
-      this.Dependencies = await mavenUtils.getDependencyArray();
-      Promise.resolve();
+      const mavenUtils = new MavenUtils();
+      const deps = await mavenUtils.getDependencyArray();
+      return Promise.resolve(deps);
     }
     catch (e) {
-      Promise.reject();
+      return Promise.reject(e);
     }
   }
 }

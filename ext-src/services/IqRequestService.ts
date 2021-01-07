@@ -21,6 +21,10 @@ import { RequestHelpers } from "./RequestHelpers";
 import { Agent as HttpsAgent }  from "https";
 import { Agent } from 'http';
 import { ILogger, LogLevel } from '../utils/Logger';
+import { ThirdPartyAPIResponse } from './ThirdPartyApiResponse';
+import { ComponentDetails } from './ComponentDetails';
+import { ReportResponse } from './ReportResponse';
+import { PackageURL } from 'packageurl-js';
 
 export class IqRequestService implements RequestService {
   readonly evaluationPollDelayMs = 2000;
@@ -97,23 +101,24 @@ export class IqRequestService implements RequestService {
     });
   }
 
-  public async submitToIqForEvaluation(
-    data: any,
+  public async submitToThirdPartyAPI(
+    sbom: string,
     applicationInternalId: string
   ): Promise<string> {
-    this.logger.log(LogLevel.TRACE, `Data submitting to IQ Server`, data);
+    let url: string = `${this.url}/api/v2/scan/applications/${applicationInternalId}/sources/vscode-iq-extension?stageId=develop`
+
     return new Promise((resolve, reject) => {
       fetch(
-        `${this.url}/api/v2/evaluation/applications/${applicationInternalId}`, 
+        url,
         {
           method: 'POST',
+          body: sbom,
           agent: this.agent,
-          body: JSON.stringify(data),
-          headers: this.getHeadersWithApplicationJsonContentType()
+          headers: this.getHeadersWithApplicationXmlContentType()
         }).then(async (res) => {
-          if(res.ok) {
-            let json = await res.json();
-            resolve(json.resultId);
+          if (res.ok) {
+            let body = await res.json();
+            resolve(body.statusUrl);
             return;
           }
           let body = await res.text();
@@ -136,13 +141,11 @@ export class IqRequestService implements RequestService {
   }
 
   public async asyncPollForEvaluationResults(
-    applicationInternalId: string,
-    resultId: string
-  ) {
+    statusURL: string
+  ): Promise<ThirdPartyAPIResponse> {
     return new Promise((resolve, reject) => {
       this.pollForEvaluationResults(
-        applicationInternalId,
-        resultId,
+        statusURL,
         body => resolve(body),
         (statusCode, message) =>
           reject(
@@ -153,15 +156,14 @@ export class IqRequestService implements RequestService {
   }
 
   public pollForEvaluationResults(
-    applicationInternalId: string,
-    resultId: string,
-    success: (body: string) => any,
+    statusURL: string,
+    success: (body: ThirdPartyAPIResponse) => any,
     failed: (statusCode: number, message: string) => any
   ) {
     let _this = this;
     let pollAttempts = 0;
 
-    let successHandler = function(value: string) {
+    let successHandler = function(value: ThirdPartyAPIResponse) {
       success(value);
     };
     let errorHandler = function(statusCode: number, message: string) {
@@ -174,8 +176,7 @@ export class IqRequestService implements RequestService {
         } else {
           setTimeout(() => {
             _this.getEvaluationResults(
-              applicationInternalId,
-              resultId,
+              statusURL,
               successHandler,
               errorHandler
             );
@@ -186,21 +187,43 @@ export class IqRequestService implements RequestService {
       }
     };
     this.getEvaluationResults(
-      applicationInternalId,
-      resultId,
+      statusURL,
       successHandler,
       errorHandler
     );
   }
 
+  public getReportResults(reportID: string, applicationPublicId: string): Promise<ReportResponse> {
+    let url = `${this.url}/api/v2/applications/${applicationPublicId}/reports/${reportID}/policy`;
+    
+    return new Promise((resolve, reject) => {
+      fetch(
+        url,
+        {
+          method: 'GET',
+          agent: this.agent,
+          headers: this.getHeaders()
+        }).then(async (res) => {
+          if (res.ok) {
+            let body: ReportResponse = await res.json();
+            resolve(body);
+            return;
+          }
+          reject(res.status);
+          return;
+        }).catch((ex) => {
+          reject(ex);
+        })
+    });
+  }
+
   public getEvaluationResults(
-    applicationInternalId: string,
-    resultId: string,
-    resolve: (body: string) => any,
+    statusURL: string,
+    resolve: (body: ThirdPartyAPIResponse) => any,
     reject: (statusCode: number, message: string) => any
   ) {
     fetch(
-      `${this.url}/api/v2/evaluation/applications/${applicationInternalId}/results/${resultId}`, 
+      `${this.url}/${statusURL}`, 
       {
         method: 'GET',
         headers: this.getHeaders(),
@@ -214,8 +237,8 @@ export class IqRequestService implements RequestService {
           reject(res.status, 'Polling');
           return;
         }
-        let json = await res.json();
-        resolve(JSON.stringify(json));
+        let json: ThirdPartyAPIResponse = await res.json();
+        resolve(json);
         return;
       }).catch((ex) => {
         reject(ex, 'big issue');
@@ -284,79 +307,128 @@ export class IqRequestService implements RequestService {
     });
   }
 
-  public async getAllVersions(nexusArtifact: any, iqApplicationPublicId: string): Promise<any[]> {
-    if (!nexusArtifact || !nexusArtifact.hash) {
-      return [];
-    }
-    return new Promise<any[]>((resolve, reject) => {
-      let hash = nexusArtifact.hash;
-      let comp = this.encodeComponentIdentifier(
-        nexusArtifact.componentIdentifier
-      );
-      let d = new Date();
-      let timestamp = d.getDate();
-      let matchstate = "exact";
-      let url =
-        `${this.url}/rest/ide/componentDetails/application/` +
-        `${iqApplicationPublicId}/allVersions?` +
-        `componentIdentifier=${comp}&` +
-        `hash=${hash}&matchState=${matchstate}&` +
-        `timestamp=${timestamp}&proprietary=false`;
+  public async getAllVersions(purl: PackageURL): Promise<Array<string>> {
+    let url = `${this.url}/api/v2/components/versions`;
+    
+    let request = {
+      packageUrl: purl.toString().replace("%2F", "/")
+    };
 
+    return new Promise((resolve, reject) => {
       fetch(
         url,
         {
-          method: 'GET', 
-          headers: this.getHeaders(),
-          agent: this.agent
+          method: 'POST',
+          body: JSON.stringify(request),
+          agent: this.agent,
+          headers: this.getHeadersWithApplicationJsonContentType()
         }).then(async (res) => {
           if (res.ok) {
-            resolve(await res.json());
+            let versions: Array<string> = await res.json();
+            resolve(versions);
             return;
           }
+          let body = await res.text();
+          this.logger.log(
+            LogLevel.ERROR, 
+            `Non 200 response received getting versions array from IQ Server`, 
+            request,
+            res.status,
+            body);
           reject(res.status);
           return;
         }).catch((ex) => {
+          this.logger.log(
+            LogLevel.ERROR, 
+            `General error getting versions array from IQ Server`, 
+            request,
+            ex);
           reject(ex);
         });
     });
   }
 
-  public async showSelectedVersion(componentIdentifier: any, version: string) {
+  public async getAllVersionDetails(versions: Array<string>, purl: PackageURL): Promise<ComponentDetails> {
+    let url = `${this.url}/api/v2/components/details`;
+
+    return new Promise((resolve, reject) => {
+      let request: ComponentDetailsRequest = { components: []};
+      versions.forEach((version) => {
+        purl.version = version;
+        request.components.push({ packageUrl: purl.toString().replace("%2F", "/") });
+      });
+
+      let body = JSON.stringify(request);
+
+      fetch(
+        url,
+        {
+          method: 'POST',
+          body: body,
+          agent: this.agent,
+          headers: this.getHeadersWithApplicationJsonContentType()
+        }).then(async (res) => {
+          if (res.ok) {
+            let comps: ComponentDetails = await res.json();
+            resolve(comps);
+            return;
+          }
+          let body = await res.text();
+          this.logger.log(
+            LogLevel.ERROR, 
+            `Non 200 response received getting component versions details from IQ Server`, 
+            request,
+            res.status,
+            body);
+          reject(res.status);
+          return;
+        }).catch((ex) => {
+          this.logger.log(
+            LogLevel.ERROR, 
+            `General error getting component versions details from IQ Server`, 
+            request,
+            ex);
+          reject(ex);
+        });
+    });
+  }
+
+  public async showSelectedVersion(purl: string): Promise<ComponentDetails> {
     return new Promise((resolve, reject) => {
       this.logger.log(LogLevel.TRACE, `Begin Show Selected Version`);
-      var transmittingComponentIdentifier = { ...componentIdentifier };
-
-      transmittingComponentIdentifier.coordinates = {
-        ...componentIdentifier.coordinates
-      };
-
-      transmittingComponentIdentifier.coordinates.version = version;
-      var detailsRequest = {
-        components: [
-          {
-            hash: null,
-            componentIdentifier: transmittingComponentIdentifier
-          }
-        ]
-      };
       let url = `${this.url}/api/v2/components/details`;
+
+      let request: ComponentDetailsRequest = {components: []};
+      request.components.push({packageUrl: purl});
 
       fetch(
         url,
         {
           method: 'POST',
           headers: this.getHeadersWithApplicationJsonContentType(),
-          body: JSON.stringify(detailsRequest),
+          body: JSON.stringify(request),
           agent: this.agent
         }).then(async (res) => {
           if (res.ok) {
-            resolve(await res.json());
+            let comp: ComponentDetails = await res.json();
+            resolve(comp);
             return;
           }
+          let body = await res.text();
+          this.logger.log(
+            LogLevel.ERROR, 
+            `Non 200 response received getting component version details from IQ Server`, 
+            request,
+            res.status,
+            body);
           reject(res.status);
           return;
         }).catch((ex) => {
+          this.logger.log(
+            LogLevel.ERROR, 
+            `General error getting component version details from IQ Server`, 
+            request,
+            ex);
           reject(ex);
         });
     });
@@ -366,6 +438,14 @@ export class IqRequestService implements RequestService {
     let actual = encodeURIComponent(JSON.stringify(componentIdentifier));
     this.logger.log(LogLevel.TRACE, `Actual: ${actual}`); 
     return actual;
+  }
+
+  private getHeadersWithApplicationXmlContentType(): Headers {
+    const headers = this.getHeaders();
+
+    headers.append('Content-Type', 'application/xml');
+
+    return headers;
   }
 
   private getHeadersWithApplicationJsonContentType(): Headers {
@@ -400,4 +480,8 @@ export class IqRequestService implements RequestService {
     }
     return new Agent();
   }
+}
+
+export interface ComponentDetailsRequest {
+  components: any[]
 }

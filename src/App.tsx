@@ -186,7 +186,7 @@ class App extends React.Component<AppProps, AppState> {
           );
           console.debug(
             "allVersions updtating componentIdentifier",
-            message.allversions[0].componentIdentifier.coordinates
+            message.allversions[0].component.componentIdentifier.coordinates
           );
           this.setState({ allVersions: message.allversions });
           break;
@@ -213,7 +213,7 @@ class App extends React.Component<AppProps, AppState> {
     }
     let current = this.state.component.nexusIQData.component.componentIdentifier
       .coordinates;
-    let next = allVersions[0].componentIdentifier.coordinates;
+    let next = allVersions[0].component.componentIdentifier.coordinates;
 
     for (var key in current) {
       if (key != "version" && current[key] != next[key]) {
