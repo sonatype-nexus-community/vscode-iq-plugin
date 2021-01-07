@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { exec } from "../../exec";
+
 import { {{&format}}Package } from "./{{&format}}Package";
 import { PackageDependencies } from "../PackageDependencies";
-import { ComponentEntry } from "../../ComponentInfoPanel";
 import { {{&format}}Coordinate } from "./{{&format}}Coordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { ComponentRequestEntry } from "../../types/ComponentRequestEntry";
-import { ComponentRequest } from "../../types/ComponentRequest";
+import { RequestService } from "../../services/RequestService";
+import { ComponentEntry } from "../../models/ComponentEntry";
+import { ScanType } from "../../types/ScanType";
 
 /**
 * @class {{&format}}Dependencies
@@ -38,12 +38,8 @@ export class {{&format}}Dependencies extends PackageDependenciesHelper implement
   }
 
   public CheckIfValid(): boolean {
-    // TODO: Set filename to manifest file for format
-    if (this.doesPathExist(this.getWorkspaceRoot(), "")) {
-      console.debug("Valid for {{&format}}");
-      return true;
-    }
-    return false;
+    // Provide a valid manifest name to check
+    return PackageDependenciesHelper.checkIfValid("", "{{&lowerCaseFormat}}");
   }
 
   public ConvertToComponentEntry(resultEntry: any): string {
@@ -58,7 +54,9 @@ export class {{&format}}Dependencies extends PackageDependenciesHelper implement
     for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
         pkg.Name,
-        pkg.Version
+        pkg.Version,
+        "{{&lowerCaseFormat}}",
+        ScanType.NexusIq
       );
       components.push(componentEntry);
       let coordinates = new {{&format}}Coordinate(
