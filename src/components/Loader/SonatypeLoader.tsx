@@ -15,7 +15,6 @@
  */
 import React, { Component } from "react";
 
-// image import
 import logo from "./SON_logo_favicon.png";
 
 class SonatypeLoader extends Component {
