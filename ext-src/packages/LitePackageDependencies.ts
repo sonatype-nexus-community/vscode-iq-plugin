@@ -16,9 +16,8 @@
 import { PackageType } from "./PackageType";
 
 export interface LitePackageDependencies {
-  dependencies: Array<PackageType>;
   format: string;
   manifestName: string;
   checkIfValid(): boolean;
-  packageForService(): Promise<any>;
+  packageForService(): Promise<Array<PackageType>>;
 }

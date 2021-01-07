@@ -19,7 +19,6 @@ import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { MavenUtils } from "./MavenUtils";
 
 export class MavenLiteDependencies implements LitePackageDependencies {
-  dependencies: Array<MavenPackage> = [];
   manifestName: string = "pom.xml";
   format: string = "maven";
 
@@ -27,15 +26,15 @@ export class MavenLiteDependencies implements LitePackageDependencies {
     return PackageDependenciesHelper.checkIfValid(this.manifestName, this.format);
   }
 
-  public async packageForService(): Promise<any> {
+  public async packageForService(): Promise<Array<MavenPackage>> {
     try {
-      let mavenUtils = new MavenUtils();
-      this.dependencies = await mavenUtils.getDependencyArray();
+      const mavenUtils = new MavenUtils();
+      const deps = await mavenUtils.getDependencyArray();
 
-      Promise.resolve();
+      return Promise.resolve(deps);
     }
-    catch (e) {
-      Promise.reject(e);
+    catch (ex) {
+      return Promise.reject(ex);
     }
   }
 }

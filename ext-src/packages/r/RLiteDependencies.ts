@@ -19,7 +19,6 @@ import { RUtils } from './RUtils';
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 
 export class RLiteDependencies implements LitePackageDependencies {
-  dependencies: Array<RPackage> = [];
   format: string = "r";
   manifestName: string = ".Rbuildignore";
 
@@ -27,15 +26,15 @@ export class RLiteDependencies implements LitePackageDependencies {
     return PackageDependenciesHelper.checkIfValid(this.manifestName, this.format);
   }
 
-  public async packageForService(): Promise<any> {
+  public async packageForService(): Promise<Array<RPackage>> {
     try {
-      let rUtils = new RUtils();
-      this.dependencies = await rUtils.getDependencyArray();
+      const rUtils = new RUtils();
+      const deps = await rUtils.getDependencyArray();
 
-      Promise.resolve();
+      return Promise.resolve(deps);
     }
-    catch (e) {
-      Promise.reject(e);
+    catch (ex) {
+      return Promise.reject(ex);
     }
   }
 }

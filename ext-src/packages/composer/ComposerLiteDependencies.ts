@@ -19,7 +19,6 @@ import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { ComposerUtils } from "./ComposerUtils";
 
 export class ComposerLiteDependencies implements LitePackageDependencies {
-  dependencies: Array<ComposerPackage> = [];
   manifestName: string = "composer.lock";
   format: string = "composer";
   
@@ -27,15 +26,15 @@ export class ComposerLiteDependencies implements LitePackageDependencies {
     return PackageDependenciesHelper.checkIfValid(this.manifestName, this.format);
   }
 
-  public async packageForService(): Promise<any> {
+  public async packageForService(): Promise<Array<ComposerPackage>> {
     try {
-      let composerUtils = new ComposerUtils();
-      this.dependencies = await composerUtils.getDependencyArray();
+      const composerUtils = new ComposerUtils();
+      const deps = await composerUtils.getDependencyArray();
 
-      Promise.resolve();
+      return Promise.resolve(deps);
     }
     catch (e) {
-      Promise.reject(e);
+      return Promise.reject(e);
     }
   }
 }

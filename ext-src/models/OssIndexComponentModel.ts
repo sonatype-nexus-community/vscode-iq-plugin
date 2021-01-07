@@ -62,11 +62,11 @@ export class OssIndexComponentModel implements ComponentModel {
               try {
 
                 this.logger.log(LogLevel.DEBUG, `Packaging Dependencies for ${pm.constructor.name}`);
-                await pm.packageForService();
+                const packages = await pm.packageForService();
     
                 progress.report({message: "Reticulating splines...", increment: 30});
   
-                purls.push(...pm.dependencies.map((x) => {
+                purls.push(...packages.map((x) => {
                   let matches = regex.exec(x.toPurl());
                   if (matches && matches.length === 4) {
                     return `${matches[1]}:${matches![2]}@${matches![3].replace("v", "")}`;
