@@ -209,6 +209,8 @@ export class IqRequestService implements RequestService {
             resolve(body);
             return;
           }
+          let body = await res.text();
+          this.logger.log(LogLevel.ERROR, `Issue getting report result`, url, body);
           reject(res.status);
           return;
         }).catch((ex) => {
@@ -229,12 +231,8 @@ export class IqRequestService implements RequestService {
         headers: this.getHeaders(),
         agent: this.agent
       }).then(async (res) => {
-        if (!res.ok) {
-          reject(res.status, 'uhh');
-          return;
-        }
-        if (res.status == 404) {
-          reject(res.status, 'Polling');
+        if (res.status == 404 || res.status == 500) {
+          reject(404, 'Polling');
           return;
         }
         let json: ThirdPartyAPIResponse = await res.json();

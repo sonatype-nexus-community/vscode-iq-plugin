@@ -125,29 +125,39 @@ export class IqComponentModel implements ComponentModel {
               this.logger.log(LogLevel.TRACE, `Received results from Third Party API IQ Scan`, resultData);
               
               let results: ReportResponse;
-              if (resultData && resultData.reportHtmlUrl) {
-                let parts = /[^/]*$/.exec(resultData!.reportHtmlUrl!);
 
-                if (parts) {
-                  results = await this.requestService.getReportResults(parts[0], this.applicationPublicId);
+              if (resultData) {
+                let id: string = "";
+                if (resultData.reportHtmlUrl) {
+                  let parts = /[^/]*$/.exec(resultData!.reportHtmlUrl!);
+                  
+                  if (parts) {
+                    id = parts[0];
+                  }
+                } else if (resultData.scanId) {
+                  id = resultData.scanId;
+                } else {
+                  throw new RangeError("No ID to work with");
+                }
+
+                results = await this.requestService.getReportResults(id, this.applicationPublicId);
   
-                  this.logger.log(LogLevel.TRACE, `Received results from Report API`, results);
+                this.logger.log(LogLevel.TRACE, `Received results from Report API`, results);
 
-                  progress.report({message: "Morphing results into something usable", increment: 90});
+                progress.report({message: "Morphing results into something usable", increment: 90});
 
-                  for (let resultEntry of results.components) {                   
-                    let componentEntry = this.coordsToComponent.get(
-                      ComponentEntryConversions.ConvertToComponentEntry(
-                        resultEntry.componentIdentifier.format, 
-                        resultEntry.componentIdentifier.coordinates
-                        )
-                    );
+                for (let resultEntry of results.components) {                   
+                  let componentEntry = this.coordsToComponent.get(
+                    ComponentEntryConversions.ConvertToComponentEntry(
+                      resultEntry.componentIdentifier.format, 
+                      resultEntry.componentIdentifier.coordinates
+                      )
+                  );
 
-                    if (componentEntry != undefined) {
-                      componentEntry!.policyViolations = resultEntry.violations;
-                      componentEntry!.hash = resultEntry.hash;
-                      componentEntry!.nexusIQData = { component: resultEntry };
-                    }
+                  if (componentEntry != undefined) {
+                    componentEntry!.policyViolations = resultEntry.violations;
+                    componentEntry!.hash = resultEntry.hash;
+                    componentEntry!.nexusIQData = { component: resultEntry };
                   }
                 }
               }

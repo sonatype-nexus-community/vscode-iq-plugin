@@ -42,13 +42,6 @@ export class {{&format}}Dependencies extends PackageDependenciesHelper implement
     return PackageDependenciesHelper.checkIfValid("", "{{&lowerCaseFormat}}");
   }
 
-  public ConvertToComponentEntry(resultEntry: any): string {
-    let coordinates = new {{&format}}Coordinate(resultEntry.component.componentIdentifier.coordinates.name,
-      resultEntry.component.componentIdentifier.coordinates.version);
-    
-    return coordinates.asCoordinates();
-  }
-
   public toComponentEntries(packages: Array<{{&format}}Package>): Array<ComponentEntry> {
     let components = new Array<ComponentEntry>();
     for (let pkg of packages) {

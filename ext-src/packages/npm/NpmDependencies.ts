@@ -51,13 +51,6 @@ export class NpmDependencies implements PackageDependencies {
     return this.scanType === "" ? false : true;
   }
 
-  public ConvertToComponentEntry(resultEntry: any): string {
-    let coordinates = new NpmCoordinate(resultEntry.component.componentIdentifier.coordinates.packageId, 
-      resultEntry.component.componentIdentifier.coordinates.version);
-    
-    return coordinates.asCoordinates();
-  }
-
   public toComponentEntries(packages: Array<NpmPackage>): Array<ComponentEntry> {
     let components = new Array<ComponentEntry>();
     for (let pkg of packages) {
