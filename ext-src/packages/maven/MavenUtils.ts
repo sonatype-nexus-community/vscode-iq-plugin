@@ -118,11 +118,6 @@ export class MavenUtils {
       }
     });
 
-    // TODO: The dependency list brought back appears to have a ton of duplicates, it needs to be deduped at a minimum in the future
-    //   we added dependencyListString above as a brute force way to dedupe. there is probably a better way to dedupe, but we couldn't 
-    //   get it to work with the MavenPackage object
-    //   Also, it would be good to do the dedupe closer to where the IQ Server request is made (probably IqComponentModel.ts) so that 
-    //   the dedupe logic catches all formats, in addition to maven as done here.
     return dependencyList;
   }
 }
