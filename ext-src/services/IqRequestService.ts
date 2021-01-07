@@ -15,7 +15,6 @@
  */
 import fetch from 'node-fetch';
 import { Headers } from 'node-fetch';
-import * as HttpStatus from 'http-status-codes';
 import { RequestService } from "./RequestService";
 import { RequestHelpers } from "./RequestHelpers";
 import { Agent as HttpsAgent }  from "https";
@@ -167,7 +166,7 @@ export class IqRequestService implements RequestService {
       success(value);
     };
     let errorHandler = function(statusCode: number, message: string) {
-      if (statusCode === HttpStatus.NOT_FOUND) {
+      if (statusCode === 404) {
         // report still being worked on, continue to poll
         pollAttempts += 1;
         // TODO use the top-level class constant, but references are failing

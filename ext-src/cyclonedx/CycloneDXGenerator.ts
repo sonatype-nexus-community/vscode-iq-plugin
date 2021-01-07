@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { uuid } from 'uuidv4';
+import { v4 as uuid } from 'uuid';
 import * as builder from 'xmlbuilder';
 import { PackageType } from '../packages/PackageType';
 
 export class CycloneDXSbomCreator {
 
   readonly SBOMSCHEMA: string = 'http://cyclonedx.org/schema/bom/1.1';
-
-  constructor() {}
 
   public async createBom(pkgInfo: Array<PackageType>): Promise<string> {
     const bom = builder.create('bom', { encoding: 'utf-8', separateArrayItems: true }).att('xmlns', this.SBOMSCHEMA);
