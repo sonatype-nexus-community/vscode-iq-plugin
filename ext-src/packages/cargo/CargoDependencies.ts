@@ -18,18 +18,14 @@ import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../models/ComponentEntry";
 import { CargoCoordinate } from "./CargoCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { ComponentRequestEntry } from "../../types/ComponentRequestEntry";
-import { ComponentRequest } from "../../types/ComponentRequest";
 import { RequestService } from "../../services/RequestService";
 import { ScanType } from "../../types/ScanType";
-import { PackageURL } from 'packageurl-js';
 import { CargoUtils } from "./CargoUtils";
 
 /**
 * @class CargoDependencies
 */
 export class CargoDependencies extends PackageDependenciesHelper implements PackageDependencies {
-  Dependencies: Array<CargoPackage> = [];
   CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
     string,
     ComponentEntry
@@ -52,35 +48,19 @@ export class CargoDependencies extends PackageDependenciesHelper implements Pack
     return coordinates.asCoordinates();
   }
 
-  public convertToNexusFormat(): ComponentRequest {
-    let comps = this.Dependencies.map(d => {
-      let entry: ComponentRequestEntry = {
-        packageUrl: d.toPurl()
-      }
-
-      return entry;
-    });
-
-    return new ComponentRequest(comps);
-  }
-
-  public toComponentEntries(data: any): Array<ComponentEntry> {
+  public toComponentEntries(packages: Array<CargoPackage>): Array<ComponentEntry> {
     let components = new Array<ComponentEntry>();
-    for (let entry of data.components) {
-      const purl: PackageURL = PackageURL.fromString(entry.packageUrl);
-      const packageId = purl.name;
-      const version = purl.version;
-
+    for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
-        packageId,
-        version,
+        pkg.Name,
+        pkg.Version,
         "cargo",
         ScanType.NexusIq
       );
       components.push(componentEntry);
       let coordinates = new CargoCoordinate(
-        packageId,
-        version
+        pkg.Name,
+        pkg.Version
       );
       this.CoordinatesToComponents.set(
         coordinates.asCoordinates(),
@@ -90,12 +70,12 @@ export class CargoDependencies extends PackageDependenciesHelper implements Pack
     return components;
   }
 
-  public async packageForIq(): Promise<any> {
+  public async packageForIq(): Promise<Array<CargoPackage>> {
     try {
-      let composerUtils = new CargoUtils();
-      this.Dependencies = await composerUtils.getDependencyArray();
+      const composerUtils = new CargoUtils();
+      const deps = await composerUtils.getDependencyArray();
 
-      return Promise.resolve();
+      return Promise.resolve(deps);
     } catch (ex) {
       return Promise.reject(`Uh oh, spaghetti-o, an exception occurred while parsing your Cargo.lock file: ${ex}`);
     }

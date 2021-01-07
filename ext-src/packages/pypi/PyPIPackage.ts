@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import { PackageType } from "../PackageType";
+import { PackageURL } from 'packageurl-js';
 
 export class PyPIPackage implements PackageType {
   constructor(
@@ -29,7 +30,8 @@ export class PyPIPackage implements PackageType {
   }
 
   public toPurl() {
-    return `pkg:pypi/${this.Name}@${this.Version}`;
+    let purl: PackageURL = new PackageURL("pypi", "", this.Name, this.Version, {"extension": this.Extension}, "");
+    return purl.toString();
   }
 
   public toCoordValueType(): string {

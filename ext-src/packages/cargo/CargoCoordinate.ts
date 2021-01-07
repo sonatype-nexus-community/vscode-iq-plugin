@@ -28,6 +28,6 @@ export class CargoCoordinate implements CoordinateType {
   }
 
   public asCoordinates(): string {
-    return `cargo: ${this.Name} @ ${this.Version}`;
+    return `cargo: ${this.Name} @ ${this.Version}`.toLowerCase();
   }
 }

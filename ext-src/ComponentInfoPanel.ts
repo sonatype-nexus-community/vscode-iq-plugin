@@ -19,7 +19,10 @@ import { IqComponentModel } from "./models/IqComponentModel";
 import { ScanType } from "./types/ScanType";
 import { ComponentModel } from "./models/ComponentModel";
 import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
-import { ComponentEntry } from "./models/ComponentEntry";
+import { ComponentEntry, NexusIQData } from "./models/ComponentEntry";
+import { ReportComponent } from "./services/ReportResponse";
+import { ComponentEntryConversions } from "./utils/ComponentEntryConversions";
+import { PackageURL } from 'packageurl-js';
 
 export class ComponentInfoPanel {
   /**
@@ -161,11 +164,19 @@ export class ComponentInfoPanel {
   private async showSelectedVersion(message: any) {
     console.log("showSelectedVersion", message);
     if (this.componentModel instanceof IqComponentModel) {
-      var componentIdentifier = message.package.nexusIQData.component.componentIdentifier;
-      var version = message.version;
+      let iqData: NexusIQData = message.package.nexusIQData;
+      let purl: PackageURL = PackageURL.fromString(iqData.component.packageUrl);
+      purl.version = message.version;
+
+      let decodedPurl = unescape(purl.toString());
       var iqComponentModel = this.componentModel as IqComponentModel
-      let body: any = await iqComponentModel.requestService.showSelectedVersion(componentIdentifier, version);
+      let body = await iqComponentModel.requestService.showSelectedVersion(decodedPurl);
     
+      // Dirty ugly hack because IQ Server removes + signs from versions for whatever reason
+      if (iqData.component.componentIdentifier.format === 'golang') {
+        body.componentDetails = this.dealWithGolang(body.componentDetails);
+      }
+
       this._panel.webview.postMessage({
         command: "versionDetails",
         componentDetails: body.componentDetails[0],
@@ -179,7 +190,6 @@ export class ComponentInfoPanel {
         scanType: ScanType.OssIndex
       });
     }
-
   }
 
   private async showRemediation(nexusArtifact: any) {
@@ -256,15 +266,39 @@ export class ComponentInfoPanel {
   private async showAllVersions() {
     console.debug("showAllVersions", this.component);
     if (this.componentModel instanceof IqComponentModel) {
-      var iqComponentModel = this.componentModel as IqComponentModel
-      let allversions = await iqComponentModel.requestService.getAllVersions(this.component!.nexusIQData.component, ComponentInfoPanel.iqApplicationPublicId);
+      const iqComponentModel = this.componentModel as IqComponentModel
+      const component: ReportComponent = this.component!.nexusIQData!.component;
+      const purl: PackageURL = PackageURL.fromString(component.packageUrl);
+      purl.version = "";
+
+      let allVersions = await iqComponentModel.requestService.getAllVersions(purl);
       
-      console.debug("posting message: allversions", allversions);
+      if (!allVersions.includes(component.componentIdentifier.coordinates.version)) {
+        allVersions.push(component.componentIdentifier.coordinates.version);
+      }
+
+      let versionsDetails = await iqComponentModel.requestService.getAllVersionDetails(allVersions, purl);
+
+      if (component.componentIdentifier.format === 'golang') {
+        versionsDetails.componentDetails = this.dealWithGolang(versionsDetails.componentDetails);
+      }
+
+      console.debug("posting message: allversions", versionsDetails.componentDetails);
       this._panel.webview.postMessage({
         command: "allversions",
-        allversions: (allversions.allVersions) ? allversions.allVersions : allversions
+        allversions: versionsDetails.componentDetails
       });
     }
+  }
+
+  private dealWithGolang(versions: any[]): any[] {
+    versions.forEach((version) => {
+      version.component.componentIdentifier.coordinates.version = ComponentEntryConversions.convertGolangVersion(
+        version.component.componentIdentifier.coordinates.version
+        );
+    });
+
+    return versions;
   }
 
   private loadHtmlForWebview() {

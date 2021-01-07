@@ -21,11 +21,8 @@ import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { RequestService } from "../../services/RequestService";
 import { PyPiUtils } from "./PyPiUtils";
 import { ScanType } from "../../types/ScanType";
-import { ComponentRequestEntry } from "../../types/ComponentRequestEntry";
-import { ComponentRequest } from "../../types/ComponentRequest";
 
 export class PyPIDependencies extends PackageDependenciesHelper implements PackageDependencies {
-  Dependencies: Array<PyPIPackage> = [];
   CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
     string,
     ComponentEntry
@@ -48,48 +45,26 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
   public ConvertToComponentEntry(resultEntry: any): string {
     let coordinates = new PyPICoordinate(resultEntry.component.componentIdentifier.coordinates.name,
       resultEntry.component.componentIdentifier.coordinates.version,
-      "", "");
+      "tar.gz", "");
     
     return coordinates.asCoordinates();
   }
 
-  public convertToNexusFormat(): ComponentRequest {
-    let comps = this.Dependencies.map(d => {
-      let entry: ComponentRequestEntry = {
-        componentIdentifier: {
-          format: "pypi",
-          coordinates: {
-            name: d.Name,
-            version: d.Version,
-            extension: "tar.gz"
-          }
-        }
-      }
-
-      return entry;
-    });
-
-    return new ComponentRequest(comps);
-  }
-
-  public toComponentEntries(data: any): Array<ComponentEntry> {
+  public toComponentEntries(packages: Array<PyPIPackage>): Array<ComponentEntry> {
     let components = new Array<ComponentEntry>();
-    for (let entry of data.components) {
-      const packageId = entry.componentIdentifier.coordinates.name;
-      const version = entry.componentIdentifier.coordinates.version;
-
+    for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
-        packageId,
-        version,
+        pkg.Name,
+        pkg.Version,
         "pypi",
         ScanType.NexusIq
       );
       components.push(componentEntry);
       let coordinates = new PyPICoordinate(
-        packageId,
-        version,
-        "",
-        ""
+        pkg.Name,
+        pkg.Version,
+        pkg.Extension,
+        pkg.Qualifier
       );
       this.CoordinatesToComponents.set(
         coordinates.asCoordinates(),
@@ -99,14 +74,14 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
     return components;
   }
 
-  public async packageForIq(): Promise<any> {
+  public async packageForIq(): Promise<Array<PyPIPackage>> {
     try {
       let pypiUtils = new PyPiUtils();
-      this.Dependencies = await pypiUtils.getDependencyArray();
-      Promise.resolve();
+      let deps = await pypiUtils.getDependencyArray();
+      return Promise.resolve(deps);
     }
     catch (e) {
-      Promise.reject();
+      return Promise.reject(e);
     }
   }
 }
