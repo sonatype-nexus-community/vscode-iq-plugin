@@ -13,14 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Uri, window, WorkspaceConfiguration, ProgressLocation } from "vscode";
+import { window, ProgressLocation } from "vscode";
 
 import { ComponentContainer } from "../packages/ComponentContainer";
 import { RequestService } from "../services/RequestService";
 import { IqRequestService } from "../services/IqRequestService";
 import { ComponentModel } from "./ComponentModel";
 import { ComponentEntry } from "./ComponentEntry";
-import { PolicyViolation } from "../types/PolicyViolation";
+import { ComponentEntryConversions } from '../utils/ComponentEntryConversions';
+import { ComponentModelOptions } from "./ComponentModelOptions";
+import { ILogger, LogLevel } from "../utils/Logger";
+import { PackageType } from "../packages/PackageType";
+import { CycloneDXSbomCreator } from "../cyclonedx/CycloneDXGenerator";
+import { ReportResponse } from "../services/ReportResponse";
 
 export class IqComponentModel implements ComponentModel {
     components = new Array<ComponentEntry>();
@@ -31,11 +36,11 @@ export class IqComponentModel implements ComponentModel {
     requestService: RequestService;
     dataSourceType: string;
     applicationPublicId: string;
+    private logger: ILogger;
   
     constructor(
-      configuration: WorkspaceConfiguration
+      options: ComponentModelOptions
     ) {
-      
       this.dataSourceType = configuration.get("nexusExplorer.dataSource", "ossindex");
       let url = configuration.get("nexusIQ.serverUrl") + "";
       let username = configuration.get("nexusIQ.username") + "";
@@ -44,15 +49,12 @@ export class IqComponentModel implements ComponentModel {
       this.applicationPublicId = configuration.get("nexusIQ.applicationId") + "";
       let password = configuration.get("nexusIQ.userPassword") + "";
       let strictSSL = configuration.get("nexusIQ.strictSSL") as boolean;
-      this.requestService = new IqRequestService(url, username, password, maximumEvaluationPollAttempts, strictSSL);
-    }
-  
-    public getContent(resource: Uri): Thenable<string> {
-      return new Promise((c, e) => "my stubbed content entry");
+      this.requestService = new IqRequestService(url, username, password, maximumEvaluationPollAttempts, strictSSL, options.logger);
+      this.logger = options.logger;
     }
   
     public evaluateComponents(): Promise<any> {
-      console.debug("evaluateComponents");
+      this.logger.log(LogLevel.DEBUG, "Starting IQ Evaluation of Components");
       return this.performIqScan();
     }
   
@@ -66,67 +68,100 @@ export class IqComponentModel implements ComponentModel {
               location: ProgressLocation.Notification, 
               title: "Running Nexus IQ Server Scan"
             }, async (progress, token) => {
-              let data: any;
-              if (componentContainer.PackageMuncher != undefined) {
-                progress.report({message: "Starting to package your dependencies for IQ Server", increment: 5});
-                await componentContainer.PackageMuncher.packageForIq();
+              // Clear state so that we don't create duplicates
+              this.components = [];
+              this.coordsToComponent.clear();
 
-                progress.report({message: "Reticulating splines...", increment: 25});
-                data = await componentContainer.PackageMuncher.convertToNexusFormat();
-                this.components = componentContainer.PackageMuncher.toComponentEntries(data);
-                this.coordsToComponent = componentContainer.PackageMuncher.CoordinatesToComponents;
+              const dependencies: Array<PackageType> = new Array();
+              if (componentContainer.Valid.length > 0) {
+                progress.report({message: "Starting to package your dependencies for IQ Server", increment: 5});
+                for (let pm of componentContainer.Valid) {
+                  try {
+                    this.logger.log(LogLevel.INFO, `Starting to Munch on ${pm.constructor.name} dependencies`);
+                    const deps = await pm.packageForIq();
+                    this.logger.log(LogLevel.TRACE, `Obtained Dependencies from Muncher`, deps);
+                    dependencies.push(...deps);
+                    progress.report({message: "Reticulating Splines", increment: 25});
+
+                    this.components.push(...pm.toComponentEntries(deps));
+                    this.coordsToComponent = new Map([...this.coordsToComponent, ...pm.CoordinatesToComponents]);
+                  } catch (ex) {
+                    this.logger.log(LogLevel.ERROR, `Nexus IQ Extension Failure moving forward`, ex);
+                    window.showErrorMessage(`Nexus IQ extension failure, moving forward, exception: ${ex}`);
+                  }
+                }
                 progress.report({message: "Packaging ready", increment: 35});
               } else {
                 throw new TypeError("Unable to instantiate Package Muncher");
               }
-      
-              if (undefined == data) {
-                throw new RangeError("Attempted to generate dependency list but received an empty collection. NexusIQ will not be invoked for this project.");
-              }
         
-              console.debug("getting applicationInternalId", this.applicationPublicId);
+              this.logger.log(LogLevel.DEBUG, `Getting Internal ID from Public ID: ${this.applicationPublicId}`);
               progress.report({message: "Getting IQ Server Internal Application ID", increment: 40});
               
               let response: string = await this.requestService.getApplicationId(this.applicationPublicId);
+              this.logger.log(LogLevel.TRACE, `Obtained internal application ID response`, response);
               
               let appRep = JSON.parse(response);
-              console.debug("appRep", appRep);
         
-              this.requestService.setApplicationId(appRep.applications[0].id)
-              console.debug("applicationInternalId", this.requestService.getApplicationInternalId());
-
-              progress.report({message: "Submitting to IQ Server for evaluation", increment: 50});
-              let resultId = await this.requestService.submitToIqForEvaluation(data, this.requestService.getApplicationInternalId());
-        
-              console.debug("report", resultId);
-              progress.report({message: "Polling IQ Server for report results", increment: 60});
-              let resultDataString = await this.requestService.asyncPollForEvaluationResults(this.requestService.getApplicationInternalId(), resultId);
-              progress.report({message: "Report retrieved, parsing", increment: 80});
-              let resultData = JSON.parse(resultDataString as string);
-        
-              console.debug(`Received results from IQ scan:`, resultData);
-
-              progress.report({message: "Morphing results into something usable", increment: 90});
-              for (let resultEntry of resultData.results) {
-                let componentEntry: ComponentEntry | undefined;
-      
-                componentEntry = this.coordsToComponent.get(
-                  componentContainer.PackageMuncher.ConvertToComponentEntry(resultEntry)
+              this.requestService.setApplicationId(appRep.applications[0].id);
+              this.logger.log(
+                LogLevel.DEBUG, 
+                `Set application internal ID: ${this.requestService.getApplicationInternalId()}`
                 );
+
+              const sbomGenerator = new CycloneDXSbomCreator();
+
+              let xml = await sbomGenerator.createBom(dependencies);
+              this.logger.log(LogLevel.TRACE, `Obtained XML from SBOM Creator`, xml);
+
+              progress.report({message: "Submitting to IQ Server Third Party API", increment: 50});
+              let resultId = await this.requestService.submitToThirdPartyAPI(xml, this.requestService.getApplicationInternalId());
+        
+              this.logger.log(LogLevel.DEBUG, `Report id obtained: ${resultId}`);
+              progress.report({message: "Polling IQ Server for report results", increment: 60});
+              let resultData = await this.requestService.asyncPollForEvaluationResults(resultId);
+              progress.report({message: "Report retrieved, parsing", increment: 80});
+
+              this.logger.log(LogLevel.TRACE, `Received results from Third Party API IQ Scan`, resultData);
               
-                componentEntry!.policyViolations = resultEntry.policyData.policyViolations as Array<PolicyViolation>;
-                componentEntry!.hash = resultEntry.component.hash;
-                componentEntry!.nexusIQData = resultEntry;
+              let results: ReportResponse;
+              if (resultData && resultData.reportHtmlUrl) {
+                let parts = /[^/]*$/.exec(resultData!.reportHtmlUrl!);
+
+                if (parts) {
+                  results = await this.requestService.getReportResults(parts[0], this.applicationPublicId);
+  
+                  this.logger.log(LogLevel.TRACE, `Received results from Report API`, results);
+
+                  progress.report({message: "Morphing results into something usable", increment: 90});
+
+                  for (let resultEntry of results.components) {                   
+                    let componentEntry = this.coordsToComponent.get(
+                      ComponentEntryConversions.ConvertToComponentEntry(
+                        resultEntry.componentIdentifier.format, 
+                        resultEntry.componentIdentifier.coordinates
+                        )
+                    );
+
+                    if (componentEntry != undefined) {
+                      componentEntry!.policyViolations = resultEntry.violations;
+                      componentEntry!.hash = resultEntry.hash;
+                      componentEntry!.nexusIQData = { component: resultEntry };
+                    }
+                  }
+                }
               }
+
               resolve();
             }).then(() => {
               window.setStatusBarMessage("Nexus IQ Server Results in, build with confidence!", 5000);
             }, 
             (failure) => {
+              this.logger.log(LogLevel.ERROR, `Nexus IQ extension failure`, failure);
               window.showErrorMessage(`Nexus IQ extension failure: ${failure}`);
             });
         } catch (e) {
-          console.log(e);
+          this.logger.log(LogLevel.ERROR, `Uh ohhhh`, e);
           reject(e);
         }
       });

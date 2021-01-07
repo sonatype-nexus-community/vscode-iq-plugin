@@ -20,6 +20,8 @@ export class PolicyViolation {
     readonly policyId: string,
     readonly policyName: string,
     readonly threatLevel: number,
-    readonly constraintViolations: Array<ConstraintViolation>
+    readonly policyThreatCategory: string,
+    readonly policyThreatLevel: number,
+    readonly constraints: Array<ConstraintViolation>
   ) {}
 }

@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { CoordinateType } from "../CoordinateType";
+
 export class MavenCoordinate implements CoordinateType {
   Name: string;
   Group: string;
@@ -27,6 +29,6 @@ export class MavenCoordinate implements CoordinateType {
   }
 
   public asCoordinates(): string {
-    return `${this.Group}:${this.Name} - ${this.Version}`;
+    return `maven - ${this.Group}:${this.Name} - ${this.Version}`.toLowerCase();
   }
 }

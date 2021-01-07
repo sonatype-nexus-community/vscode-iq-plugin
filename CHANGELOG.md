@@ -1,3 +1,27 @@
+## [0.8.3](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.8.2...v0.8.3) (2020-12-18)
+
+
+### Bug Fixes
+
+* test release credentials ([cd41ee0](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/cd41ee0c1cc6c5b132c99bb4793db9ce05bdb89e))
+* test release credentials again ([958d933](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/958d9339e3f4ed3eb99ec4f8e7c1cb6a6bae6bac))
+* test release credentials from approved branch ([#144](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/144)) ([9a03357](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/9a033578cee01dd70a7bba0fc83c4e840c5b6e4c))
+* updated SECURITY.md ([#143](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/143)) ([6a4898a](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/6a4898ab59f3961f25925324cf68a27df527f0b6))
+
+## [0.8.2](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.8.1...v0.8.2) (2020-12-08)
+
+
+### Bug Fixes
+
+* CWE-20: Improper Input Validation (fixes [#140](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/140)) ([2450e60](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/2450e60e488793404e03e394c89c685a3cb31150))
+
+## [0.8.1](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.8.0...v0.8.1) (2020-12-08)
+
+
+### Bug Fixes
+
+* **127:** `policyViolations of undefined` when loading a python project with requirements.txt ([f1b4585](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/f1b458553710df18914aa2e23c677d8c66639208))
+
 # [0.8.0](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.7.8...v0.8.0) (2020-10-22)
 
 

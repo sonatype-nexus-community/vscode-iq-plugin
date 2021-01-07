@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as request from "request";
-import * as HttpStatus from "http-status-codes";
+import fetch from 'node-fetch';
+import { Headers } from 'node-fetch';
+import { ILogger, LogLevel } from '../utils/Logger';
 
 import { LiteRequestService } from "./LiteRequestService";
 import { RequestHelpers } from "./RequestHelpers";
@@ -25,7 +26,10 @@ const URL = `https://ossindex.sonatype.org/api/v3/component-report`;
 
 export class OssIndexRequestService implements LiteRequestService {
 
-  constructor(readonly username: string, private password: string){}
+  constructor(
+    readonly username: string, 
+    private password: string,
+    readonly logger: ILogger) {}
 
   public isPasswordSet():boolean {
     if(this.password == "") {
@@ -46,6 +50,7 @@ export class OssIndexRequestService implements LiteRequestService {
       for (var purlList of newPurls) {
         let err, res = await this.callOssIndex(purlList);
         if (err != null) {
+          this.logger.log(LogLevel.ERROR, 'Uh oh');
           reject(err);
         } else {
           response = response.concat(res);
@@ -62,36 +67,32 @@ export class OssIndexRequestService implements LiteRequestService {
     })
   }
 
-  private async callOssIndex(purls: String[]) {
+  private async callOssIndex(purls: String[]): Promise<any> {
+    const headers = new Headers(RequestHelpers.getUserAgentHeader());
+    headers.append('Content-Type', 'application/json');
+    this.logger.log(LogLevel.TRACE, "Got User Agent");
+
     return new Promise((resolve, reject) => {
-      request.post(
+      fetch(URL,
         {
-          method: "POST",
-          url: `${URL}`,
-          json: this.turnPurlsIntoOssIndexRequestObject(purls),
-          headers: RequestHelpers.getUserAgentHeader()
-        },
-        (err: any, response: any, body: any) => {
-          if (err) {            
-            reject(`Unable to retrieve Component Report: ${err}`);
-            return;
+          method: 'POST',
+          body: JSON.stringify(this.turnPurlsIntoOssIndexRequestObject(purls)),
+          headers: headers
+        }).then(async (res) => {
+          if (res.ok) {
+            resolve(await res.json());
           }
-          if (response.statusCode != HttpStatus.OK) {
-            reject(`Unable to retrieve Component Report. Could not communicate with server. Server error: ${response.statusCode}`);
-            return;
-          }
-          resolve(body);
-          return;
-        }
-      );
+          reject(res.status);
+        }).catch((ex) => {
+          reject(ex);
+        });
     });
   }
 
   private turnPurlsIntoOssIndexRequestObject(purls: String[]): any {
-    let components = {
+    return { 
       coordinates: purls
-    }
-    return components;
+    };
   }
 
   /**

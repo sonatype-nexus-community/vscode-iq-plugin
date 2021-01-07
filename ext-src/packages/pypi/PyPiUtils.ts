@@ -69,10 +69,8 @@ export class PyPiUtils {
           const dependencyParts: string[] = dep.trim().split("==");
           const name: string = dependencyParts[0];
           const version: string = dependencyParts[1];
-          const extension: string = "";
+          const extension: string = "tar.gz";
           const qualifier: string = "";
-            //dependencies used only during unit testing are generally ignored since they aren't included in the runtime artifact
-            // artifactId, extension, and version are required fields. If a single dependency is missing any of the three, IQ will return a 400 response for the whole list
           if (name && version) {
             const dependencyObject: PyPIPackage = new PyPIPackage(
               name,

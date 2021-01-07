@@ -18,12 +18,10 @@ import { ComponentEntry } from "../models/ComponentEntry";
 import { RequestService } from "../services/RequestService";
 
 export interface PackageDependencies {
-  Dependencies: Array<PackageType>;
   CoordinatesToComponents: Map<string, ComponentEntry>;
   RequestService: RequestService;
   CheckIfValid(): boolean;
-  ConvertToComponentEntry(resultEntry: any): string;
-  convertToNexusFormat(): any;
+  ConvertToComponentEntry(resultEntry: Array<PackageType>): string;
   toComponentEntries(data: any): Array<ComponentEntry>;
-  packageForIq(): Promise<undefined>;
+  packageForIq(): Promise<Array<PackageType>>;
 }

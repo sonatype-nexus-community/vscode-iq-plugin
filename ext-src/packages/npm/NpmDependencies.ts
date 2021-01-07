@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as _ from "lodash";
-
 import { NpmPackage } from "./NpmPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { NpmCoordinate } from "./NpmCoordinate";
@@ -26,7 +24,6 @@ import { ComponentEntry } from "../../models/ComponentEntry";
 import { NpmScanType } from "./NpmScanType";
 
 export class NpmDependencies implements PackageDependencies {
-  Dependencies: Array<NpmPackage> = [];
   CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
     string,
     ComponentEntry
@@ -38,14 +35,14 @@ export class NpmDependencies implements PackageDependencies {
     this.RequestService = this.requestService;
   }
 
-  public async packageForIq(): Promise<any> {
+  public async packageForIq(): Promise<Array<NpmPackage>> {
     try {
-      let npmUtils = new NpmUtils();
-      this.Dependencies = await npmUtils.getDependencyArray(this.scanType);
-      Promise.resolve();
+      const npmUtils = new NpmUtils();
+      const deps = await npmUtils.getDependencyArray(this.scanType);
+      return Promise.resolve(deps);
     }
     catch (e) {
-      throw new TypeError(e);
+      return Promise.reject(e);
     }
   }
 
@@ -61,42 +58,19 @@ export class NpmDependencies implements PackageDependencies {
     return coordinates.asCoordinates();
   }
 
-  public convertToNexusFormat() {
-    return {
-      components: _.map(
-        this.Dependencies,
-        (d: {
-          Hash: any;
-          Name: any;
-          Group: any;
-          Version: any;
-          Extension: any;
-        }) => ({
-          hash: null,
-          componentIdentifier: {
-            format: "npm",
-            coordinates: {
-              packageId: d.Name,
-              version: d.Version
-            }
-          }
-        })
-      )
-    };
-  }
-
-  public toComponentEntries(data: any): Array<ComponentEntry> {
+  public toComponentEntries(packages: Array<NpmPackage>): Array<ComponentEntry> {
     let components = new Array<ComponentEntry>();
-    for (let entry of data.components) {
+    for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
-        entry.componentIdentifier.coordinates.packageId,
-        entry.componentIdentifier.coordinates.version,
+        pkg.Name,
+        pkg.Version,
+        "npm",
         ScanType.NexusIq
       );
       components.push(componentEntry);
       let coordinates = new NpmCoordinate(
-        entry.componentIdentifier.coordinates.packageId,
-        entry.componentIdentifier.coordinates.version
+        pkg.Name,
+        pkg.Version
       );
       this.CoordinatesToComponents.set(
         coordinates.asCoordinates(),

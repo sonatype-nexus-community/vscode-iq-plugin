@@ -18,28 +18,37 @@ import { MavenDependencies } from "./maven/MavenDependencies";
 import { NpmDependencies } from "./npm/NpmDependencies";
 import { GolangDependencies } from "./golang/GolangDependencies";
 import { PyPIDependencies } from "./pypi/PyPIDependencies";
+import { RubyGemsDependencies } from "./rubygems/RubyGemsDependencies"; 
 import { RequestService } from "../services/RequestService";
+import { PoetryDependencies } from "./poetry/PoetryDependencies";
+import { ComposerDependencies } from './composer/ComposerDependencies';
+import { CargoDependencies } from './cargo/CargoDependencies';
 
 export class ComponentContainer {
-  Implementation: Array<PackageDependencies> = [];
+  Possible: Array<PackageDependencies> = [];
+  Valid: Array<PackageDependencies> = [];
   PackageMuncher: PackageDependencies | undefined;
 
   constructor(private requestService: RequestService) {
-    // To add a new format, you just need to push another implementation to this list
-    this.Implementation.push(new MavenDependencies(this.requestService));
-    this.Implementation.push(new NpmDependencies(this.requestService));
-    this.Implementation.push(new GolangDependencies(this.requestService));
-    this.Implementation.push(new PyPIDependencies(this.requestService));
 
-    // Bit of an odd side effect, if a project has multiple dependency types, the PackageMuncher will get set to the last one it encounters currently
-    this.Implementation.forEach(i => {
+    // To add a new format, you just need to push another implementation to this list
+    this.Possible.push(new MavenDependencies(this.requestService));
+    this.Possible.push(new NpmDependencies(this.requestService));
+    this.Possible.push(new GolangDependencies(this.requestService));
+    this.Possible.push(new PyPIDependencies(this.requestService));
+    this.Possible.push(new RubyGemsDependencies(this.requestService));
+    this.Possible.push(new PoetryDependencies(this.requestService));
+    this.Possible.push(new ComposerDependencies(this.requestService));
+    this.Possible.push(new CargoDependencies(this.requestService));
+
+    this.Possible.forEach(i => {
       if(i.CheckIfValid()) {
-        this.PackageMuncher = i;
+        this.Valid.push(i);
       }
     });
 
-    if (this.PackageMuncher != undefined) {
-      console.debug("Package Muncher set");
+    if (this.Valid.length != 0) {
+      console.debug("Package Muncher(s) set");
     } else {
       throw new TypeError("No valid implementation exists for workspace");
     }

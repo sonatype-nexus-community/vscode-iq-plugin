@@ -14,73 +14,30 @@
  * limitations under the License.
  */
 
-import { exec } from "../../utils/exec";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { RubyGemsPackage } from './RubyGemsPackage';
+import * as gem from 'gemfile';
+import * as path from "path";
 
 export class RubyGemsUtils {
   public async getDependencyArray(): Promise<Array<RubyGemsPackage>> {
     try {
-      let {stdout, stderr } = await exec(`bundle show`, {
-        cwd: PackageDependenciesHelper.getWorkspaceRoot(),
-        env: {
-          PATH: process.env.PATH
-        }
-      });
+      let gems = gem.parseSync(path.join(PackageDependenciesHelper.getWorkspaceRoot(), 'Gemfile.lock'));
 
-      if (stdout != "" && stderr === "") {
-        return Promise.resolve(this.parseGemfile(stdout));
-      } else {
-        return Promise.reject(
-          new Error(
-            "Error occurred in generating dependency list. Check that you have bundler installed, and you've installed your dependencies"
-          )
-        );
-      }
-    } catch (e) {
-      return Promise.reject(
-        `bundle show failed, try running it manually to see what went wrong: ${e.error}`
-      );
-    }
-  }
-
-  private parseGemfile(dependencyTree: string): Array<RubyGemsPackage> {
-    const dependencies: string = dependencyTree;
-    console.debug(dependencies);
-    console.debug(
-      "------------------------------------------------------------------------------"
-    );
-    let dependencyList: RubyGemsPackage[] = [];
-
-    const dependencyLines = dependencies.split("\n");
-    dependencyLines.forEach((dep) => {  
-      console.debug(dep);
-      if (dep.trim()) {
-        //ignore comments
-        if (dep.startsWith("Gems included by the bundle:")) {
-          console.debug("Found comment, skipping");
-        } else {
-          let dependencyParts: string[] = dep.trim().split(" (");
-          let realName: string = dependencyParts[0].substring(2, dependencyParts[0].length);
-          const name: string = realName;
-          const version: string = dependencyParts[1].replace(")", "");
-          if (name && version) {
-            const dependencyObject: RubyGemsPackage = new RubyGemsPackage(
-              name,
-              version
-            );
-            dependencyList.push(dependencyObject);
-          } else {
-            console.warn(
-              "Skipping dependency: " +
-                dep +
-                " due to missing data (name, version)"
-            );
+      if (gems.GEM && gems.GEM.specs) {
+        let res: Array<RubyGemsPackage> = new Array();
+        Object.keys(gems.GEM.specs).forEach((key) => {
+          let version: string = gems.GEM.specs[key].version as string;
+          if (version) {
+            res.push(new RubyGemsPackage(key, version));
           }
-        }
+        });
+        return Promise.resolve(res);
       }
-    });
-
-    return dependencyList;
+  
+      return Promise.reject("No dependencies found, your Gemfile.lock may have no specs in it");
+    } catch (ex) {
+      return Promise.reject(`Uh oh, spaghetti-o, an exception occurred while getting RubyGems dependencies, exception: ${ex}`);
+    }
   }
 }

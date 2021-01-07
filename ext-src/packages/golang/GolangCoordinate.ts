@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { CoordinateType } from "../CoordinateType";
+
 export class GolangCoordinate implements CoordinateType {
   Name: string;
   Version: string;
@@ -23,6 +25,6 @@ export class GolangCoordinate implements CoordinateType {
   }
 
   public asCoordinates(): string {
-    return `${this.Name} - ${this.Version}`;
+    return `golang - ${this.Name} - ${this.Version}`.toLowerCase();
   }
 }

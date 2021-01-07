@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { CoordinateType } from '../CoordinateType';
+
 export class PyPICoordinate implements CoordinateType {
   Name: string;
   Version: string;
@@ -27,6 +29,6 @@ export class PyPICoordinate implements CoordinateType {
   }
 
   public asCoordinates(): string {
-    return `${this.Name} - ${this.Extension} - ${this.Qualifier} - ${this.Version}`;
+    return `pypi - ${this.Name} - ${this.Extension} - ${this.Qualifier} - ${this.Version}`.toLowerCase();
   }
 }

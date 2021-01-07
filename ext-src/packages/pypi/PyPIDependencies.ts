@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as _ from "lodash";
-
 import { PyPIPackage } from "./PyPIPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../models/ComponentEntry";
@@ -25,7 +23,6 @@ import { PyPiUtils } from "./PyPiUtils";
 import { ScanType } from "../../types/ScanType";
 
 export class PyPIDependencies extends PackageDependenciesHelper implements PackageDependencies {
-  Dependencies: Array<PyPIPackage> = [];
   CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
     string,
     ComponentEntry
@@ -48,43 +45,26 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
   public ConvertToComponentEntry(resultEntry: any): string {
     let coordinates = new PyPICoordinate(resultEntry.component.componentIdentifier.coordinates.name,
       resultEntry.component.componentIdentifier.coordinates.version,
-      "", "");
+      "tar.gz", "");
     
     return coordinates.asCoordinates();
   }
 
-  public convertToNexusFormat() {
-    return {
-      components: _.map(
-        this.Dependencies,
-        (d) => ({
-          packageUrl: d.toPurl() + `?extension=tar.gz`
-        })
-      )
-    };
-  }
-
-  public toComponentEntries(data: any): Array<ComponentEntry> {
+  public toComponentEntries(packages: Array<PyPIPackage>): Array<ComponentEntry> {
     let components = new Array<ComponentEntry>();
-    for (let entry of data.components) {
-      const purl: string = entry.packageUrl;
-      const parts: string[] = purl.substr(9, purl.length).split("@");
-      const packageId =
-        parts[0];
-
-      const version: string = parts[1].split("?")[0];
-
+    for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
-        packageId,
-        version,
+        pkg.Name,
+        pkg.Version,
+        "pypi",
         ScanType.NexusIq
       );
       components.push(componentEntry);
       let coordinates = new PyPICoordinate(
-        parts[0],
-        version,
-        "",
-        ""
+        pkg.Name,
+        pkg.Version,
+        pkg.Extension,
+        pkg.Qualifier
       );
       this.CoordinatesToComponents.set(
         coordinates.asCoordinates(),
@@ -94,14 +74,14 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
     return components;
   }
 
-  public async packageForIq(): Promise<any> {
+  public async packageForIq(): Promise<Array<PyPIPackage>> {
     try {
       let pypiUtils = new PyPiUtils();
-      this.Dependencies = await pypiUtils.getDependencyArray();
-      Promise.resolve();
+      let deps = await pypiUtils.getDependencyArray();
+      return Promise.resolve(deps);
     }
     catch (e) {
-      Promise.reject();
+      return Promise.reject(e);
     }
   }
 }

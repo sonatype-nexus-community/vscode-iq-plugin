@@ -13,32 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as _ from "lodash";
 
-import { exec } from "../../exec";
 import { {{&format}}Package } from "./{{&format}}Package";
 import { PackageDependencies } from "../PackageDependencies";
-import { ComponentEntry } from "../../ComponentInfoPanel";
 import { {{&format}}Coordinate } from "./{{&format}}Coordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
+import { RequestService } from "../../services/RequestService";
+import { ComponentEntry } from "../../models/ComponentEntry";
+import { ScanType } from "../../types/ScanType";
 
 /**
 * @class {{&format}}Dependencies
 */
 export class {{&format}}Dependencies extends PackageDependenciesHelper implements PackageDependencies {
-  Dependencies: Array<{{&format}}Package> = [];
   CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
     string,
     ComponentEntry
   >();
+  RequestService: RequestService;
+
+  constructor(private requestService: RequestService) {
+    super();
+    this.RequestService = this.requestService;
+  }
 
   public CheckIfValid(): boolean {
-    // TODO: Set filename to manifest file for format
-    if (this.doesPathExist(this.getWorkspaceRoot(), "")) {
-      console.debug("Valid for {{&format}}");
-      return true;
-    }
-    return false;
+    // Provide a valid manifest name to check
+    return PackageDependenciesHelper.checkIfValid("", "{{&lowerCaseFormat}}");
   }
 
   public ConvertToComponentEntry(resultEntry: any): string {
@@ -48,42 +49,19 @@ export class {{&format}}Dependencies extends PackageDependenciesHelper implement
     return coordinates.asCoordinates();
   }
 
-  public convertToNexusFormat() {
-    return {
-      components: _.map(
-        this.Dependencies,
-        (d: {
-          Hash: any;
-          Name: any;
-          Version: any;
-        }) => ({
-          hash: null,
-          componentIdentifier: {
-            format: "{{&format}}",
-            coordinates: {
-              name: d.Name,
-              version: d.Version       
-            }
-          }
-        })
-      )
-    };
-  }
-
-  public toComponentEntries(data: any): Array<ComponentEntry> {
+  public toComponentEntries(packages: Array<{{&format}}Package>): Array<ComponentEntry> {
     let components = new Array<ComponentEntry>();
-    for (let entry of data.components) {
-      const packageId =
-        entry.componentIdentifier.coordinates.name;
-
+    for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
-        packageId,
-        entry.componentIdentifier.coordinates.version
+        pkg.Name,
+        pkg.Version,
+        "{{&lowerCaseFormat}}",
+        ScanType.NexusIq
       );
       components.push(componentEntry);
       let coordinates = new {{&format}}Coordinate(
-        entry.componentIdentifier.coordinates.name,
-        entry.componentIdentifier.coordinates.version
+        pkg.Name,
+        pkg.Version
       );
       this.CoordinatesToComponents.set(
         coordinates.asCoordinates(),
@@ -93,51 +71,17 @@ export class {{&format}}Dependencies extends PackageDependenciesHelper implement
     return components;
   }
 
-  public async packageForIq(): Promise<any> {
+  public async packageForIq(): Promise<Array<{{&format}}Package>> {
     throw new Error("not Implemented");
 
     try {
-      // TODO: Fill in command to run to get list of dependencies
-      let {stdout, stderr } = await exec(``, {
-        cwd: this.getWorkspaceRoot(),
-        env: {
-          PATH: process.env.PATH
-        }
-      });
-
-      if (stdout != "" && stderr === "") {
-        this.parse{{&format}}DependencyTree(stdout);
-      } else {
-        return Promise.reject(
-          new Error(
-            "Error occurred in generating dependency tree."
-          )
-        );
-      }
+      // Most of our formats have a Utils class where we do the actual work (so that you can share it among OSS Index and IQ)
 
       return Promise.resolve();
-    } catch (e) {
+    } catch (ex) {
       return Promise.reject(
-        `Command failed, try running it manually to see what went wrong: ${e.error}`
+        `Uh oh spaghetti-o, something went wrong!: ${ex}`
       );
     }
-  }
-
-  private parse{{&format}}DependencyTree(dependencyTree: string) {
-    const dependencies: string = dependencyTree;
-    console.debug(dependencies);
-    console.debug(
-      "------------------------------------------------------------------------------"
-    );
-    let dependencyList: {{&format}}Package[] = [];
-
-    const dependencyLines = dependencies.split("\n");
-    dependencyLines.forEach((dep) => {  
-      console.debug(dep);
-      // TODO: Implement parsing of dependencies into appropriate list for pushing to IQ server
-      throw new Error("not Implemented");
-    });
-
-    this.Dependencies = dependencyList;
   }
 }

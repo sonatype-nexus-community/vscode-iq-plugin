@@ -20,7 +20,6 @@ import { VersionsContextConsumer } from "../../../context/versions-context";
 import ClassNameUtils from "../../../utils/ClassNameUtils";
 import SelectedBadge from "./SelectedBadge/SelectedBadge";
 import Loader from "react-loader-spinner";
-// import SonatypeLoader from "../../Loader/SonatypeLoader";
 
 type Props = {
   versionChangeHandler: (version: string) => void;
@@ -88,25 +87,25 @@ class AllVersionsPage extends React.Component<Props, State> {
             className={this.getAlertClassname(context, row)}
             onClick={_this.handleClick.bind(
               _this,
-              context!.allVersions[row].componentIdentifier.coordinates.version
+              context!.allVersions[row].component.componentIdentifier.coordinates.version
             )}
           >
             <SelectedBadge
               version={
-                context!.allVersions[row].componentIdentifier.coordinates
+                context!.allVersions[row].component.componentIdentifier.coordinates
                   .version
               }
               selectedVersion={context!.selectedVersion}
               initialVersion={context!.initialVersion}
             />{" "}
-            {context!.allVersions[row].componentIdentifier.coordinates.version}
+            {context!.allVersions[row].component.componentIdentifier.coordinates.version}
             <Badge
               className={ClassNameUtils.threatClassName(
-                context!.allVersions[row].highestSecurityVulnerabilitySeverity
+                this.getMaxSecurity(context!.allVersions[row].securityData)
               )}
             >
               CVSS:{" "}
-              {context!.allVersions[row].highestSecurityVulnerabilitySeverity}
+              {this.getMaxSecurity(context!.allVersions[row].securityData)}
             </Badge>
           </Alert>
         ))}
@@ -129,6 +128,14 @@ class AllVersionsPage extends React.Component<Props, State> {
     }
   }
 
+  private getMaxSecurity(security: any): number {
+    if (security && security.securityIssues && security.securityIssues.length > 0) {
+      console.debug(security);
+      return Math.max.apply(Math, security.securityIssues.map((sec: { severity: number; }) => { return sec.severity }));
+    }
+    return 0;
+  }
+
   private isElementInViewport(element: Element) {
     var bounding = element.getBoundingClientRect();
     return (
@@ -141,13 +148,13 @@ class AllVersionsPage extends React.Component<Props, State> {
   private getAlertClassname(context: any, row: any): string {
     var className: string = "";
     if (
-      context!.allVersions[row].componentIdentifier.coordinates.version ==
+      context!.allVersions[row].component.componentIdentifier.coordinates.version ==
       context!.selectedVersion
     ) {
       className += " selected-version";
     }
     if (
-      context!.allVersions[row].componentIdentifier.coordinates.version ==
+      context!.allVersions[row].component.componentIdentifier.coordinates.version ==
       context!.initialVersion
     ) {
       className += " current-version";
