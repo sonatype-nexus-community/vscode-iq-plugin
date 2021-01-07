@@ -20,7 +20,6 @@ import { GolangUtils } from "./GolangUtils";
 import { GolangScanType } from "./GolangScanType";
 
 export class GolangLiteDependencies implements LitePackageDependencies {
-  dependencies: Array<GolangPackage> = [];
   manifestName: string = "go.sum";
   format: string = "golang";
   private scanType: string = "";
@@ -30,15 +29,15 @@ export class GolangLiteDependencies implements LitePackageDependencies {
     return this.scanType === "" ? false : true;
   }
 
-  public async packageForService(): Promise<any> {
+  public async packageForService(): Promise<Array<GolangPackage>> {
     try {
-      let golangUtils = new GolangUtils();
-      this.dependencies = await golangUtils.getDependencyArray(this.scanType);
+      const golangUtils = new GolangUtils();
+      const deps = await golangUtils.getDependencyArray(this.scanType);
 
-      Promise.resolve();
+      return Promise.resolve(deps);
     }
-    catch (e) {
-      Promise.reject(e);
+    catch (ex) {
+      return Promise.reject(ex);
     }
   }
 }

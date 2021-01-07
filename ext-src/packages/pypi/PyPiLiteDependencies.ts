@@ -19,7 +19,6 @@ import { PyPiUtils } from './PyPiUtils';
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 
 export class PyPiLiteDependencies implements LitePackageDependencies {
-  dependencies: Array<PyPIPackage> = [];
   format: string = "pypi";
   manifestName: string = "requirements.txt";
 
@@ -27,15 +26,15 @@ export class PyPiLiteDependencies implements LitePackageDependencies {
     return PackageDependenciesHelper.checkIfValid(this.manifestName, this.format);
   }
 
-  public async packageForService(): Promise<any> {
+  public async packageForService(): Promise<Array<PyPIPackage>> {
     try {
-      let pypiUtils = new PyPiUtils();
-      this.dependencies = await pypiUtils.getDependencyArray();
+      const pypiUtils = new PyPiUtils();
+      const deps = await pypiUtils.getDependencyArray();
 
-      Promise.resolve();
+      return Promise.resolve(deps);
     }
-    catch (e) {
-      Promise.reject(e);
+    catch (ex) {
+      return Promise.reject(ex);
     }
   }
 }

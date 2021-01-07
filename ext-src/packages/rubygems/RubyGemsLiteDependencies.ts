@@ -19,7 +19,6 @@ import { RubyGemsUtils } from './RubyGemsUtils';
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 
 export class RubyGemLiteDependencies implements LitePackageDependencies {
-  dependencies: Array<RubyGemsPackage> = [];
   format: string = "rubygems";
   manifestName: string = "Gemfile.lock";
 
@@ -27,15 +26,15 @@ export class RubyGemLiteDependencies implements LitePackageDependencies {
     return PackageDependenciesHelper.checkIfValid(this.manifestName, this.format);
   }
 
-  public async packageForService(): Promise<any> {
+  public async packageForService(): Promise<Array<RubyGemsPackage>> {
     try {
-      let rubyGemsUtils = new RubyGemsUtils();
-      this.dependencies = await rubyGemsUtils.getDependencyArray();
+      const rubyGemsUtils = new RubyGemsUtils();
+      const deps = await rubyGemsUtils.getDependencyArray();
 
-      Promise.resolve();
+      return Promise.resolve(deps);
     }
     catch (e) {
-      Promise.reject(e);
+      return Promise.reject(e);
     }
   }
 }

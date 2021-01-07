@@ -19,7 +19,6 @@ import { PoetryUtils } from './PoetryUtils';
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 
 export class PoetryLiteDependencies implements LitePackageDependencies {
-  dependencies: Array<PyPIPackage> = [];
   format: string = "pypi";
   manifestName: string = "poetry.lock";
 
@@ -27,15 +26,15 @@ export class PoetryLiteDependencies implements LitePackageDependencies {
     return PackageDependenciesHelper.checkIfValid(this.manifestName, this.format);
   }
 
-  public async packageForService(): Promise<any> {
+  public async packageForService(): Promise<Array<PyPIPackage>> {
     try {
       const poetryUtils = new PoetryUtils();
-      this.dependencies = await poetryUtils.getDependencyArray();
+      const deps = await poetryUtils.getDependencyArray();
 
-      Promise.resolve();
+      return Promise.resolve(deps);
     }
-    catch (e) {
-      Promise.reject(e);
+    catch (ex) {
+      return Promise.reject(ex);
     }
   }
 }

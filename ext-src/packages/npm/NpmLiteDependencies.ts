@@ -20,28 +20,24 @@ import { NpmUtils } from "./NpmUtils";
 import { NpmScanType } from "./NpmScanType";
 
 export class NpmLiteDependencies implements LitePackageDependencies {
-  dependencies: Array<NpmPackage> = [];
   format: string = "npm";
   manifestName: string = "package.json";
   private scanType: string = "";
-
-  constructor() {
-  }
 
   public checkIfValid(): boolean {
     this.scanType = PackageDependenciesHelper.checkIfValidWithArray(NpmScanType, this.format);
     return this.scanType === "" ? false : true;
   }
 
-  public async packageForService(): Promise<any> {
+  public async packageForService(): Promise<Array<NpmPackage>> {
     try {
-      let npmUtils = new NpmUtils();
-      this.dependencies = await npmUtils.getDependencyArray(this.scanType);
+      const npmUtils = new NpmUtils();
+      const deps = await npmUtils.getDependencyArray(this.scanType);
 
-      Promise.resolve();
+      return Promise.resolve(deps);
     }
-    catch (e) {
-      throw new TypeError(`There are problems, please check this error: ${e}`);
+    catch (ex) {
+      return Promise.reject(ex);
     }
   }
 }

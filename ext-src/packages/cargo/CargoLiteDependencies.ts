@@ -19,7 +19,6 @@ import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { CargoUtils } from "./CargoUtils";
 
 export class CargoLiteDependencies implements LitePackageDependencies {
-  dependencies: Array<CargoPackage> = [];
   manifestName: string = "cargo.lock";
   format: string = "cargo";
   
@@ -27,15 +26,15 @@ export class CargoLiteDependencies implements LitePackageDependencies {
     return PackageDependenciesHelper.checkIfValid(this.manifestName, this.format);
   }
 
-  public async packageForService(): Promise<any> {
+  public async packageForService(): Promise<Array<CargoPackage>> {
     try {
-      let cargoUtils = new CargoUtils();
-      this.dependencies = await cargoUtils.getDependencyArray();
+      const cargoUtils = new CargoUtils();
+      const deps = await cargoUtils.getDependencyArray();
 
-      Promise.resolve();
+      return Promise.resolve(deps);
     }
-    catch (e) {
-      Promise.reject(e);
+    catch (ex) {
+      return Promise.reject(ex);
     }
   }
 }
