@@ -41,15 +41,14 @@ export class IqComponentModel implements ComponentModel {
     constructor(
       options: ComponentModelOptions
     ) {
-      
       this.dataSourceType = options.configuration.get("nexusExplorer.dataSource", "ossindex");
-      let url = options.configuration.get("nexusiq.url") + "";
-      let username = options.configuration.get("nexusiq.username") + "";
+      let url = options.configuration.get("nexusIQ.serverUrl") + "";
+      let username = options.configuration.get("nexusIQ.username") + "";
       let maximumEvaluationPollAttempts = parseInt(
-        options.configuration.get("nexusiq.maximumEvaluationPollAttempts") + "", 10);
-      this.applicationPublicId = options.configuration.get("nexusiq.applicationPublicId") + "";
-      let password = options.configuration.get("nexusiq.password") + "";
-      let strictSSL = options.configuration.get("nexusiq.strictSSL") as boolean;
+        options.configuration.get("nexusIQ.maximumEvaluationPollAttempts") + "", 10);
+      this.applicationPublicId = options.configuration.get("nexusIQ.applicationId") + "";
+      let password = options.configuration.get("nexusIQ.userPassword") + "";
+      let strictSSL = options.configuration.get("nexusIQ.strictSSL") as boolean;
       this.requestService = new IqRequestService(url, username, password, maximumEvaluationPollAttempts, strictSSL, options.logger);
       this.logger = options.logger;
     }
