@@ -23,17 +23,9 @@ export class RubyGemsPackage implements PackageType {
     readonly Hash?: string
   ) {}
 
-  public toCoordinates() {
-    return `${this.Name}:${this.Version}`;
-  }
-
   public toPurl() {
     let purl: PackageURL = new PackageURL("gem", "", this.Name, this.Version, {}, "");
     return purl.toString()
     // return `pkg:gem/${this.Name}@${this.Version}`;
-  }
-
-  public toCoordValueType(): string {
-    return `${this.Name} - ${this.Version}`;
   }
 }

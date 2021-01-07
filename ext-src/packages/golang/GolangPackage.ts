@@ -29,15 +29,7 @@ export class GolangPackage implements PackageType {
     }
   }
 
-  public toCoordinates() {
-    return `${this.Name}:${this.Version}`;
-  }
-
   public toPurl() {
     return `pkg:golang/${this.Name}@${this.Version}`.toLowerCase();
-  }
-
-  public toCoordValueType(): string {
-    return `${this.Name} - ${this.Version}`;
   }
 }

@@ -19,7 +19,7 @@ import { listInstalled } from 'list-installed';
 import { PackageJson } from 'type-fest';
 
 export class NpmUtils {
-  public async getDependencyArray(manifestType: string): Promise<Array<NpmPackage>> {
+  public async getDependencyArray(): Promise<Array<NpmPackage>> {
     try {
       let pkgs = await listInstalled(PackageDependenciesHelper.getWorkspaceRoot());
 
@@ -37,7 +37,12 @@ export class NpmUtils {
     let res: Array<NpmPackage> = new Array();
     for (let [name, packageJson] of pkgs.entries()) {
       if (packageJson.version && packageJson.name) {
-        res.push(new NpmPackage(packageJson.name, packageJson.version, ""));
+        let parts = packageJson.name!.split("/");
+        if (parts && parts.length > 1) {
+          res.push(new NpmPackage(parts[0], parts[1], packageJson.version, ""));
+          continue;
+        }
+        res.push(new NpmPackage(packageJson.name, "", packageJson.version, ""));
       }
     }
 

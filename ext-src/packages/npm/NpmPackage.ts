@@ -16,29 +16,15 @@
 import { PackageType } from '../PackageType';
 import { PackageURL } from 'packageurl-js';
 
-export class NpmPackage implements PackageType {
-  Hash: string;
-  Name: string;
-  Version: string;
-    
-  constructor(name: string, version: string, hash: string
-  ) {
-    this.Hash = hash;
-    this.Name = name;
-    this.Version = version;
-  }
-
-  public toCoordinates() {
-    return `${this.Name}@${this.Version}`;
-  }
+export class NpmPackage implements PackageType {    
+  constructor(
+    readonly Name: string, 
+    readonly Group: string,
+    readonly Version: string, 
+    readonly Hash: string) {}
 
   public toPurl() {
-    let purl: PackageURL = new PackageURL("npm", "", this.Name, this.Version, {}, "");
-    return purl.toString();
-    // return `pkg:npm/${this.Name.replace("@", "%40")}@${this.Version}`;
-  }
-
-  public toCoordValueType(): string {
-    return `${this.Name} - ${this.Version}`;
+    let purl: PackageURL = new PackageURL("npm", this.Group, this.Name, this.Version, {}, "");
+    return purl.toString().substr(0, purl.toString().length - 1);
   }
 }

@@ -33,8 +33,4 @@ export class PyPIPackage implements PackageType {
     let purl: PackageURL = new PackageURL("pypi", "", this.Name, this.Version, {"extension": this.Extension}, "");
     return purl.toString();
   }
-
-  public toCoordValueType(): string {
-    return `${this.Name} - ${this.Extension} - ${this.Qualifier} - ${this.Version}`;
-  }
 }

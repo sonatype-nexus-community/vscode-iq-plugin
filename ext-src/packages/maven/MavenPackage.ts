@@ -26,17 +26,9 @@ export class MavenPackage implements PackageType {
     readonly Hash?: string
   ) {}
 
-  public toCoordinates() {
-    return `${this.Group}:${this.Name}.${this.Extension}:${this.Version}`;
-  }
-
   public toPurl() {
     let purl: PackageURL = new PackageURL(
       "maven", this.Group, this.Name, this.Version, {"type": this.Extension}, "");
     return purl.toString();
-  }
-
-  public toCoordValueType(): string {
-    return `${this.Group}:${this.Name} - ${this.Version}`;
   }
 }
