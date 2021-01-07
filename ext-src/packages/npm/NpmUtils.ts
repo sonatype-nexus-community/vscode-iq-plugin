@@ -39,7 +39,7 @@ export class NpmUtils {
       if (packageJson.version && packageJson.name) {
         let parts = packageJson.name!.split("/");
         if (parts && parts.length > 1) {
-          res.push(new NpmPackage(parts[0], parts[1], packageJson.version, ""));
+          res.push(new NpmPackage(parts[1], parts[0], packageJson.version, ""));
           continue;
         }
         res.push(new NpmPackage(packageJson.name, "", packageJson.version, ""));
@@ -51,8 +51,10 @@ export class NpmUtils {
 
   private sortDependencyList(list: NpmPackage[]): NpmPackage[] {
     return list.sort((a, b) => {
-      if (a.Name > b.Name) { return 1; }
-      if (a.Name < b.Name) { return -1; }
+      let combineA = a.Group + a.Name;
+      let combineB = b.Group + b.Name;
+      if (combineA > combineB) { return 1; }
+      if (combineA < combineB) { return -1; }
       return 0;
     });
   }

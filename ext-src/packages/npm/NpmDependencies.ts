@@ -43,8 +43,9 @@ export class NpmDependencies implements PackageDependencies {
   public toComponentEntries(packages: Array<NpmPackage>): Map<string, ComponentEntry> {
     let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
+      const name = (pkg.Group != "") ? `${pkg.Group}/${pkg.Name}` : pkg.Name;
       let componentEntry = new ComponentEntry(
-        pkg.Name,
+        name,
         pkg.Version,
         "npm",
         ScanType.NexusIq
