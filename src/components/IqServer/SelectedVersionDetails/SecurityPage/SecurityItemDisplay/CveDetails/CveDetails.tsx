@@ -27,19 +27,65 @@ class CveDetails extends React.Component<Props, State> {
   public render() {
     return (
       <VersionsContextConsumer>
-        {context => context && context.vulnDetails && (
+        { context => context && context.vulnDetails && (
           <React.Fragment>
-            <h4>Detection</h4>
+            <h6>Issue</h6>
             <p>
-              <ReactMarkdown children={context.vulnDetails.detectionMarkdown} />
+              { context.vulnDetails.identifier }
             </p>
-            <h4>Explanation</h4>
+            <h6>Severity</h6>
+            { context.vulnDetails.severityScores.map((score) => (
+              <p>
+                { score.source + ": " + score.score }
+              </p>
+            ))}
+            <h6>Weakness</h6>
             <p>
-              <ReactMarkdown children={context.vulnDetails.explanationMarkdown} />
+              {context.vulnDetails.weakness.cweIds.map((weakness) => (
+                <React.Fragment>
+                  { context.vulnDetails!.weakness.cweSource + " CWE: " }
+                  <a 
+                    href={ weakness.uri } 
+                    target="_blank">
+                      { weakness.id }
+                    </a>
+                </React.Fragment>
+              ))}
             </p>
-            <h4>Recommendation</h4>
+            <h6>Source</h6>
             <p>
-              <ReactMarkdown children={context.vulnDetails.recommendationMarkdown} />
+              { context.vulnDetails.source.longName }
+            </p>
+            <h6>Categories</h6>
+            { context.vulnDetails.categories.map((val) => (
+              <p>
+                {val}
+              </p>
+            ))}
+            <h5>Detection</h5>
+            <p>
+              <ReactMarkdown children={ context.vulnDetails.detectionMarkdown } />
+            </p>
+            <h5>Explanation</h5>
+            <p>
+              <ReactMarkdown children={ context.vulnDetails.explanationMarkdown } />
+            </p>
+            <h5>Recommendation</h5>
+            <p>
+              <ReactMarkdown children={ context.vulnDetails.recommendationMarkdown } />
+            </p>
+            <h6>Advisories</h6>
+            { context.vulnDetails.advisories.map((advisory) => (
+              <p>
+                { advisory.referenceType + ": " } <a href={ advisory.url } target="_blank">{ advisory.url }</a>
+              </p>
+            ))}
+            <h6>CVSS Details</h6>
+            <p>
+              { context.vulnDetails.mainSeverity.source + ": " + context.vulnDetails.mainSeverity.score}
+            </p>
+            <p>
+              CVSS Vector: { context.vulnDetails.mainSeverity.vector }
             </p>
           </React.Fragment>
         )}
