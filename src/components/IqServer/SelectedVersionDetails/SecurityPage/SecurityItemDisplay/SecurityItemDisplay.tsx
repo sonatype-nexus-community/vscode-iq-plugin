@@ -28,8 +28,8 @@ type State = {
 
 type Props = {
   securityIssue: any,
-  nexusArtifact: any,
-  remediationEvent: (nexusArtifact: any, cve: string) => void
+  packageUrl: string,
+  remediationEvent: (packageUrl: string, vulnID: string) => void
 }
 
 class SecurityItemDisplay extends React.Component<Props, State> {
@@ -39,7 +39,7 @@ class SecurityItemDisplay extends React.Component<Props, State> {
         <Accordion.Toggle 
           as={Card.Header} 
           eventKey={this.props.securityIssue.reference} 
-          onClick={this.props.remediationEvent.bind(this, this.props.nexusArtifact, this.props.securityIssue.reference)}
+          onClick={this.props.remediationEvent.bind(this, this.props.packageUrl, this.props.securityIssue.reference)}
           >
           { this.props.securityIssue.reference } <FaChevronRight /> 
           <Badge 

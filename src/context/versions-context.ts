@@ -15,6 +15,7 @@
  */
 import * as React from 'react';
 import { ExtScanType } from '../utils/ExtScanType';
+import { VulnerabilityResponse } from './VulnerabilityResponse';
 
 export interface VersionsContextInterface {
   scanType?: ExtScanType,
@@ -24,7 +25,7 @@ export interface VersionsContextInterface {
   selectedVersion: string,
   initialVersion: string,
   remediation?: any,
-  cvedetails?: any,
+  vulnDetails?: VulnerabilityResponse | undefined,
   policyViolations?: any[],
   handleGetRemediation(o: any, s: string): void
 }

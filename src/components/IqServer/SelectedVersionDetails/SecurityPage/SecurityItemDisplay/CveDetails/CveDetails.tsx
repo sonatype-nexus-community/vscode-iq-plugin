@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import * as React from 'react';
+import ReactMarkdown from 'react-markdown';
 import { VersionsContextConsumer } from '../../../../../../context/versions-context';
 
 type Props = {
@@ -24,11 +25,23 @@ type State = {
 
 class CveDetails extends React.Component<Props, State> {
   public render() {
-    console.debug("CVE Details section rendering");
     return (
       <VersionsContextConsumer>
-        {context => context && context.cvedetails && (
-          <div dangerouslySetInnerHTML={{ __html: context.cvedetails.htmlDetails }} />
+        {context => context && context.vulnDetails && (
+          <React.Fragment>
+            <h4>Detection</h4>
+            <p>
+              <ReactMarkdown children={context.vulnDetails.detectionMarkdown} />
+            </p>
+            <h4>Explanation</h4>
+            <p>
+              <ReactMarkdown children={context.vulnDetails.explanationMarkdown} />
+            </p>
+            <h4>Recommendation</h4>
+            <p>
+              <ReactMarkdown children={context.vulnDetails.recommendationMarkdown} />
+            </p>
+          </React.Fragment>
         )}
       </VersionsContextConsumer>
     );

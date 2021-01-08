@@ -22,6 +22,7 @@ import { VersionsContextProvider } from "./context/versions-context";
 import { OssIndexContextProvider } from "./context/ossindex-context";
 import { ExtScanType } from "./utils/ExtScanType";
 import OssIndexVersionDetails from "./components/OssIndex/OssIndexVersionDetails/OssIndexVersionDetails";
+import { VulnerabilityResponse } from "./context/VulnerabilityResponse";
 
 // add workarounds to call VSCode
 declare var acquireVsCodeApi: any;
@@ -39,7 +40,7 @@ type AppState = {
   initialVersion: string;
   remediation?: any;
   policyViolations?: any[];
-  cvedetails?: any;
+  vulnDetails?: VulnerabilityResponse | undefined;
   handleGetRemediation(o: any, s: string): void;
 };
 
@@ -56,7 +57,7 @@ class App extends React.Component<AppProps, AppState> {
       initialVersion: "",
       remediation: undefined,
       policyViolations: undefined,
-      cvedetails: undefined,
+      vulnDetails: undefined,
       handleGetRemediation: this.handleGetRemediation.bind(this)
     };
   }
@@ -75,19 +76,18 @@ class App extends React.Component<AppProps, AppState> {
     });
   }
 
-  public handleGetRemediation(nexusArtifact: any, cve: string): void {
-    console.debug("App received remediation request", nexusArtifact);
+  public handleGetRemediation(packageUrl: string, vulnID: string): void {
+    console.debug("App received remediation request", packageUrl);
     this.setState({ remediation: undefined });
 
     vscode.postMessage({
       command: "getRemediation",
-      nexusArtifact: nexusArtifact
+      packageUrl: packageUrl
     });
 
     vscode.postMessage({
-      command: "getCVEDetails",
-      cve: cve,
-      nexusArtifact: nexusArtifact
+      command: "getVulnDetails",
+      vulnID: vulnID
     });
   }
 
@@ -181,11 +181,11 @@ class App extends React.Component<AppProps, AppState> {
             break;
           }
           console.debug(
-            "allVersions updtating state component, componentIdentifier",
+            "allVersions updating state component, componentIdentifier",
             this.state.component
           );
           console.debug(
-            "allVersions updtating componentIdentifier",
+            "allVersions updating componentIdentifier",
             message.allversions[0].component.componentIdentifier.coordinates
           );
           this.setState({ allVersions: message.allversions });
@@ -197,9 +197,11 @@ class App extends React.Component<AppProps, AppState> {
           );
           this.setState({ remediation: message.remediation.remediation });
           break;
-        case "cveDetails":
-          console.debug("App handling cveDetails message", message.cvedetails);
-          this.setState({ cvedetails: message.cvedetails });
+        case "vulnDetails":
+          console.debug("App handling vulnerability details message", message.vulnDetails);
+          this.setState({ 
+            vulnDetails: message.vulnDetails
+          });
           break;
       }
     });
