@@ -34,14 +34,14 @@ class CveDetails extends React.Component<Props, State> {
               { context.vulnDetails.identifier }
             </p>
             <h6>Severity</h6>
-            { context.vulnDetails.severityScores.map((score) => (
+            { context.vulnDetails.severityScores && context.vulnDetails.severityScores.map((score) => (
               <p>
                 { score.source + ": " + score.score }
               </p>
             ))}
             <h6>Weakness</h6>
             <p>
-              {context.vulnDetails.weakness.cweIds.map((weakness) => (
+              { context.vulnDetails.weakness && context.vulnDetails.weakness.cweIds && context.vulnDetails.weakness.cweIds.map((weakness) => (
                 <React.Fragment>
                   { context.vulnDetails!.weakness.cweSource + " CWE: " }
                   <a 
@@ -75,7 +75,7 @@ class CveDetails extends React.Component<Props, State> {
               <ReactMarkdown children={ context.vulnDetails.recommendationMarkdown } />
             </p>
             <h6>Advisories</h6>
-            { context.vulnDetails.advisories.map((advisory) => (
+            { context.vulnDetails.advisories && context.vulnDetails.advisories.map((advisory) => (
               <p>
                 { advisory.referenceType + ": " } <a href={ advisory.url } target="_blank">{ advisory.url }</a>
               </p>
