@@ -24,8 +24,7 @@ export class RubyGemsPackage implements PackageType {
   ) {}
 
   public toPurl() {
-    let purl: PackageURL = new PackageURL("gem", "", this.Name, this.Version, {}, "");
-    return purl.toString()
-    // return `pkg:gem/${this.Name}@${this.Version}`;
+    let purl: PackageURL = new PackageURL("gem", undefined, this.Name, this.Version, {"platform": "ruby"}, undefined);
+    return purl.toString();
   }
 }

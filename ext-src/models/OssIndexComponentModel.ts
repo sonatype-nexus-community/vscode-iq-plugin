@@ -88,7 +88,7 @@ export class OssIndexComponentModel implements ComponentModel {
               let name = (purl.namespace) ? purl.namespace + " : " + purl.name : purl.name;
               let format = purl.type;
               let version = purl.version;
-              let componentEntry = new ComponentEntry(name, version, format, ScanType.OssIndex);
+              let componentEntry = new ComponentEntry(name, version!, format, ScanType.OssIndex);
               componentEntry.ossIndexData = x;
               return componentEntry;
             });
