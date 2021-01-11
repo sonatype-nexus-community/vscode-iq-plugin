@@ -24,6 +24,8 @@ import { ThirdPartyAPIResponse } from './ThirdPartyApiResponse';
 import { ComponentDetails } from './ComponentDetails';
 import { ReportResponse } from './ReportResponse';
 import { PackageURL } from 'packageurl-js';
+import { VulnerabilityResponse } from './VulnerabilityResponse';
+import { RemediationResponse } from './RemediationResponse';
 
 export class IqRequestService implements RequestService {
   readonly evaluationPollDelayMs = 2000;
@@ -242,11 +244,12 @@ export class IqRequestService implements RequestService {
       });
   }
 
-  public async getRemediation(nexusArtifact: any) {
+  public async getRemediation(purl: string): Promise<RemediationResponse> {
+    this.logger.log(LogLevel.TRACE, `Begin Get Remediation: ${purl}`);
+
     return new Promise((resolve, reject) => {
-      this.logger.log(LogLevel.TRACE, `Begin Get Remediation`);
-      var requestdata = nexusArtifact.component;
-      this.logger.log(LogLevel.TRACE, `Begin Sending Request Data`);
+      const request = { packageUrl: purl };
+
       let url = `${this.url}/api/v2/components/remediation/application/${this.applicationId}`;
 
       fetch(
@@ -254,54 +257,70 @@ export class IqRequestService implements RequestService {
         {
           method: 'POST',
           headers: this.getHeadersWithApplicationJsonContentType(),
-          body: JSON.stringify(requestdata),
+          body: JSON.stringify(request),
           agent: this.agent
         }).then(async (res) => {
           if (res.ok) {
-            resolve(await res.json());
+            let remediation: RemediationResponse = await res.json();
+            resolve(remediation);
             return;
           }
+          let body = await res.text();
+          this.logger.log(
+            LogLevel.ERROR,
+            `Non 200 response attempting to get remediation details: ${purl}`,
+            request,
+            body,
+            url
+          );
           reject(res.status);
           return;
         }).catch((ex) => {
+          this.logger.log(
+            LogLevel.ERROR,
+            `General error attempting to get remediation details: ${purl}`,
+            request,
+            ex,
+            url
+          );
           reject(ex);
         });
     });
   }
 
-  public async getCVEDetails(cve: any, nexusArtifact: any) {
-    return new Promise((resolve, reject) => {
-      this.logger.log(LogLevel.TRACE, `Begin Get CVE Details`);
-      let timestamp = Date.now();
-      let hash = nexusArtifact.component.hash;
-      let componentIdentifier = this.encodeComponentIdentifier(
-        nexusArtifact.component.componentIdentifier
-      );
-      let vulnerability_source;
-      if (cve.search("sonatype") >= 0) {
-        vulnerability_source = "sonatype";
-      } else {
-        vulnerability_source = "cve";
-      }
-      let url = `${this.url}/rest/vulnerability/details/${vulnerability_source}/${cve}?componentIdentifier=${componentIdentifier}&hash=${hash}&timestamp=${timestamp}`;
+  public async getVulnerabilityDetails(vulnID: string): Promise<VulnerabilityResponse> {
+    let url = `${this.url}/api/v2/vulnerabilities/${vulnID}`;
 
+    return new Promise((resolve, reject) => {
       fetch(
         url,
         {
           method: 'GET',
-          headers: this.getHeaders(),
-          agent: this.agent
+          agent: this.agent,
+          headers: this.getHeaders()
         }).then(async (res) => {
           if (res.ok) {
-            resolve(await res.json());
+            let body: VulnerabilityResponse = await res.json();
+            resolve(body);
             return;
           }
+          let body = await res.text();
+          this.logger.log(
+            LogLevel.ERROR, 
+            `Non 200 response attempting to get vuln details: ${vulnID}`,
+            body,
+            url);
           reject(res.status);
           return;
         }).catch((ex) => {
+          this.logger.log(
+            LogLevel.ERROR, 
+            `General error attempting to get vuln details: ${vulnID}`,
+            ex,
+            url);
           reject(ex);
-        });
-    });
+        })
+    })
   }
 
   public async getAllVersions(purl: PackageURL): Promise<Array<string>> {
@@ -346,6 +365,11 @@ export class IqRequestService implements RequestService {
   }
 
   public async getAllVersionDetails(versions: Array<string>, purl: PackageURL): Promise<ComponentDetails> {
+    this.logger.log(LogLevel.TRACE, 
+      `Begin Get All Version Details: ${purl.toString()}`, 
+      purl, 
+      versions);
+
     let url = `${this.url}/api/v2/components/details`;
 
     return new Promise((resolve, reject) => {
@@ -391,8 +415,10 @@ export class IqRequestService implements RequestService {
   }
 
   public async showSelectedVersion(purl: string): Promise<ComponentDetails> {
+    this.logger.log(LogLevel.TRACE, 
+      `Begin Show Selected Version: ${purl}`);
+
     return new Promise((resolve, reject) => {
-      this.logger.log(LogLevel.TRACE, `Begin Show Selected Version`);
       let url = `${this.url}/api/v2/components/details`;
 
       let request: ComponentDetailsRequest = {components: []};
@@ -429,12 +455,6 @@ export class IqRequestService implements RequestService {
           reject(ex);
         });
     });
-  }
-
-  private encodeComponentIdentifier(componentIdentifier: string) {
-    let actual = encodeURIComponent(JSON.stringify(componentIdentifier));
-    this.logger.log(LogLevel.TRACE, `Actual: ${actual}`); 
-    return actual;
   }
 
   private getHeadersWithApplicationXmlContentType(): Headers {

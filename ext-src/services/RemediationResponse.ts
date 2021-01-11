@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PackageType } from "../PackageType";
-import { PackageURL } from 'packageurl-js';
+import { ComponentRequestEntry } from "../types/ComponentRequestEntry";
 
-export class ComposerPackage implements PackageType {
-  constructor(
-    readonly Name: string,
-    readonly Group: string,
-    readonly Version: string,
-    readonly Hash?: string
-  ) {}
+export interface RemediationResponse {
+    remediation: VersionChanges;
+}
 
-  public toPurl(): string {
-    let purl: PackageURL = new PackageURL(
-      "composer", this.Group, this.Name, this.Version, undefined, undefined);
-    return purl.toString();
-  }
+export interface VersionChanges {
+    versionChanges: Change[];
+}
+
+export interface Change {
+    type: string;
+    data: ComponentContainer;
+}
+
+export interface ComponentContainer {
+    component: ComponentRequestEntry;
 }
