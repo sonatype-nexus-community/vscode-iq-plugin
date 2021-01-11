@@ -27,12 +27,4 @@ export class CargoPackage implements PackageType {
     let purl: PackageURL = new PackageURL("cargo", "", this.Name, this.Version, {}, "");
     return purl.toString().substring(0, purl.toString().length - 1);
   }
-
-  public toCoordinates(): string {
-    return `${this.Name}:${this.Version}`;
-  }
-
-  public toCoordValueType(): string {
-    return `${this.Name} - ${this.Version}`;
-  }
 }

@@ -16,7 +16,6 @@
 import { MavenPackage } from "./MavenPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { MavenCoordinate } from "./MavenCoordinate";
 import { MavenUtils } from "./MavenUtils";
 import { ScanType } from "../../types/ScanType";
 import { ComponentEntry } from "../../models/ComponentEntry";
@@ -36,14 +35,8 @@ export class MavenDependencies extends PackageDependenciesHelper implements Pack
         "maven",
         ScanType.NexusIq
       );
-      let coordinates = new MavenCoordinate(
-        pkg.Name,
-        pkg.Group,
-        pkg.Version,
-        pkg.Extension
-      );
       map.set(
-        coordinates.asCoordinates(),
+        pkg.toPurl(),
         componentEntry
       );
     }

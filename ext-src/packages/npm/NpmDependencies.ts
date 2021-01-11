@@ -15,7 +15,6 @@
  */
 import { NpmPackage } from "./NpmPackage";
 import { PackageDependencies } from "../PackageDependencies";
-import { NpmCoordinate } from "./NpmCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { NpmUtils } from './NpmUtils';
 import { ScanType } from "../../types/ScanType";
@@ -28,7 +27,7 @@ export class NpmDependencies implements PackageDependencies {
   public async packageForIq(): Promise<Array<NpmPackage>> {
     try {
       const npmUtils = new NpmUtils();
-      const deps = await npmUtils.getDependencyArray(this.scanType);
+      const deps = await npmUtils.getDependencyArray();
       return Promise.resolve(deps);
     }
     catch (e) {
@@ -44,18 +43,15 @@ export class NpmDependencies implements PackageDependencies {
   public toComponentEntries(packages: Array<NpmPackage>): Map<string, ComponentEntry> {
     let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
+      const name = (pkg.Group != "") ? `${pkg.Group}/${pkg.Name}` : pkg.Name;
       let componentEntry = new ComponentEntry(
-        pkg.Name,
+        name,
         pkg.Version,
         "npm",
         ScanType.NexusIq
       );
-      let coordinates = new NpmCoordinate(
-        pkg.Name,
-        pkg.Version
-      );
       map.set(
-        coordinates.asCoordinates(),
+        pkg.toPurl(),
         componentEntry
       );
     }

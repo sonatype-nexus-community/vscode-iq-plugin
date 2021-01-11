@@ -145,13 +145,14 @@ export class IqComponentModel implements ComponentModel {
 
                 progress.report({message: "Morphing results into something usable", increment: 90});
 
-                for (let resultEntry of results.components) {                   
-                  let componentEntry = this.coordsToComponent.get(
-                    ComponentEntryConversions.ConvertToComponentEntry(
-                      resultEntry.componentIdentifier.format, 
-                      resultEntry.componentIdentifier.coordinates
-                      )
-                  );
+                for (let resultEntry of results.components) {
+                  let purl = resultEntry.packageUrl;
+                  if (resultEntry.componentIdentifier.format == 'golang' && resultEntry.packageUrl.includes("incompatible")) {
+                    purl = purl.replace("%20", "+");
+                    resultEntry.packageUrl = purl;
+                  }
+
+                  let componentEntry = this.coordsToComponent.get(purl);
 
                   if (componentEntry != undefined) {
                     componentEntry!.policyViolations = resultEntry.violations;

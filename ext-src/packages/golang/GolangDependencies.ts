@@ -15,7 +15,6 @@
  */
 import { GolangPackage } from "./GolangPackage";
 import { PackageDependencies } from "../PackageDependencies";
-import { GolangCoordinate } from "./GolangCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { GolangUtils } from "./GolangUtils";
 import { ScanType } from "../../types/ScanType";
@@ -39,12 +38,8 @@ export class GolangDependencies extends PackageDependenciesHelper implements Pac
         "golang",
         ScanType.NexusIq
       );
-      let coordinates = new GolangCoordinate(
-        pkg.Name,
-        pkg.Version
-      );
       map.set(
-        coordinates.asCoordinates(),
+        pkg.toPurl(),
         componentEntry
       );
     }

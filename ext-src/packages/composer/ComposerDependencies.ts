@@ -16,7 +16,6 @@
 import { ComposerPackage } from "./ComposerPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../models/ComponentEntry";
-import { ComposerCoordinate } from "./ComposerCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { ScanType } from "../../types/ScanType";
 import { ComposerUtils } from "./ComposerUtils";
@@ -39,13 +38,8 @@ export class ComposerDependencies extends PackageDependenciesHelper implements P
         "composer",
         ScanType.NexusIq
       );
-      let coordinates = new ComposerCoordinate(
-        pkg.Name,
-        pkg.Group,
-        pkg.Version
-      );
       map.set(
-        coordinates.asCoordinates(),
+        pkg.toPurl(),
         componentEntry
       );
     }
