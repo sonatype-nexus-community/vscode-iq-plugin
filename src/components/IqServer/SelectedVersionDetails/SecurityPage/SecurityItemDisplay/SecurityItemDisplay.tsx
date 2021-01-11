@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import { FaChevronRight } from 'react-icons/fa';
-import Table from 'react-bootstrap/Table';
 import Badge from 'react-bootstrap/Badge';
-import Accordion from 'react-bootstrap/Accordion';
-import Card from 'react-bootstrap/Card';
 import ClassNameUtils from '../../../../../utils/ClassNameUtils';
 import Remediation from './Remediation/Remediation';
 import CveDetails from './CveDetails/CveDetails';
+import { 
+  NxAccordion, 
+  NxTable, 
+  NxTableRow, 
+  NxTableBody, 
+  NxTableCell } from '@sonatype/react-shared-components';
 
 type State = {
+  open: boolean
 }
 
 type Props = {
@@ -33,59 +36,89 @@ type Props = {
 }
 
 class SecurityItemDisplay extends React.Component<Props, State> {
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      open: false
+    }
+  }
+
+  dispatchRemedation = () => {
+    this.setState({
+      open: !this.state.open
+    });
+
+    this.props.remediationEvent(this.props.nexusArtifact, this.props.securityIssue);
+  }
+
   public render() {
     return (
-      <Card>
-        <Accordion.Toggle 
-          as={Card.Header} 
-          eventKey={this.props.securityIssue.reference} 
-          onClick={this.props.remediationEvent.bind(this, this.props.nexusArtifact, this.props.securityIssue.reference)}
-          >
-          { this.props.securityIssue.reference } <FaChevronRight /> 
-          <Badge 
-            className={ClassNameUtils.threatClassName(this.props.securityIssue.severity)}>
-              CVSS: {this.props.securityIssue.severity}
-          </Badge>
-        </Accordion.Toggle>
-        <Accordion.Collapse eventKey={this.props.securityIssue.reference}>
-          <Card.Body>
-            <Table>
-              <tbody>
-                <tr>
-                  <td>Severity:</td>
-                  <td><Badge className={ClassNameUtils.threatClassName(this.props.securityIssue.severity)}>{this.props.securityIssue.severity}</Badge></td>
-                </tr>
-                <tr>
-                  <td>Source:</td>
-                  <td>{this.props.securityIssue.source}</td>
-                </tr>
-                <tr>
-                  <td>Threat Category:</td>
-                  <td>{this.props.securityIssue.threatCategory}</td>
-                </tr>
-                <tr>
-                  <td>URL:</td>
-                  <td>
-                    { this.props.securityIssue.url != "" &&
-                    <a href={this.props.securityIssue.url}>{this.props.securityIssue.url}</a>
-                    }
-                  </td>
-                </tr>
-                <tr>
-                  <td colSpan={2}>
-                    <CveDetails />
-                  </td>
-                </tr>
-                <tr>
-                  <td colSpan={2}>
-                    <Remediation />
-                  </td>
-                </tr>
-              </tbody>
-            </Table>
-          </Card.Body>
-        </Accordion.Collapse>
-      </Card>
+      <NxAccordion open={ this.state.open } onToggle={ this.dispatchRemedation }>
+        <NxAccordion.Header>
+          <h2 className="nx-accordion__header-title">
+            { this.props.securityIssue.reference }
+          </h2>
+          <div className="nx-btn-bar">
+            <Badge 
+              className={ClassNameUtils.threatClassName(this.props.securityIssue.severity)}>
+                CVSS: {this.props.securityIssue.severity}
+            </Badge>
+          </div>
+        </NxAccordion.Header>
+        <NxTable>
+          <NxTableBody>
+            <NxTableRow>
+              <NxTableCell>
+                Severity
+              </NxTableCell>
+              <NxTableCell>
+                <Badge 
+                  className={ClassNameUtils.threatClassName(this.props.securityIssue.severity)}
+                  >
+                    {this.props.securityIssue.severity}
+                </Badge>
+              </NxTableCell>
+            </NxTableRow>
+            <NxTableRow>
+              <NxTableCell>
+                Source
+              </NxTableCell>
+              <NxTableCell>
+                {this.props.securityIssue.source}
+              </NxTableCell>
+            </NxTableRow>
+            <NxTableRow>
+              <NxTableCell>
+                Threat Category
+              </NxTableCell>
+              <NxTableCell>
+                {this.props.securityIssue.threatCategory}
+              </NxTableCell>
+            </NxTableRow>
+            <NxTableRow>
+              <NxTableCell>
+                URL
+              </NxTableCell>
+              <NxTableCell>
+                { this.props.securityIssue.url != "" &&
+                  <a href={this.props.securityIssue.url}>{this.props.securityIssue.url}</a>
+                }
+              </NxTableCell>
+            </NxTableRow>
+            <NxTableRow>
+              <NxTableCell colSpan={2}>
+                <CveDetails />
+              </NxTableCell>
+            </NxTableRow>
+            <NxTableRow>
+              <NxTableCell colSpan={2}>
+                <Remediation />
+              </NxTableCell>
+            </NxTableRow>
+          </NxTableBody>
+        </NxTable>
+      </NxAccordion>
     );
   }
 }

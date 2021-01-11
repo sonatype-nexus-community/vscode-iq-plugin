@@ -13,26 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
-import { VersionsContextConsumer } from '../../../../../../context/versions-context';
+import React, { useContext } from 'react';
+import { VersionsContext, VersionsContextInterface } from '../../../../../../context/versions-context';
 
-type Props = {
-}
+const CveDetails = () => {
 
-type State = {
-}
+  const versionsContext = useContext(VersionsContext);
 
-class CveDetails extends React.Component<Props, State> {
-  public render() {
-    console.debug("CVE Details section rendering");
-    return (
-      <VersionsContextConsumer>
-        {context => context && context.cvedetails && (
-          <div dangerouslySetInnerHTML={{ __html: context.cvedetails.htmlDetails }} />
-        )}
-      </VersionsContextConsumer>
-    );
+  const renderVulnerability = (versionsContext: VersionsContextInterface | undefined) => {
+    if (versionsContext && versionsContext.cvedetails) {
+      return <div dangerouslySetInnerHTML={{ __html: versionsContext.cvedetails.htmlDetails }} />
+    }
+    return null;
   }
+
+  return (
+    renderVulnerability(versionsContext)
+  )
 }
 
 export default CveDetails;

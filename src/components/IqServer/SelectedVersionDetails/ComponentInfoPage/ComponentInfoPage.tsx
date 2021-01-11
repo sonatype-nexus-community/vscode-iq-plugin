@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import Table from 'react-bootstrap/Table';
 import { VersionsContextConsumer } from '../../../../context/versions-context';
+import { 
+  NxTable, 
+  NxTableHead, 
+  NxTableRow, 
+  NxTableCell, 
+  NxTableBody } 
+  from '@sonatype/react-shared-components';
 
 type CipProps = {
 };
@@ -41,41 +47,71 @@ class ComponentInfoPage extends React.Component<CipProps, CipState> {
     return (
       <VersionsContextConsumer>
         {context => context && context.selectedVersionDetails && (
-          <Table>
-          <thead>
-            <tr>
-              <th colSpan={2}>
-                <h2>{context.selectedVersionDetails.component.packageUrl}</h2>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="cipInfoLabel">Package</td>
-              <td>{context.selectedVersionDetails.component.componentIdentifier.coordinates.packageId}</td>
-            </tr>
-            <tr>
-              <td className="cipInfoLabel">Version</td>
-              <td><span id="version">{context.selectedVersionDetails.component.componentIdentifier.coordinates.version}</span></td>
-            </tr>
-            <tr>
-              <td className="cipInfoLabel">Hash</td>
-              <td>{context.selectedVersionDetails.component.hash}</td>
-            </tr>
-            <tr>
-              <td className="cipInfoLabel">Match State</td>
-              <td>{context.selectedVersionDetails.matchState}</td>
-            </tr>
-            <tr>
-              <td className="cipInfoLabel">Catalog Date</td>
-              <td><span id="catalogdate">{ this.formatDate(context.selectedVersionDetails.catalogDate) }</span></td>
-            </tr>
-            <tr>
-              <td className="cipInfoLabel">Relative Popularity</td>                
-              <td><span id="relativepopularity">{context.selectedVersionDetails.relativePopularity}</span></td>
-            </tr>
-          </tbody>
-        </Table>		
+          <NxTable>
+            <NxTableHead>
+              <NxTableRow>
+                <NxTableCell colSpan={2}>
+                  <h2>{ context.selectedVersionDetails.component.packageUrl }</h2>
+                </NxTableCell>
+              </NxTableRow>
+            </NxTableHead>
+            <NxTableBody>
+              <NxTableRow>
+                <NxTableCell>
+                  Package
+                </NxTableCell>
+                <NxTableCell>
+                  { context.selectedVersionDetails.component.componentIdentifier.coordinates.packageId }
+                </NxTableCell>
+              </NxTableRow>
+              <NxTableRow>
+                <NxTableCell>
+                  Hash
+                </NxTableCell>
+                <NxTableCell>
+                  { context.selectedVersionDetails.component.hash }
+                </NxTableCell>
+              </NxTableRow>
+              <NxTableRow>
+                <NxTableCell>
+                  Version
+                </NxTableCell>
+                <NxTableCell>
+                  <span id="version">
+                    { context.selectedVersionDetails.component.componentIdentifier.coordinates.version }
+                  </span>
+                </NxTableCell>
+              </NxTableRow>
+              <NxTableRow>
+                <NxTableCell>
+                  Match State
+                </NxTableCell>
+                <NxTableCell>
+                  { context.selectedVersionDetails.matchState }
+                </NxTableCell>
+              </NxTableRow>
+              <NxTableRow>
+                <NxTableCell>
+                  Catalog Date
+                </NxTableCell>
+                <NxTableCell>
+                  <span id="catalogdate">
+                    { this.formatDate(context.selectedVersionDetails.catalogDate) }
+                  </span>
+                </NxTableCell>
+              </NxTableRow>
+              <NxTableRow>
+                <NxTableCell>
+                  Relative Popularity
+                </NxTableCell>
+                <NxTableCell>
+                  <span id="relativepopularity">
+                    { context.selectedVersionDetails.relativePopularity }
+                  </span>
+                </NxTableCell>
+              </NxTableRow>
+            </NxTableBody>
+          </NxTable>
         )}
       </VersionsContextConsumer>	
     );

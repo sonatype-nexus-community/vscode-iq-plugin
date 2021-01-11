@@ -278,7 +278,7 @@ export class IqRequestService implements RequestService {
         nexusArtifact.component.componentIdentifier
       );
       let vulnerability_source;
-      if (cve.search("sonatype") >= 0) {
+      if (cve.source("sonatype") >= 0) {
         vulnerability_source = "sonatype";
       } else {
         vulnerability_source = "cve";

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import * as React from 'react';
+import { NxTableRow, NxTableCell } from '@sonatype/react-shared-components';
 
 type Props = {
   licenseData: any
@@ -25,14 +26,14 @@ type State = {
 class LicensingDisplay extends React.Component<Props, State> {
   public render() {
     return (
-      <tr>
-        <td>
-          Id: {this.props.licenseData.licenseId}
-        </td>
-        <td>
-          Name: {this.props.licenseData.licenseName}
-        </td>
-      </tr>
+      <NxTableRow>
+        <NxTableCell>
+          ID: { this.props.licenseData.licenseId }
+        </NxTableCell>
+        <NxTableCell>
+          Name: { this.props.licenseData.licenseName }
+        </NxTableCell>
+      </NxTableRow>
     );
   }
 }
