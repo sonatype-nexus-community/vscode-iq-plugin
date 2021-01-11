@@ -21,7 +21,6 @@ import { PyPIDependencies } from '../pypi/PyPIDependencies';
 import { ScanType } from "../../types/ScanType";
 import { PoetryUtils } from "./PoetryUtils";
 import { PyPIPackage } from '../pypi/PyPIPackage';
-import { PyPICoordinate } from "../pypi/PyPICoordinate";
 
 export class PoetryDependencies extends PyPIDependencies implements PackageDependencies {
 
@@ -42,14 +41,8 @@ export class PoetryDependencies extends PyPIDependencies implements PackageDepen
         "pypi",
         ScanType.NexusIq
       );
-      let coordinates = new PyPICoordinate(
-        pkg.Name,
-        pkg.Version,
-        pkg.Extension,
-        pkg.Qualifier
-      );
       map.set(
-        coordinates.asCoordinates(),
+        pkg.toPurl(),
         componentEntry
       );
     }

@@ -16,7 +16,6 @@
 import { CargoPackage } from "./CargoPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../models/ComponentEntry";
-import { CargoCoordinate } from "./CargoCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { ScanType } from "../../types/ScanType";
 import { CargoUtils } from "./CargoUtils";
@@ -39,12 +38,8 @@ export class CargoDependencies extends PackageDependenciesHelper implements Pack
         "cargo",
         ScanType.NexusIq
       );
-      let coordinates = new CargoCoordinate(
-        pkg.Name,
-        pkg.Version
-      );
       map.set(
-        coordinates.asCoordinates(),
+        pkg.toPurl(),
         componentEntry
       );
     }

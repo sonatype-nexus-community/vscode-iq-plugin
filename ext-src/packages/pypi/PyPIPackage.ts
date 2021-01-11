@@ -25,10 +25,6 @@ export class PyPIPackage implements PackageType {
     readonly Hash?: string
   ) {}
 
-  public toCoordinates() {
-    return `${this.Name}:${this.Extension}:${this.Qualifier}:${this.Version}`;
-  }
-
   public toPurl() {
     let purl: PackageURL = new PackageURL(
       "pypi", undefined, this.Name, this.Version, {"extension": this.Extension}, undefined);

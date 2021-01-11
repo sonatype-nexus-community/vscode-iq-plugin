@@ -22,7 +22,5 @@ export interface PackageType {
   Group?: string;
   Hash?: string;
   Extension?: string;
-  toCoordinates(): string;
   toPurl(): string;
-  toCoordValueType(coordinate: CoordinateType): string;
 }

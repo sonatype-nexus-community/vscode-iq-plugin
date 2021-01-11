@@ -101,9 +101,9 @@ export class MavenUtils {
                 version,
                 extension
               );
-              if (!dependencyListString.has(dependencyObject.toCoordinates()))
+              if (!dependencyListString.has(dependencyObject.toPurl()))
               {
-                dependencyListString.add(dependencyObject.toCoordinates())
+                dependencyListString.add(dependencyObject.toPurl())
                 dependencyList.push(dependencyObject);
               }
             } else {

@@ -89,10 +89,12 @@ export class GolangUtils {
     dependencyLines.forEach((dep, index) => {
       if (index > 0 && dep != "") {
         const dependencyParts: string[] = dep.trim().split(" ");
-        const name: string = dependencyParts[0];
+        const fullName: string = dependencyParts[0];
         const version: string = dependencyParts[1];
-
-        dependencyList.push(new GolangPackage(name, version));
+        dependencyList.push(
+          new GolangPackage(
+            fullName, 
+            version));
       }
     });
 

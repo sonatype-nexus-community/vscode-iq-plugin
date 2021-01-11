@@ -32,7 +32,7 @@ export class NpmLiteDependencies implements LitePackageDependencies {
   public async packageForService(): Promise<Array<NpmPackage>> {
     try {
       const npmUtils = new NpmUtils();
-      const deps = await npmUtils.getDependencyArray(this.scanType);
+      const deps = await npmUtils.getDependencyArray();
 
       return Promise.resolve(deps);
     }

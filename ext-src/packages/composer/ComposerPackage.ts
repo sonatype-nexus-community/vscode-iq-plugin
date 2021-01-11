@@ -29,12 +29,4 @@ export class ComposerPackage implements PackageType {
       "composer", this.Group, this.Name, this.Version, undefined, undefined);
     return purl.toString();
   }
-
-  public toCoordinates(): string {
-    return `${this.Group}:${this.Name}:${this.Version}`;
-  }
-
-  public toCoordValueType(): string {
-    return `${this.Group}:${this.Name} - ${this.Version}`;
-  }
 }

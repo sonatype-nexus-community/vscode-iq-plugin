@@ -28,12 +28,4 @@ export class CargoPackage implements PackageType {
       "cargo", undefined, this.Name, this.Version, undefined, undefined);
     return purl.toString();
   }
-
-  public toCoordinates(): string {
-    return `${this.Name}:${this.Version}`;
-  }
-
-  public toCoordValueType(): string {
-    return `${this.Name} - ${this.Version}`;
-  }
 }
