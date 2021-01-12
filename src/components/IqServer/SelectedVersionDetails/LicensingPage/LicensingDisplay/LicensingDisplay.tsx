@@ -14,28 +14,30 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import { NxTableRow, NxTableCell } from '@sonatype/react-shared-components';
+import { 
+  NxTableRow, 
+  NxTableCell } from '@sonatype/react-shared-components';
 
-type Props = {
-  licenseData: any
+type LicensingDisplayProps = {
+  licenseData: LicenseData
 }
 
-type State = {
+interface LicenseData {
+  licenseId: string,
+  licenseName: string
 }
 
-class LicensingDisplay extends React.Component<Props, State> {
-  public render() {
-    return (
-      <NxTableRow>
-        <NxTableCell>
-          ID: { this.props.licenseData.licenseId }
-        </NxTableCell>
-        <NxTableCell>
-          Name: { this.props.licenseData.licenseName }
-        </NxTableCell>
-      </NxTableRow>
-    );
-  }
+const LicensingDisplay = (props: LicensingDisplayProps) => {
+  return (
+    <NxTableRow>
+      <NxTableCell>
+        ID: { props.licenseData.licenseId }
+      </NxTableCell>
+      <NxTableCell>
+        Name: { props.licenseData.licenseName }
+      </NxTableCell>
+    </NxTableRow>
+  );
 }
 
 export default LicensingDisplay;

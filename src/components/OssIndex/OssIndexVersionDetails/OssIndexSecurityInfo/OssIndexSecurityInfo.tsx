@@ -13,22 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { useContext, useState } from 'react';
-import { 
-  NxAccordion, 
-  NxPolicyViolationIndicator, 
-  ThreatLevelNumber, 
-  NxTable, 
-  NxTableRow,
-  NxTableBody, 
-  NxTableCell } from '@sonatype/react-shared-components';
+import React, { useContext } from 'react';
 import { 
   OssIndexContextInterface, 
   OssIndexContext } from '../../../../context/ossindex-context';
+import OssIndexVulnerability from './OssIndexVulnerability/OssIndexVulnerability';
 
 const OssIndexSecurityInfo = () => {
-
-  const [open, setOpen] = useState(false);
 
   const ossIndexContext = useContext(OssIndexContext);
 
@@ -38,59 +29,14 @@ const OssIndexSecurityInfo = () => {
     );
   }
 
-  const printVulnerabitilies = (vulnerabilities: any[]) => {
-    return (
-      vulnerabilities.map(printVulnerability)
-    )
-  }
-
-  const printVulnerability = (vulnerability: any) => {
-    return (
-      <NxAccordion open={open} onToggle={setOpen}>
-        <NxAccordion.Header>
-        <h2 className="nx-accordion__header-title">
-          { vulnerability.title }
-        </h2>
-        <div className="nx-btn-bar">
-          <NxPolicyViolationIndicator 
-            policyThreatLevel={Math.round(vulnerability.cvssScore) as ThreatLevelNumber} 
-            />
-        </div>
-        </NxAccordion.Header>
-        <NxTable>
-          <NxTableBody>
-            <NxTableRow>
-              <NxTableCell>
-                { vulnerability.description }
-              </NxTableCell>
-            </NxTableRow>
-            <NxTableRow>
-              <NxTableCell>
-                CVSS Score: { vulnerability.cvssScore }  
-              </NxTableCell>
-            </NxTableRow>
-            <NxTableRow>
-              <NxTableCell>
-                CVSS Vector: { vulnerability.cvssVector }
-              </NxTableCell>
-            </NxTableRow>
-            <NxTableRow>
-              <NxTableCell>
-                Click here for more info: <a href={ vulnerability.reference } target="_blank">{ vulnerability.reference }</a>
-              </NxTableCell>
-            </NxTableRow>
-          </NxTableBody>
-        </NxTable>
-      </NxAccordion>
-    )
-  }
-
   const renderVulnerabilities = (ossIndexContext: OssIndexContextInterface | undefined) => {
     if (ossIndexContext && ossIndexContext.vulnerabilities && ossIndexContext.vulnerabilities.length > 0) {
       return (
         <React.Fragment>
-            <h3>Vulnerabilities</h3>
-            { printVulnerabitilies(ossIndexContext.vulnerabilities) }
+          <h3>Vulnerabilities</h3>
+          { ossIndexContext.vulnerabilities.map((vuln) => {
+            return <OssIndexVulnerability vulnerability={vuln} />
+          })}
         </React.Fragment>
       )
     }
