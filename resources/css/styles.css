@@ -23,3 +23,16 @@
     font-size: 18px;
   }
 }
+
+.nx-accordion {
+  background-color: var(--vscode-editorWidget-background) !important;
+  color: var(--vscode-editorWidget-foreground) !important;
+}
+
+.nx-accordion__header>.nx-accordion__summary-wrapper {
+  color: var(--vscode-editorWidget-foreground) !important;
+}
+
+.nx-h2, .nx-h3, .nx-h4, .nx-h5, .nx-h6 {
+  color: var(--vscode-editorWidget-foreground) !important;
+}
