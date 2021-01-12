@@ -13,12 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import SecurityItemDisplay from './SecurityItemDisplay/SecurityItemDisplay';
 import { VersionsContext, VersionsContextInterface } from '../../../../context/versions-context';
 
 const SecurityPage = () => {
+  const [open, setOpen] = useState("");
+
   const versionsContext = useContext(VersionsContext);
+
+  const getRemediationAndOpen = (packageUrl: string, securityIssue: string): void => {
+    if (versionsContext) {
+      versionsContext.handleGetRemediation(packageUrl, securityIssue);
+    }
+
+    setOpen(securityIssue);
+  }
+
+  const isOpen = (issue: string): boolean => {
+    return issue == open;
+  }
 
   const renderAccordion = (versionsContext: VersionsContextInterface | undefined) => {
     if (versionsContext 
@@ -27,9 +41,10 @@ const SecurityPage = () => {
       && versionsContext.selectedVersionDetails.securityData.securityIssues) {
         return versionsContext.selectedVersionDetails.securityData.securityIssues.map((issue: any) => {
           return <SecurityItemDisplay
+            open = { isOpen(issue.reference) }
             packageUrl = { versionsContext.selectedVersionDetails.component.packageUrl }
             securityIssue = { issue }
-            remediationEvent = { versionsContext.handleGetRemediation }
+            remediationEvent = { getRemediationAndOpen }
           />
         });
     }

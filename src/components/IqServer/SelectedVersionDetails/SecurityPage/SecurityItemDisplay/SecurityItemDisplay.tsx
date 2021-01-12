@@ -25,46 +25,24 @@ import {
   NxPolicyViolationIndicator,
   ThreatLevelNumber } from '@sonatype/react-shared-components';
 
-type State = {
-  open: boolean
-}
-
-type Props = {
+type SecurityItemProps = {
   securityIssue: any,
+  open: boolean,
   packageUrl: string,
   remediationEvent: (packageUrl: string, vulnID: string) => void
 }
 
-class SecurityItemDisplay extends React.Component<Props, State> {
+const SecurityItemDisplay = (props: SecurityItemProps) => {
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      open: false
-    }
-  }
-
-  dispatchRemedation = () => {
-    this.props.remediationEvent(
-      this.props.packageUrl, 
-      this.props.securityIssue.reference
-    );
-
-    this.setState({
-      open: !this.state.open
-    });
-  }
-
-  public render() {
     return (
-      <NxAccordion open={ this.state.open } onToggle={ this.dispatchRemedation }>
+      <NxAccordion open={ props.open } onToggle={() => props.remediationEvent(props.packageUrl, props.securityIssue.reference) }>
         <NxAccordion.Header>
           <h2 className="nx-accordion__header-title">
-            { this.props.securityIssue.reference }
+            { props.securityIssue.reference }
           </h2>
           <div className="nx-btn-bar">
             <NxPolicyViolationIndicator 
-              policyThreatLevel={Math.round(this.props.securityIssue.severity) as ThreatLevelNumber} 
+              policyThreatLevel={Math.round(props.securityIssue.severity) as ThreatLevelNumber} 
               />
           </div>
         </NxAccordion.Header>
@@ -75,7 +53,7 @@ class SecurityItemDisplay extends React.Component<Props, State> {
                 Severity
               </NxTableCell>
               <NxTableCell>
-                <span>{this.props.securityIssue.severity}</span>
+                <span>{props.securityIssue.severity}</span>
               </NxTableCell>
             </NxTableRow>
             <NxTableRow>
@@ -83,7 +61,7 @@ class SecurityItemDisplay extends React.Component<Props, State> {
                 Source
               </NxTableCell>
               <NxTableCell>
-                {this.props.securityIssue.source}
+                {props.securityIssue.source}
               </NxTableCell>
             </NxTableRow>
             <NxTableRow>
@@ -91,7 +69,7 @@ class SecurityItemDisplay extends React.Component<Props, State> {
                 Threat Category
               </NxTableCell>
               <NxTableCell>
-                {this.props.securityIssue.threatCategory}
+                {props.securityIssue.threatCategory}
               </NxTableCell>
             </NxTableRow>
             <NxTableRow>
@@ -99,8 +77,8 @@ class SecurityItemDisplay extends React.Component<Props, State> {
                 URL
               </NxTableCell>
               <NxTableCell>
-                { this.props.securityIssue.url != "" &&
-                  <a href={this.props.securityIssue.url}>{this.props.securityIssue.url}</a>
+                { props.securityIssue.url != "" &&
+                  <a href={props.securityIssue.url}>{props.securityIssue.url}</a>
                 }
               </NxTableCell>
             </NxTableRow>
@@ -118,7 +96,17 @@ class SecurityItemDisplay extends React.Component<Props, State> {
         </NxTable>
       </NxAccordion>
     );
-  }
 }
+
+  // dispatchRemedation = () => {
+  //   this.props.remediationEvent(
+  //     this.props.packageUrl, 
+  //     this.props.securityIssue.reference
+  //   );
+
+  //   this.setState({
+  //     open: !this.state.open
+  //   });
+  // }
 
 export default SecurityItemDisplay;
