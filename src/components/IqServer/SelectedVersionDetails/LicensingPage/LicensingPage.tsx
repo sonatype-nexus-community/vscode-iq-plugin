@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
+import React, { 
+  useContext } from 'react';
 import LicensingDisplay from './LicensingDisplay/LicensingDisplay';
-import { VersionsContextConsumer } from '../../../../context/versions-context';
+import { 
+  VersionsContext, 
+  VersionsContextInterface } from '../../../../context/versions-context';
 import { 
   NxTable, 
   NxTableHead, 
@@ -24,51 +27,49 @@ import {
   NxTableBody } 
   from '@sonatype/react-shared-components';
 
-type Props = {
-}
+const LicensingPage = () => {
 
-type State = {
-}
+  const versionsContext = useContext(VersionsContext);
 
-class LicensingPage extends React.Component<Props, State> {
-  public render() {
-    return (
-      <VersionsContextConsumer>
-        {context => context && context.selectedVersionDetails && (
-          <React.Fragment>
-            <NxTable>
-              <NxTableHead>
-                <NxTableRow>
-                  <NxTableCell colSpan={2}>
-                    Declared Licenses
-                  </NxTableCell>
-                </NxTableRow>
-              </NxTableHead>
-              <NxTableBody>
-                { context.selectedVersionDetails.licenseData.declaredLicenses.map(function(license: any) {
-                  return <LicensingDisplay licenseData={license} />
-                })}
-              </NxTableBody>
-            </NxTable>
-            <NxTable>
-              <NxTableHead>
-                <NxTableRow>
-                  <NxTableCell colSpan={2}>
-                    Observed Licenses
-                  </NxTableCell>
-                </NxTableRow>
-              </NxTableHead>
-              <NxTableBody>
-                { context.selectedVersionDetails.licenseData.observedLicenses.map(function(license: any) {
-                  return <LicensingDisplay licenseData={license} />
-                })}
-              </NxTableBody>
-            </NxTable>
-          </React.Fragment>
-        )}
-      </VersionsContextConsumer>
-    );
+  const renderLicensePage = (versionsContext: VersionsContextInterface | undefined) => {
+    if (versionsContext && versionsContext.selectedVersionDetails) {
+      return <React.Fragment>
+        <NxTable>
+          <NxTableHead>
+            <NxTableRow>
+              <NxTableCell colSpan={2}>
+                Declared Licenses
+              </NxTableCell>
+            </NxTableRow>
+          </NxTableHead>
+          <NxTableBody>
+            { versionsContext.selectedVersionDetails.licenseData.declaredLicenses.map(function(license: any) {
+              return <LicensingDisplay licenseData={license} />
+            })}
+          </NxTableBody>
+        </NxTable>
+        <NxTable>
+          <NxTableHead>
+            <NxTableRow>
+              <NxTableCell colSpan={2}>
+                Observed Licenses
+              </NxTableCell>
+            </NxTableRow>
+          </NxTableHead>
+          <NxTableBody>
+            { versionsContext.selectedVersionDetails.licenseData.observedLicenses.map(function(license: any) {
+              return <LicensingDisplay licenseData={license} />
+            })}
+          </NxTableBody>
+        </NxTable>
+      </React.Fragment>
+    }
+    return null;
   }
+
+  return (
+    renderLicensePage(versionsContext)
+  )
 }
 
 export default LicensingPage;
