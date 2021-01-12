@@ -250,7 +250,7 @@ export class IqRequestService implements RequestService {
     return new Promise((resolve, reject) => {
       const request = { packageUrl: purl };
 
-      let url = `${this.url}/api/v2/components/remediation/application/${this.applicationId}`;
+      let url = `${this.url}/api/v2/components/remediation/application/${this.applicationId}?stageId=develop`;
 
       fetch(
         url, 
@@ -261,7 +261,7 @@ export class IqRequestService implements RequestService {
           agent: this.agent
         }).then(async (res) => {
           if (res.ok) {
-            let remediation: RemediationResponse = await res.json();
+            let remediation: any = await res.json();
             resolve(remediation);
             return;
           }

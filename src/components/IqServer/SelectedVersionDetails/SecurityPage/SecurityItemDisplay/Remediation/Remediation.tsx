@@ -22,6 +22,7 @@ const Remediation = () => {
 
   const renderRemediation = (versionsContext: VersionsContextInterface | undefined) => {
     if (versionsContext && versionsContext.remediation && versionsContext.remediation.versionChanges) {
+      console.log(versionsContext.remediation);
       return versionsContext.remediation.versionChanges.map((version: any) => {
         <React.Fragment>
           <h2>Remediation Type: { version.type }</h2>

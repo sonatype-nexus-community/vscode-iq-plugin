@@ -17,35 +17,32 @@ import * as React from 'react';
 import { NxFontAwesomeIcon } from '@sonatype/react-shared-components';
 import { faChevronRight, faCheckSquare, faSquare } from '@fortawesome/free-solid-svg-icons';
 
-type Props = {
+type SelectedBadgeProps = {
   selectedVersion: string,
   version: string,
   initialVersion: string
 }
 
-type State = {
-}
+const SelectedBadge = (props: SelectedBadgeProps) => {
 
-class SelectedBadge extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-  }
-
-  public render() {
-    if (this.props.selectedVersion == this.props.version) {
+  const renderBadge = (props: SelectedBadgeProps) => {
+    if (props.selectedVersion == props.version) {
       return (
         <NxFontAwesomeIcon icon={faChevronRight} />
       )
-    } else if (this.props.initialVersion == this.props.version) {
+    } else if (props.initialVersion == props.version) {
       return (
         <NxFontAwesomeIcon icon={faCheckSquare} />
       )
-    } else {
-      return (
-        <NxFontAwesomeIcon icon={faSquare} />
-      )
     }
+    return (
+      <NxFontAwesomeIcon icon={faSquare} />
+    )
   }
+
+  return (
+    renderBadge(props)
+  )
 }
 
 export default SelectedBadge;

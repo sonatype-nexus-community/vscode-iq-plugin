@@ -15,7 +15,7 @@
  */
 import * as React from 'react';
 import Remediation from './Remediation/Remediation';
-import CveDetails from './CveDetails/CveDetails';
+import VulnDetails from './VulnDetails/VulnDetails';
 import { 
   NxAccordion, 
   NxTable, 
@@ -106,7 +106,7 @@ class SecurityItemDisplay extends React.Component<Props, State> {
             </NxTableRow>
             <NxTableRow>
               <NxTableCell colSpan={2}>
-                <CveDetails />
+                <VulnDetails />
               </NxTableCell>
             </NxTableRow>
             <NxTableRow>

@@ -17,7 +17,7 @@ import React, { useContext } from 'react';
 import { VersionsContext, VersionsContextInterface } from '../../../../../../context/versions-context';
 import { NxVulnerabilityDetails } from '@sonatype/react-shared-components';
 
-const CveDetails = () => {
+const VulnDetails = () => {
 
   const versionsContext = useContext(VersionsContext);
 
@@ -33,4 +33,4 @@ const CveDetails = () => {
   )
 }
 
-export default CveDetails;
+export default VulnDetails;

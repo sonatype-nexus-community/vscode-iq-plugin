@@ -13,11 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { useContext, useEffect, useState } from "react";
-import { VersionsContext, VersionsContextInterface } from "../../../context/versions-context";
+import React, { 
+  useContext, 
+  useEffect, 
+  useState } from "react";
+import { 
+  VersionsContext, 
+  VersionsContextInterface } from "../../../context/versions-context";
 import SelectedBadge from "./SelectedBadge/SelectedBadge";
 import Loader from "react-loader-spinner";
-import { NxPolicyViolationIndicator, ThreatLevelNumber } from '@sonatype/react-shared-components';
+import { 
+  NxPolicyViolationIndicator, 
+  ThreatLevelNumber } from '@sonatype/react-shared-components';
 
 const AllVersionsPage = (props: any) => {
 
@@ -114,7 +121,7 @@ const AllVersionsPage = (props: any) => {
                 policyThreatLevel={ 
                   Math.round(getMaxSecurity(version.securityData)) as ThreatLevelNumber
                   } >
-                { "CVSS: " + getMaxSecurity(version.securityData) }
+                { " " + getMaxSecurity(version.securityData) }
               </NxPolicyViolationIndicator>
             </span>
           </li>
@@ -122,7 +129,12 @@ const AllVersionsPage = (props: any) => {
         </ul>
       )
     }
-    return <Loader type="MutatingDots" color="#00BFFF" height={100} width={100} />
+    return <Loader 
+      type="MutatingDots" 
+      color="#00BFFF" 
+      height={100} 
+      width={100} 
+      />
   }
 
   return (
