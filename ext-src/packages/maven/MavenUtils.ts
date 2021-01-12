@@ -16,6 +16,8 @@
 import * as path from "path";
 import * as fs from "fs";
 
+import * as temp from 'temp';
+
 import { exec } from "../../utils/exec";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { MavenPackage } from "./MavenPackage";
@@ -32,11 +34,10 @@ export class MavenUtils {
        * 2. Standard POM does not include transitive dependmavenDependenciesencies
        * 3. Effective POM may contain unused dependencies
        */
-      const outputPath: string = path.join(
-        PackageDependenciesHelper.getWorkspaceRoot(),
-        "dependency_tree.txt"
-      );
-      mvnCommand = `mvn dependency:tree -Dverbose -DappendOutput=true -DoutputFile="${outputPath}" -f "${pomFile}"`;
+
+      const tmpFile = temp.openSync();
+
+      mvnCommand = `mvn dependency:tree -Dverbose -DappendOutput=true -DoutputFile="${tmpFile.path}" -f "${pomFile}"`;
 
       await exec(mvnCommand, {
         cwd: PackageDependenciesHelper.getWorkspaceRoot(),
@@ -45,14 +46,16 @@ export class MavenUtils {
         }
       });
 
-      if (!fs.existsSync(outputPath)) {
+      if (!fs.existsSync(tmpFile.path)) {
         return Promise.reject(
           new Error(
             "Error occurred in generating dependency tree. Please check that maven is on your PATH."
           )
         );
       }
-      const dependencyTree: string = fs.readFileSync(outputPath).toString();
+      const dependencyTree: string = fs.readFileSync(tmpFile.path).toString();
+
+      temp.cleanupSync();
 
       return Promise.resolve(this.parseMavenDependencyTree(dependencyTree));
     } catch (e) {
