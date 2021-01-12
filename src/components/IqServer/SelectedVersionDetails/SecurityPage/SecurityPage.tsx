@@ -27,7 +27,7 @@ const SecurityPage = () => {
       && versionsContext.selectedVersionDetails.securityData.securityIssues) {
         return versionsContext.selectedVersionDetails.securityData.securityIssues.map((issue: any) => {
           return <SecurityItemDisplay
-            nexusArtifact = { versionsContext.selectedVersionDetails }
+            packageUrl = { versionsContext.selectedVersionDetails.component.packageUrl }
             securityIssue = { issue }
             remediationEvent = { versionsContext.handleGetRemediation }
           />

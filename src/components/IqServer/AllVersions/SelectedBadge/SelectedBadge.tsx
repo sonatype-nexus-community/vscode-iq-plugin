@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import { FaChevronRight, FaCheckSquare, FaRegSquare } from 'react-icons/fa';
+import { NxFontAwesomeIcon } from '@sonatype/react-shared-components';
+import { faChevronRight, faCheckSquare, faSquare } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
   selectedVersion: string,
@@ -33,15 +34,15 @@ class SelectedBadge extends React.Component<Props, State> {
   public render() {
     if (this.props.selectedVersion == this.props.version) {
       return (
-        <FaChevronRight />
+        <NxFontAwesomeIcon icon={faChevronRight} />
       )
     } else if (this.props.initialVersion == this.props.version) {
       return (
-        <FaCheckSquare />
+        <NxFontAwesomeIcon icon={faCheckSquare} />
       )
     } else {
       return (
-        <FaRegSquare />
+        <NxFontAwesomeIcon icon={faSquare} />
       )
     }
   }

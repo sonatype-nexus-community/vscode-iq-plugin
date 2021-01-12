@@ -13,108 +13,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from "react";
-import Alert from "react-bootstrap/Alert";
-import Badge from "react-bootstrap/Badge";
-import { VersionsContextConsumer } from "../../../context/versions-context";
-import ClassNameUtils from "../../../utils/ClassNameUtils";
+import React, { useContext, useEffect, useState } from "react";
+import { VersionsContext, VersionsContextInterface } from "../../../context/versions-context";
 import SelectedBadge from "./SelectedBadge/SelectedBadge";
 import Loader from "react-loader-spinner";
+import { NxPolicyViolationIndicator, ThreatLevelNumber } from '@sonatype/react-shared-components';
 
-type Props = {
-  versionChangeHandler: (version: string) => void;
-};
+const AllVersionsPage = (props: any) => {
 
-type State = {
-  selectedVersion: string;
-};
+  const [selectedVersion, setSelectedVersion] = useState("");
 
-class AllVersionsPage extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      selectedVersion: ""
-    };
+  const versionsContext = useContext(VersionsContext);
+
+  const getMaxSecurity = (security: any): number => {
+    if (security && security.securityIssues && security.securityIssues.length > 0) {
+      return Math.max.apply(Math, security.securityIssues.map((sec: { severity: number; }) => { return sec.severity }));
+    }
+    return 0;
   }
 
-  private handleClick(e: any) {
-    console.debug("row clicked, event:", e);
-    this.setState({ selectedVersion: e });
-    this.props.versionChangeHandler(e);
+  const getAlertClassname = (version: string, initialVersion: string, initialClassName: string): string => {
+    let selectedElement = document.getElementsByClassName("nx-list__item selected");
+
+    if (selectedElement && selectedElement.length > 0) {
+      selectedElement[0].classList.remove("selected");
+    }
+
+    if (
+      version == selectedVersion
+    ) {
+      initialClassName += " selected";
+    }
+    if (
+      version == initialVersion
+    ) {
+      initialClassName += " selected";
+    }
+    return initialClassName;
   }
 
-  public render() {
-    var _this = this;
+  useEffect(() => {
+    scrollToCurrentVersion();
+  });
 
-    return (
-      <VersionsContextConsumer>
-        {context => {
-          if (!context!.allVersions || context!.allVersions.length == 0) {
-            return _this.buildLoader(context);
-          }
-          return _this.buildAllVersionsList(context);
-        }}
-      </VersionsContextConsumer>
-    );
+  const handleClick = (version: string) => {
+    setSelectedVersion(version);
+    props.versionChangeHandler(version);
   }
 
-  public componentDidMount() {
-    console.debug("AllVersionsPage componentDidMount, state", this.state);
-    this.scrollToCurrentVersion();
-  }
-
-  public componentDidUpdate() {
-    console.debug("AllVersionsPage componentDidUpdate, state", this.state);
-    this.scrollToCurrentVersion();
-  }
-
-  private buildLoader(context: any) {
-    // return <SonatypeLoader />;
-    return (
-      <Loader type="MutatingDots" color="#00BFFF" height={100} width={100} />
-    );
-  }
-
-  private buildAllVersionsList(context: any) {
-    console.debug(
-      `buildAllVersions called, selected: ${context!.selectedVersion}`
-    );
-    var _this = this;
-    return (
-      <React.Fragment>
-        {Object.keys(context!.allVersions).map(row => (
-          <Alert
-            className={this.getAlertClassname(context, row)}
-            onClick={_this.handleClick.bind(
-              _this,
-              context!.allVersions[row].component.componentIdentifier.coordinates.version
-            )}
-          >
-            <SelectedBadge
-              version={
-                context!.allVersions[row].component.componentIdentifier.coordinates
-                  .version
-              }
-              selectedVersion={context!.selectedVersion}
-              initialVersion={context!.initialVersion}
-            />{" "}
-            {context!.allVersions[row].component.componentIdentifier.coordinates.version}
-            <Badge
-              className={ClassNameUtils.threatClassName(
-                this.getMaxSecurity(context!.allVersions[row].securityData)
-              )}
-            >
-              CVSS:{" "}
-              {this.getMaxSecurity(context!.allVersions[row].securityData)}
-            </Badge>
-          </Alert>
-        ))}
-      </React.Fragment>
-    );
-  }
-
-  private scrollToCurrentVersion() {
-    let selectedElement = document.getElementsByClassName("selected-version");
+  const scrollToCurrentVersion = () => {
+    let selectedElement = document.getElementsByClassName("nx-list__item selected");
     console.debug(
       "scrollToCurrentVersion found selected version",
       selectedElement
@@ -122,21 +70,13 @@ class AllVersionsPage extends React.Component<Props, State> {
     if (
       selectedElement &&
       selectedElement.length > 0 &&
-      !this.isElementInViewport(selectedElement[0])
+      !isElementInViewport(selectedElement[0])
     ) {
       selectedElement[0].scrollIntoView();
     }
   }
 
-  private getMaxSecurity(security: any): number {
-    if (security && security.securityIssues && security.securityIssues.length > 0) {
-      console.debug(security);
-      return Math.max.apply(Math, security.securityIssues.map((sec: { severity: number; }) => { return sec.severity }));
-    }
-    return 0;
-  }
-
-  private isElementInViewport(element: Element) {
+  const isElementInViewport = (element: Element) => {
     var bounding = element.getBoundingClientRect();
     return (
       bounding.top >= 0 &&
@@ -145,22 +85,48 @@ class AllVersionsPage extends React.Component<Props, State> {
     );
   }
 
-  private getAlertClassname(context: any, row: any): string {
-    var className: string = "";
-    if (
-      context!.allVersions[row].component.componentIdentifier.coordinates.version ==
-      context!.selectedVersion
-    ) {
-      className += " selected-version";
+  const renderAllVersionsList = (versionsContext: VersionsContextInterface | undefined) => {
+    if (versionsContext && versionsContext.allVersions && versionsContext.allVersions.length > 0) {
+      return (
+        <ul className="nx-list nx-list--clickable">
+        { versionsContext.allVersions.map((version) => (
+          <li 
+            className={
+              getAlertClassname(
+                version.component.componentIdentifier.coordinates.version,
+                versionsContext.initialVersion,
+                "nx-list__item")
+            }
+            onClick={() => handleClick(version.component.componentIdentifier.coordinates.version)}
+            >
+            <span className="nx-list__text">
+              <SelectedBadge
+                version={
+                  version.component.componentIdentifier.coordinates
+                    .version
+                }
+                selectedVersion={versionsContext.selectedVersion}
+                initialVersion={versionsContext.initialVersion}
+              />
+              { " " + version.component.componentIdentifier.coordinates.version + " " }
+              <NxPolicyViolationIndicator 
+                policyThreatLevel={ 
+                  Math.round(getMaxSecurity(version.securityData)) as ThreatLevelNumber
+                  } >
+                { "CVSS: " + getMaxSecurity(version.securityData) }
+              </NxPolicyViolationIndicator>
+            </span>
+          </li>
+        ))}
+        </ul>
+      )
     }
-    if (
-      context!.allVersions[row].component.componentIdentifier.coordinates.version ==
-      context!.initialVersion
-    ) {
-      className += " current-version";
-    }
-    return className;
+    return <Loader type="MutatingDots" color="#00BFFF" height={100} width={100} />
   }
+
+  return (
+    renderAllVersionsList(versionsContext)
+  )
 }
 
 export default AllVersionsPage;

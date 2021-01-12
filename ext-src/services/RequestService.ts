@@ -17,6 +17,8 @@ import { BaseRequestService } from "./BaseRequestService";
  */
 import { ThirdPartyAPIResponse } from './ThirdPartyApiResponse';
 import { ReportResponse } from './ReportResponse';
+import { VulnerabilityResponse } from './VulnerabilityResponse';
+import { RemediationResponse } from './RemediationResponse';
 import { ComponentDetails } from './ComponentDetails';
 import { PackageURL } from 'packageurl-js';
 
@@ -27,8 +29,8 @@ export interface RequestService extends BaseRequestService {
   asyncPollForEvaluationResults(statusURL: string): Promise<ThirdPartyAPIResponse>;
   getAllVersionDetails(versions: Array<string>, purl: PackageURL): Promise<ComponentDetails>;
   getAllVersions(purl: PackageURL): Promise<Array<string>>;
-  getCVEDetails(cve: any, nexusArtifact: any): Promise<any>;
-  getRemediation(nexusArtifact: any, iqApplicationId: string): Promise<any>;
+  getVulnerabilityDetails(vulnID: string): Promise<VulnerabilityResponse>;
+  getRemediation(purl: string): Promise<RemediationResponse>;
   showSelectedVersion(purl: string): Promise<ComponentDetails>
   setPassword(password: string): void;
   isPasswordSet(): boolean;

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import Badge from 'react-bootstrap/Badge';
-import ClassNameUtils from '../../../../../utils/ClassNameUtils';
 import Remediation from './Remediation/Remediation';
 import CveDetails from './CveDetails/CveDetails';
 import { 
@@ -23,7 +21,9 @@ import {
   NxTable, 
   NxTableRow, 
   NxTableBody, 
-  NxTableCell } from '@sonatype/react-shared-components';
+  NxTableCell,
+  NxPolicyViolationIndicator,
+  ThreatLevelNumber } from '@sonatype/react-shared-components';
 
 type State = {
   open: boolean
@@ -31,8 +31,8 @@ type State = {
 
 type Props = {
   securityIssue: any,
-  nexusArtifact: any,
-  remediationEvent: (nexusArtifact: any, cve: string) => void
+  packageUrl: string,
+  remediationEvent: (packageUrl: string, vulnID: string) => void
 }
 
 class SecurityItemDisplay extends React.Component<Props, State> {
@@ -45,11 +45,14 @@ class SecurityItemDisplay extends React.Component<Props, State> {
   }
 
   dispatchRemedation = () => {
+    this.props.remediationEvent(
+      this.props.packageUrl, 
+      this.props.securityIssue.reference
+    );
+
     this.setState({
       open: !this.state.open
     });
-
-    this.props.remediationEvent(this.props.nexusArtifact, this.props.securityIssue);
   }
 
   public render() {
@@ -60,10 +63,9 @@ class SecurityItemDisplay extends React.Component<Props, State> {
             { this.props.securityIssue.reference }
           </h2>
           <div className="nx-btn-bar">
-            <Badge 
-              className={ClassNameUtils.threatClassName(this.props.securityIssue.severity)}>
-                CVSS: {this.props.securityIssue.severity}
-            </Badge>
+            <NxPolicyViolationIndicator 
+              policyThreatLevel={Math.round(this.props.securityIssue.severity) as ThreatLevelNumber} 
+              />
           </div>
         </NxAccordion.Header>
         <NxTable>
@@ -73,11 +75,7 @@ class SecurityItemDisplay extends React.Component<Props, State> {
                 Severity
               </NxTableCell>
               <NxTableCell>
-                <Badge 
-                  className={ClassNameUtils.threatClassName(this.props.securityIssue.severity)}
-                  >
-                    {this.props.securityIssue.severity}
-                </Badge>
+                <span>{this.props.securityIssue.severity}</span>
               </NxTableCell>
             </NxTableRow>
             <NxTableRow>

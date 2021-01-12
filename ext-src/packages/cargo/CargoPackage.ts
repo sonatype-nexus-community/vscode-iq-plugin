@@ -24,7 +24,8 @@ export class CargoPackage implements PackageType {
   ) {}
 
   public toPurl(): string {
-    let purl: PackageURL = new PackageURL("cargo", "", this.Name, this.Version, {}, "");
-    return purl.toString().substring(0, purl.toString().length - 1);
+    let purl: PackageURL = new PackageURL(
+      "cargo", undefined, this.Name, this.Version, undefined, undefined);
+    return purl.toString();
   }
 }

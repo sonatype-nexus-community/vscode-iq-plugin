@@ -28,7 +28,7 @@ export class MavenPackage implements PackageType {
 
   public toPurl() {
     let purl: PackageURL = new PackageURL(
-      "maven", this.Group, this.Name, this.Version, {"type": this.Extension}, "");
+      "maven", this.Group, this.Name, this.Version, {"type": this.Extension}, undefined);
     return purl.toString();
   }
 }

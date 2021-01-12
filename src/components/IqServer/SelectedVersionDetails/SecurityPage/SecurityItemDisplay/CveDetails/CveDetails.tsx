@@ -15,14 +15,15 @@
  */
 import React, { useContext } from 'react';
 import { VersionsContext, VersionsContextInterface } from '../../../../../../context/versions-context';
+import { NxVulnerabilityDetails } from '@sonatype/react-shared-components';
 
 const CveDetails = () => {
 
   const versionsContext = useContext(VersionsContext);
 
   const renderVulnerability = (versionsContext: VersionsContextInterface | undefined) => {
-    if (versionsContext && versionsContext.cvedetails) {
-      return <div dangerouslySetInnerHTML={{ __html: versionsContext.cvedetails.htmlDetails }} />
+    if (versionsContext && versionsContext.vulnDetails) {
+      return <NxVulnerabilityDetails vulnerabilityDetails={versionsContext.vulnDetails} />
     }
     return null;
   }

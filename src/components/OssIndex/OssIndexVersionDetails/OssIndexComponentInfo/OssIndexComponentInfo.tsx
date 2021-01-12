@@ -13,52 +13,58 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
-import Table from 'react-bootstrap/Table';
-import { OssIndexContextConsumer} from '../../../../context/ossindex-context';
+import React, { useContext } from 'react';
+import { NxTable, NxTableHead, NxTableBody, NxTableRow, NxTableCell} from '@sonatype/react-shared-components';
+import { OssIndexContext, OssIndexContextInterface} from '../../../../context/ossindex-context';
 
-type OssCipProps = {
-};
+const OssIndexComponentInfo = () => {
 
-type OssCipState = {
-};
+  const ossIndexContext = useContext(OssIndexContext);
 
-class OssIndexComponentInfo extends React.Component<OssCipProps, OssCipState> {
-  constructor(props: OssCipProps) {
-    super(props);
+  const renderComponentInfo = (ossIndexContext: OssIndexContextInterface | undefined) => {
+    if (ossIndexContext && ossIndexContext.component) {
+      return <NxTable>
+        <NxTableHead>
+          <NxTableRow>
+            <NxTableCell colSpan={2}>
+              { ossIndexContext.component.ossIndexData.coordinates }
+            </NxTableCell>
+          </NxTableRow>
+        </NxTableHead>
+        <NxTableBody>
+          <NxTableRow>
+            <NxTableCell>
+              Package
+            </NxTableCell>
+            <NxTableCell>
+              { ossIndexContext.component.name }
+            </NxTableCell>
+          </NxTableRow>
+          <NxTableRow>
+            <NxTableCell>
+              Version
+            </NxTableCell>
+            <NxTableCell>
+              { ossIndexContext.component.version }
+            </NxTableCell>
+          </NxTableRow>
+          <NxTableRow>
+            <NxTableCell>
+              Description
+            </NxTableCell>
+            <NxTableCell>
+              { ossIndexContext.component.ossIndexData.description }
+            </NxTableCell>
+          </NxTableRow>
+        </NxTableBody>
+      </NxTable>
+    }
+    return null;
   }
 
-  public render() {
-    return (
-      <OssIndexContextConsumer>
-        {context => context && context.component && (
-          <Table>
-          <thead>
-            <tr>
-              <th colSpan={2}>
-                <h2>{context.component.ossIndexData.coordinates}</h2>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="cipInfoLabel">Package</td>
-              <td>{context.component.name}</td>
-            </tr>
-            <tr>
-              <td className="cipInfoLabel">Version</td>
-              <td><span id="version">{context.component.version}</span></td>
-            </tr>
-            <tr>
-              <td className="cipInfoLabel">Description</td>
-              <td><span id="description">{context.component.ossIndexData.description}</span></td>
-            </tr>
-          </tbody>
-        </Table>
-        )}
-      </OssIndexContextConsumer>
-    );
-  }
+  return (
+    renderComponentInfo(ossIndexContext)
+  )
 }
 
 export default OssIndexComponentInfo;

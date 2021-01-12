@@ -143,8 +143,8 @@ export class ComponentInfoPanel {
           case "alert":
             vscode.window.showErrorMessage(message.text);
             return;
-          case "getCVEDetails":
-            this.showCVE(message.cve, message.nexusArtifact);
+          case "getVulnDetails":
+            this.showVulnerability(message.vulnID);
             return;
           case "Evaluate":
             vscode.window.showInformationMessage(
@@ -152,7 +152,7 @@ export class ComponentInfoPanel {
             );
             return;
           case "getRemediation":
-            this.showRemediation(message.nexusArtifact);
+            this.showRemediation(message.packageUrl);
             return;
         }
       },
@@ -192,11 +192,11 @@ export class ComponentInfoPanel {
     }
   }
 
-  private async showRemediation(nexusArtifact: any) {
-    console.debug("showRemediation", nexusArtifact);
+  private async showRemediation(purl: string) {
+    console.debug("showRemediation", purl);
     if (this.componentModel instanceof IqComponentModel) {
       var iqComponentModel = this.componentModel as IqComponentModel
-      let remediation = await iqComponentModel.requestService.getRemediation(nexusArtifact, ComponentInfoPanel.iqApplicationId);
+      const remediation = await iqComponentModel.requestService.getRemediation(purl);
       
       console.debug("posting message: remediation", remediation);
       this._panel.webview.postMessage({
@@ -206,16 +206,15 @@ export class ComponentInfoPanel {
     }
   }
 
-  private async showCVE(cve: any, nexusArtifact: any) {
-    console.debug("showCVE", cve, nexusArtifact);
+  private async showVulnerability(vulnID: any) {
+    console.debug("showVulnerability", vulnID);
     if (this.componentModel instanceof IqComponentModel) {
       var iqComponentModel = this.componentModel as IqComponentModel
-      let cvedetails = await iqComponentModel.requestService.getCVEDetails(cve, nexusArtifact);
+      const vulnDetails = await iqComponentModel.requestService.getVulnerabilityDetails(vulnID);
       
-      console.debug("posting message: cveDetails", cvedetails);
       this._panel.webview.postMessage({
-        command: "cveDetails",
-        cvedetails: cvedetails
+        command: "vulnDetails",
+        vulnDetails: vulnDetails
       });
     }
   }

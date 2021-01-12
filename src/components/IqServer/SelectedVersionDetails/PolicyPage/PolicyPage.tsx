@@ -13,107 +13,90 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
-import { VersionsContext } from '../../../../context/versions-context';
-import { Accordion, Card } from 'react-bootstrap';
-import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
+import React, { 
+  useContext, 
+  useState } from 'react';
+import { 
+  VersionsContext, 
+  VersionsContextInterface } from '../../../../context/versions-context';
+import { 
+  NxAccordion, 
+  NxPolicyViolationIndicator } from '@sonatype/react-shared-components';
 
-type Props = {
-};
-// todo declare more details on component
-type State = {
-  selected: Map<string, string>
-};
+const PolicyPage = () => {
 
-class PolicyPage extends React.Component<Props, State> {
-  static contextType = VersionsContext;
+  const [open, setOpen] = useState(false);
 
-  constructor(props: Props) {
-    super(props);
+  const versionContext = useContext(VersionsContext);
 
-    this.state = {
-      selected: new Map<string, string>()
-    }
-  }
-
-  public render() {
-    console.debug("Policy Page rendering");
-    return (
+  const renderPolicyViolation = (versionContext: VersionsContextInterface | undefined) => {
+    if (versionContext && versionContext.policyViolations) {
+      return (
         <React.Fragment>
-            {this.context && this.context.policyViolations && (
-              this.context.policyViolations.map((x: any, y: any) => this.printPolicyViolation(x, y), this)
-              )
-            }
+          { versionContext.policyViolations.map((x: any) => printPolicyViolation(x)) }
         </React.Fragment>
+      )
+    }
+    return null;
+  }
+
+  const printPolicyViolation = (policyViolation: any) => {
+    return (
+      <NxAccordion open={ open } onToggle={setOpen}>
+        <NxAccordion.Header>
+        <h2 className="nx-accordion__header-title">
+            { policyViolation.policyName }
+          </h2>
+          <div className="nx-btn-bar">
+            <NxPolicyViolationIndicator 
+              policyThreatLevel={ policyViolation.policyThreatLevel } 
+              />
+          </div>
+        </NxAccordion.Header>
+          <h2 className="nx-h2">
+            Threat Level: { policyViolation.policyThreatLevel }
+          </h2>
+            { policyViolation.constraints.map((x: any) => (
+            <React.Fragment>
+              <h3 className="nx-h3">Constraint: { x.constraintName }</h3>
+              <h3 className="nx-h3">Reasons</h3>
+              <ul className="nx-list">
+                { x.conditions.map((y: any) => (
+                  <li className="nx-list__item">
+                    <span className="nx-list__text">
+                      { y.conditionReason }
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </React.Fragment>
+          ))}
+      </NxAccordion>
     );
   }
 
-  switchIcon = (policyId: string) => {
-    if (this.state != undefined) {
-      if (this.state.selected.get(policyId)) {
-        return (
-          <FaChevronDown />
-        )
-      } 
-    }
-    return (
-      <FaChevronRight />
-    )
-  }
-
-  setSelected = (policyId: string) => {
-    console.log(policyId);
-    if (this.state != undefined) {
-      if (this.state.selected.get(policyId) != undefined) {
-        let mutatedMap = this.state.selected;
-        mutatedMap.delete(policyId);
-        this.setState({
-          selected: mutatedMap
-        });
-      } else {
-        let mutatedMap = this.state.selected;
-        mutatedMap.set(policyId, "active");
-        this.setState({
-          selected: mutatedMap
-        });
-      }
-    }
-  }
-
-  printPolicyViolation = (policyViolation: any, index: number) => {
-    const icon = this.switchIcon(index.toString());
-    return (
-      <Accordion>
-        <Card>
-          <Accordion.Toggle 
-            as={ Card.Header }
-            eventKey={ index.toString() } 
-            onClick={() => this.setSelected(index.toString())}>
-              Policy Violation: { policyViolation.policyName }
-            { icon }
-          </Accordion.Toggle>
-          <Accordion.Collapse eventKey={ index.toString() }>
-            <Card.Body>
-              Threat Level: { policyViolation.policyThreatLevel }
-              { policyViolation.constraints.map((x: any) => (
-                <td>
-                  <h5>Constraint: { x.constraintName }</h5>
-                  <h5>Reasons:</h5>
-                  <ol>
-                    { x.conditions.map((y: any) => (
-                      <li>
-                        { y.conditionReason }
-                      </li>
-                    ))}
-                  </ol>
-                </td>
-              ))}
-            </Card.Body>
-          </Accordion.Collapse >
-        </Card>
-      </Accordion>
-    );
-  }
+  return (
+    renderPolicyViolation(versionContext)
+  )
 }
+
+  // setSelected = (policyId: string) => {
+  //   console.log(policyId);
+  //   if (this.state != undefined) {
+  //     if (this.state.selected.get(policyId) != undefined) {
+  //       let mutatedMap = this.state.selected;
+  //       mutatedMap.delete(policyId);
+  //       this.setState({
+  //         selected: mutatedMap
+  //       });
+  //     } else {
+  //       let mutatedMap = this.state.selected;
+  //       mutatedMap.set(policyId, "active");
+  //       this.setState({
+  //         selected: mutatedMap
+  //       });
+  //     }
+  //   }
+  // }
 
 export default PolicyPage;
