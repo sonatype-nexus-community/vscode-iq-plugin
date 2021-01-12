@@ -36,3 +36,11 @@
 .nx-h2, .nx-h3, .nx-h4, .nx-h5, .nx-h6 {
   color: var(--vscode-editorWidget-foreground) !important;
 }
+
+.nx-list--clickable .nx-list__item:hover {
+  background-color: var(--vscode-list-hoverBackground) !important;
+}
+
+.nx-list--clickable .nx-list__item.selected {
+  background-color: var(--vscode-list-dropBackground) !important;
+}
