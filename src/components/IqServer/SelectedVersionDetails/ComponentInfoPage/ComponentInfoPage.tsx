@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
-import { VersionsContextConsumer } from '../../../../context/versions-context';
+import React, { useContext } from 'react';
+import { VersionsContext, VersionsContextInterface } from '../../../../context/versions-context';
 import { 
   NxTable, 
   NxTableHead, 
@@ -23,99 +23,92 @@ import {
   NxTableBody } 
   from '@sonatype/react-shared-components';
 
-type CipProps = {
-};
-// todo declare more details on component
-type CipState = {};
+const ComponentInfoPage = () => {
 
-class ComponentInfoPage extends React.Component<CipProps, CipState> {
-  constructor(props: CipProps) {
-    super(props);
+  const versionsContext = useContext(VersionsContext);
+
+  const formatDate = (date: string): string => {
+    if (date) {
+      var dateTime = new Date(date);
+      return dateTime.toDateString();
+    }
+    return "Unknown";
   }
 
-  public changeComponent(component: any) {
-    console.debug("CIP changing component", component);
-    this.setState({component: component})
+  const renderCIPPage = (versionsContext: VersionsContextInterface | undefined) => {
+    if (versionsContext && versionsContext.selectedVersionDetails) {
+      return <NxTable>
+      <NxTableHead>
+        <NxTableRow>
+          <NxTableCell colSpan={2}>
+            <h2>{ versionsContext.component.name }</h2>
+          </NxTableCell>
+        </NxTableRow>
+      </NxTableHead>
+      <NxTableBody>
+        <NxTableRow>
+          <NxTableCell>
+            Package URL
+          </NxTableCell>
+          <NxTableCell>
+            { versionsContext.selectedVersionDetails.component.packageUrl }
+          </NxTableCell>
+        </NxTableRow>
+        <NxTableRow>
+          <NxTableCell>
+            Hash
+          </NxTableCell>
+          <NxTableCell>
+            { versionsContext.selectedVersionDetails.component.hash }
+          </NxTableCell>
+        </NxTableRow>
+        <NxTableRow>
+          <NxTableCell>
+            Version
+          </NxTableCell>
+          <NxTableCell>
+            <span id="version">
+              { versionsContext.selectedVersionDetails.component.componentIdentifier.coordinates.version }
+            </span>
+          </NxTableCell>
+        </NxTableRow>
+        <NxTableRow>
+          <NxTableCell>
+            Match State
+          </NxTableCell>
+          <NxTableCell>
+            { versionsContext.selectedVersionDetails.matchState }
+          </NxTableCell>
+        </NxTableRow>
+        <NxTableRow>
+          <NxTableCell>
+            Catalog Date
+          </NxTableCell>
+          <NxTableCell>
+            <span id="catalogdate">
+              { formatDate(versionsContext.selectedVersionDetails.catalogDate) }
+            </span>
+          </NxTableCell>
+        </NxTableRow>
+        <NxTableRow>
+          <NxTableCell>
+            Relative Popularity
+          </NxTableCell>
+          <NxTableCell>
+            <span id="relativepopularity">
+              { versionsContext.selectedVersionDetails.relativePopularity }
+            </span>
+          </NxTableCell>
+        </NxTableRow>
+      </NxTableBody>
+    </NxTable>
+    }
+    return null;
   }
 
-  public formatDate(date: string) {
-    var dateTime = new Date(date);
-    return dateTime.toDateString();
-  }
-
-  public render() {
-    return (
-      <VersionsContextConsumer>
-        {context => context && context.selectedVersionDetails && (
-          <NxTable>
-            <NxTableHead>
-              <NxTableRow>
-                <NxTableCell colSpan={2}>
-                  <h2>{ context.selectedVersionDetails.component.packageUrl }</h2>
-                </NxTableCell>
-              </NxTableRow>
-            </NxTableHead>
-            <NxTableBody>
-              <NxTableRow>
-                <NxTableCell>
-                  Package
-                </NxTableCell>
-                <NxTableCell>
-                  { context.selectedVersionDetails.component.componentIdentifier.coordinates.packageId }
-                </NxTableCell>
-              </NxTableRow>
-              <NxTableRow>
-                <NxTableCell>
-                  Hash
-                </NxTableCell>
-                <NxTableCell>
-                  { context.selectedVersionDetails.component.hash }
-                </NxTableCell>
-              </NxTableRow>
-              <NxTableRow>
-                <NxTableCell>
-                  Version
-                </NxTableCell>
-                <NxTableCell>
-                  <span id="version">
-                    { context.selectedVersionDetails.component.componentIdentifier.coordinates.version }
-                  </span>
-                </NxTableCell>
-              </NxTableRow>
-              <NxTableRow>
-                <NxTableCell>
-                  Match State
-                </NxTableCell>
-                <NxTableCell>
-                  { context.selectedVersionDetails.matchState }
-                </NxTableCell>
-              </NxTableRow>
-              <NxTableRow>
-                <NxTableCell>
-                  Catalog Date
-                </NxTableCell>
-                <NxTableCell>
-                  <span id="catalogdate">
-                    { this.formatDate(context.selectedVersionDetails.catalogDate) }
-                  </span>
-                </NxTableCell>
-              </NxTableRow>
-              <NxTableRow>
-                <NxTableCell>
-                  Relative Popularity
-                </NxTableCell>
-                <NxTableCell>
-                  <span id="relativepopularity">
-                    { context.selectedVersionDetails.relativePopularity }
-                  </span>
-                </NxTableCell>
-              </NxTableRow>
-            </NxTableBody>
-          </NxTable>
-        )}
-      </VersionsContextConsumer>	
-    );
-  }
+  return (
+    renderCIPPage(versionsContext)
+  )
 }
 
 export default ComponentInfoPage;
