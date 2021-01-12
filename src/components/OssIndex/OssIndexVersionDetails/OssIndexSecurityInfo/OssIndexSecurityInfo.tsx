@@ -13,19 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { 
   NxAccordion, 
   NxPolicyViolationIndicator, 
   ThreatLevelNumber, 
   NxTable, 
-  NxTableRow, 
+  NxTableRow,
+  NxTableBody, 
   NxTableCell } from '@sonatype/react-shared-components';
 import { 
   OssIndexContextInterface, 
   OssIndexContext } from '../../../../context/ossindex-context';
 
 const OssIndexSecurityInfo = () => {
+
+  const [open, setOpen] = useState(false);
 
   const ossIndexContext = useContext(OssIndexContext);
 
@@ -43,7 +46,7 @@ const OssIndexSecurityInfo = () => {
 
   const printVulnerability = (vulnerability: any) => {
     return (
-      <NxAccordion>
+      <NxAccordion open={open} onToggle={setOpen}>
         <NxAccordion.Header>
         <h2 className="nx-accordion__header-title">
           { vulnerability.title }
@@ -55,26 +58,28 @@ const OssIndexSecurityInfo = () => {
         </div>
         </NxAccordion.Header>
         <NxTable>
-          <NxTableRow>
-            <NxTableCell>
-              { vulnerability.description }
-            </NxTableCell>
-          </NxTableRow>
-          <NxTableRow>
-            <NxTableCell>
-              CVSS Score: { vulnerability.cvssScore }  
-            </NxTableCell>
-          </NxTableRow>
-          <NxTableRow>
-            <NxTableCell>
-              CVSS Vector: { vulnerability.cvssVector }
-            </NxTableCell>
-          </NxTableRow>
-          <NxTableRow>
-            <NxTableCell>
-              Click here for more info: <a href={ vulnerability.reference } target="_blank">{ vulnerability.reference }</a>
-            </NxTableCell>
-          </NxTableRow>
+          <NxTableBody>
+            <NxTableRow>
+              <NxTableCell>
+                { vulnerability.description }
+              </NxTableCell>
+            </NxTableRow>
+            <NxTableRow>
+              <NxTableCell>
+                CVSS Score: { vulnerability.cvssScore }  
+              </NxTableCell>
+            </NxTableRow>
+            <NxTableRow>
+              <NxTableCell>
+                CVSS Vector: { vulnerability.cvssVector }
+              </NxTableCell>
+            </NxTableRow>
+            <NxTableRow>
+              <NxTableCell>
+                Click here for more info: <a href={ vulnerability.reference } target="_blank">{ vulnerability.reference }</a>
+              </NxTableCell>
+            </NxTableRow>
+          </NxTableBody>
         </NxTable>
       </NxAccordion>
     )
