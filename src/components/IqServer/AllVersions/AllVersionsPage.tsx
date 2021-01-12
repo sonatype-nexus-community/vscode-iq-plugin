@@ -110,6 +110,7 @@ const AllVersionsPage = (props: any) => {
               />
               { " " + version.component.componentIdentifier.coordinates.version + " " }
               <NxPolicyViolationIndicator 
+                style={{float: "right"}}
                 policyThreatLevel={ 
                   Math.round(getMaxSecurity(version.securityData)) as ThreatLevelNumber
                   } >
