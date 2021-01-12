@@ -39,32 +39,13 @@ const AllVersionsPage = (props: any) => {
     return 0;
   }
 
-  const getAlertClassname = (version: string, initialVersion: string, initialClassName: string): string => {
-    let selectedElement = document.getElementsByClassName("nx-list__item selected");
-
-    if (selectedElement && selectedElement.length > 0) {
-      selectedElement[0].classList.remove("selected");
-    }
-
-    if (
-      version == selectedVersion
-    ) {
-      initialClassName += " selected";
-    }
-    if (
-      version == initialVersion
-    ) {
-      initialClassName += " selected";
-    }
-    return initialClassName;
-  }
-
   useEffect(() => {
     scrollToCurrentVersion();
   });
 
   const handleClick = (version: string) => {
     setSelectedVersion(version);
+
     props.versionChangeHandler(version);
   }
 
@@ -92,6 +73,16 @@ const AllVersionsPage = (props: any) => {
     );
   }
 
+  const getClassName = (initialVersion: string, version: string, className: string):string => {
+    console.debug(selectedVersion);
+    if (selectedVersion == version) {
+      return className += " selected";
+    } else if (initialVersion == version) {
+      return className += " selected";
+    }
+    return className;
+  }
+
   const renderAllVersionsList = (versionsContext: VersionsContextInterface | undefined) => {
     if (versionsContext && versionsContext.allVersions && versionsContext.allVersions.length > 0) {
       return (
@@ -99,9 +90,9 @@ const AllVersionsPage = (props: any) => {
         { versionsContext.allVersions.map((version) => (
           <li 
             className={
-              getAlertClassname(
-                version.component.componentIdentifier.coordinates.version,
+              getClassName(
                 versionsContext.initialVersion,
+                version.component.componentIdentifier.coordinates.version,
                 "nx-list__item")
             }
             onClick={() => handleClick(version.component.componentIdentifier.coordinates.version)}
