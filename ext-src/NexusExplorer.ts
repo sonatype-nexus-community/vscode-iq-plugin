@@ -124,9 +124,14 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
   select(range: vscode.Range) {
     this.editor!.selection = new vscode.Selection(range.start, range.end);
   }
+
+  public updateComponentModel(componentModel: ComponentModel) {
+    this.componentModel = componentModel as IqComponentModel;
+  }
 }
 
 export class NexusExplorer {
+  
   private sortPolicyDescending: boolean = true;
   private sortNameAscending: boolean = true;
   private nexusViewer: vscode.TreeView<ComponentEntry>;
@@ -135,6 +140,7 @@ export class NexusExplorer {
   private logger: ILogger;
 
   constructor(readonly context: vscode.ExtensionContext) {
+
     let configuration = vscode.workspace.getConfiguration();
     const _channel = vscode.window.createOutputChannel(`Sonatype IQ Extension`);
     context.subscriptions.push(_channel);
@@ -216,5 +222,19 @@ export class NexusExplorer {
       entry,
       this.componentModel
     );
+  }
+
+  public switchComponentModel(scanType: string) {
+    let configuration = vscode.workspace.getConfiguration();
+
+    if (scanType == "iqServer") {
+      this.componentModel = new IqComponentModel({configuration: configuration, logger: this.logger});
+    } else if (scanType == "ossindex") {
+      this.componentModel = new OssIndexComponentModel({configuration: configuration, logger: this.logger});
+    }
+
+    this.nexusExplorerProvider.updateComponentModel(this.componentModel);
+
+    this.nexusExplorerProvider.doRefresh();
   }
 }
