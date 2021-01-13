@@ -17,5 +17,18 @@
             "vs/**/**/*.ts",            
             "vs/**/**/*.js"
         ]
+    },
+    {
+        "name": "Extension Tests",
+        "type": "extensionHost",
+        "request": "launch",
+        "args": [
+            "--extensionDevelopmentPath=${workspaceFolder}",
+            "--extensionTestsPath=${workspaceFolder}/build/ext-src"
+        ],
+        "outFiles": [
+            "${workspaceFolder}/build/ext-src/**/*.js"
+        ],
+        "preLaunchTask": "${defaultBuildTask}"
     }]
 }
