@@ -21,7 +21,7 @@ import {
   VersionsContext, 
   VersionsContextInterface } from "../../../context/versions-context";
 import SelectedBadge from "./SelectedBadge/SelectedBadge";
-import Loader from "react-loader-spinner";
+import { Puff } from '@agney/react-loading';
 import { 
   NxPolicyViolationIndicator, 
   ThreatLevelNumber } from '@sonatype/react-shared-components';
@@ -86,46 +86,46 @@ const AllVersionsPage = (props: any) => {
   const renderAllVersionsList = (versionsContext: VersionsContextInterface | undefined) => {
     if (versionsContext && versionsContext.allVersions && versionsContext.allVersions.length > 0) {
       return (
-        <ul className="nx-list nx-list--clickable">
-        { versionsContext.allVersions.map((version) => (
-          <li 
-            className={
-              getClassName(
-                versionsContext.initialVersion,
-                version.component.componentIdentifier.coordinates.version,
-                "nx-list__item")
-            }
-            onClick={() => handleClick(version.component.componentIdentifier.coordinates.version)}
-            >
-            <span className="nx-list__text">
-              <SelectedBadge
-                version={
-                  version.component.componentIdentifier.coordinates
-                    .version
-                }
-                selectedVersion={versionsContext.selectedVersion}
-                initialVersion={versionsContext.initialVersion}
-              />
-              { " " + version.component.componentIdentifier.coordinates.version + " " }
-              <NxPolicyViolationIndicator 
-                style={{float: "right"}}
-                policyThreatLevel={ 
-                  Math.round(getMaxSecurity(version.securityData)) as ThreatLevelNumber
-                  } >
-                { " " + getMaxSecurity(version.securityData) }
-              </NxPolicyViolationIndicator>
-            </span>
-          </li>
-        ))}
-        </ul>
+        <React.Fragment>
+          <h3 className="nx-h3">
+            Versions
+          </h3>
+          <ul className="nx-list nx-list--clickable">
+          { versionsContext.allVersions.map((version) => (
+            <li 
+              className={
+                getClassName(
+                  versionsContext.initialVersion,
+                  version.component.componentIdentifier.coordinates.version,
+                  "nx-list__item")
+              }
+              onClick={() => handleClick(version.component.componentIdentifier.coordinates.version)}
+              >
+              <span className="nx-list__text">
+                <SelectedBadge
+                  version={
+                    version.component.componentIdentifier.coordinates
+                      .version
+                  }
+                  selectedVersion={versionsContext.selectedVersion}
+                  initialVersion={versionsContext.initialVersion}
+                />
+                { " " + version.component.componentIdentifier.coordinates.version + " " }
+                <NxPolicyViolationIndicator 
+                  style={{float: "right"}}
+                  policyThreatLevel={ 
+                    Math.round(getMaxSecurity(version.securityData)) as ThreatLevelNumber
+                    } >
+                  { " " + getMaxSecurity(version.securityData) }
+                </NxPolicyViolationIndicator>
+              </span>
+            </li>
+          ))}
+          </ul>
+        </React.Fragment>
       )
     }
-    return <Loader 
-      type="MutatingDots" 
-      color="#00BFFF" 
-      height={100} 
-      width={100}
-      />
+    return <Puff />
   }
 
   return (

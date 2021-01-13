@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 import * as React from "react";
-import Loader from "react-loader-spinner";
 import AllVersionsPage from "./components/IqServer/AllVersions/AllVersionsPage";
 import SelectedVersionDetails from "./components/IqServer/SelectedVersionDetails/SelectedVersionDetails";
 import { VersionsContextProvider } from "./context/versions-context";
@@ -44,9 +43,12 @@ type AppState = {
 };
 
 class ExtensionContainer extends React.Component<AppProps, AppState> {
+
   constructor(props: AppProps) {
     super(props);
+
     console.debug("App constructing, props:", props);
+
     this.state = {
       component: {},
       vulnerabilities: [],
@@ -59,6 +61,60 @@ class ExtensionContainer extends React.Component<AppProps, AppState> {
       vulnDetails: undefined,
       handleGetRemediation: this.handleGetRemediation.bind(this)
     };
+  }
+
+  render() {
+    if (!this.state.scanType) {
+      return null;
+    } else if (this.state.scanType === ExtScanType.OssIndex) {
+      return <OssIndexContextProvider 
+        value={this.state}>
+        <OssIndexVersionDetails />
+      </OssIndexContextProvider>
+    }
+    return <VersionsContextProvider 
+      value={this.state}>
+        <React.Fragment>
+          <div className="sidenav">
+            <AllVersionsPage
+              versionChangeHandler={ this.handleVersionSelection }
+              />
+          </div>
+          <div className="main">
+            <SelectedVersionDetails />
+          </div>
+        </React.Fragment>
+    </VersionsContextProvider>
+  }
+
+  componentDidMount() {
+    window.addEventListener("message", event => {
+      const message = event.data;
+
+      console.debug("App received VS message", message);
+
+      switch (message.command) {
+        case "artifact":
+          this.handleArtifactMessage(message.component);
+          break;
+        case "versionDetails":
+          this.handleVersionDetailsMessage(
+            message.componentDetails,
+            message.vulnerabilities,
+            message.scanType
+            );
+          break;
+        case "allversions":
+          this.handleAllVersionsMessage(message.allversions);
+          break;
+        case "remediationDetail":
+          this.handleRemediationMessage(message.remediation.remediation);
+          break;
+        case "vulnDetails":
+          this.handleVulnDetailsMessage(message.vulnDetails);
+          break;
+      }
+    });
   }
 
   handleVersionSelection = (version: string): void => {
@@ -75,9 +131,11 @@ class ExtensionContainer extends React.Component<AppProps, AppState> {
     });
   }
 
-  public handleGetRemediation(packageUrl: string, vulnID: string): void {
+  handleGetRemediation = (packageUrl: string, vulnID: string): void => {
     console.debug("App received remediation request", packageUrl);
-    this.setState({ remediation: undefined });
+    this.setState({
+      remediation: undefined 
+    });
 
     vscode.postMessage({
       command: "getRemediation",
@@ -90,139 +148,103 @@ class ExtensionContainer extends React.Component<AppProps, AppState> {
     });
   }
 
-  public render() {
-    console.log("App render called, state:", this.state);
-    if (!this.state.scanType) {
-      console.log("rendering loader because ");
-      return <Loader type="Puff" color="#00BFFF" height="100" width="100" />;
-      // return <SonatypeLoader />;
-    } else if (this.state.scanType === ExtScanType.OssIndex) {
-      console.log("Attempting to render OSS Index");
-      return (
-        <OssIndexContextProvider value={this.state}>
-          <OssIndexVersionDetails />
-        </OssIndexContextProvider>
-      );
-    }
-    console.log("rendering Nexus IQ");
-    return (
-      <VersionsContextProvider value={this.state}>
-        <div>
-          <div className="sidenav">
-            <h3>Versions</h3>
-            <AllVersionsPage
-              versionChangeHandler={this.handleVersionSelection}
-            ></AllVersionsPage>
-          </div>
-          <div className="main">
-            <SelectedVersionDetails />
-          </div>
-        </div>
-      </VersionsContextProvider>
+  handleArtifactMessage = (component: any) => {
+    console.debug(
+      "Artifact received, updating state & children",
+      component
     );
+
+    this.setState({
+      component: component,
+      allVersions: [],
+      selectedVersionDetails: undefined,
+      policyViolations: component.policyViolations,
+      initialVersion: component.version
+    });
+
+    this.handleVersionSelection(component.version);
   }
 
-  public componentDidMount() {
-    window.addEventListener("message", event => {
-      const message = event.data;
-      console.debug("App received VS message", message);
-      switch (message.command) {
-        case "artifact":
-          console.debug(
-            "Artifact received, updating state & children",
-            message.component
-          );
-          const component = message.component;
-          this.setState({
-            component: component,
-            allVersions: [],
-            selectedVersionDetails: undefined,
-            policyViolations: component.policyViolations,
-            initialVersion: message.component.version
-          });
-          this.handleVersionSelection(message.component.version);
-          break;
-        case "versionDetails":
-          console.log(
-            "Selected version details received",
-            message.componentDetails
-          );
-          let selectedVersion: any;
-          let version: string = "";
-          let vulnerabilities: [] = [];
-          if (message.scanType == ExtScanType.NexusIq) {
-            selectedVersion = message.componentDetails;
-            version =
-              message.componentDetails.component.componentIdentifier.coordinates
-                .version;
-          }
-          if (message.scanType == ExtScanType.OssIndex) {
-            selectedVersion = message.componentDetails;
-            version = message.componentDetails.version;
-            vulnerabilities = message.vulnerabilities;
-          }
-          this.setState({
-            selectedVersionDetails: selectedVersion,
-            selectedVersion: version,
-            scanType: message.scanType,
-            vulnerabilities: vulnerabilities
-          });
-          break;
-        case "allversions":
-          console.debug("App handling allVersions message", message);
-          console.debug("allVersions state component", this.state.component);
-          if (!this.allVersionsIsForCurrentComponent(message.allversions)) {
-            console.debug(
-              "Received allVersions for different component, ignoring",
-              message
-            );
-            break;
-          }
-          console.debug(
-            "allVersions updating state component, componentIdentifier",
-            this.state.component
-          );
-          console.debug(
-            "allVersions updating componentIdentifier",
-            message.allversions[0].component.componentIdentifier.coordinates
-          );
-          this.setState({ allVersions: message.allversions });
-          break;
-        case "remediationDetail":
-          console.debug(
-            "App handling remediationDetail message",
-            message.remediation.remediation
-          );
-          this.setState({ remediation: message.remediation.remediation });
-          break;
-        case "vulnDetails":
-          console.debug("App handling vulnerability details message", message.vulnDetails);
-          this.setState({ 
-            vulnDetails: message.vulnDetails
-          });
-          break;
-      }
+  handleVersionDetailsMessage = (componentDetails: any, vulnerabilities: any, scanType: ExtScanType) => {
+    console.debug(
+      "Selected version details received",
+      componentDetails
+    );
+
+    const version: string = 
+      (scanType === ExtScanType.NexusIq) ? componentDetails.component.componentIdentifier.coordinates.version : componentDetails.version;
+
+    this.setState({
+      selectedVersionDetails: componentDetails,
+      selectedVersion: version,
+      scanType: scanType,
+      vulnerabilities: vulnerabilities
     });
   }
 
-  private allVersionsIsForCurrentComponent(allVersions: any): boolean {
+  handleAllVersionsMessage = (allVersions: any[]) => {
+    console.debug("App handling allVersions message");
+    console.debug(
+      "allVersions state component", 
+      this.state.component
+    );
+
+    if (!this.allVersionsShallowEqual(allVersions)) {
+      console.debug(
+        "Received allVersions for different component, ignoring",
+      );
+      return;
+    }
+    console.debug(
+      "allVersions updating state component, componentIdentifier",
+      this.state.component
+    );
+    console.debug(
+      "allVersions updating componentIdentifier",
+      allVersions[0].component.componentIdentifier.coordinates
+    );
+
+    this.setState({
+      allVersions: allVersions 
+    });
+  }
+
+  handleRemediationMessage = (remediation: any) => {
+    console.debug(
+      "App handling remediationDetail message",
+      remediation
+    );
+
+    this.setState({
+      remediation: remediation 
+    });
+  }
+
+  handleVulnDetailsMessage = (vulnDetails: VulnerabilityDetails) => {
+    console.debug(
+      "App handling vulnerability details message", 
+      vulnDetails
+    );
+
+    this.setState({ 
+      vulnDetails: vulnDetails
+    });
+  }
+
+  allVersionsShallowEqual = (allVersions: any[]): boolean => {
     if (!allVersions || allVersions.length <= 0) {
-      // no version array provided
-      console.debug(`allVersions 0 length: ${allVersions}`);
       return false;
     }
-    let current = this.state.component.nexusIQData.component.componentIdentifier
-      .coordinates;
-    let next = allVersions[0].component.componentIdentifier.coordinates;
 
-    for (var key in current) {
-      if (key != "version" && current[key] != next[key]) {
-        console.debug(
-          `next allVersion has property mismatch. Key=[${key}], current: ${current[key]}, next: ${next[key]}`
-        );
+    const current = this.state.component.nexusIQData.component.componentIdentifier.coordinates;
+    const next = allVersions[0].component.componentIdentifier.coordinates;
+
+    for (let key in current) {
+      if (key != "version" && current[key] !== next[key]) {
         return false;
       }
     }
+
     return true;
   }
 }
