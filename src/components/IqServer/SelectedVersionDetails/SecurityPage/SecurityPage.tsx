@@ -23,11 +23,15 @@ const SecurityPage = () => {
   const versionsContext = useContext(VersionsContext);
 
   const getRemediationAndOpen = (packageUrl: string, securityIssue: string): void => {
-    if (versionsContext) {
-      versionsContext.handleGetRemediation(packageUrl, securityIssue);
+    if (open == securityIssue) {
+      setOpen("");
+    } else {
+      if (versionsContext) {
+        versionsContext.handleGetRemediation(packageUrl, securityIssue);
+      }
+  
+      setOpen(securityIssue);
     }
-
-    setOpen(securityIssue);
   }
 
   const isOpen = (issue: string): boolean => {
