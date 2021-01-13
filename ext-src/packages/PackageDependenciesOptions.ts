@@ -13,15 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ILogger } from "../utils/Logger";
 
-export class ComponentEntryConversions {
-    public static convertGolangVersion(version: string) {
-        if (version.includes("incompatible")) {
-            let pos = version.lastIndexOf("incompatible");
-            let vers = version.substring(0, pos).trimEnd() + "+" + version.substring(pos);
-    
-            return vers;
-        }
-        return version;
-    }
+export interface PackageDependenciesOptions {
+    logger: ILogger
 }

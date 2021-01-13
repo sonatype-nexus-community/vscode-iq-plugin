@@ -19,11 +19,14 @@ import { ComponentEntry } from "../../models/ComponentEntry";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { ScanType } from "../../types/ScanType";
 import { CargoUtils } from "./CargoUtils";
+import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
 
 /**
 * @class CargoDependencies
 */
-export class CargoDependencies extends PackageDependenciesHelper implements PackageDependencies {
+export class CargoDependencies implements PackageDependencies {
+
+  constructor(private options: PackageDependenciesOptions) {}
 
   public checkIfValid(): boolean {
     return PackageDependenciesHelper.checkIfValid("Cargo.lock", "cargo");
@@ -46,7 +49,7 @@ export class CargoDependencies extends PackageDependenciesHelper implements Pack
     return map;
   }
 
-  public async packageForIq(): Promise<Array<CargoPackage>> {
+  public async packageForService(): Promise<Array<CargoPackage>> {
     try {
       const composerUtils = new CargoUtils();
       const deps = await composerUtils.getDependencyArray();

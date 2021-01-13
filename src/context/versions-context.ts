@@ -34,6 +34,4 @@ const ctxt = React.createContext<VersionsContextInterface | undefined>(undefined
 
 export const VersionsContextProvider = ctxt.Provider;
 
-export const VersionsContextConsumer = ctxt.Consumer;
-
 export const VersionsContext = ctxt;

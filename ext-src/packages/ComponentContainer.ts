@@ -22,23 +22,24 @@ import { RubyGemsDependencies } from "./rubygems/RubyGemsDependencies";
 import { PoetryDependencies } from "./poetry/PoetryDependencies";
 import { ComposerDependencies } from './composer/ComposerDependencies';
 import { CargoDependencies } from './cargo/CargoDependencies';
+import { ILogger } from "../utils/Logger";
 
 export class ComponentContainer {
   Possible: Array<PackageDependencies> = [];
   Valid: Array<PackageDependencies> = [];
   PackageMuncher: PackageDependencies | undefined;
 
-  constructor() {
+  constructor(readonly logger: ILogger) {
 
     // To add a new format, you just need to push another implementation to this list
-    this.Possible.push(new MavenDependencies());
-    this.Possible.push(new NpmDependencies());
-    this.Possible.push(new GolangDependencies());
-    this.Possible.push(new PyPIDependencies());
-    this.Possible.push(new RubyGemsDependencies());
-    this.Possible.push(new PoetryDependencies());
-    this.Possible.push(new ComposerDependencies());
-    this.Possible.push(new CargoDependencies());
+    this.Possible.push(new MavenDependencies({logger}));
+    this.Possible.push(new NpmDependencies({logger}));
+    this.Possible.push(new GolangDependencies({logger}));
+    this.Possible.push(new PyPIDependencies({logger}));
+    this.Possible.push(new RubyGemsDependencies({logger}));
+    this.Possible.push(new PoetryDependencies({logger}));
+    this.Possible.push(new ComposerDependencies({logger}));
+    this.Possible.push(new CargoDependencies({logger}));
 
     this.Possible.forEach(i => {
       if(i.checkIfValid()) {

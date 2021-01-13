@@ -71,12 +71,4 @@ export class PackageDependenciesHelper {
 
     return result;
   }
-
-  private static valueOrEmpty(map: Map<string, string>, key: string): string {
-    if (map.has(key)) {
-      let val = map.get(key);
-      return val === undefined ? "" : val;
-    }
-    return "";
-  }
 }

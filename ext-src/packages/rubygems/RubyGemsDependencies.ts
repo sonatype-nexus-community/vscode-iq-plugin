@@ -19,10 +19,14 @@ import { PackageDependencies } from "../PackageDependencies";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { ScanType } from "../../types/ScanType";
 import { ComponentEntry } from "../../models/ComponentEntry";
+import { PackageDependenciesOptions } from '../PackageDependenciesOptions';
 
 export class RubyGemsDependencies implements PackageDependencies {
 
-  public async packageForIq(): Promise<any> {
+  constructor(private options: PackageDependenciesOptions) {
+  }
+
+  public async packageForService(): Promise<any> {
     try {
       const rubyGemsUtils = new RubyGemsUtils();
       const deps = await rubyGemsUtils.getDependencyArray();

@@ -19,5 +19,5 @@ import { ComponentEntry } from "../models/ComponentEntry";
 export interface PackageDependencies {
   checkIfValid(): boolean;
   toComponentEntries(data: Array<PackageType>): Map<string, ComponentEntry>;
-  packageForIq(): Promise<Array<PackageType>>;
+  packageForService(): Promise<Array<PackageType>>;
 }

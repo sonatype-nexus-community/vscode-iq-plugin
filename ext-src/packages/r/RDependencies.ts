@@ -13,28 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { LitePackageDependencies } from "../LitePackageDependencies";
-import { RubyGemsPackage } from "./RubyGemsPackage";
-import { RubyGemsUtils } from './RubyGemsUtils';
+import { RPackage } from "./RPackage";
+import { RUtils } from './RUtils';
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
+import { PackageDependencies } from "../PackageDependencies";
+import { ComponentEntry } from "../../models/ComponentEntry";
+import { PackageType } from "../PackageType";
+import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
 
-export class RubyGemLiteDependencies implements LitePackageDependencies {
-  format: string = "rubygems";
-  manifestName: string = "Gemfile.lock";
+export class RDependencies implements PackageDependencies {
+  
+  constructor(private options: PackageDependenciesOptions) {}
+
+  format: string = "r";
+  manifestName: string = ".Rbuildignore";
 
   public checkIfValid(): boolean {
     return PackageDependenciesHelper.checkIfValid(this.manifestName, this.format);
   }
 
-  public async packageForService(): Promise<Array<RubyGemsPackage>> {
+  toComponentEntries(data: PackageType[]): Map<string, ComponentEntry> {
+    throw new Error("Method not implemented.");
+  }
+
+  public async packageForService(): Promise<Array<RPackage>> {
     try {
-      const rubyGemsUtils = new RubyGemsUtils();
-      const deps = await rubyGemsUtils.getDependencyArray();
+      const rUtils = new RUtils();
+      const deps = await rUtils.getDependencyArray();
 
       return Promise.resolve(deps);
     }
-    catch (e) {
-      return Promise.reject(e);
+    catch (ex) {
+      return Promise.reject(ex);
     }
   }
 }

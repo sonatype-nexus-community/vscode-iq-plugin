@@ -19,8 +19,11 @@ import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { MavenUtils } from "./MavenUtils";
 import { ScanType } from "../../types/ScanType";
 import { ComponentEntry } from "../../models/ComponentEntry";
+import { PackageDependenciesOptions } from '../PackageDependenciesOptions'; 
 
-export class MavenDependencies extends PackageDependenciesHelper implements PackageDependencies {
+export class MavenDependencies implements PackageDependencies {
+
+  constructor(private options: PackageDependenciesOptions) {}
 
   public checkIfValid(): boolean {
     return PackageDependenciesHelper.checkIfValid("pom.xml", "maven");
@@ -43,7 +46,7 @@ export class MavenDependencies extends PackageDependenciesHelper implements Pack
     return map;
   }
 
-  public async packageForIq(): Promise<Array<MavenPackage>> {
+  public async packageForService(): Promise<Array<MavenPackage>> {
     try {
       const mavenUtils = new MavenUtils();
       const deps = await mavenUtils.getDependencyArray();

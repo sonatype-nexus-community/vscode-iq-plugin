@@ -83,7 +83,6 @@ export class Logger implements ILogger {
 
     public log(level: LogLevel, message: string, ...meta: any): void {
         if (this._logLevel >= level) {
-            console.debug(LogLevel[level]);
             this._writeToOutputChannel(level, message);
             this._logMessage(level, message, ...meta);
         }
@@ -96,32 +95,26 @@ export class Logger implements ILogger {
     private _logMessage(level: LogLevel, message: string, ...meta: any) {
         switch (level) {
             case LogLevel.ERROR: {
-                console.debug('error log');
                 this._fileLogger.error(message, ...meta);
                 break;
             }
             case LogLevel.DEBUG: {
-                console.debug('debug log');
                 this._fileLogger.debug(message, ...meta);
                 break;
             }
             case LogLevel.TRACE: {
-                console.debug('trace log');
                 this._fileLogger.trace(message, ...meta);
                 break;
             }
             case LogLevel.INFO: {
-                console.debug('info log');
                 this._fileLogger.info(message, ...meta);
                 break;
             }
             case LogLevel.WARN: {
-                console.debug('warn log');
                 this._fileLogger.warn(message, ...meta);
                 break;
             }
             case LogLevel.FATAL: {
-                console.debug('fatal log');
                 this._fileLogger.fatal(message, ...meta);
                 break;
             }

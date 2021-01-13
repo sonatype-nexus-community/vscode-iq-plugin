@@ -19,11 +19,14 @@ import { ComponentEntry } from "../../models/ComponentEntry";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { ScanType } from "../../types/ScanType";
 import { ComposerUtils } from "./ComposerUtils";
+import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
 
 /**
 * @class ComposerDependencies
 */
-export class ComposerDependencies extends PackageDependenciesHelper implements PackageDependencies {
+export class ComposerDependencies implements PackageDependencies {
+  
+  constructor(private options: PackageDependenciesOptions) {}
 
   public checkIfValid(): boolean {
     return PackageDependenciesHelper.checkIfValid("composer.lock", "composer");
@@ -46,7 +49,7 @@ export class ComposerDependencies extends PackageDependenciesHelper implements P
     return map;
   }
 
-  public async packageForIq(): Promise<Array<ComposerPackage>> {
+  public async packageForService(): Promise<Array<ComposerPackage>> {
     try {
       const composerUtils = new ComposerUtils();
       const deps = await composerUtils.getDependencyArray();

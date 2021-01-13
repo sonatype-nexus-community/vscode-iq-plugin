@@ -203,7 +203,7 @@
     "list-installed": "^1.0.0",
     "log4js": "^6.3.0",
     "node-fetch": "^2.6.1",
-    "packageurl-js": "^0.0.3",
+    "packageurl-js": "^0.0.4",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
     "temp": "^0.9.4",

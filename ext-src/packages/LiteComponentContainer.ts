@@ -13,34 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import { LitePackageDependencies } from "./LitePackageDependencies";
-import { NpmLiteDependencies } from "./npm/NpmLiteDependencies";
-import { PyPiLiteDependencies } from "./pypi/PyPiLiteDependencies";
-import { PoetryLiteDependencies } from "./poetry/PoetryLiteDependencies";
-import { GolangLiteDependencies } from "./golang/GolangLiteDependencies";
-import { MavenLiteDependencies } from "./maven/MavenLiteDependencies";
-import { RubyGemLiteDependencies } from "./rubygems/RubyGemsLiteDependencies";
-import { RLiteDependencies } from "./r/RLiteDependencies";
-import { ComposerLiteDependencies } from "./composer/ComposerLiteDependencies";
-import { CargoLiteDependencies } from "./cargo/CargoLiteDependencies";
+import { NpmDependencies } from "./npm/NpmDependencies";
+import { PyPIDependencies } from "./pypi/PyPIDependencies";
+import { PoetryDependencies } from "./poetry/PoetryDependencies";
+import { GolangDependencies } from "./golang/GolangDependencies";
+import { MavenDependencies } from "./maven/MavenDependencies";
+import { RubyGemsDependencies } from "./rubygems/RubyGemsDependencies";
+import { RDependencies } from "./r/RDependencies";
+import { ComposerDependencies } from "./composer/ComposerDependencies";
+import { CargoDependencies } from "./cargo/CargoDependencies";
+import { PackageDependencies } from "./PackageDependencies";
+import { ILogger } from "../utils/Logger";
 
 export class LiteComponentContainer {
-  Possible: Array<LitePackageDependencies> = [];
-  Valid: Array<LitePackageDependencies> = [];
-  PackageMuncher: LitePackageDependencies | undefined;
+  Possible: Array<PackageDependencies> = [];
+  Valid: Array<PackageDependencies> = [];
 
-  constructor() {
+  constructor(readonly logger: ILogger) {
     // To add a new format, you just need to push another implementation to this list
-    this.Possible.push(new RubyGemLiteDependencies());
-    this.Possible.push(new NpmLiteDependencies());
-    this.Possible.push(new PyPiLiteDependencies());
-    this.Possible.push(new GolangLiteDependencies());
-    this.Possible.push(new MavenLiteDependencies());
-    this.Possible.push(new RLiteDependencies());
-    this.Possible.push(new PoetryLiteDependencies());
-    this.Possible.push(new ComposerLiteDependencies());
-    this.Possible.push(new CargoLiteDependencies());
+    this.Possible.push(new RubyGemsDependencies({logger}));
+    this.Possible.push(new NpmDependencies({logger}));
+    this.Possible.push(new PyPIDependencies({logger}));
+    this.Possible.push(new GolangDependencies({logger}));
+    this.Possible.push(new MavenDependencies({logger}));
+    this.Possible.push(new RDependencies({logger}));
+    this.Possible.push(new PoetryDependencies({logger}));
+    this.Possible.push(new ComposerDependencies({logger}));
+    this.Possible.push(new CargoDependencies({logger}));
 
     this.Possible.forEach(i => {
       if(i.checkIfValid()) {

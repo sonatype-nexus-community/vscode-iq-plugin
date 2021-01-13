@@ -20,7 +20,6 @@ import { RequestService } from "../services/RequestService";
 import { IqRequestService } from "../services/IqRequestService";
 import { ComponentModel } from "./ComponentModel";
 import { ComponentEntry } from "./ComponentEntry";
-import { ComponentEntryConversions } from '../utils/ComponentEntryConversions';
 import { ComponentModelOptions } from "./ComponentModelOptions";
 import { ILogger, LogLevel } from "../utils/Logger";
 import { PackageType } from "../packages/PackageType";
@@ -61,7 +60,7 @@ export class IqComponentModel implements ComponentModel {
     private async performIqScan(): Promise<any> {
       return new Promise((resolve, reject) => {
         try {
-          let componentContainer = new ComponentContainer();
+          let componentContainer = new ComponentContainer(this.logger);
 
           window.withProgress(
             {
@@ -78,7 +77,7 @@ export class IqComponentModel implements ComponentModel {
                 for (let pm of componentContainer.Valid) {
                   try {
                     this.logger.log(LogLevel.INFO, `Starting to Munch on ${pm.constructor.name} dependencies`);
-                    const deps = await pm.packageForIq();
+                    const deps = await pm.packageForService();
                     this.logger.log(LogLevel.TRACE, `Obtained Dependencies from Muncher`, deps);
                     dependencies.push(...deps);
                     progress.report({message: "Reticulating Splines", increment: 25});
