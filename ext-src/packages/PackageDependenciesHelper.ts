@@ -71,4 +71,17 @@ export class PackageDependenciesHelper {
 
     return result;
   }
+
+  public static checkIfValidWithExclusion(extension: string, format: string, exclusions: string[]): boolean {
+    let dirCont = fs.readdirSync(this.getWorkspaceRoot());
+
+    let files = dirCont.filter((file) => {
+      return !exclusions.includes(file) && file.endsWith(extension);
+    });
+
+    if (files && files.length > 0) {
+      return true;
+    }
+    return false;
+  }
 }

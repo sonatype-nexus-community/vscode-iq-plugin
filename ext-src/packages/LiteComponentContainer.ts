@@ -24,6 +24,7 @@ import { ComposerDependencies } from "./composer/ComposerDependencies";
 import { CargoDependencies } from "./cargo/CargoDependencies";
 import { PackageDependencies } from "./PackageDependencies";
 import { ILogger } from "../utils/Logger";
+import { ConanDependencies } from "./conan/ConanDependencies";
 
 export class LiteComponentContainer {
   Possible: Array<PackageDependencies> = [];
@@ -40,6 +41,7 @@ export class LiteComponentContainer {
     this.Possible.push(new PoetryDependencies({logger}));
     this.Possible.push(new ComposerDependencies({logger}));
     this.Possible.push(new CargoDependencies({logger}));
+    this.Possible.push(new ConanDependencies({logger}));
 
     this.Possible.forEach(i => {
       if(i.checkIfValid()) {
