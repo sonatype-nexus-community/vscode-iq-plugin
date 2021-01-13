@@ -5,7 +5,7 @@
 - [x] add hover-help with more details about the component and violations found
 - [X] on double-click (or something) open a webview page
 - [X] set the webview page to use violation details (eg: Chrome plugin, other IDEs)
-- [] automatically sort the components based on violation status
+- [X] automatically sort the components based on violation status
 - [] enable viewing component details for all components, not just the security violations
 - [] add "compile error" warnings in the package.json file based on violations
 - [] add a tree view to show all transitive dependencies and how they relate to top-level components
@@ -18,9 +18,6 @@
 
 - [] improve asynch calls to do more parallelism
 - [] dynamically update UI as scans are performed
-- [] have IQ use MIME types for CSS and JS so that strict checks within VS Code can be used
-- [] Add CSP blocks to the HTML in IQ for additional security
-
 
 # Issues
 
