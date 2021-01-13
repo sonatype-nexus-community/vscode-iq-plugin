@@ -33,7 +33,7 @@ export class RubyGemsDependencies implements PackageDependencies {
     }
   }
 
-  public CheckIfValid(): boolean {
+  public checkIfValid(): boolean {
     return PackageDependenciesHelper.checkIfValid('Gemfile.lock', 'rubygems');
   }
 

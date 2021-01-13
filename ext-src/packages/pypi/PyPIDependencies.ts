@@ -22,12 +22,8 @@ import { ScanType } from "../../types/ScanType";
 
 export class PyPIDependencies extends PackageDependenciesHelper implements PackageDependencies {
 
-  public CheckIfValid(): boolean {
-    if (PackageDependenciesHelper.doesPathExist(PackageDependenciesHelper.getWorkspaceRoot(), "requirements.txt")) {
-      console.debug("Valid for PyPI");
-      return true;
-    }
-    return false;
+  public checkIfValid(): boolean {
+    return PackageDependenciesHelper.doesPathExist(PackageDependenciesHelper.getWorkspaceRoot(), "requirements.txt");
   }
 
   public toComponentEntries(packages: Array<PyPIPackage>): Map<string, ComponentEntry> {

@@ -41,7 +41,7 @@ export class ComponentContainer {
     this.Possible.push(new CargoDependencies());
 
     this.Possible.forEach(i => {
-      if(i.CheckIfValid()) {
+      if(i.checkIfValid()) {
         this.Valid.push(i);
       }
     });

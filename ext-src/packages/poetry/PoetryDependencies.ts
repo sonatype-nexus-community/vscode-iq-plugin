@@ -24,12 +24,8 @@ import { PyPIPackage } from '../pypi/PyPIPackage';
 
 export class PoetryDependencies extends PyPIDependencies implements PackageDependencies {
 
-  public CheckIfValid(): boolean {
-    if (PackageDependenciesHelper.doesPathExist(PackageDependenciesHelper.getWorkspaceRoot(), "poetry.lock")) {
-      console.debug("Valid for Poetry");
-      return true;
-    }
-    return false;
+  public checkIfValid(): boolean {
+    return PackageDependenciesHelper.doesPathExist(PackageDependenciesHelper.getWorkspaceRoot(), "poetry.lock");
   }
 
   public toComponentEntries(packages: Array<PyPIPackage>): Map<string, ComponentEntry> {

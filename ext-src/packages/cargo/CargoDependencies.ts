@@ -25,7 +25,7 @@ import { CargoUtils } from "./CargoUtils";
 */
 export class CargoDependencies extends PackageDependenciesHelper implements PackageDependencies {
 
-  public CheckIfValid(): boolean {
+  public checkIfValid(): boolean {
     return PackageDependenciesHelper.checkIfValid("Cargo.lock", "cargo");
   }
 

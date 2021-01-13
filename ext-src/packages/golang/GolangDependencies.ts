@@ -24,7 +24,7 @@ import { GolangScanType } from "./GolangScanType";
 export class GolangDependencies extends PackageDependenciesHelper implements PackageDependencies {
   private scanType: string = "";
 
-  public CheckIfValid(): boolean {
+  public checkIfValid(): boolean {
     this.scanType =  PackageDependenciesHelper.checkIfValidWithArray(GolangScanType, "golang");
     return this.scanType === "" ? false : true;
   }

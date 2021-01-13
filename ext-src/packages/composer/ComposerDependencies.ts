@@ -25,7 +25,7 @@ import { ComposerUtils } from "./ComposerUtils";
 */
 export class ComposerDependencies extends PackageDependenciesHelper implements PackageDependencies {
 
-  public CheckIfValid(): boolean {
+  public checkIfValid(): boolean {
     return PackageDependenciesHelper.checkIfValid("composer.lock", "composer");
   }
 

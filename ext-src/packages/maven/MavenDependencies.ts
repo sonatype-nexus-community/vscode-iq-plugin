@@ -22,7 +22,7 @@ import { ComponentEntry } from "../../models/ComponentEntry";
 
 export class MavenDependencies extends PackageDependenciesHelper implements PackageDependencies {
 
-  public CheckIfValid(): boolean {
+  public checkIfValid(): boolean {
     return PackageDependenciesHelper.checkIfValid("pom.xml", "maven");
   }
 

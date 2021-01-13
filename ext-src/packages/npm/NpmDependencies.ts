@@ -35,7 +35,7 @@ export class NpmDependencies implements PackageDependencies {
     }
   }
 
-  public CheckIfValid(): boolean {
+  public checkIfValid(): boolean {
     this.scanType = PackageDependenciesHelper.checkIfValidWithArray(NpmScanType, "npm");
     return this.scanType === "" ? false : true;
   }
