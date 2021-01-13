@@ -31,7 +31,9 @@ type SecurityItemProps = {
 const SecurityItemDisplay = (props: SecurityItemProps) => {
 
     return (
-      <NxAccordion open={ props.open } onToggle={() => props.remediationEvent(props.packageUrl, props.securityIssue.reference) }>
+      <NxAccordion 
+        open={ props.open } 
+        onToggle={() => props.remediationEvent(props.packageUrl, props.securityIssue.reference) }>
         <NxAccordion.Header>
           <h2 className="nx-accordion__header-title">
             { props.securityIssue.reference }
@@ -45,19 +47,6 @@ const SecurityItemDisplay = (props: SecurityItemProps) => {
         <h3 className="nx-h3">
           Details
         </h3>
-        <ul className="nx-list">
-          <li className="nx-list__item">
-            <span className="nx-list__text">Severity: { props.securityIssue.severity }</span>
-          </li>
-          <li className="nx-list__item">
-            <span className="nx-list__text">Threat Category: { props.securityIssue.threatCategory }</span>
-          </li>
-          <li className="nx-list__item">
-            <span className="nx-list__text">URL: { props.securityIssue.url != "" &&
-                  <a href={props.securityIssue.url}>{props.securityIssue.url}</a>
-            }</span>
-          </li>
-        </ul>
         <VulnDetails />
         <Remediation />
       </NxAccordion>
