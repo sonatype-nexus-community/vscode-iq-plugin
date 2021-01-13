@@ -7,7 +7,7 @@ Scan your libraries against either the free [OSS Index](https://ossindex.sonatyp
 
 ## Features
 
-- Scan npm, Maven, RubyGems, Go (`dep` and `go mod`), R (see known quirks) or PyPi projects (Go is only supported on Linux or OS/X)
+- Scan npm/yarn, Maven, RubyGems, Golang (`dep` and `go mod`), Rust (Cargo), PHP (Composer), R (see known quirks), Python (requirements.txt or Poetry) projects 
 - See all components, with vulnerable ones highlighted
 
 ### Sonatype Nexus IQ Scan
@@ -81,7 +81,7 @@ We try to use other tooling whenever possible, to avoid reinventing the wheel (t
 
 Development requires running this project in Visual Studio Code, for ease of testing etc...
 
-You'll need a working version of nodejs (we have been using 10.x and higher), and then:
+You'll need a working version of nodejs (we have been using 12.x and higher), and then:
 
 ```
 npm i
@@ -117,7 +117,7 @@ fix: `policyViolations of undefined` when loading a python project with requirem
 ```
 
 Without such a commit comment, commits to the `master` branch will cause a build failure during the release
-process due to an attempted to reuse an existing version number.
+process due to an attempt to reuse an existing version number.
 
 To avoid such build failures without performing a release, be sure your commit message includes `[skip ci] `.
 
