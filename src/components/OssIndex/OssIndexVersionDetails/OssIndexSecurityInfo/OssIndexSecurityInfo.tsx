@@ -13,99 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
-import { Table, Badge, Accordion, Card } from 'react-bootstrap';
-import ClassNameUtils from '../../../../utils/ClassNameUtils';
-import { FaChevronDown } from 'react-icons/fa';
+import React, { useContext } from 'react';
+import { 
+  OssIndexContextInterface, 
+  OssIndexContext } from '../../../../context/ossindex-context';
+import OssIndexVulnerability from './OssIndexVulnerability/OssIndexVulnerability';
 
-type OssCipProps = {
-  vulnerabilities: any[]
-};
-// todo declare more details on component
-type OssCipState = {
-};
+const OssIndexSecurityInfo = () => {
 
-class OssIndexSecurityInfo extends React.Component<OssCipProps, OssCipState> {
-  constructor(props: OssCipProps) {
-    super(props);
-  }
+  const ossIndexContext = useContext(OssIndexContext);
 
-  public render() {
-    if (this.props.vulnerabilities && this.props.vulnerabilities.length > 0) {
-      return (
-        <React.Fragment>
-            <h3>Vulnerabilities</h3>
-            { this.printVulnerabitilies(this.props.vulnerabilities) }
-        </React.Fragment>
-      )
-    } else {
-      return this.noVulnerabilitiesFound();
-    }
-  }
-
-  private noVulnerabilitiesFound() {
-    console.debug("No vulnerabilities found");
+  const noVulnerabilitiesFound = () => {
     return (
       <h2>No Vulnerabilities Found</h2>
     );
   }
 
-  private printVulnerabitilies(vulnerabilities: any[]) {
-    console.debug("Printing vulnerability", vulnerabilities);
-
-    return (
-      <Accordion>
-          { vulnerabilities.map(this.printVulnerability) }
-      </Accordion>
-    )
+  const renderVulnerabilities = (ossIndexContext: OssIndexContextInterface | undefined) => {
+    if (ossIndexContext && ossIndexContext.vulnerabilities && ossIndexContext.vulnerabilities.length > 0) {
+      return (
+        <React.Fragment>
+          <h3>Vulnerabilities</h3>
+          { ossIndexContext.vulnerabilities.map((vuln) => {
+            return <OssIndexVulnerability vulnerability={vuln} />
+          })}
+        </React.Fragment>
+      )
+    }
+    return noVulnerabilitiesFound();
   }
 
-  private printVulnerability(vulnerability: any) {
-    return (
-      <Card>
-          <Accordion.Toggle as={Card.Header} 
-            eventKey={vulnerability.id}>
-            { vulnerability.title } <FaChevronDown /> 
-            <Badge 
-              className={ClassNameUtils.threatClassName(vulnerability.cvssScore)}
-              >
-                CVSS: { vulnerability.cvssScore }
-            </Badge>
-          </Accordion.Toggle>
-        <Accordion.Collapse eventKey={vulnerability.id}>
-          <Card.Body>
-            <Table>
-              <tbody>
-                <tr>
-                  <td>
-                    { vulnerability.description }
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    CVSS Score:             
-                    <Badge className={ClassNameUtils.threatClassName(vulnerability.cvssScore)}>
-                      { vulnerability.cvssScore }
-                    </Badge>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    CVSS Vector: { vulnerability.cvssVector }
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    Click here for more info: <a href={ vulnerability.reference } target="_blank">{ vulnerability.reference }</a>
-                  </td>
-                </tr>
-              </tbody>
-            </Table>
-          </Card.Body>
-        </Accordion.Collapse>
-      </Card>
-    )
-  }
+  return (
+    renderVulnerabilities(ossIndexContext)
+  )
 }
 
 export default OssIndexSecurityInfo;

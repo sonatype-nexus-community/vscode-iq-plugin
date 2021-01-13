@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-import { CoordinateType } from "./CoordinateType";
-
 export interface PackageType {
   Name: string;
   Version: string;
   Group?: string;
   Hash?: string;
   Extension?: string;
-  toCoordinates(): string;
   toPurl(): string;
-  toCoordValueType(coordinate: CoordinateType): string;
 }

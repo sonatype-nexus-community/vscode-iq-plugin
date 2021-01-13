@@ -151,35 +151,35 @@
         "type": "object",
         "title": "Sonatype Nexus IQ configuration",
         "properties": {
-          "nexusiq.url": {
+          "nexusIQ.applicationId": {
+            "type": "string",
+            "default": "sandbox-application",
+            "description": "Your Nexus IQ Application Id"
+          },
+          "nexusIQ.maximumEvaluationPollAttempts": {
+            "type": "number",
+            "default": "300",
+            "description": "Number of retries (every 2secs) to wait for the evaluation report"
+          },
+          "nexusIQ.serverUrl": {
             "type": "string",
             "default": "http://127.0.0.1:8070",
-            "description": "URL including port of the Nexus IQ server"
+            "description": "URL (including port) of the Nexus IQ Server"
           },
-          "nexusiq.username": {
+          "nexusIQ.strictSSL": {
+            "type": "boolean",
+            "default": true,
+            "description": "Set this to false if you are using self signed certificates with Nexus IQ Server"
+          },
+          "nexusIQ.username": {
             "type": "string",
             "default": "admin",
             "description": "Your Nexus IQ user name"
           },
-          "nexusiq.password": {
+          "nexusIQ.userPassword": {
             "type": "string",
             "default": "admin123",
             "description": "Your Nexus IQ password"
-          },
-          "nexusiq.applicationPublicId": {
-            "type": "string",
-            "default": "sandbox-application",
-            "description": "Your Nexus IQ Application Public Id"
-          },
-          "nexusiq.maximumEvaluationPollAttempts": {
-            "type": "number",
-            "default": "300",
-            "description": "Number of retries (every 2secs) to wait for the Evaluation report. "
-          },
-          "nexusiq.strictSSL": {
-            "type": "boolean",
-            "default": true,
-            "description": "Set this to false if you are using self signed certificates with Nexus IQ Server."
           }
         }
       }
@@ -195,33 +195,33 @@
     "generate-format": "./generate-format.sh"
   },
   "dependencies": {
+    "@agney/react-loading": "^0.1.2",
+    "@fortawesome/free-solid-svg-icons": "^5.15.1",
+    "@sonatype/react-shared-components": "^3.3.1",
     "@types/platform": "^1.3.2",
-    "ansi-colors": "^4.1.1",
-    "bootstrap": "^4.3.1",
+    "@types/temp": "^0.8.34",
     "gemfile": "^1.1.0",
-    "http-status-codes": "^1.3.2",
-    "jquery": "^3.4.0",
     "list-installed": "^1.0.0",
-    "node-fetch": "^2.6.1",
     "log4js": "^6.3.0",
-    "packageurl-js": "0.0.2",
+    "node-fetch": "^2.6.1",
+    "packageurl-js": "^0.0.4",
     "react": "^16.11.0",
-    "react-bootstrap": "^1.0.0-beta.14",
     "react-dom": "^16.11.0",
-    "react-icons": "^3.7.0",
-    "react-loader-spinner": "^3.1.2",
-    "toml": "^3.0.0"
+    "temp": "^0.9.4",
+    "toml": "^3.0.0",
+    "uuid": "^8.3.2",
+    "xmlbuilder": "^15.1.1"
   },
   "devDependencies": {
-    "@types/bootstrap": "^4.3.1",
     "@types/jest": "^22.2.3",
-    "@types/lodash": "^4.14.136",
     "@types/node": "^12.12.6",
     "@types/node-fetch": "^2.5.7",
     "@types/react": "^16.9.11",
     "@types/react-dom": "^16.9.3",
+    "@types/uuid": "^8.3.0",
     "@types/vscode": "1.46.0",
     "mustache": "^3.1.0",
+    "node-sass": "4.14.1",
     "node-forge": "^0.10.0",
     "react-scripts": "^2.1.3",
     "rewire": "^4.0.1",

@@ -15,89 +15,50 @@
  */
 import { NpmPackage } from "./NpmPackage";
 import { PackageDependencies } from "../PackageDependencies";
-import { NpmCoordinate } from "./NpmCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { RequestService } from "../../services/RequestService";
 import { NpmUtils } from './NpmUtils';
 import { ScanType } from "../../types/ScanType";
 import { ComponentEntry } from "../../models/ComponentEntry";
 import { NpmScanType } from "./NpmScanType";
-import { ComponentRequestEntry } from "../../types/ComponentRequestEntry";
-import { ComponentRequest } from "../../types/ComponentRequest";
+import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
 
 export class NpmDependencies implements PackageDependencies {
-  Dependencies: Array<NpmPackage> = [];
-  CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
-    string,
-    ComponentEntry
-  >();
-  RequestService: RequestService;
+
+  constructor(private options: PackageDependenciesOptions) {}
+
   private scanType: string = "";
 
-  constructor(private requestService: RequestService) {
-    this.RequestService = this.requestService;
-  }
-
-  public async packageForIq(): Promise<any> {
+  public async packageForService(): Promise<Array<NpmPackage>> {
     try {
-      let npmUtils = new NpmUtils();
-      this.Dependencies = await npmUtils.getDependencyArray(this.scanType);
-      Promise.resolve();
+      const npmUtils = new NpmUtils();
+      const deps = await npmUtils.getDependencyArray();
+      return Promise.resolve(deps);
     }
     catch (e) {
-      throw new TypeError(e);
+      return Promise.reject(e);
     }
   }
 
-  public CheckIfValid(): boolean {
+  public checkIfValid(): boolean {
     this.scanType = PackageDependenciesHelper.checkIfValidWithArray(NpmScanType, "npm");
     return this.scanType === "" ? false : true;
   }
 
-  public ConvertToComponentEntry(resultEntry: any): string {
-    let coordinates = new NpmCoordinate(resultEntry.component.componentIdentifier.coordinates.packageId, 
-      resultEntry.component.componentIdentifier.coordinates.version);
-    
-    return coordinates.asCoordinates();
-  }
-
-  public convertToNexusFormat(): ComponentRequest {
-    let comps = this.Dependencies.map(d => {
-      let entry: ComponentRequestEntry = {
-        componentIdentifier: {
-          format: "npm",
-          coordinates: {
-            packageId: d.Name,
-            version: d.Version
-          }
-        }
-      }
-
-      return entry;
-    });
-
-    return new ComponentRequest(comps);
-  }
-
-  public toComponentEntries(data: any): Array<ComponentEntry> {
-    let components = new Array<ComponentEntry>();
-    for (let entry of data.components) {
+  public toComponentEntries(packages: Array<NpmPackage>): Map<string, ComponentEntry> {
+    let map = new Map<string, ComponentEntry>();
+    for (let pkg of packages) {
+      const name = (pkg.Group != "") ? `${pkg.Group}/${pkg.Name}` : pkg.Name;
       let componentEntry = new ComponentEntry(
-        entry.componentIdentifier.coordinates.packageId,
-        entry.componentIdentifier.coordinates.version,
+        name,
+        pkg.Version,
         "npm",
         ScanType.NexusIq
       );
-      components.push(componentEntry);
-      let coordinates = new NpmCoordinate(
-        entry.componentIdentifier.coordinates.packageId,
-        entry.componentIdentifier.coordinates.version
-      );
-      this.CoordinatesToComponents.set(
-        coordinates.asCoordinates(),
+      map.set(
+        pkg.toPurl(),
         componentEntry
       );
     }
-    return components;
+    return map;
   }
 }

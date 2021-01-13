@@ -1,5 +1,3 @@
-import { BaseRequestService } from "./BaseRequestService";
-
 /*
  * Copyright (c) 2019-present Sonatype, Inc.
  *
@@ -15,14 +13,24 @@ import { BaseRequestService } from "./BaseRequestService";
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { BaseRequestService } from "./BaseRequestService";
+import { ThirdPartyAPIResponse } from './ThirdPartyApiResponse';
+import { ReportResponse } from './ReportResponse';
+import { VulnerabilityResponse } from './VulnerabilityResponse';
+import { RemediationResponse } from './RemediationResponse';
+import { ComponentDetails } from './ComponentDetails';
+import { PackageURL } from 'packageurl-js';
+
 export interface RequestService extends BaseRequestService {
   getApplicationId(applicationPublicId: string): Promise<string>;
-  submitToIqForEvaluation(data: any, applicationInternalId: string): Promise<any>;
-  asyncPollForEvaluationResults(applicationInternalId: string, resultId: string): Promise<any>;
-  getAllVersions(component: any, iqApplicationPublicId: string): Promise<any>;
-  getCVEDetails(cve: any, nexusArtifact: any): Promise<any>;
-  getRemediation(nexusArtifact: any, iqApplicationId: string): Promise<any>;
-  showSelectedVersion(componentIdentifier: any, version: string): Promise<any>
+  submitToThirdPartyAPI(sbom: string, applicationInternalId: string): Promise<string>;
+  getReportResults(reportID: string, applicationPublicId: string): Promise<ReportResponse>;
+  asyncPollForEvaluationResults(statusURL: string): Promise<ThirdPartyAPIResponse>;
+  getAllVersionDetails(versions: Array<string>, purl: PackageURL): Promise<ComponentDetails>;
+  getAllVersions(purl: PackageURL): Promise<Array<string>>;
+  getVulnerabilityDetails(vulnID: string): Promise<VulnerabilityResponse>;
+  getRemediation(purl: string): Promise<RemediationResponse>;
+  showSelectedVersion(purl: string): Promise<ComponentDetails>
   setPassword(password: string): void;
   isPasswordSet(): boolean;
   setApplicationId(s: string): void;

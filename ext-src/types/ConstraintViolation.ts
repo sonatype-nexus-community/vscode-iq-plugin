@@ -20,6 +20,6 @@ export class ConstraintViolation {
   constructor(
     readonly constraintId: string,
     constraintName: string,
-    readonly reasons: Array<ConstraintReason>
+    readonly conditions: Array<ConstraintReason>
   ) {}
 }

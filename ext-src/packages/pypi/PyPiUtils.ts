@@ -14,65 +14,45 @@
  * limitations under the License.
  */
 
-import { exec } from "../../utils/exec";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { PyPIPackage } from './PyPIPackage';
-import { type } from 'os';
+import { readFileSync } from "fs";
+import { join } from "path";
 
 export class PyPiUtils {
   public async getDependencyArray(): Promise<Array<PyPIPackage>> {
-    const WINDOWS = "Windows_NT"
     try {
-      let command: string = "cat requirements.txt"
-      if (type() === WINDOWS) {
-        command = "type requirements.txt"
-      }
-      let {stdout, stderr } = await exec(command, {
-        cwd: PackageDependenciesHelper.getWorkspaceRoot(),
-        env: {
-          PATH: process.env.PATH
-        }
-      });
+      const requirements = readFileSync(
+        join(
+          PackageDependenciesHelper.getWorkspaceRoot(), 
+          "requirements.txt"));
 
-      if (stdout != "" && stderr === "") {
-        return Promise.resolve(this.parsePyPIDependencyTree(stdout));
-      } else {
-        return Promise.reject(
-          new Error(
-            "Error occurred in generating dependency tree. Check that there is not an issue with your requirements.txt"
-          )
-        );
-      }
-    } catch (e) {
+      return Promise.resolve(
+        this.parsePyPIDependencyTree(
+          requirements.toString()));
+    } catch (ex) {
       return Promise.reject(
-        `cat requirements.txt failed, try running it manually to see what went wrong: ${e.error}`
-      );
+        `Error occurred in generating dependency tree. Check that there is not an issue with your requirements.txt, ex: ${ex}`
+        );
     }
   }
 
   private parsePyPIDependencyTree(dependencyTree: string): Array<PyPIPackage> {
-    const dependencies: string = dependencyTree;
-    console.debug(dependencies);
-    console.debug(
-      "------------------------------------------------------------------------------"
-    );
     let dependencyList: PyPIPackage[] = [];
-    //numpy==1.16.4
-    const dependencyLines = dependencies.split("\n");
-    dependencyLines.forEach((dep) => {  
-      console.debug(dep);
+    dependencyTree.split("\n").forEach((dep) => {  
       if (dep.trim()) {
-        //ignore comments
         if (dep.startsWith("#")) {
           console.debug("Found comment, skipping");
         } else {
           const dependencyParts: string[] = dep.trim().split("==");
+          if (!dependencyParts || dependencyParts.length != 2) {
+            // Short circuit, we couldn't split, move on to next one
+            return;
+          }
           const name: string = dependencyParts[0];
           const version: string = dependencyParts[1];
-          const extension: string = "";
+          const extension: string = "tar.gz";
           const qualifier: string = "";
-            //dependencies used only during unit testing are generally ignored since they aren't included in the runtime artifact
-            // artifactId, extension, and version are required fields. If a single dependency is missing any of the three, IQ will return a 400 response for the whole list
           if (name && version) {
             const dependencyObject: PyPIPackage = new PyPIPackage(
               name,
@@ -85,7 +65,7 @@ export class PyPiUtils {
             console.warn(
               "Skipping dependency: " +
                 dep +
-                " due to missing data (name, version, and/or extension)"
+                " due to missing data (name, version)"
             );
           }
         }

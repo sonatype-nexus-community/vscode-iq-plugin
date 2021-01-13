@@ -30,7 +30,7 @@ export class PoetryUtils {
           let res: Array<PyPIPackage> = new Array();
 
           poetry.package.forEach(pkg => {
-            res.push(new PyPIPackage(pkg.name, pkg.version, "", ""));
+            res.push(new PyPIPackage(pkg.name, pkg.version, "tar.gz", ""));
           });
 
           return Promise.resolve(res);

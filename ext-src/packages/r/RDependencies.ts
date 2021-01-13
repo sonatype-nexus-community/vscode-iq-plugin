@@ -13,13 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { LitePackageDependencies } from "../LitePackageDependencies";
 import { RPackage } from "./RPackage";
 import { RUtils } from './RUtils';
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
+import { PackageDependencies } from "../PackageDependencies";
+import { ComponentEntry } from "../../models/ComponentEntry";
+import { PackageType } from "../PackageType";
+import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
 
-export class RLiteDependencies implements LitePackageDependencies {
-  dependencies: Array<RPackage> = [];
+export class RDependencies implements PackageDependencies {
+  
+  constructor(private options: PackageDependenciesOptions) {}
+
   format: string = "r";
   manifestName: string = ".Rbuildignore";
 
@@ -27,15 +32,19 @@ export class RLiteDependencies implements LitePackageDependencies {
     return PackageDependenciesHelper.checkIfValid(this.manifestName, this.format);
   }
 
-  public async packageForService(): Promise<any> {
-    try {
-      let rUtils = new RUtils();
-      this.dependencies = await rUtils.getDependencyArray();
+  toComponentEntries(data: PackageType[]): Map<string, ComponentEntry> {
+    throw new Error("Method not implemented.");
+  }
 
-      Promise.resolve();
+  public async packageForService(): Promise<Array<RPackage>> {
+    try {
+      const rUtils = new RUtils();
+      const deps = await rUtils.getDependencyArray();
+
+      return Promise.resolve(deps);
     }
-    catch (e) {
-      Promise.reject(e);
+    catch (ex) {
+      return Promise.reject(ex);
     }
   }
 }

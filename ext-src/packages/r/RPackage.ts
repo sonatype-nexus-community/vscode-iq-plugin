@@ -22,15 +22,7 @@ export class RPackage implements PackageType {
     readonly Hash?: string
   ) {}
 
-  public toCoordinates() {
-    return `${this.Name}:${this.Version}`;
-  }
-
   public toPurl() {
     return `pkg:cran/${this.Name}@${this.Version}`;
-  }
-
-  public toCoordValueType(): string {
-    return `${this.Name} - ${this.Version}`;
   }
 }

@@ -16,89 +16,45 @@
 import { ComposerPackage } from "./ComposerPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../models/ComponentEntry";
-import { ComposerCoordinate } from "./ComposerCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { ComponentRequestEntry } from "../../types/ComponentRequestEntry";
-import { ComponentRequest } from "../../types/ComponentRequest";
-import { RequestService } from "../../services/RequestService";
 import { ScanType } from "../../types/ScanType";
-import { PackageURL } from 'packageurl-js';
 import { ComposerUtils } from "./ComposerUtils";
+import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
 
 /**
 * @class ComposerDependencies
 */
-export class ComposerDependencies extends PackageDependenciesHelper implements PackageDependencies {
-  Dependencies: Array<ComposerPackage> = [];
-  CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
-    string,
-    ComponentEntry
-  >();
-  RequestService: RequestService;
+export class ComposerDependencies implements PackageDependencies {
+  
+  constructor(private options: PackageDependenciesOptions) {}
 
-  constructor(private requestService: RequestService) {
-    super();
-    this.RequestService = this.requestService;
-  }
-
-  public CheckIfValid(): boolean {
+  public checkIfValid(): boolean {
     return PackageDependenciesHelper.checkIfValid("composer.lock", "composer");
   }
 
-  public ConvertToComponentEntry(resultEntry: any): string {
-    let coordinates = new ComposerCoordinate(resultEntry.component.componentIdentifier.coordinates.name,
-      resultEntry.component.componentIdentifier.coordinates.namespace,
-      resultEntry.component.componentIdentifier.coordinates.version);
-    
-    return coordinates.asCoordinates();
-  }
-
-  public convertToNexusFormat(): ComponentRequest {
-    let comps = this.Dependencies.map(d => {
-      let entry: ComponentRequestEntry = {
-        packageUrl: d.toPurl()
-      }
-
-      return entry;
-    });
-
-    return new ComponentRequest(comps);
-  }
-
-  public toComponentEntries(data: any): Array<ComponentEntry> {
-    let components = new Array<ComponentEntry>();
-    for (let entry of data.components) {
-      const purl: PackageURL = PackageURL.fromString(entry.packageUrl);
-      const packageId = purl.name;
-      const namespace = purl.namespace;
-      const version = purl.version;
-
+  public toComponentEntries(packages: Array<ComposerPackage>): Map<string, ComponentEntry> {
+    let map = new Map<string, ComponentEntry>();
+    for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
-        namespace + ":" + packageId,
-        version,
+        pkg.Group + ":" + pkg.Name,
+        pkg.Version,
         "composer",
         ScanType.NexusIq
       );
-      components.push(componentEntry);
-      let coordinates = new ComposerCoordinate(
-        packageId,
-        namespace,
-        version
-      );
-      this.CoordinatesToComponents.set(
-        coordinates.asCoordinates(),
+      map.set(
+        pkg.toPurl(),
         componentEntry
       );
     }
-    return components;
+    return map;
   }
 
-  public async packageForIq(): Promise<any> {
+  public async packageForService(): Promise<Array<ComposerPackage>> {
     try {
-      let composerUtils = new ComposerUtils();
-      this.Dependencies = await composerUtils.getDependencyArray();
+      const composerUtils = new ComposerUtils();
+      const deps = await composerUtils.getDependencyArray();
 
-      return Promise.resolve();
+      return Promise.resolve(deps);
     } catch (ex) {
       return Promise.reject(`Uh oh, spaghetti-o, an exception occurred while parsing your composer.lock file: ${ex}`);
     }

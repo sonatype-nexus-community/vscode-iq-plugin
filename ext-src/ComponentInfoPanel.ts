@@ -19,7 +19,9 @@ import { IqComponentModel } from "./models/IqComponentModel";
 import { ScanType } from "./types/ScanType";
 import { ComponentModel } from "./models/ComponentModel";
 import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
-import { ComponentEntry } from "./models/ComponentEntry";
+import { ComponentEntry, NexusIQData } from "./models/ComponentEntry";
+import { ReportComponent } from "./services/ReportResponse";
+import { PackageURL } from 'packageurl-js';
 
 export class ComponentInfoPanel {
   /**
@@ -140,8 +142,8 @@ export class ComponentInfoPanel {
           case "alert":
             vscode.window.showErrorMessage(message.text);
             return;
-          case "getCVEDetails":
-            this.showCVE(message.cve, message.nexusArtifact);
+          case "getVulnDetails":
+            this.showVulnerability(message.vulnID);
             return;
           case "Evaluate":
             vscode.window.showInformationMessage(
@@ -149,7 +151,7 @@ export class ComponentInfoPanel {
             );
             return;
           case "getRemediation":
-            this.showRemediation(message.nexusArtifact);
+            this.showRemediation(message.packageUrl);
             return;
         }
       },
@@ -161,11 +163,19 @@ export class ComponentInfoPanel {
   private async showSelectedVersion(message: any) {
     console.log("showSelectedVersion", message);
     if (this.componentModel instanceof IqComponentModel) {
-      var componentIdentifier = message.package.nexusIQData.component.componentIdentifier;
-      var version = message.version;
+      let iqData: NexusIQData = message.package.nexusIQData;
+      let purl: PackageURL = PackageURL.fromString(iqData.component.packageUrl);
+      purl.version = message.version;
+
+      let decodedPurl = unescape(purl.toString());
       var iqComponentModel = this.componentModel as IqComponentModel
-      let body: any = await iqComponentModel.requestService.showSelectedVersion(componentIdentifier, version);
+      let body = await iqComponentModel.requestService.showSelectedVersion(decodedPurl);
     
+      // Dirty ugly hack because IQ Server removes + signs from versions for whatever reason
+      if (iqData.component.componentIdentifier.format === 'golang') {
+        body.componentDetails = this.dealWithGolang(body.componentDetails);
+      }
+
       this._panel.webview.postMessage({
         command: "versionDetails",
         componentDetails: body.componentDetails[0],
@@ -179,14 +189,13 @@ export class ComponentInfoPanel {
         scanType: ScanType.OssIndex
       });
     }
-
   }
 
-  private async showRemediation(nexusArtifact: any) {
-    console.debug("showRemediation", nexusArtifact);
+  private async showRemediation(purl: string) {
+    console.debug("showRemediation", purl);
     if (this.componentModel instanceof IqComponentModel) {
       var iqComponentModel = this.componentModel as IqComponentModel
-      let remediation = await iqComponentModel.requestService.getRemediation(nexusArtifact, ComponentInfoPanel.iqApplicationId);
+      const remediation = await iqComponentModel.requestService.getRemediation(purl);
       
       console.debug("posting message: remediation", remediation);
       this._panel.webview.postMessage({
@@ -196,16 +205,15 @@ export class ComponentInfoPanel {
     }
   }
 
-  private async showCVE(cve: any, nexusArtifact: any) {
-    console.debug("showCVE", cve, nexusArtifact);
+  private async showVulnerability(vulnID: any) {
+    console.debug("showVulnerability", vulnID);
     if (this.componentModel instanceof IqComponentModel) {
       var iqComponentModel = this.componentModel as IqComponentModel
-      let cvedetails = await iqComponentModel.requestService.getCVEDetails(cve, nexusArtifact);
+      const vulnDetails = await iqComponentModel.requestService.getVulnerabilityDetails(vulnID);
       
-      console.debug("posting message: cveDetails", cvedetails);
       this._panel.webview.postMessage({
-        command: "cveDetails",
-        cvedetails: cvedetails
+        command: "vulnDetails",
+        vulnDetails: vulnDetails
       });
     }
   }
@@ -256,15 +264,49 @@ export class ComponentInfoPanel {
   private async showAllVersions() {
     console.debug("showAllVersions", this.component);
     if (this.componentModel instanceof IqComponentModel) {
-      var iqComponentModel = this.componentModel as IqComponentModel
-      let allversions = await iqComponentModel.requestService.getAllVersions(this.component!.nexusIQData.component, ComponentInfoPanel.iqApplicationPublicId);
+      const iqComponentModel = this.componentModel as IqComponentModel
+      const component: ReportComponent = this.component!.nexusIQData!.component;
+      const purl: PackageURL = PackageURL.fromString(component.packageUrl);
+      purl.version = "";
+
+      let allVersions = await iqComponentModel.requestService.getAllVersions(purl);
       
-      console.debug("posting message: allversions", allversions);
+      if (!allVersions.includes(component.componentIdentifier.coordinates.version)) {
+        allVersions.push(component.componentIdentifier.coordinates.version);
+      }
+
+      let versionsDetails = await iqComponentModel.requestService.getAllVersionDetails(allVersions, purl);
+
+      if (component.componentIdentifier.format === 'golang') {
+        versionsDetails.componentDetails = this.dealWithGolang(versionsDetails.componentDetails);
+      }
+
+      console.debug("posting message: allversions", versionsDetails.componentDetails);
       this._panel.webview.postMessage({
         command: "allversions",
-        allversions: (allversions.allVersions) ? allversions.allVersions : allversions
+        allversions: versionsDetails.componentDetails
       });
     }
+  }
+
+  private dealWithGolang(versions: any[]): any[] {
+    versions.forEach((version) => {
+      version.component.componentIdentifier.coordinates.version = this.convertGolangVersion(
+        version.component.componentIdentifier.coordinates.version
+        );
+    });
+
+    return versions;
+  }
+
+  private convertGolangVersion(version: string) {
+    if (version.includes("incompatible")) {
+        let pos = version.lastIndexOf("incompatible");
+        let vers = version.substring(0, pos).trimEnd() + "+" + version.substring(pos);
+
+        return vers;
+    }
+    return version;
   }
 
   private loadHtmlForWebview() {

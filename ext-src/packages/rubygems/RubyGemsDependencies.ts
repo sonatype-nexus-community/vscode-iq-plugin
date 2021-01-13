@@ -15,86 +15,46 @@
  */
 import { RubyGemsPackage } from './RubyGemsPackage';
 import { RubyGemsUtils } from './RubyGemsUtils';
-import { RubyGemsCoordinate } from './RubyGemsCoordinate';
 import { PackageDependencies } from "../PackageDependencies";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { RequestService } from "../../services/RequestService";
 import { ScanType } from "../../types/ScanType";
 import { ComponentEntry } from "../../models/ComponentEntry";
-import { ComponentRequestEntry } from "../../types/ComponentRequestEntry";
-import { ComponentRequest } from "../../types/ComponentRequest";
+import { PackageDependenciesOptions } from '../PackageDependenciesOptions';
 
 export class RubyGemsDependencies implements PackageDependencies {
-  Dependencies: Array<RubyGemsPackage> = [];
-  CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
-    string,
-    ComponentEntry
-  >();
-  RequestService: RequestService;
 
-  constructor(private requestService: RequestService) {
-    this.RequestService = this.requestService;
+  constructor(private options: PackageDependenciesOptions) {
   }
 
-  public async packageForIq(): Promise<any> {
+  public async packageForService(): Promise<any> {
     try {
-      let rubyGemsUtils = new RubyGemsUtils();
-      this.Dependencies = await rubyGemsUtils.getDependencyArray();
-      Promise.resolve();
+      const rubyGemsUtils = new RubyGemsUtils();
+      const deps = await rubyGemsUtils.getDependencyArray();
+      return Promise.resolve(deps);
     }
     catch (e) {
-      throw new TypeError(e);
+      return Promise.reject(e);
     }
   }
 
-  public CheckIfValid(): boolean {
+  public checkIfValid(): boolean {
     return PackageDependenciesHelper.checkIfValid('Gemfile.lock', 'rubygems');
   }
 
-  public ConvertToComponentEntry(resultEntry: any): string {
-    let coordinates = new RubyGemsCoordinate(resultEntry.component.componentIdentifier.coordinates.name, 
-      resultEntry.component.componentIdentifier.coordinates.version);
-    
-    return coordinates.asCoordinates();
-  }
-
-  public convertToNexusFormat(): ComponentRequest {
-    let comps = this.Dependencies.map(d => {
-      let entry: ComponentRequestEntry = {
-        componentIdentifier: {
-          format: "gem",
-          coordinates: {
-            name: d.Name,
-            version: d.Version
-          }
-        }
-      }
-
-      return entry;
-    });
-
-    return new ComponentRequest(comps);
-  }
-
-  public toComponentEntries(data: any): Array<ComponentEntry> {
-    let components = new Array<ComponentEntry>();
-    for (let entry of data.components) {
+  public toComponentEntries(packages: Array<RubyGemsPackage>): Map<string, ComponentEntry> {
+    let map = new Map<string, ComponentEntry>();
+    for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
-        entry.componentIdentifier.coordinates.name,
-        entry.componentIdentifier.coordinates.version,
+        pkg.Name,
+        pkg.Version,
         "gem",
         ScanType.NexusIq
       );
-      components.push(componentEntry);
-      let coordinates = new RubyGemsCoordinate(
-        entry.componentIdentifier.coordinates.name,
-        entry.componentIdentifier.coordinates.version
-      );
-      this.CoordinatesToComponents.set(
-        coordinates.asCoordinates(),
+      map.set(
+        pkg.toPurl(),
         componentEntry
       );
     }
-    return components;
+    return map;
   }
 }

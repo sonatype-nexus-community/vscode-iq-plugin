@@ -15,92 +15,49 @@
  */
 import { GolangPackage } from "./GolangPackage";
 import { PackageDependencies } from "../PackageDependencies";
-import { GolangCoordinate } from "./GolangCoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { RequestService } from "../../services/RequestService";
 import { GolangUtils } from "./GolangUtils";
 import { ScanType } from "../../types/ScanType";
 import { ComponentEntry } from "../../models/ComponentEntry";
 import { GolangScanType } from "./GolangScanType";
-import { ComponentRequestEntry } from "../../types/ComponentRequestEntry";
-import { ComponentRequest } from "../../types/ComponentRequest";
+import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
 
-export class GolangDependencies extends PackageDependenciesHelper implements PackageDependencies {
-  Dependencies: Array<GolangPackage> = [];
-  CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
-    string,
-    ComponentEntry
-  >();
-  RequestService: RequestService;
+export class GolangDependencies implements PackageDependencies {
+  
+  constructor(private options: PackageDependenciesOptions) {}
+
   private scanType: string = "";
 
-  constructor(private requestService: RequestService) {
-    super();
-    this.RequestService = this.requestService;
-  }
-
-  public CheckIfValid(): boolean {
+  public checkIfValid(): boolean {
     this.scanType =  PackageDependenciesHelper.checkIfValidWithArray(GolangScanType, "golang");
     return this.scanType === "" ? false : true;
   }
 
-  public ConvertToComponentEntry(resultEntry: any): string {
-    let coordinates = new GolangCoordinate(resultEntry.component.componentIdentifier.coordinates.name, 
-      resultEntry.component.componentIdentifier.coordinates.version);
-
-    return coordinates.asCoordinates();
-  }
-
-  public convertToNexusFormat(): ComponentRequest {
-    let comps = this.Dependencies.map(d => {
-      let entry: ComponentRequestEntry = {
-        componentIdentifier: {
-          format: "golang",
-          coordinates: {
-            name: d.Name,
-            version: d.Version
-          }
-        }
-      }
-
-      return entry;
-    });
-
-    return new ComponentRequest(comps);
-  }
-
-  public toComponentEntries(data: any): Array<ComponentEntry> {
-    let components = new Array<ComponentEntry>();
-    for (let entry of data.components) {
-      const packageId = entry.componentIdentifier.coordinates.name;
-
+  public toComponentEntries(packages: Array<GolangPackage>): Map<string, ComponentEntry> {
+    let map = new Map<string, ComponentEntry>();
+    for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
-        packageId,
-        entry.componentIdentifier.coordinates.version,
+        pkg.Name,
+        pkg.Version,
         "golang",
         ScanType.NexusIq
       );
-      components.push(componentEntry);
-      let coordinates = new GolangCoordinate(
-        entry.componentIdentifier.coordinates.name,
-        entry.componentIdentifier.coordinates.version
-      );
-      this.CoordinatesToComponents.set(
-        coordinates.asCoordinates(),
+      map.set(
+        pkg.toPurl(),
         componentEntry
       );
     }
-    return components;
+    return map;
   }
 
-  public async packageForIq(): Promise<any> {
+  public async packageForService(): Promise<Array<GolangPackage>> {
     try {
-      let golangUtils = new GolangUtils();
-      this.Dependencies = await golangUtils.getDependencyArray(this.scanType);
-      Promise.resolve();
+      const golangUtils = new GolangUtils();
+      const deps = await golangUtils.getDependencyArray(this.scanType);
+      return Promise.resolve(deps);
     }
     catch (e) {
-      Promise.reject();
+      return Promise.reject(e);
     }
   }
 }

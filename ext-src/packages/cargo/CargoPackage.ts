@@ -13,12 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PackageType } from "./PackageType";
+import { PackageType } from "../PackageType";
+import { PackageURL } from 'packageurl-js';
 
-export interface LitePackageDependencies {
-  dependencies: Array<PackageType>;
-  format: string;
-  manifestName: string;
-  checkIfValid(): boolean;
-  packageForService(): Promise<any>;
+export class CargoPackage implements PackageType {
+  constructor(
+    readonly Name: string,
+    readonly Version: string,
+    readonly Hash?: string
+  ) {}
+
+  public toPurl(): string {
+    let purl: PackageURL = new PackageURL(
+      "cargo", undefined, this.Name, this.Version, undefined, undefined);
+    return purl.toString();
+  }
 }

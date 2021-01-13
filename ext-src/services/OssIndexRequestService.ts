@@ -16,7 +16,6 @@
 import fetch from 'node-fetch';
 import { Headers } from 'node-fetch';
 import { ILogger, LogLevel } from '../utils/Logger';
-
 import { LiteRequestService } from "./LiteRequestService";
 import { RequestHelpers } from "./RequestHelpers";
 

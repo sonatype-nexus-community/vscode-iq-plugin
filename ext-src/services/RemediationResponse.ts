@@ -13,24 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ComponentRequestEntry } from "../types/ComponentRequestEntry";
 
-import { CoordinateType } from "../CoordinateType";
+export interface RemediationResponse {
+    remediation: VersionChanges;
+}
 
- /**
- * @class ComposerCoordinate
- */
-export class ComposerCoordinate implements CoordinateType {
-  Name: string;
-  Group: string;
-  Version: string;
- 
-  constructor (name: string, group: string, version: string){
-    this.Name = name;
-    this.Group = group;
-    this.Version = version;
-  }
+export interface VersionChanges {
+    versionChanges: Change[];
+}
 
-  public asCoordinates(): string {
-    return `composer: ${this.Group}/${this.Name} @ ${this.Version}`;
-  }
+export interface Change {
+    type: string;
+    data: ComponentContainer;
+}
+
+export interface ComponentContainer {
+    component: ComponentRequestEntry;
 }

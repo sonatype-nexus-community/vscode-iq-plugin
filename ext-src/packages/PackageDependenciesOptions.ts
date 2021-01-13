@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export interface CoordinateType {
-  Name: string;
-  Version: string;
-  Group?: string;
-  Extension?: string;
-  asCoordinates(): string;
+import { ILogger } from "../utils/Logger";
+
+export interface PackageDependenciesOptions {
+    logger: ILogger
 }

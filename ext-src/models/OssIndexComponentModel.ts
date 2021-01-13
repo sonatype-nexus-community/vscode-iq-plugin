@@ -48,7 +48,7 @@ export class OssIndexComponentModel implements ComponentModel {
   private async performOssIndexScan(): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
-        let componentContainer = new LiteComponentContainer();
+        let componentContainer = new LiteComponentContainer(this.logger);
         window.withProgress(
           {
             location: ProgressLocation.Notification, 
@@ -62,11 +62,11 @@ export class OssIndexComponentModel implements ComponentModel {
               try {
 
                 this.logger.log(LogLevel.DEBUG, `Packaging Dependencies for ${pm.constructor.name}`);
-                await pm.packageForService();
+                const packages = await pm.packageForService();
     
                 progress.report({message: "Reticulating splines...", increment: 30});
   
-                purls.push(...pm.dependencies.map((x) => {
+                purls.push(...packages.map((x) => {
                   let matches = regex.exec(x.toPurl());
                   if (matches && matches.length === 4) {
                     return `${matches[1]}:${matches![2]}@${matches![3].replace("v", "")}`;
@@ -85,10 +85,10 @@ export class OssIndexComponentModel implements ComponentModel {
             progress.report({message: "Morphing OSS Index results into something usable", increment: 75});
             this.components = results.map(x => {
               let purl: PackageURL = PackageURL.fromString(x.coordinates);
-              let name = purl.name;
+              let name = (purl.namespace) ? purl.namespace + " : " + purl.name : purl.name;
               let format = purl.type;
               let version = purl.version;
-              let componentEntry = new ComponentEntry(name, version, format, ScanType.OssIndex);
+              let componentEntry = new ComponentEntry(name, version!, format, ScanType.OssIndex);
               componentEntry.ossIndexData = x;
               return componentEntry;
             });

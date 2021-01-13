@@ -25,15 +25,8 @@ export class ComposerPackage implements PackageType {
   ) {}
 
   public toPurl(): string {
-    let purl: PackageURL = new PackageURL("composer", this.Group, this.Name, this.Version, {}, "");
-    return purl.toString().substring(0, purl.toString().length - 1);
-  }
-
-  public toCoordinates(): string {
-    return `${this.Group}:${this.Name}:${this.Version}`;
-  }
-
-  public toCoordValueType(): string {
-    return `${this.Group}:${this.Name} - ${this.Version}`;
+    let purl: PackageURL = new PackageURL(
+      "composer", this.Group, this.Name, this.Version, undefined, undefined);
+    return purl.toString();
   }
 }
