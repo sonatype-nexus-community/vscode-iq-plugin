@@ -19,10 +19,23 @@ import { NexusExplorer } from './NexusExplorer';
 
 export function activate(context: vscode.ExtensionContext) {
 
-	context.subscriptions.push(vscode.commands.registerCommand('react-webview.start', () => {
+	let disposable = vscode.commands.registerCommand('react-webview.start', () => {
 		ReactPanel.createOrShow(context.extensionPath);
-	}));
-	new NexusExplorer(context);
+	});
+
+	context.subscriptions.push(disposable);
+
+	const explorer = new NexusExplorer(context);
+
+	// Listen to changes of the configuration, and if it's a change to the datasource, reload the dang thing
+	vscode.workspace.onDidChangeConfiguration((event) => {
+		let affected = event.affectsConfiguration("nexusExplorer.dataSource");
+
+		if (affected) {
+			let source = vscode.workspace.getConfiguration().get("nexusExplorer.dataSource") + "";
+			explorer.switchComponentModel(source);
+		}
+	});
 }
 
 /**
