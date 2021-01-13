@@ -26,6 +26,4 @@ const ctxt = React.createContext<OssIndexContextInterface | undefined>(undefined
 
 export const OssIndexContextProvider = ctxt.Provider;
 
-export const OssIndexContextConsumer = ctxt.Consumer;
-
 export const OssIndexContext = ctxt;
