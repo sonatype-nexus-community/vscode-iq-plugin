@@ -1,5 +1,3 @@
-import { BaseRequestService } from "./BaseRequestService";
-
 /*
  * Copyright (c) 2019-present Sonatype, Inc.
  *
@@ -15,6 +13,7 @@ import { BaseRequestService } from "./BaseRequestService";
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { BaseRequestService } from "./BaseRequestService";
 import { ThirdPartyAPIResponse } from './ThirdPartyApiResponse';
 import { ReportResponse } from './ReportResponse';
 import { VulnerabilityResponse } from './VulnerabilityResponse';

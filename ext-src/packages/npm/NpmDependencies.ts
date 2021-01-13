@@ -20,11 +20,15 @@ import { NpmUtils } from './NpmUtils';
 import { ScanType } from "../../types/ScanType";
 import { ComponentEntry } from "../../models/ComponentEntry";
 import { NpmScanType } from "./NpmScanType";
+import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
 
 export class NpmDependencies implements PackageDependencies {
+
+  constructor(private options: PackageDependenciesOptions) {}
+
   private scanType: string = "";
 
-  public async packageForIq(): Promise<Array<NpmPackage>> {
+  public async packageForService(): Promise<Array<NpmPackage>> {
     try {
       const npmUtils = new NpmUtils();
       const deps = await npmUtils.getDependencyArray();

@@ -19,8 +19,11 @@ import { ComponentEntry } from "../../models/ComponentEntry";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { PyPiUtils } from "./PyPiUtils";
 import { ScanType } from "../../types/ScanType";
+import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
 
-export class PyPIDependencies extends PackageDependenciesHelper implements PackageDependencies {
+export class PyPIDependencies implements PackageDependencies {
+
+  constructor(private options: PackageDependenciesOptions) {}
 
   public checkIfValid(): boolean {
     return PackageDependenciesHelper.doesPathExist(PackageDependenciesHelper.getWorkspaceRoot(), "requirements.txt");
@@ -43,7 +46,7 @@ export class PyPIDependencies extends PackageDependenciesHelper implements Packa
     return map;
   }
 
-  public async packageForIq(): Promise<Array<PyPIPackage>> {
+  public async packageForService(): Promise<Array<PyPIPackage>> {
     try {
       let pypiUtils = new PyPiUtils();
       let deps = await pypiUtils.getDependencyArray();

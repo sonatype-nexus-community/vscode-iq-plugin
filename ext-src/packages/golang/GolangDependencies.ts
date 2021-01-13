@@ -20,8 +20,12 @@ import { GolangUtils } from "./GolangUtils";
 import { ScanType } from "../../types/ScanType";
 import { ComponentEntry } from "../../models/ComponentEntry";
 import { GolangScanType } from "./GolangScanType";
+import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
 
-export class GolangDependencies extends PackageDependenciesHelper implements PackageDependencies {
+export class GolangDependencies implements PackageDependencies {
+  
+  constructor(private options: PackageDependenciesOptions) {}
+
   private scanType: string = "";
 
   public checkIfValid(): boolean {
@@ -46,7 +50,7 @@ export class GolangDependencies extends PackageDependenciesHelper implements Pac
     return map;
   }
 
-  public async packageForIq(): Promise<Array<GolangPackage>> {
+  public async packageForService(): Promise<Array<GolangPackage>> {
     try {
       const golangUtils = new GolangUtils();
       const deps = await golangUtils.getDependencyArray(this.scanType);

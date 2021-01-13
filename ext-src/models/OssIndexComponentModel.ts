@@ -48,7 +48,7 @@ export class OssIndexComponentModel implements ComponentModel {
   private async performOssIndexScan(): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
-        let componentContainer = new LiteComponentContainer();
+        let componentContainer = new LiteComponentContainer(this.logger);
         window.withProgress(
           {
             location: ProgressLocation.Notification, 

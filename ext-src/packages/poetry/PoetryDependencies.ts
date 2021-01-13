@@ -21,8 +21,13 @@ import { PyPIDependencies } from '../pypi/PyPIDependencies';
 import { ScanType } from "../../types/ScanType";
 import { PoetryUtils } from "./PoetryUtils";
 import { PyPIPackage } from '../pypi/PyPIPackage';
+import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
 
 export class PoetryDependencies extends PyPIDependencies implements PackageDependencies {
+
+  constructor(options: PackageDependenciesOptions) {
+    super(options);
+  }
 
   public checkIfValid(): boolean {
     return PackageDependenciesHelper.doesPathExist(PackageDependenciesHelper.getWorkspaceRoot(), "poetry.lock");
@@ -45,7 +50,7 @@ export class PoetryDependencies extends PyPIDependencies implements PackageDepen
     return map;
   }
 
-  public async packageForIq(): Promise<Array<PyPIPackage>> {
+  public async packageForService(): Promise<Array<PyPIPackage>> {
     try {
       const poetryUtils = new PoetryUtils();
       const deps = await poetryUtils.getDependencyArray();
