@@ -13,34 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
+import React, {useContext, useState} from 'react';
 import SecurityItemDisplay from './SecurityItemDisplay/SecurityItemDisplay';
-import Accordion from 'react-bootstrap/Accordion';
-import { VersionsContextConsumer } from '../../../../context/versions-context';
+import { VersionsContext, VersionsContextInterface } from '../../../../context/versions-context';
 
-type State = {
-}
+const SecurityPage = () => {
+  const [open, setOpen] = useState("");
 
-type Props = {}
+  const versionsContext = useContext(VersionsContext);
 
-class SecurityPage extends React.Component<State, Props> {
-  public render() {
-    return (
-      <VersionsContextConsumer>
-        {context => context && context.selectedVersionDetails && (
-          <Accordion>
-            {context.selectedVersionDetails.securityData.securityIssues.map(function(issue: any) {
-              return <SecurityItemDisplay
-                packageUrl = { context.selectedVersionDetails.component.packageUrl }
-                securityIssue = { issue }
-                remediationEvent = { context.handleGetRemediation }
-                />
-            })}
-          </Accordion>
-        )}
-      </VersionsContextConsumer>
-    );
+  const getRemediationAndOpen = (packageUrl: string, securityIssue: string): void => {
+    if (open == securityIssue) {
+      setOpen("");
+    } else {
+      if (versionsContext) {
+        versionsContext.handleGetRemediation(packageUrl, securityIssue);
+      }
+  
+      setOpen(securityIssue);
+    }
   }
+
+  const isOpen = (issue: string): boolean => {
+    return issue == open;
+  }
+
+  const renderAccordion = (versionsContext: VersionsContextInterface | undefined) => {
+    if (versionsContext 
+      && versionsContext.selectedVersionDetails 
+      && versionsContext.selectedVersionDetails.securityData 
+      && versionsContext.selectedVersionDetails.securityData.securityIssues) {
+        return versionsContext.selectedVersionDetails.securityData.securityIssues.map((issue: any) => {
+          return <SecurityItemDisplay
+            open = { isOpen(issue.reference) }
+            packageUrl = { versionsContext.selectedVersionDetails.component.packageUrl }
+            securityIssue = { issue }
+            remediationEvent = { getRemediationAndOpen }
+          />
+        });
+    }
+    return null;
+  }
+
+  return (
+    renderAccordion(versionsContext!)
+  );
 }
 
 export default SecurityPage;

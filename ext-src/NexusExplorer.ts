@@ -164,7 +164,6 @@ export class NexusExplorer {
       this.sortPolicyDescending = true;
       this.sortNameAscending = true;
       this.nexusExplorerProvider.doRefresh();
-      // this.sortByPolicy();
     });
 
     vscode.commands.registerCommand("nexusExplorer.sortByPolicy", () => {

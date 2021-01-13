@@ -72,9 +72,9 @@ export class ComponentEntry {
     // TODO what is the right way to display threat level graphically?
     if (maxThreatLevel >= 8) {
       return `threat-critical.png`;
-    } else if (maxThreatLevel >= 7) {
+    } else if (maxThreatLevel >= 4) {
       return `threat-severe.png`;
-    } else if (maxThreatLevel >= 5) {
+    } else if (maxThreatLevel >= 2) {
       return `threat-moderate.png`;
     } else if (maxThreatLevel >= 1) {
       return `threat-low.png`;

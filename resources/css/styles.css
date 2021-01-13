@@ -1,73 +1,19 @@
-body {
-  margin: 2px;
-  padding: 2px;
-  font-family: var(--vscode-editor-font-family);
-  font-weight: var(--vscode-editor-font-weight);
-  font-size: var(--vscode-editor-font-size);
-  border-radius: 5px;
-  border-width: 2px;
-  color: var(--vscode-editor-foreground) !important;
-  background-color: var(--vscode-editor-background) !important;
-}
-
-
 .sidenav {
   height: 100%;
-  /* Full-height: remove this if you want "auto" height */
-  width: 250px;
-  /* Set the width of the sidebar */
+  width: 300px;
   position: fixed;
-  /* Fixed Sidebar (stay in place on scroll) */
   z-index: 1;
-  /* Stay on top */
   padding: 10px;
   top: 0;
-  /* Stay at the top */
   left: 0;
   overflow-x: hidden;
-  /* Disable horizontal scroll */
 }
-
-.nav-item {
-  background-color: var(--vscode-tab-inactiveBackground) !important;
-  color: var(--vscode-tab-inactiveForeground) !important;
-  border-color: var(--vscode-editorGroupBorder) !important;
-}
-
-.nav-item.active {
-  color: var(--vscode-tab-activeForeground) !important;
-  background-color: var(--vscode-tab-activeBackground) !important;
-  border-color: var(--vscode-tab-activeBorder) !important;
-}
-
-.nav-item:hover {
-  background-color: var(--vscode-tab-unfocusedHoverBackground) !important;
-  border-color: var(--vscode-tab-hoverBorder) !important;
-}
-
-.nav-item.active:hover {
-  background-color: var(--vscode-tab-hoverBackground) !important;
-}
-
-a.nav-link,
-a.nav-link:hover {
-  color: var(--vscode-tab-inactiveForeground) !important;
-}
-
-a.nav-link.active,
-a.nav-link.active:hover {
-  color: var(--vscode-tab-activeForeground) !important;
-}
-
 
 .main {
-  margin-left: 250px;
-  /* Same as the width of the sidebar */
+  margin-left: 300px;
   height: 100%;
-  padding: 10px;
 }
 
-/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
 @media screen and (max-height: 450px) {
   .sidenav {
     padding-top: 15px;
@@ -78,240 +24,23 @@ a.nav-link.active:hover {
   }
 }
 
-
-button {
-  height: 30px;
-  width: 30px;
-  outline: none;
-  margin: 10px;
+.nx-accordion {
+  background-color: var(--vscode-editorWidget-background) !important;
+  color: var(--vscode-editorWidget-foreground) !important;
 }
 
-table {
-  border-spacing: 0px;
-  color: var(--vscode-editor-foreground) !important;
-  background-color: var(--vscode-editor-background) !important;
+.nx-accordion__header>.nx-accordion__summary-wrapper {
+  color: var(--vscode-editorWidget-foreground) !important;
 }
 
-.label {
-  /* font-style: italic; */
-  text-align: right;
-  font-size: small;
+.nx-h2, .nx-h3, .nx-h4, .nx-h5, .nx-h6 {
+  color: var(--vscode-editorWidget-foreground) !important;
 }
 
-.data {
-  font-weight: bold;
-  text-align: left;
-  /* overflow: scroll; */
-  font-size: small;
+.nx-list--clickable .nx-list__item:hover {
+  background-color: var(--vscode-list-hoverBackground) !important;
 }
 
-.reference {
-  padding-bottom: 8px !important;
-  padding-top: 0px !important;
-}
-
-h2 {
-  font-size: 1em;
-}
-
-h3 {
-  font-size: 1.5em;
-}
-
-.card,
-.card-header,
-.card-body {
-  color: var(--vscode-editor-foreground) !important;
-  background-color: var(--vscode-editor-background) !important;
-}
-
-.accordion>.card {
-  margin-bottom: 1em;
-}
-
-.vscode-dark .card-header,
-.vscode-dark .card-body {
-  filter: brightness(130%) !important;
-}
-
-.vscode-light .card-header,
-.vscode-light .card-body {
-  filter: brightness(90%);
-}
-
-.vscode-high-contrast .card-header,
-.vscode-high-contrast .card-body {
-  filter: brightness(90%);
-}
-
-.critical {
-  background-color: red !important;
-  border-color: red !important;
-  color: #212529 !important;
-  float: right;
-}
-
-.severe {
-  background-color: orange !important;
-  border-color: orange !important;
-  color: #212529 !important;
-  float: right;
-}
-
-.moderate {
-  background-color: yellow !important;
-  border-color: yellow !important;
-  color: #ffecdb !important;
-  float: right;
-}
-
-.low {
-  background-color: darkblue !important;
-  border-color: darkblue !important;
-  color: #152a23 !important;
-  float: right;
-}
-
-.none {
-  background-color: lightblue !important;
-  border-color: lightblue !important;
-  color: #00552a !important;
-  float: right;
-}
-
-.alert {
-  position: relative !important;
-  padding: .25rem .75rem !important;
-  margin-bottom: .5rem !important;
-  border: 1px solid;
-  border-radius: .25rem !important;
-  border-color: var(--vscode-list-inactiveFocusBackground);
-}
-
-.alert.selected-version {
-  color: var(--vscode-button-foreground);
-  background-color: var(--vscode-button-background);
-}
-
-.alert.current-version {
-  border-color: var(--vscode-selection-background);
-}
-
-.numissues {
-  padding: 1px;
-  margin: 1px;
-}
-
-.maxIssue {
-  padding: 0px 5px 0px 5px;
-  margin: 2px;
-  border-radius: 2px;
-}
-
-/* Add animation to "page content" */
-.animate-bottom {
-  position: relative;
-  -webkit-animation-name: animatebottom;
-  -webkit-animation-duration: 1s;
-  animation-name: animatebottom;
-  animation-duration: 1s
-}
-
-@-webkit-keyframes animatebottom {
-  from {
-    bottom: -100px;
-    opacity: 0
-  }
-
-  to {
-    bottom: 0px;
-    opacity: 1
-  }
-}
-
-@keyframes animatebottom {
-  from {
-    bottom: -100px;
-    opacity: 0
-  }
-
-  to {
-    bottom: 0;
-    opacity: 1
-  }
-}
-
-a img {
-  width: 16px;
-  height: 16px;
-  padding: 2px 0px 0px 2px;
-}
-
-.code,
-code {
-  font-family: Consolas, monaco, monospace;
-}
-
-.cipInfoLabel {
-  font-size: 1.2em;
-}
-
-.tab-content>.active {
-  padding: 10px;
-}
-
-
-#loader {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  z-index: 1;
-  width: 150px;
-  height: 150px;
-  margin: -75px 0 0 -75px;
-  border: 16px solid white;
-  border-radius: 50%;
-  border-top: 16px solid white;
-  width: 120px;
-  height: 120px;
-  -webkit-animation: spin 2s linear infinite;
-  animation: spin 2s linear infinite;
-}
-
-.loader {
-  height: 600px;
-  width: 600px;
-}
-
-.loader img {
-  object-fit: cover;
-  object-position: top;
-  display: block;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-  overflow: hidden;
-}
-
-@-webkit-keyframes spin {
-  0% {
-    -webkit-transform: rotate(0deg);
-  }
-
-  100% {
-    -webkit-transform: rotate(360deg);
-  }
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
+.nx-list--clickable .nx-list__item.selected {
+  background-color: var(--vscode-list-dropBackground) !important;
 }

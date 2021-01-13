@@ -15,27 +15,22 @@
  */
 import React, { useContext } from 'react';
 import { VersionsContext, VersionsContextInterface } from '../../../../../../context/versions-context';
+import { NxVulnerabilityDetails } from '@sonatype/react-shared-components';
 
-const Remediation = () => {
+const VulnDetails = () => {
 
   const versionsContext = useContext(VersionsContext);
 
-  const renderRemediation = (versionsContext: VersionsContextInterface | undefined) => {
-    if (versionsContext && versionsContext.remediation && versionsContext.remediation.versionChanges) {
-      console.log(versionsContext.remediation);
-      return versionsContext.remediation.versionChanges.map((version: any) => {
-        <React.Fragment>
-          <h2>Remediation Type: { version.type }</h2>
-          Upgrade to this version: { version.data.component.componentIdentifier.coordinates.version }
-        </React.Fragment>
-      })
+  const renderVulnerability = (versionsContext: VersionsContextInterface | undefined) => {
+    if (versionsContext && versionsContext.vulnDetails) {
+      return <NxVulnerabilityDetails vulnerabilityDetails={versionsContext.vulnDetails} />
     }
     return null;
   }
 
   return (
-    renderRemediation(versionsContext)
+    renderVulnerability(versionsContext)
   )
 }
 
-export default Remediation;
+export default VulnDetails;
