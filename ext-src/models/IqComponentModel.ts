@@ -20,7 +20,6 @@ import { RequestService } from "../services/RequestService";
 import { IqRequestService } from "../services/IqRequestService";
 import { ComponentModel } from "./ComponentModel";
 import { ComponentEntry } from "./ComponentEntry";
-import { ComponentEntryConversions } from '../utils/ComponentEntryConversions';
 import { ComponentModelOptions } from "./ComponentModelOptions";
 import { ILogger, LogLevel } from "../utils/Logger";
 import { PackageType } from "../packages/PackageType";

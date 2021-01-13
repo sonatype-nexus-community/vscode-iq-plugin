@@ -31,7 +31,7 @@ export class MavenUtils {
       /*
        * Need to use dependency tree operation because:
        * 1. Standard POM may lack dependency versions due to usage of property variables or inherited versions from parent POM
-       * 2. Standard POM does not include transitive dependmavenDependenciesencies
+       * 2. Standard POM does not include transitive Maven Dependencies
        * 3. Effective POM may contain unused dependencies
        */
 

@@ -21,7 +21,6 @@ import { ComponentModel } from "./models/ComponentModel";
 import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
 import { ComponentEntry, NexusIQData } from "./models/ComponentEntry";
 import { ReportComponent } from "./services/ReportResponse";
-import { ComponentEntryConversions } from "./utils/ComponentEntryConversions";
 import { PackageURL } from 'packageurl-js';
 
 export class ComponentInfoPanel {
@@ -292,12 +291,22 @@ export class ComponentInfoPanel {
 
   private dealWithGolang(versions: any[]): any[] {
     versions.forEach((version) => {
-      version.component.componentIdentifier.coordinates.version = ComponentEntryConversions.convertGolangVersion(
+      version.component.componentIdentifier.coordinates.version = this.convertGolangVersion(
         version.component.componentIdentifier.coordinates.version
         );
     });
 
     return versions;
+  }
+
+  private convertGolangVersion(version: string) {
+    if (version.includes("incompatible")) {
+        let pos = version.lastIndexOf("incompatible");
+        let vers = version.substring(0, pos).trimEnd() + "+" + version.substring(pos);
+
+        return vers;
+    }
+    return version;
   }
 
   private loadHtmlForWebview() {
