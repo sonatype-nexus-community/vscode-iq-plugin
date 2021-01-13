@@ -15,10 +15,10 @@
  */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import App from './App';
+import ExtensionContainer from './ExtensionContainer';
 import "@fortawesome/fontawesome-svg-core/styles.css";
 
 ReactDOM.render(
-  <App  />,
+  <ExtensionContainer  />,
   document.getElementById('root') as HTMLElement
 );

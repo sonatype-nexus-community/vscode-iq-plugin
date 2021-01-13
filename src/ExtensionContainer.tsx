@@ -43,7 +43,7 @@ type AppState = {
   handleGetRemediation(o: any, s: string): void;
 };
 
-class App extends React.Component<AppProps, AppState> {
+class ExtensionContainer extends React.Component<AppProps, AppState> {
   constructor(props: AppProps) {
     super(props);
     console.debug("App constructing, props:", props);
@@ -227,4 +227,4 @@ class App extends React.Component<AppProps, AppState> {
   }
 }
 
-export default App;
+export default ExtensionContainer;
