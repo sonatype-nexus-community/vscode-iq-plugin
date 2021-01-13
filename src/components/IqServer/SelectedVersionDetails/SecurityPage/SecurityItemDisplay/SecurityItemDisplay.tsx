@@ -18,10 +18,6 @@ import Remediation from './Remediation/Remediation';
 import VulnDetails from './VulnDetails/VulnDetails';
 import { 
   NxAccordion, 
-  NxTable, 
-  NxTableRow, 
-  NxTableBody, 
-  NxTableCell,
   NxPolicyViolationIndicator,
   ThreatLevelNumber } from '@sonatype/react-shared-components';
 
@@ -46,67 +42,26 @@ const SecurityItemDisplay = (props: SecurityItemProps) => {
               />
           </div>
         </NxAccordion.Header>
-        <NxTable>
-          <NxTableBody>
-            <NxTableRow>
-              <NxTableCell>
-                Severity
-              </NxTableCell>
-              <NxTableCell>
-                <span>{props.securityIssue.severity}</span>
-              </NxTableCell>
-            </NxTableRow>
-            <NxTableRow>
-              <NxTableCell>
-                Source
-              </NxTableCell>
-              <NxTableCell>
-                {props.securityIssue.source}
-              </NxTableCell>
-            </NxTableRow>
-            <NxTableRow>
-              <NxTableCell>
-                Threat Category
-              </NxTableCell>
-              <NxTableCell>
-                {props.securityIssue.threatCategory}
-              </NxTableCell>
-            </NxTableRow>
-            <NxTableRow>
-              <NxTableCell>
-                URL
-              </NxTableCell>
-              <NxTableCell>
-                { props.securityIssue.url != "" &&
+        <h3 className="nx-h3">
+          Details
+        </h3>
+        <ul className="nx-list">
+          <li className="nx-list__item">
+            <span className="nx-list__text">Severity: { props.securityIssue.severity }</span>
+          </li>
+          <li className="nx-list__item">
+            <span className="nx-list__text">Threat Category: { props.securityIssue.threatCategory }</span>
+          </li>
+          <li className="nx-list__item">
+            <span className="nx-list__text">URL: { props.securityIssue.url != "" &&
                   <a href={props.securityIssue.url}>{props.securityIssue.url}</a>
-                }
-              </NxTableCell>
-            </NxTableRow>
-            <NxTableRow>
-              <NxTableCell colSpan={2}>
-                <VulnDetails />
-              </NxTableCell>
-            </NxTableRow>
-            <NxTableRow>
-              <NxTableCell colSpan={2}>
-                <Remediation />
-              </NxTableCell>
-            </NxTableRow>
-          </NxTableBody>
-        </NxTable>
+            }</span>
+          </li>
+        </ul>
+        <VulnDetails />
+        <Remediation />
       </NxAccordion>
     );
 }
-
-  // dispatchRemedation = () => {
-  //   this.props.remediationEvent(
-  //     this.props.packageUrl, 
-  //     this.props.securityIssue.reference
-  //   );
-
-  //   this.setState({
-  //     open: !this.state.open
-  //   });
-  // }
 
 export default SecurityItemDisplay;
