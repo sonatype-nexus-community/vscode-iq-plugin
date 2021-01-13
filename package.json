@@ -189,8 +189,8 @@
     "vscode:prepublish": "./scripts/build-non-split.js && tsc -p tsconfig.extension.json",
     "start": "react-scripts start",
     "build": "./scripts/build-non-split.js && tsc -p tsconfig.extension.json",
-    "test": "react-scripts test --env=jsdom && npm run test-ext",
-    "test-ext": "node ./build/ext-src/runTest.js",
+    "test": "npm run test-ext",
+    "test-ext": "npm run build && CI=true node ./build/ext-src/runTest.js",
     "eject": "react-scripts eject",
     "generate-format": "./generate-format.sh"
   },

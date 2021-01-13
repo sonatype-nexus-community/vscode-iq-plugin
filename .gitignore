@@ -25,3 +25,5 @@ yarn-error.log*
 .circleci/local-config.yml
 
 *.vsix
+
+.vscode-test/
