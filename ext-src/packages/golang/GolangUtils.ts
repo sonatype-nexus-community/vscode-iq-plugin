@@ -30,8 +30,9 @@ export class GolangUtils {
         let { stdout, stderr } = await exec(`go list -m all`, {
           cwd: PackageDependenciesHelper.getWorkspaceRoot(),
           env: {
-            PATH: process.env.PATH,
-            HOME: this.getGoCacheDirectory()
+            "NODE_ENV": "production",
+            "PATH": process.env["PATH"],
+            "HOME": this.getGoCacheDirectory()
           }
         });
 

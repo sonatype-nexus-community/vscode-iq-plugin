@@ -7,17 +7,17 @@ jobs:
     steps: 
       - checkout
       - restore_cache: 
-          key: dependency-cache-{{ checksum "yarn.lock" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Install npm dependencies...weeeeee
-          command: yarn
+          command: npm i
       - save_cache: 
-          key: dependency-cache-{{ checksum "yarn.lock" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
             - ./node_modules
       - run: 
           name: build
-          command: yarn run build
+          command: npm run webpack
   release:
     working_directory: ~/vscode-iq-plugin 
     docker: 
@@ -29,22 +29,16 @@ jobs:
           command: sudo chown -R circleci:circleci /usr/local/lib && sudo chown -R circleci:circleci /usr/local/bin
       - run:
           name: Install dependencies
-          command: yarn
-      - run:
-          name: Build extension
-          command: yarn run build
+          command: npm i
       - run: 
           name: Install publishing packages 
-          command: yarn global add vsce semantic-release @semantic-release/changelog @semantic-release/git@7.1.0-beta.11 @semantic-release/npm
+          command: npm i -g semantic-release @semantic-release/changelog @semantic-release/git@7.1.0-beta.11 @semantic-release/npm
       - run: 
           name: Attempt publish to GitHub
           command: npx semantic-release -b master
       - run: 
-          name: Package for Visual Studio Code Extension Marketplace
-          command: vsce package --yarn
-      - run: 
           name: Publish to Visual Studio Code Extension Marketplace
-          command: vsce publish --yarn -p $VSCODE_TOKEN
+          command: vsce publish -p $VSCODE_TOKEN
       - run:
           name: Publish to Open VSX
           command: npx ovsx publish -p $VSX_TOKEN

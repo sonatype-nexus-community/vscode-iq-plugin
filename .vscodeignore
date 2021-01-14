@@ -3,6 +3,13 @@ out/
 src/
 public/
 tsconfig.json
+tsconfig.extension.json
+tsconfig.prod.json
+tsconfig.test.json
+tslint.json
 ext-src/
 .circleci/
+.github/
+.vscode/
 types/
+node_modules/

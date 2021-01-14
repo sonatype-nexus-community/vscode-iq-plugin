@@ -23,10 +23,7 @@ export class RUtils {
     try {
       let {stdout, stderr } = await exec(`RScript ` + PackageDependenciesHelper.getExtensionPath() + `/scripts/installed.r`
         , {
-        cwd: PackageDependenciesHelper.getWorkspaceRoot(),
-        env: {
-          PATH: process.env.PATH
-        }
+        cwd: PackageDependenciesHelper.getWorkspaceRoot()
       });
 
       if (stdout != "" && stderr === "") {

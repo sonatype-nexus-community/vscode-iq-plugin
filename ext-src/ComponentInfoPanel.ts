@@ -318,23 +318,10 @@ export class ComponentInfoPanel {
     );
     const resourceSrc = onDiskPath.with({ scheme: "vscode-resource" });
 
-    const manifest = require(path.join(
-      this._extensionPath,
-      "build",
-      "asset-manifest.json"
-    ));
-    const mainScript = manifest["main.js"];
-    const mainStyle = manifest["main.css"];
-
     const scriptPathOnDisk = vscode.Uri.file(
-      path.join(this._extensionPath, "build", mainScript)
+      path.join(this._extensionPath, "build", 'index.js')
     );
     const scriptUri = scriptPathOnDisk.with({ scheme: "vscode-resource" });
-
-    const stylePathOnDisk = vscode.Uri.file(
-      path.join(this._extensionPath, "build", mainStyle)
-    );
-    const styleUri = stylePathOnDisk.with({ scheme: "vscode-resource" });
 
     // Use a nonce to whitelist which scripts can be run
     const nonce = this.getNonce();
@@ -345,10 +332,9 @@ export class ComponentInfoPanel {
 						<meta http-equiv="X-UA-Compatible" content="IE=edge">
 						<meta name="description" content="">
             <meta name="viewport" content="width=device-width, initial-scale=1">
-            <meta http-equiv="Content-Security-Policy" content="default-src * vscode-resource:; script-src * vscode-resource:; connect-src 'self'; style-src * vscode-resource:; media-src * vscode-resource:">
+            <meta http-equiv="Content-Security-Policy" content="default-src * vscode-resource:; script-src * vscode-resource:; connect-src 'self'; style-src 'self' 'unsafe-inline' * vscode-resource:; media-src * vscode-resource:">
 						<link rel="stylesheet" href="${resourceSrc}/css/react-tabs.css">
             <link rel="stylesheet" href="${resourceSrc}/css/styles.css">
-            <link rel="stylesheet" href="${styleUri}">
 						<title>Component Info</title>
 				</head>
 				<body>

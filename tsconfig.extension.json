@@ -2,6 +2,8 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "es6",
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
         "outDir": "build",
         "lib": [
 			"es6",
@@ -10,9 +12,13 @@
         "sourceMap": true,
         "rootDir": ".",
         "strict": true
-	},
+    },
+    "typeRoots": [
+        "./types",
+        "./node_modules/@types"
+    ],
 	"include": [
-		"ext-src"
+        "ext-src",
 	],
     "exclude": [
         "node_modules",

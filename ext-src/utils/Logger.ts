@@ -40,8 +40,8 @@ export class Logger implements ILogger {
 
         let path: string = join(filePath, '.sonatypeIQExtension.combined.log');
 
-        log4js.addLayout('json', (config) => {
-            return function(logEvent) { 
+        log4js.addLayout('json', (config: any) => {
+            return function(logEvent: any) { 
                 return JSON.stringify(logEvent) + ','; 
             }
         });

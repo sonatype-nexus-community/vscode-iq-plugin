@@ -40,10 +40,7 @@ export class MavenUtils {
       mvnCommand = `mvn dependency:tree -Dverbose -DappendOutput=true -DoutputFile="${tmpFile.path}" -f "${pomFile}"`;
 
       await exec(mvnCommand, {
-        cwd: PackageDependenciesHelper.getWorkspaceRoot(),
-        env: {
-          PATH: process.env.PATH
-        }
+        cwd: PackageDependenciesHelper.getWorkspaceRoot()
       });
 
       if (!fs.existsSync(tmpFile.path)) {
