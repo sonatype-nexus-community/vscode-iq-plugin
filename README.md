@@ -7,7 +7,7 @@ Sonatype's VSCode extension allows you to surface and remediate issues in your p
 
 Any developer can use the extension for free against our publicly available [OSS Index](https://ossindex.sonatype.org/) vulnerability database while our commercial users can connect to [Sonatype's Nexus IQ Server](https://www.sonatype.com/nexus-iq-server) to evaluate against organizational policy. Drill down into all of your dependencies to examine each package version for violations to determine whether you should upgrade or move to a different package at a glance.
 
-### Supported Formats
+## Supported Formats
 
 Good news for polyglots -- the extension allows you to view violations across multiple ecosystems at once across the following formats: 
 - npm/yarn (`npm install` or `yarn install` required)
@@ -27,16 +27,11 @@ Good news for polyglots -- the extension allows you to view violations across mu
 
 ![OSSI Screenshot](media/ossi-screenshot.png)
 
-### Themes
-
-The extension supports color theme changes dynamically.
-
-![Theme Screenshot](media/light-theme-screenshot.png)
-
 ## Installation
 
 - Install from the [marketplace link](https://marketplace.visualstudio.com/items?itemName=SonatypeCommunity.vscode-iq-plugin)
 - Install directly from the VSCode extension interface:
+
 ![Install Screenshot](media/install-screenshot.png)
 
 ## Configuration
@@ -50,6 +45,12 @@ If you are using IQ Server, you can enter your password which will be stored in 
 ![VSCode Settings](media/iqserver-passwordprompt-dark.png)
 
 If you are using IQ Server v76 or above, you can create a [user token](https://help.sonatype.com/iqserver/automating/rest-apis/user-token-rest-api---v2) and save this in the password field instead. The added benefit of doing this is that you are not storing your IQ Server password in plaintext, but rather a user token that can be deleted, etc... if need be.
+
+## Themes
+
+The extension supports color theme changes dynamically.
+
+![Theme Screenshot](media/light-theme-screenshot.png)
 
 ### Known Quirks
 
