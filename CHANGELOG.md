@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.2...v1.0.3) (2021-01-14)
+
+
+### Bug Fixes
+
+* prune before anything else, so we are down to the smallest list of dependencies needed ([a809a6f](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/a809a6f90410c0dbad3ac38ebc2bb0436ef83012))
+
 ## [1.0.2](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.1...v1.0.2) (2021-01-14)
 
 
