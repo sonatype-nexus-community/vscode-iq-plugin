@@ -1,3 +1,10 @@
+## [1.0.7](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.6...v1.0.7) (2021-01-14)
+
+
+### Bug Fixes
+
+* better error message for a project where we cannot find a manifest to scan ([e729d9b](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/e729d9b3a25c9183dfc36964e0654d6f1f53fafd))
+
 ## [1.0.6](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.5...v1.0.6) (2021-01-14)
 
 
