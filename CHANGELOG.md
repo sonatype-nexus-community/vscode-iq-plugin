@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.1...v1.0.2) (2021-01-14)
+
+
+### Bug Fixes
+
+* run npm i to ensure dependencies are there, but still avoid npm list ([94ad6fc](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/94ad6fc07d466ecc4e91b8a3fddfcbaacafdd163))
+
 ## [1.0.1](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.0...v1.0.1) (2021-01-14)
 
 
