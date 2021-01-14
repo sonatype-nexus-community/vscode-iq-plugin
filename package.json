@@ -186,7 +186,7 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm i && ./scripts/build-non-split.js && tsc -p tsconfig.extension.json",
+    "vscode:prepublish": "npm i && ./scripts/build-non-split.js && tsc -p tsconfig.extension.json && npm prune --production",
     "start": "react-scripts start",
     "build": "./scripts/build-non-split.js && tsc -p tsconfig.extension.json",
     "test": "react-scripts test --env=jsdom",
