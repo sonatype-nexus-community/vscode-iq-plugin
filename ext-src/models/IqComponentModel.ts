@@ -72,7 +72,7 @@ export class IqComponentModel implements ComponentModel {
               this.coordsToComponent.clear();
 
               const dependencies: Array<PackageType> = new Array();
-              if (componentContainer.Valid.length > 0) {
+              if (componentContainer.Valid && componentContainer.Valid.length > 0) {
                 progress.report({message: "Starting to package your dependencies for IQ Server", increment: 5});
                 for (let pm of componentContainer.Valid) {
                   try {
@@ -90,7 +90,7 @@ export class IqComponentModel implements ComponentModel {
                 }
                 progress.report({message: "Packaging ready", increment: 35});
               } else {
-                throw new TypeError("Unable to instantiate Package Muncher");
+                throw new TypeError("No valid formats available to scan for this project.");
               }
         
               this.logger.log(LogLevel.DEBUG, `Getting Internal ID from Public ID: ${this.applicationPublicId}`);
@@ -172,7 +172,7 @@ export class IqComponentModel implements ComponentModel {
               window.showErrorMessage(`Nexus IQ extension failure: ${failure}`);
             });
         } catch (e) {
-          this.logger.log(LogLevel.ERROR, `Uh ohhhh`, e);
+          this.logger.log(LogLevel.ERROR, `Nexus IQ Extension failure: ${e}`, e);
           reject(e);
         }
       });

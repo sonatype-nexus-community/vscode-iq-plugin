@@ -52,7 +52,7 @@ export class ComponentContainer {
     if (this.Valid.length != 0) {
       console.debug("Package Muncher(s) set");
     } else {
-      throw new TypeError("No valid implementation exists for workspace");
+      throw new Error("No supported scan type exists for the open workspace");
     }
   }
 }
