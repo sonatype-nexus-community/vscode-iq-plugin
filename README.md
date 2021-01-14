@@ -3,31 +3,35 @@
 [![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/sonatypecommunity.vscode-iq-plugin?color=blue&label=VS%20Marketplace&logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SonatypeCommunity.vscode-iq-plugin)
 <a href="https://circleci.com/gh/sonatype-nexus-community/vscode-iq-plugin"><img src="https://circleci.com/gh/sonatype-nexus-community/vscode-iq-plugin.svg?style=shield" /></a>
 
-Scan your libraries against either the free [OSS Index](https://ossindex.sonatype.org/) vulnerability database or the [Sonatype Nexus IQ Server](https://www.sonatype.com/nexus-iq-server). Drill down into all of your dependencies to examine each package version for security vulnerabilities. With IQ Server, it also provides policy and license details.[](https://github.com/sonatype-nexus-community/vscode-iq-plugin)
+Sonatype's VSCode extension allows you to surface and remediate issues in your project's dependencies without every leaving your development environment.
 
-## Features
+Any developer can use the extension for free against our publicly available [OSS Index](https://ossindex.sonatype.org/) vulnerability database while our commercial users can connect to [Sonatype's Nexus IQ Server](https://www.sonatype.com/nexus-iq-server) to evaluate against organizational policy. Drill down into all of your dependencies to examine each package version for violations to determine whether you should upgrade or move to a different package at a glance.
 
-- Scan npm/yarn, Maven, RubyGems, Golang (`dep` and `go mod`), Rust (Cargo), PHP (Composer), R (see known quirks), Python (requirements.txt or Poetry) projects 
-- See all components, with vulnerable ones highlighted
+### Supported Formats
+
+Good news for polyglots: the extension allows you to view violations across multiple ecosystems at once across the following formats: 
+- npm/yarn (`npm install` or `yarn install` required)
+- maven (`pom.xml`)
+- python (`requirements.txt` or `poetry.lock`)
+- RubyGems (`Gemfile.lock`)
+- Golang (`dep` or `go mod`)
+- PHP (`composer.lock`)
+- Rust/Cargo (`Cargo.lock`)
+- R/CRAN (see known quirks)
 
 ### Sonatype Nexus IQ Scan
 
-![1574377213618](media/iq-animated-scan.gif)
+![IQ Screenshot](media/iq-screenshot.png)
 
 ### OSS Index Scan
 
-![1574377213618](media/ossindex-animated-scan.gif)
+![OSSI Screenshot](media/ossi-screenshot.png)
 
 ### Themes
 
-![1574377213618](media/animated-themes.gif)
+## Installation
 
-## Requirements
-
-- To enable the IQ scan, you will need a Sonatype Nexus IQ Lifecycle license, but the OSS Index scan will work for all users
-- The plugin requires npm/yarn, golang, maven, or python and pip to be installed, depending on which language you are using. It will not install these as a part of the plugin
-
-## Extension Settings
+## Configuration
 
 - Configuration is done in the VSCode `Preferences > Settings > Sonatype Explorer`
 
