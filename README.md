@@ -3,41 +3,55 @@
 [![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/sonatypecommunity.vscode-iq-plugin?color=blue&label=VS%20Marketplace&logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SonatypeCommunity.vscode-iq-plugin)
 <a href="https://circleci.com/gh/sonatype-nexus-community/vscode-iq-plugin"><img src="https://circleci.com/gh/sonatype-nexus-community/vscode-iq-plugin.svg?style=shield" /></a>
 
-Scan your libraries against either the free [OSS Index](https://ossindex.sonatype.org/) vulnerability database or the [Sonatype Nexus IQ Server](https://www.sonatype.com/nexus-iq-server). Drill down into all of your dependencies to examine each package version for security vulnerabilities. With IQ Server, it also provides policy and license details.[](https://github.com/sonatype-nexus-community/vscode-iq-plugin)
+Sonatype's VSCode extension allows you to surface and remediate issues in your project's dependencies without ever leaving your development environment.
 
-## Features
+Any developer can use the extension for free against our publicly available [OSS Index](https://ossindex.sonatype.org/) vulnerability database while our commercial users can connect to [Sonatype's Nexus IQ Server](https://www.sonatype.com/nexus-iq-server) to evaluate against organizational policy. Drill down into all of your dependencies to examine each package version for violations to determine whether you should upgrade or move to a different version at a glance.
 
-- Scan npm/yarn, Maven, RubyGems, Golang (`dep` and `go mod`), Rust (Cargo), PHP (Composer), R (see known quirks), Python (requirements.txt or Poetry) projects 
-- See all components, with vulnerable ones highlighted
+## Supported Formats
+
+Good news for polyglots -- the extension allows you to view violations across multiple ecosystems at once across the following formats: 
+- npm/yarn (`npm install` or `yarn install` required)
+- maven (`pom.xml`)
+- python (`requirements.txt` or `poetry.lock`)
+- RubyGems (`Gemfile.lock`)
+- Golang (`dep` or `go mod`)
+- PHP (`composer.lock`)
+- Rust/Cargo (`Cargo.lock`)
+- R/CRAN (see known quirks)
+- Conan (any conan formatted `*.lock` files)
 
 ### Sonatype Nexus IQ Scan
 
-![1574377213618](media/iq-animated-scan.gif)
+![IQ Screenshot](media/iq-screenshot.png)
 
 ### OSS Index Scan
 
-![1574377213618](media/ossindex-animated-scan.gif)
+![OSSI Screenshot](media/ossi-screenshot.png)
 
-### Themes
+## Installation
 
-![1574377213618](media/animated-themes.gif)
+- Install from the [marketplace link](https://marketplace.visualstudio.com/items?itemName=SonatypeCommunity.vscode-iq-plugin)
+- Install directly from the VSCode extension interface:
 
-## Requirements
+![Install Screenshot](media/install-screenshot.png)
 
-- To enable the IQ scan, you will need a Sonatype Nexus IQ Lifecycle license, but the OSS Index scan will work for all users
-- The plugin requires npm/yarn, golang, maven, or python and pip to be installed, depending on which language you are using. It will not install these as a part of the plugin
+## Configuration
 
-## Extension Settings
-
-- Configuration is done in the VSCode `Preferences > Settings > Sonatype Explorer`
+Configuration is done in VSCode's extension settings: `Preferences > Settings > Sonatype Explorer`
 
 ![VS Code Settings](media/animated-settings.gif)
 
-If you are using IQ Server, you can enter your password which will be stored in cleartext, or for additional security you can leave this blank and whenever you start VS Code (and if you have the Nexus Explorer Data Source set to `iqServer`) you will be prompted for a password:
+If you are a commercial Sonatype IQ user, switch the data source to `iqServer` and enter your IQ endpoint and credentials.  You can enter your password which will be stored in cleartext, or you can leave this blank and be prompted for a password on start-up:
 
 ![VSCode Settings](media/iqserver-passwordprompt-dark.png)
 
-If you are using IQ Server v76 or above, you can create a [user token](https://help.sonatype.com/iqserver/automating/rest-apis/user-token-rest-api---v2) and save this in the password field instead. The added benefit of doing this is that you are not storing your IQ Server password in plaintext, but rather a user token that can be deleted, etc... if need be.
+Additonally, you can create a [user token](https://help.sonatype.com/iqserver/automating/rest-apis/user-token-rest-api---v2) and save this in the password field instead so you are not storing credentials in plain text.
+
+## Themes
+
+The extension supports color theme changes dynamically.
+
+![Theme Screenshot](media/light-theme-screenshot.png)
 
 ### Known Quirks
 
@@ -84,20 +98,14 @@ Development requires running this project in Visual Studio Code, for ease of tes
 You'll need a working version of nodejs (we have been using 12.x and higher), and then:
 
 ```
-npm i
+npm install && npm run build
 ```
 
 Then:
 
-```
-npm run build
-```
+`Debug > Launch Extension`
 
-Then:
-
-`Debug > Start Debugging`
-
-If you are working on functionality that requires IQ Server, you'll need an instance running, and configured in the settings for the project. OSS Index should work right out of the box.
+If you are working on functionality that requires IQ Server, you'll need an instance running, and configured in the settings for the project. OSS Index will work out of the box.
 
 All of the React specific code can be found in `src`. The rest of the code is contained within `ext-src` and this is what communicates with either OSS Index or IQ Server.
 
