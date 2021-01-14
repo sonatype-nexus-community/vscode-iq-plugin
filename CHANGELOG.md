@@ -1,3 +1,10 @@
+## [1.0.6](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.5...v1.0.6) (2021-01-14)
+
+
+### Bug Fixes
+
+* install vsce ([115c070](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/115c07022174f3bb0442b99147848d75a2a4f545))
+
 ## [1.0.5](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.4...v1.0.5) (2021-01-14)
 
 
