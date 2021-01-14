@@ -3,7 +3,7 @@ jobs:
   build: 
     working_directory: ~/vscode-iq-plugin 
     docker: 
-      - image: circleci/node:10.19.0
+      - image: circleci/node:12.20.1
     steps: 
       - checkout
       - restore_cache: 
@@ -21,7 +21,7 @@ jobs:
   release:
     working_directory: ~/vscode-iq-plugin 
     docker: 
-      - image: circleci/node:10.19.0
+      - image: circleci/node:12.20.1
     steps:
       - checkout
       - run: 
