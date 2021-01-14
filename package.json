@@ -186,7 +186,7 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm i && ./scripts/build-non-split.js && tsc -p tsconfig.extension.json && npm prune --production",
+    "vscode:prepublish": "./scripts/build-non-split.js && tsc -p tsconfig.extension.json",
     "start": "react-scripts start",
     "build": "./scripts/build-non-split.js && tsc -p tsconfig.extension.json",
     "test": "react-scripts test --env=jsdom",
@@ -215,7 +215,7 @@
     "@types/node-fetch": "^2.5.7",
     "@types/jest": "^22.2.3",
     "@types/node": "^12.12.6",
-    "@types/react": "^16.9.11",
+    "@types/react": "^16.14.2",
     "@types/react-dom": "^16.9.3",
     "@types/uuid": "^8.3.0",
     "@types/vscode": "1.46.0",
@@ -231,5 +231,8 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "resolutions": {
+    "@types/react": "^16.14.2"
+  }
 }
