@@ -13,32 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
-import { VersionsContextConsumer } from '../../../../../../context/versions-context';
+import React, { useContext } from 'react';
+import { VersionsContext, VersionsContextInterface } from '../../../../../../context/versions-context';
 
-type Props = {
-}
+const Remediation = () => {
 
-type State = {
-}
+  const versionsContext = useContext(VersionsContext);
 
-class Remediation extends React.Component<Props, State> {
-  public render() {
-    console.debug("Remediation section rendering");
-    return (
-      <VersionsContextConsumer>
-        { context => context && context.remediation && (
-          Object.keys(context.remediation.versionChanges).map(val => (
-            <React.Fragment>
-              <h2>Remediation Type: {context.remediation.versionChanges[val].type}</h2>
-              Upgrade to this version: {context.remediation.versionChanges[val].data.component.componentIdentifier.coordinates.version}
-            </React.Fragment>
-            )
-          )           
-        )}
-      </VersionsContextConsumer>
-    );
+  const renderRemediation = (versionsContext: VersionsContextInterface | undefined) => {
+    if (versionsContext && versionsContext.remediation && versionsContext.remediation.versionChanges) {
+      console.log(versionsContext.remediation);
+      return versionsContext.remediation.versionChanges.map((version: any) => {
+        <React.Fragment>
+          <h2>Remediation Type: { version.type }</h2>
+          Upgrade to this version: { version.data.component.componentIdentifier.coordinates.version }
+        </React.Fragment>
+      })
+    }
+    return null;
   }
+
+  return (
+    renderRemediation(versionsContext)
+  )
 }
 
 export default Remediation;

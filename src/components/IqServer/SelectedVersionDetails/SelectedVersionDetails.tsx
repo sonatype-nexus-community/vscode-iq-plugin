@@ -13,47 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
+import React, { useState } from 'react';
 import ComponentInfoPage from './ComponentInfoPage/ComponentInfoPage';
-import Tabs from 'react-bootstrap/Tabs';
-import Tab from 'react-bootstrap/Tab';
 import SecurityPage from './SecurityPage/SecurityPage';
 import LicensingPage from './LicensingPage/LicensingPage';
 import PolicyPage from './PolicyPage/PolicyPage';
+import { 
+  NxTabs, 
+  NxTab, 
+  NxTabList, 
+  NxTabPanel } from '@sonatype/react-shared-components';
 
-type Props = {
-}
+const SelectedVersionDetails = () => {
+  const [activeTabId, setActiveTabId] = useState(0);
 
-type State = {
-}
-
-class SelectedVersionDetails extends React.Component<Props, State> {
-
-  constructor(props: Props) {
-    super(props);
-  }
-
-  public render() {
-    console.log("SelectedVersionDetails page rendering")
-    return (
-      this.context && (
-      <Tabs id="selected-version-tabs" defaultActiveKey="info">
-        <Tab title="Component Info" eventKey="info">
-          <ComponentInfoPage></ComponentInfoPage>
-        </Tab>
-        <Tab title="Policy" eventKey="policy">
-          <PolicyPage></PolicyPage>
-        </Tab>
-        <Tab title="Security" eventKey="security">
-          <SecurityPage></SecurityPage>
-        </Tab>
-        <Tab title="Licensing" eventKey="licensing">
-          <LicensingPage></LicensingPage>
-        </Tab>
-      </Tabs>   
-      )
-    );
-  }
-}
+  return (
+    <NxTabs activeTab={activeTabId} onTabSelect={setActiveTabId}>
+      <NxTabList>
+        <NxTab>
+          Component Info
+        </NxTab>
+        <NxTab>
+          Policy
+        </NxTab>
+        <NxTab>
+          Security
+        </NxTab>
+        <NxTab>
+          Licensing
+        </NxTab>
+      </NxTabList>
+      <NxTabPanel>
+        <ComponentInfoPage></ComponentInfoPage>
+      </NxTabPanel>
+      <NxTabPanel>
+        <PolicyPage></PolicyPage>
+      </NxTabPanel>
+      <NxTabPanel>
+        <SecurityPage></SecurityPage>
+      </NxTabPanel>
+      <NxTabPanel>
+        <LicensingPage></LicensingPage>
+      </NxTabPanel>
+    </NxTabs>
+  );
+};
 
 export default SelectedVersionDetails;

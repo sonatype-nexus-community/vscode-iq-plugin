@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export class GolangCoordinate implements CoordinateType {
-  Name: string;
-  Version: string;
+import { ComponentRequestEntry } from "./ComponentRequestEntry";
 
-  constructor (name: string, version: string){
-    this.Name = name;
-    this.Version = version;
-  }
+export class ComponentRequest {
+    components: Array<ComponentRequestEntry>;
 
-  public asCoordinates(): string {
-    return `${this.Name} - ${this.Version}`;
-  }
+    constructor(components: ComponentRequestEntry[]) {
+        this.components = components;
+    }
 }

@@ -13,52 +13,60 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
-import Tabs from 'react-bootstrap/Tabs';
-import Tab from 'react-bootstrap/Tab';
+import React, { useState } from 'react';
 import OssIndexComponentInfo from './OssIndexComponentInfo/OssIndexComponentInfo';
 import OssIndexSecurityInfo from './OssIndexSecurityInfo/OssIndexSecurityInfo';
-import { OssIndexContextConsumer } from '../../../context/ossindex-context';
-import { Alert } from 'react-bootstrap';
+import { 
+  NxTabs, 
+  NxTab, 
+  NxTabList, 
+  NxTabPanel,
+  NxInfoAlert } from '@sonatype/react-shared-components';
 
-type Props = {
-}
+const OssIndexVersionDetails = () => {
 
-type State = {
-}
+  const [activeTabId, setActiveTabId] = useState(0);
 
-class OssIndexVersionDetails extends React.Component<Props, State> {
-  public render() {
-    console.log("OssIndexSelectedVersionDetails page rendering")
-    return (
-      <Tabs id="selected-version-tabs" defaultActiveKey="info">
-        <Tab title="Component Info" eventKey="info">
-          <OssIndexComponentInfo />
-        </Tab>
-        <Tab title="Security" eventKey="security">
-          <OssIndexContextConsumer>
-            {context => context && context.vulnerabilities && (
-              <OssIndexSecurityInfo vulnerabilities={context.vulnerabilities}/>
-            )}
-          </OssIndexContextConsumer>
-        </Tab>
-        <Tab title="Policy" eventKey="policy">
-          <Alert variant="info">
-            IQ Server provides policy based, automated risk mitigation in your CI environment.
-          </Alert>
-          
-          <p><a href="https://www.sonatype.com/product-nexus-lifecycle" target="_blank">Learn more about IQ Server</a></p>
-        </Tab>
-        <Tab title="Licensing" eventKey="licensing">
-          <Alert variant="info">
-            IQ Server gives you visibility into the licensing of your components, and allows you to manage your legal obligations using our automated policy enforcement engine.
-          </Alert>
-            
-          <p><a href="https://www.sonatype.com/product-nexus-lifecycle" target="_blank">Learn more about IQ Server</a></p>
-        </Tab>
-      </Tabs>     
-    );
-  }
+  return (
+    <NxTabs activeTab={activeTabId} onTabSelect={setActiveTabId}>
+    <NxTabList>
+      <NxTab>
+        Component Info
+      </NxTab>
+      <NxTab>
+        Security
+      </NxTab>
+      <NxTab>
+        Policy
+      </NxTab>
+      <NxTab>
+        Licensing
+      </NxTab>
+    </NxTabList>
+    <NxTabPanel>
+      <OssIndexComponentInfo />
+    </NxTabPanel>
+    <NxTabPanel>
+      <OssIndexSecurityInfo/>
+    </NxTabPanel>
+    <NxTabPanel>
+      <NxInfoAlert>
+        IQ Server provides policy based, automated risk mitigation in your CI environment.
+        <p>
+          <a href="https://www.sonatype.com/product-nexus-lifecycle" target="_blank">Learn more about IQ Server</a>
+        </p>
+      </NxInfoAlert>
+    </NxTabPanel>
+    <NxTabPanel>
+      <NxInfoAlert>
+      IQ Server gives you visibility into the licensing of your components, and allows you to manage your legal obligations using our automated policy enforcement engine.
+        <p>
+          <a href="https://www.sonatype.com/product-nexus-lifecycle" target="_blank">Learn more about IQ Server</a>
+        </p>
+      </NxInfoAlert>
+    </NxTabPanel>
+  </NxTabs>
+  )
 }
 
 export default OssIndexVersionDetails;

@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- /**
- * @class {{format}}Coordinate
- */
-export class {{format}}Coordinate implements CoordinateType {
-  Name: string;
-  Version: string;
- 
-  constructor (name: string, version: string){
-    this.Name = name;
-    this.Version = version;
-  }
+import { PackageType } from "../PackageType";
+import { PackageURL } from 'packageurl-js';
 
-  public asCoordinates(): string {
-    throw new Error("not Implemented");
+export class CargoPackage implements PackageType {
+  constructor(
+    readonly Name: string,
+    readonly Version: string,
+    readonly Hash?: string
+  ) {}
+
+  public toPurl(): string {
+    let purl: PackageURL = new PackageURL(
+      "cargo", undefined, this.Name, this.Version, undefined, undefined);
+    return purl.toString();
   }
 }

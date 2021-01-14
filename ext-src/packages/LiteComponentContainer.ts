@@ -13,37 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import { LitePackageDependencies } from "./LitePackageDependencies";
-import { NpmLiteDependencies } from "./npm/NpmLiteDependencies";
-import { PyPiLiteDependencies } from "./pypi/PyPiLiteDependencies";
-import { GolangLiteDependencies } from "./golang/GolangLiteDependencies";
-import { MavenLiteDependencies } from "./maven/MavenLiteDependencies";
-import { RubyGemLiteDependencies } from "./rubygems/RubyGemsLiteDependencies";
-import { RLiteDependencies } from "./r/RLiteDependencies";
+import { NpmDependencies } from "./npm/NpmDependencies";
+import { PyPIDependencies } from "./pypi/PyPIDependencies";
+import { PoetryDependencies } from "./poetry/PoetryDependencies";
+import { GolangDependencies } from "./golang/GolangDependencies";
+import { MavenDependencies } from "./maven/MavenDependencies";
+import { RubyGemsDependencies } from "./rubygems/RubyGemsDependencies";
+import { RDependencies } from "./r/RDependencies";
+import { ComposerDependencies } from "./composer/ComposerDependencies";
+import { CargoDependencies } from "./cargo/CargoDependencies";
+import { PackageDependencies } from "./PackageDependencies";
+import { ILogger } from "../utils/Logger";
+import { ConanDependencies } from "./conan/ConanDependencies";
 
 export class LiteComponentContainer {
-  Implementation: Array<LitePackageDependencies> = [];
-  PackageMuncher: LitePackageDependencies | undefined;
+  Possible: Array<PackageDependencies> = [];
+  Valid: Array<PackageDependencies> = [];
 
-  constructor() {
+  constructor(readonly logger: ILogger) {
     // To add a new format, you just need to push another implementation to this list
-    this.Implementation.push(new RubyGemLiteDependencies());
-    this.Implementation.push(new NpmLiteDependencies());
-    this.Implementation.push(new PyPiLiteDependencies());
-    this.Implementation.push(new GolangLiteDependencies());
-    this.Implementation.push(new MavenLiteDependencies());
-    this.Implementation.push(new RLiteDependencies());
+    this.Possible.push(new RubyGemsDependencies({logger}));
+    this.Possible.push(new NpmDependencies({logger}));
+    this.Possible.push(new PyPIDependencies({logger}));
+    this.Possible.push(new GolangDependencies({logger}));
+    this.Possible.push(new MavenDependencies({logger}));
+    this.Possible.push(new RDependencies({logger}));
+    this.Possible.push(new PoetryDependencies({logger}));
+    this.Possible.push(new ComposerDependencies({logger}));
+    this.Possible.push(new CargoDependencies({logger}));
+    this.Possible.push(new ConanDependencies({logger}));
 
-    // Bit of an odd side effect, if a project has multiple dependency types, the PackageMuncher will get set to the last one it encounters currently
-    this.Implementation.forEach(i => {
+    this.Possible.forEach(i => {
       if(i.checkIfValid()) {
-        this.PackageMuncher = i;
+        this.Valid.push(i);
       }
     });
 
-    if (this.PackageMuncher != undefined) {
-      console.debug("Package Muncher set");
+    if (this.Valid.length != 0) {
+      console.debug("Package Muncher(s) set");
     } else {
       throw new TypeError("No valid implementation exists for workspace");
     }

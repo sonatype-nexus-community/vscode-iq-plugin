@@ -7,7 +7,7 @@ Scan your libraries against either the free [OSS Index](https://ossindex.sonatyp
 
 ## Features
 
-- Scan npm, Maven, RubyGems, Go (`dep` and `go mod`), R (see known quirks) or PyPi projects (Go is only supported on Linux or OS/X)
+- Scan npm/yarn, Maven, RubyGems, Golang (`dep` and `go mod`), Rust (Cargo), PHP (Composer), R (see known quirks), Python (requirements.txt or Poetry) projects 
 - See all components, with vulnerable ones highlighted
 
 ### Sonatype Nexus IQ Scan
@@ -25,7 +25,7 @@ Scan your libraries against either the free [OSS Index](https://ossindex.sonatyp
 ## Requirements
 
 - To enable the IQ scan, you will need a Sonatype Nexus IQ Lifecycle license, but the OSS Index scan will work for all users
-- The plugin requires npm, golang, maven, ruby / bundler, or python and pip to be installed, depending on which language you are using. It will not install these as a part of the plugin
+- The plugin requires npm/yarn, golang, maven, or python and pip to be installed, depending on which language you are using. It will not install these as a part of the plugin
 
 ## Extension Settings
 
@@ -43,19 +43,14 @@ If you are using IQ Server v76 or above, you can create a [user token](https://h
 
 We try to use other tooling whenever possible, to avoid reinventing the wheel (that's what Open Source is about anyways, right!). However, due to using this tooling, we are at the mercy of it, sometimes, so here's a list of quirks we've ran into while developing/using this extension ourself.
 
-#### npm
+#### npm/yarn
 
-- We run either `npm shrinkwrap`, `npm list`, or `yarn list` depending on what tool chain you are using.
-- If we are unable to parse your dependencies, it's likely one of those commands is throwing an error, and you should make sure it isn't.
-- Projects that use both `npm` and `yarn` can be confusing to a program, as we have to pick one to work with. If you experience issues, bear this in mind, it's likely that you have both a `package-lock.json` and a `yarn.lock`, and our lil extension is going "OH NOES!" because one is out of date, etc...
+- We read the actual dependencies you have installed, which means we parse your node_modules folder. If this folder doesn't exist, we won't find any dependencies! Make sure to run `npm i` or `yarn` on your project if you haven't done so already.
 
 #### RubyGems
 
-- Ruby Gems support depends on the installation of Ruby, and Bundler
-- We run `bundle show` to get your dependency list
-- If your Ruby version mismatches what is declared in your Gemfile, Bundler will not run properly
-- If you use rbenv, ensure your `.ruby-version` file matches your Gemfile
-- In order for the command we use to get your dependency list to output to succeed, you need to have run `bundle install`, as `bundle show` cannot track down what you use locally otherwise
+- We parse the `Gemfile.lock` file, so if you don't have one, you won't see any dependencies!
+- If your `Gemfile.lock` has no specs in it, we will not show any dependencies.
 
 #### Golang
 
@@ -79,8 +74,6 @@ We try to use other tooling whenever possible, to avoid reinventing the wheel (t
 - The way the R script runs, it finds all of the packages you've installed in the R environment, so not just for your project. This is because there is really no way to query for project specific packages, and appears to be a limitation of R.
 
 #### Various and Sundry
-`
-- Projects with both RubyGems and NPM (`Gemfile.lock` and `package.json`), or similar, this VS Code extension currently picks one format, and scans for it. We haven't built a path to scan multiple types in one project, but that would be lovely. PRs welcome :)
 
 - "My project has 3,000 dependencies, why is this so slow?!?". We chunk up requests to OSS Index (free solution) in sections of 128 dependencies, so for 3,000 dependencies, you are making 24 https POST requests for information, and then it's merging those results, etc... We'd love to know your feedback on the tool, so if you do run into this, open up an issue and let us know! Same goes for IQ Server, there could be quite a bit to process.
 
@@ -88,7 +81,7 @@ We try to use other tooling whenever possible, to avoid reinventing the wheel (t
 
 Development requires running this project in Visual Studio Code, for ease of testing etc...
 
-You'll need a working version of nodejs (we have been using 10.x and higher), and then:
+You'll need a working version of nodejs (we have been using 12.x and higher), and then:
 
 ```
 npm i
@@ -110,6 +103,13 @@ All of the React specific code can be found in `src`. The rest of the code is co
 
 We highly suggest installing "Webview Developer Tools" for this project, as the front end is written in React, and it's nice to have that to see what's going on.
 
+### Contributing to Nexus IQ Plugin for VS Code
+
+#### Adding a format
+
+1) Run `FORMAT=Maven npm run generate-format`, substituting the value for FORMAT for the name of the Format you are working on, example: `Maven` in this case
+2) Implement the methods you need to in these newly generated classes, and then in `ext-src/packages/ComponentContainer.ts`, add your Implementation!
+
 ## Contributing
 
 We care a lot about making the world a safer place, and that's why we created this extension. If you as well want to speed up the pace of software development by working on this project, jump on in! Before you start work, create a new issue, or comment on an existing issue, to let others know you are!
@@ -124,7 +124,7 @@ fix: `policyViolations of undefined` when loading a python project with requirem
 ```
 
 Without such a commit comment, commits to the `master` branch will cause a build failure during the release
-process due to an attempted to reuse an existing version number.
+process due to an attempt to reuse an existing version number.
 
 To avoid such build failures without performing a release, be sure your commit message includes `[skip ci] `.
 

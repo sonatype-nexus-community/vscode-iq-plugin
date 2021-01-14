@@ -13,94 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as _ from "lodash";
-
 import { PyPIPackage } from "./PyPIPackage";
 import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../models/ComponentEntry";
-import { PyPICoordinate } from "./PyPICoordinate";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { RequestService } from "../../services/RequestService";
 import { PyPiUtils } from "./PyPiUtils";
 import { ScanType } from "../../types/ScanType";
+import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
 
-export class PyPIDependencies extends PackageDependenciesHelper implements PackageDependencies {
-  Dependencies: Array<PyPIPackage> = [];
-  CoordinatesToComponents: Map<string, ComponentEntry> = new Map<
-    string,
-    ComponentEntry
-  >();
-  RequestService: RequestService;
+export class PyPIDependencies implements PackageDependencies {
 
-  constructor(private requestService: RequestService) {
-    super();
-    this.RequestService = this.requestService;
+  constructor(private options: PackageDependenciesOptions) {}
+
+  public checkIfValid(): boolean {
+    return PackageDependenciesHelper.doesPathExist(PackageDependenciesHelper.getWorkspaceRoot(), "requirements.txt");
   }
 
-  public CheckIfValid(): boolean {
-    if (PackageDependenciesHelper.doesPathExist(PackageDependenciesHelper.getWorkspaceRoot(), "requirements.txt")) {
-      console.debug("Valid for PyPI");
-      return true;
-    }
-    return false;
-  }
-
-  public ConvertToComponentEntry(resultEntry: any): string {
-    let coordinates = new PyPICoordinate(resultEntry.component.componentIdentifier.coordinates.name,
-      resultEntry.component.componentIdentifier.coordinates.version,
-      "", "");
-    
-    return coordinates.asCoordinates();
-  }
-
-  public convertToNexusFormat() {
-    return {
-      components: _.map(
-        this.Dependencies,
-        (d) => ({
-          componentIdentifier:{
-            format: "pypi",
-            coordinates:{extension:"tar.gz",name:d.Name,version:d.Version}
-          }
-        })
-      )
-    };
-  }
-
-  public toComponentEntries(data: any): Array<ComponentEntry> {
-    let components = new Array<ComponentEntry>();
-    for (let entry of data.components) {
-      const packageId = entry.componentIdentifier.coordinates.name;
-      const version = entry.componentIdentifier.coordinates.version;
-
+  public toComponentEntries(packages: Array<PyPIPackage>): Map<string, ComponentEntry> {
+    let map = new Map<string, ComponentEntry>();
+    for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
-        packageId,
-        version,
+        pkg.Name,
+        pkg.Version,
+        "pypi",
         ScanType.NexusIq
       );
-      components.push(componentEntry);
-      let coordinates = new PyPICoordinate(
-        packageId,
-        version,
-        "",
-        ""
-      );
-      this.CoordinatesToComponents.set(
-        coordinates.asCoordinates(),
+      map.set(
+        pkg.toPurl(),
         componentEntry
       );
     }
-    return components;
+    return map;
   }
 
-  public async packageForIq(): Promise<any> {
+  public async packageForService(): Promise<Array<PyPIPackage>> {
     try {
       let pypiUtils = new PyPiUtils();
-      this.Dependencies = await pypiUtils.getDependencyArray();
-      Promise.resolve();
+      let deps = await pypiUtils.getDependencyArray();
+      return Promise.resolve(deps);
     }
     catch (e) {
-      Promise.reject();
+      return Promise.reject(e);
     }
   }
 }

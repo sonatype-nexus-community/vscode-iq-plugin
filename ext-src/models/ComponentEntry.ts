@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+import { ReportComponent } from "../services/ReportResponse";
 import { PolicyViolation } from "../types/PolicyViolation";
 import { ScanType } from "../types/ScanType";
 
@@ -22,14 +22,14 @@ export class ComponentEntry {
   failure: string = "";
   policyViolations: Array<PolicyViolation> = [];
   hash: string = "";
-  nexusIQData: any = undefined;
-  ossIndexData: any = undefined;
+  nexusIQData?: NexusIQData = undefined;
+  ossIndexData?: any = undefined;
 
-  constructor(readonly name: string, readonly version: string, readonly scanType: ScanType) {
+  constructor(readonly name: string, readonly version: string, readonly format: string, readonly scanType: ScanType) {
   }
 
   public toString(): string {
-    return `${this.name} @ ${this.version}`;
+    return `${this.format}: ${this.name} @ ${this.version}`;
   }
 
   public maxPolicy(): number {
@@ -41,7 +41,7 @@ export class ComponentEntry {
       if (this.policyViolations && this.policyViolations.length > 0) {
         maxThreatLevel = this.policyViolations.reduce(
           (prevMax: number, a: PolicyViolation) => {
-            return a.threatLevel > prevMax ? a.threatLevel : prevMax;
+            return a.policyThreatLevel > prevMax ? a.policyThreatLevel : prevMax;
           },
           0
         );
@@ -61,6 +61,7 @@ export class ComponentEntry {
     }
     return maxThreatLevel;
   }
+
   public iconName(): string {
     if ((this.scanType == ScanType.NexusIq && (!this.policyViolations || !this.nexusIQData)) ||
       (this.scanType == ScanType.OssIndex && !this.ossIndexData )) {
@@ -71,9 +72,9 @@ export class ComponentEntry {
     // TODO what is the right way to display threat level graphically?
     if (maxThreatLevel >= 8) {
       return `threat-critical.png`;
-    } else if (maxThreatLevel >= 7) {
+    } else if (maxThreatLevel >= 4) {
       return `threat-severe.png`;
-    } else if (maxThreatLevel >= 5) {
+    } else if (maxThreatLevel >= 2) {
       return `threat-moderate.png`;
     } else if (maxThreatLevel >= 1) {
       return `threat-low.png`;
@@ -81,4 +82,8 @@ export class ComponentEntry {
       return `threat-none.png`;
     }
   }
+}
+
+export interface NexusIQData {
+  component: ReportComponent
 }

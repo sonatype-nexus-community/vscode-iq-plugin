@@ -13,16 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export class NpmCoordinate implements CoordinateType {
-  Name: string;
-  Version: string;
+import { WorkspaceConfiguration } from "vscode";
+import { ILogger } from "../utils/Logger";
 
-  constructor (name: string, version: string){
-    this.Name = name;
-    this.Version = version;
-  }
-
-  public asCoordinates(): string {
-    return `${this.Name} - ${this.Version}`;
-  }
+export interface ComponentModelOptions {
+    configuration: WorkspaceConfiguration;
+    logger: ILogger;
 }

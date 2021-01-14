@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export class MavenCoordinate implements CoordinateType {
-  Name: string;
-  Group: string;
-  Version: string;
-  Extension: string;
+import { ComponentRequestEntry } from "../types/ComponentRequestEntry";
 
-  constructor (artifactId: string, groupId: string, version: string, extension: string){
-    this.Name = artifactId;
-    this.Group = groupId;
-    this.Version = version;
-    this.Extension = extension;
-  }
+export interface RemediationResponse {
+    remediation: VersionChanges;
+}
 
-  public asCoordinates(): string {
-    return `${this.Group}:${this.Name} - ${this.Version}`;
-  }
+export interface VersionChanges {
+    versionChanges: Change[];
+}
+
+export interface Change {
+    type: string;
+    data: ComponentContainer;
+}
+
+export interface ComponentContainer {
+    component: ComponentRequestEntry;
 }

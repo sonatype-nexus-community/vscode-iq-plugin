@@ -13,26 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
-import { VersionsContextConsumer } from '../../../../../../context/versions-context';
+import { PackageURL } from "packageurl-js";
+import { PackageType } from "../PackageType";
 
-type Props = {
-}
+export class ConanPackage implements PackageType {
+  constructor(
+    readonly Name: string,
+    readonly Version: string,
+    readonly Hash?: string
+  ) {}
 
-type State = {
-}
-
-class CveDetails extends React.Component<Props, State> {
-  public render() {
-    console.debug("CVE Details section rendering");
-    return (
-      <VersionsContextConsumer>
-        {context => context && context.cvedetails && (
-          <div dangerouslySetInnerHTML={{ __html: context.cvedetails.htmlDetails }} />
-        )}
-      </VersionsContextConsumer>
-    );
+  public toPurl(): string {
+    let purl: PackageURL = new PackageURL("conan", undefined, this.Name, this.Version, undefined, undefined);
+    return purl.toString();
   }
 }
-
-export default CveDetails;

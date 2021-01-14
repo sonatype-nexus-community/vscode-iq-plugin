@@ -13,12 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PackageType } from "./PackageType";
+export interface ComponentRequestEntry {
+    hash?: string;
+    componentIdentifier?: ComponentIdentifier;
+    packageUrl?: string;
+}
 
-export interface LitePackageDependencies {
-  dependencies: Array<PackageType>;
-  format: string;
-  manifestName: string;
-  checkIfValid(): boolean;
-  packageForService(): Promise<any>;
+export interface ComponentIdentifier {
+    format: string;
+    coordinates: Coordinates;
+}
+
+export interface Coordinates {
+    name?: String;
+    packageId?: String;
+    version: String;
+    group?: String;
+    extension?: String; 
 }

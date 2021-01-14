@@ -14,80 +14,43 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import { FaChevronRight } from 'react-icons/fa';
-import Table from 'react-bootstrap/Table';
-import Badge from 'react-bootstrap/Badge';
-import Accordion from 'react-bootstrap/Accordion';
-import Card from 'react-bootstrap/Card';
-import ClassNameUtils from '../../../../../utils/ClassNameUtils';
 import Remediation from './Remediation/Remediation';
-import CveDetails from './CveDetails/CveDetails';
+import VulnDetails from './VulnDetails/VulnDetails';
+import { 
+  NxAccordion, 
+  NxPolicyViolationIndicator,
+  ThreatLevelNumber } from '@sonatype/react-shared-components';
 
-type State = {
-}
-
-type Props = {
+type SecurityItemProps = {
   securityIssue: any,
-  nexusArtifact: any,
-  remediationEvent: (nexusArtifact: any, cve: string) => void
+  open: boolean,
+  packageUrl: string,
+  remediationEvent: (packageUrl: string, vulnID: string) => void
 }
 
-class SecurityItemDisplay extends React.Component<Props, State> {
-  public render() {
+const SecurityItemDisplay = (props: SecurityItemProps) => {
+
     return (
-      <Card>
-        <Accordion.Toggle 
-          as={Card.Header} 
-          eventKey={this.props.securityIssue.reference} 
-          onClick={this.props.remediationEvent.bind(this, this.props.nexusArtifact, this.props.securityIssue.reference)}
-          >
-          { this.props.securityIssue.reference } <FaChevronRight /> 
-          <Badge 
-            className={ClassNameUtils.threatClassName(this.props.securityIssue.severity)}>
-              CVSS: {this.props.securityIssue.severity}
-          </Badge>
-        </Accordion.Toggle>
-        <Accordion.Collapse eventKey={this.props.securityIssue.reference}>
-          <Card.Body>
-            <Table>
-              <tbody>
-                <tr>
-                  <td>Severity:</td>
-                  <td><Badge className={ClassNameUtils.threatClassName(this.props.securityIssue.severity)}>{this.props.securityIssue.severity}</Badge></td>
-                </tr>
-                <tr>
-                  <td>Source:</td>
-                  <td>{this.props.securityIssue.source}</td>
-                </tr>
-                <tr>
-                  <td>Threat Category:</td>
-                  <td>{this.props.securityIssue.threatCategory}</td>
-                </tr>
-                <tr>
-                  <td>URL:</td>
-                  <td>
-                    { this.props.securityIssue.url != "" &&
-                    <a href={this.props.securityIssue.url}>{this.props.securityIssue.url}</a>
-                    }
-                  </td>
-                </tr>
-                <tr>
-                  <td colSpan={2}>
-                    <CveDetails />
-                  </td>
-                </tr>
-                <tr>
-                  <td colSpan={2}>
-                    <Remediation />
-                  </td>
-                </tr>
-              </tbody>
-            </Table>
-          </Card.Body>
-        </Accordion.Collapse>
-      </Card>
+      <NxAccordion 
+        open={ props.open } 
+        onToggle={() => props.remediationEvent(props.packageUrl, props.securityIssue.reference) }>
+        <NxAccordion.Header>
+          <h2 className="nx-accordion__header-title">
+            { props.securityIssue.reference }
+          </h2>
+          <div className="nx-btn-bar">
+            <NxPolicyViolationIndicator 
+              policyThreatLevel={Math.round(props.securityIssue.severity) as ThreatLevelNumber} 
+              />
+          </div>
+        </NxAccordion.Header>
+        <h3 className="nx-h3">
+          Details
+        </h3>
+        <VulnDetails />
+        <Remediation />
+      </NxAccordion>
     );
-  }
 }
 
 export default SecurityItemDisplay;

@@ -15,6 +15,7 @@
  */
 
 import { PackageType } from "../PackageType";
+import { PackageURL } from 'packageurl-js';
 
 export class MavenPackage implements PackageType {
   constructor(
@@ -25,15 +26,9 @@ export class MavenPackage implements PackageType {
     readonly Hash?: string
   ) {}
 
-  public toCoordinates() {
-    return `${this.Group}:${this.Name}.${this.Extension}:${this.Version}`;
-  }
-
   public toPurl() {
-    return `pkg:maven/${this.Group}/${this.Name}@${this.Version}`;
-  }
-
-  public toCoordValueType(): string {
-    return `${this.Group}:${this.Name} - ${this.Version}`;
+    let purl: PackageURL = new PackageURL(
+      "maven", this.Group, this.Name, this.Version, {"type": this.Extension}, undefined);
+    return purl.toString();
   }
 }

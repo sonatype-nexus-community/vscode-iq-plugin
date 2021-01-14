@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import { PackageType } from "../PackageType";
+import { PackageURL } from 'packageurl-js';
 
 export class PyPIPackage implements PackageType {
   constructor(
@@ -24,12 +25,10 @@ export class PyPIPackage implements PackageType {
     readonly Hash?: string
   ) {}
 
-  public toCoordinates() {
-    return `${this.Name}:${this.Extension}:${this.Qualifier}:${this.Version}`;
-  }
-
   public toPurl() {
-    return `pkg:pypi/${this.Name}@${this.Version}`;
+    let purl: PackageURL = new PackageURL(
+      "pypi", undefined, this.Name, this.Version, {"extension": this.Extension}, undefined);
+    return purl.toString();
   }
 
   public toCoordValueType(): string {

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-interface CoordinateType {
-  Name: string;
-  Version: string;
-  Group?: string;
-  Extension?: string;
-  asCoordinates(): string;
+export interface ThirdPartyAPIResponse {
+    policyAction?: string;
+    reportHtmlUrl?: string;
+    isError: boolean;
+    errorMessage?: string;
+    scanId?: string;
 }

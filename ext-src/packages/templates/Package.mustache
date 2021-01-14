@@ -22,11 +22,7 @@ export class {{&format}}Package implements PackageType {
     readonly Hash?: string
   ) {}
 
-  public toCoordinates(): string {
-    throw new Error("Not implemented");
-  }
-
-  public toCoordValueType(): string {
+  public toPurl(): string {
     throw new Error("Not implemented");
   }
 }

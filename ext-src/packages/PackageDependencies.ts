@@ -15,15 +15,9 @@
  */
 import { PackageType } from "./PackageType";
 import { ComponentEntry } from "../models/ComponentEntry";
-import { RequestService } from "../services/RequestService";
 
 export interface PackageDependencies {
-  Dependencies: Array<PackageType>;
-  CoordinatesToComponents: Map<string, ComponentEntry>;
-  RequestService: RequestService;
-  CheckIfValid(): boolean;
-  ConvertToComponentEntry(resultEntry: any): string;
-  convertToNexusFormat(): any;
-  toComponentEntries(data: any): Array<ComponentEntry>;
-  packageForIq(): Promise<undefined>;
+  checkIfValid(): boolean;
+  toComponentEntries(data: Array<PackageType>): Map<string, ComponentEntry>;
+  packageForService(): Promise<Array<PackageType>>;
 }

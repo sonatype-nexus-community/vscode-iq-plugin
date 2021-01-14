@@ -13,12 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import App from './App';
+import { PackageType } from "../PackageType";
+import { PackageURL } from 'packageurl-js';
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
-  ReactDOM.unmountComponentAtNode(div);
-});
+export class ComposerPackage implements PackageType {
+  constructor(
+    readonly Name: string,
+    readonly Group: string,
+    readonly Version: string,
+    readonly Hash?: string
+  ) {}
+
+  public toPurl(): string {
+    let purl: PackageURL = new PackageURL(
+      "composer", this.Group, this.Name, this.Version, undefined, undefined);
+    return purl.toString();
+  }
+}

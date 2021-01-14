@@ -18,28 +18,39 @@ import { MavenDependencies } from "./maven/MavenDependencies";
 import { NpmDependencies } from "./npm/NpmDependencies";
 import { GolangDependencies } from "./golang/GolangDependencies";
 import { PyPIDependencies } from "./pypi/PyPIDependencies";
-import { RequestService } from "../services/RequestService";
+import { RubyGemsDependencies } from "./rubygems/RubyGemsDependencies"; 
+import { PoetryDependencies } from "./poetry/PoetryDependencies";
+import { ComposerDependencies } from './composer/ComposerDependencies';
+import { CargoDependencies } from './cargo/CargoDependencies';
+import { ILogger } from "../utils/Logger";
+import { ConanDependencies } from "./conan/ConanDependencies";
 
 export class ComponentContainer {
-  Implementation: Array<PackageDependencies> = [];
+  Possible: Array<PackageDependencies> = [];
+  Valid: Array<PackageDependencies> = [];
   PackageMuncher: PackageDependencies | undefined;
 
-  constructor(private requestService: RequestService) {
-    // To add a new format, you just need to push another implementation to this list
-    this.Implementation.push(new MavenDependencies(this.requestService));
-    this.Implementation.push(new NpmDependencies(this.requestService));
-    this.Implementation.push(new GolangDependencies(this.requestService));
-    this.Implementation.push(new PyPIDependencies(this.requestService));
+  constructor(readonly logger: ILogger) {
 
-    // Bit of an odd side effect, if a project has multiple dependency types, the PackageMuncher will get set to the last one it encounters currently
-    this.Implementation.forEach(i => {
-      if(i.CheckIfValid()) {
-        this.PackageMuncher = i;
+    // To add a new format, you just need to push another implementation to this list
+    this.Possible.push(new MavenDependencies({logger}));
+    this.Possible.push(new NpmDependencies({logger}));
+    this.Possible.push(new GolangDependencies({logger}));
+    this.Possible.push(new PyPIDependencies({logger}));
+    this.Possible.push(new RubyGemsDependencies({logger}));
+    this.Possible.push(new PoetryDependencies({logger}));
+    this.Possible.push(new ComposerDependencies({logger}));
+    this.Possible.push(new CargoDependencies({logger}));
+    this.Possible.push(new ConanDependencies({logger}));
+
+    this.Possible.forEach(i => {
+      if(i.checkIfValid()) {
+        this.Valid.push(i);
       }
     });
 
-    if (this.PackageMuncher != undefined) {
-      console.debug("Package Muncher set");
+    if (this.Valid.length != 0) {
+      console.debug("Package Muncher(s) set");
     } else {
       throw new TypeError("No valid implementation exists for workspace");
     }
