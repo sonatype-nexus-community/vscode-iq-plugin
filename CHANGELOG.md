@@ -1,3 +1,11 @@
+## [1.0.4](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.3...v1.0.4) (2021-01-14)
+
+
+### Bug Fixes
+
+* update node while we are at it ([3701345](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/37013456155d85a0f16adcb07d1092536112044e))
+* yarn, why not ([6f428f1](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/6f428f10f23b3c65acceaf93072dab95a21c4b1c))
+
 ## [1.0.3](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.2...v1.0.3) (2021-01-14)
 
 
