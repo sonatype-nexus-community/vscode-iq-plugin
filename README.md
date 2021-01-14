@@ -36,15 +36,15 @@ Good news for polyglots -- the extension allows you to view violations across mu
 
 ## Configuration
 
-- Configuration is done in the VSCode `Preferences > Settings > Sonatype Explorer`
+Configuration is done in VSCode's extension settings: `Preferences > Settings > Sonatype Explorer`
 
 ![VS Code Settings](media/animated-settings.gif)
 
-If you are using IQ Server, you can enter your password which will be stored in cleartext, or for additional security you can leave this blank and whenever you start VS Code (and if you have the Nexus Explorer Data Source set to `iqServer`) you will be prompted for a password:
+If you are a commercial Sonatype IQ user, switch the data source to `iqServer` and enter your IQ endpoint and credentials.  You can enter your password which will be stored in cleartext, or you can leave this blank and be prompted for a password on start-up:
 
 ![VSCode Settings](media/iqserver-passwordprompt-dark.png)
 
-If you are using IQ Server v76 or above, you can create a [user token](https://help.sonatype.com/iqserver/automating/rest-apis/user-token-rest-api---v2) and save this in the password field instead. The added benefit of doing this is that you are not storing your IQ Server password in plaintext, but rather a user token that can be deleted, etc... if need be.
+Additonally, you can create a [user token](https://help.sonatype.com/iqserver/automating/rest-apis/user-token-rest-api---v2) and save this in the password field instead so you are not storing credentials in plain text.
 
 ## Themes
 
@@ -97,20 +97,14 @@ Development requires running this project in Visual Studio Code, for ease of tes
 You'll need a working version of nodejs (we have been using 12.x and higher), and then:
 
 ```
-npm i
+npm install && npm run build
 ```
 
 Then:
 
-```
-npm run build
-```
+`Debug > Launch Extension`
 
-Then:
-
-`Debug > Start Debugging`
-
-If you are working on functionality that requires IQ Server, you'll need an instance running, and configured in the settings for the project. OSS Index should work right out of the box.
+If you are working on functionality that requires IQ Server, you'll need an instance running, and configured in the settings for the project. OSS Index will work out of the box.
 
 All of the React specific code can be found in `src`. The rest of the code is contained within `ext-src` and this is what communicates with either OSS Index or IQ Server.
 
