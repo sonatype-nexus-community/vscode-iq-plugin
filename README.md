@@ -35,6 +35,10 @@ The extension supports color theme changes dynamically.
 
 ## Installation
 
+- Install from the [marketplace link](https://marketplace.visualstudio.com/items?itemName=SonatypeCommunity.vscode-iq-plugin)
+- Install directly from the VSCode extension interface:
+![Install Screenshot](media/install-screenshot.png)
+
 ## Configuration
 
 - Configuration is done in the VSCode `Preferences > Settings > Sonatype Explorer`
