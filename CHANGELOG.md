@@ -1,3 +1,10 @@
+## [1.0.8](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.7...v1.0.8) (2021-01-14)
+
+
+### Bug Fixes
+
+* Handle semicolons in auto-generated requirements.txt files ([#175](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/175)) ([2a43863](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/2a438638ae876f95e3de275ab29c505457d4cd70))
+
 ## [1.0.7](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.6...v1.0.7) (2021-01-14)
 
 
