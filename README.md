@@ -9,7 +9,7 @@ Any developer can use the extension for free against our publicly available [OSS
 
 ### Supported Formats
 
-Good news for polyglots: the extension allows you to view violations across multiple ecosystems at once across the following formats: 
+Good news for polyglots -- the extension allows you to view violations across multiple ecosystems at once across the following formats: 
 - npm/yarn (`npm install` or `yarn install` required)
 - maven (`pom.xml`)
 - python (`requirements.txt` or `poetry.lock`)
@@ -28,6 +28,10 @@ Good news for polyglots: the extension allows you to view violations across mult
 ![OSSI Screenshot](media/ossi-screenshot.png)
 
 ### Themes
+
+The extension supports color theme changes dynamically.
+
+![Theme Screenshot](media/light-theme-screenshot.png)
 
 ## Installation
 
