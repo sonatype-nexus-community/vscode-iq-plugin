@@ -3,9 +3,9 @@
 [![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/sonatypecommunity.vscode-iq-plugin?color=blue&label=VS%20Marketplace&logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SonatypeCommunity.vscode-iq-plugin)
 <a href="https://circleci.com/gh/sonatype-nexus-community/vscode-iq-plugin"><img src="https://circleci.com/gh/sonatype-nexus-community/vscode-iq-plugin.svg?style=shield" /></a>
 
-Sonatype's VSCode extension allows you to surface and remediate issues in your project's dependencies without every leaving your development environment.
+Sonatype's VSCode extension allows you to surface and remediate issues in your project's dependencies without ever leaving your development environment.
 
-Any developer can use the extension for free against our publicly available [OSS Index](https://ossindex.sonatype.org/) vulnerability database while our commercial users can connect to [Sonatype's Nexus IQ Server](https://www.sonatype.com/nexus-iq-server) to evaluate against organizational policy. Drill down into all of your dependencies to examine each package version for violations to determine whether you should upgrade or move to a different package at a glance.
+Any developer can use the extension for free against our publicly available [OSS Index](https://ossindex.sonatype.org/) vulnerability database while our commercial users can connect to [Sonatype's Nexus IQ Server](https://www.sonatype.com/nexus-iq-server) to evaluate against organizational policy. Drill down into all of your dependencies to examine each package version for violations to determine whether you should upgrade or move to a different version at a glance.
 
 ## Supported Formats
 
