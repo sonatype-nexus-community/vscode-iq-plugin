@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.0...v1.0.1) (2021-01-14)
+
+
+### Bug Fixes
+
+* See if we can bypass bad npm list command ([55de861](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/55de861bdc85c077037b58b45fb636bea35fb4d1))
+
 # [1.0.0](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.8.3...v1.0.0) (2021-01-14)
 
 ## [0.8.3](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.8.2...v0.8.3) (2020-12-18)
