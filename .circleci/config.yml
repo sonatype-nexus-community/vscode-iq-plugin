@@ -44,10 +44,10 @@ jobs:
           command: npx semantic-release -b master
       - run: 
           name: Package for Visual Studio Code Extension Marketplace
-          command: vsce package
+          command: vsce package --yarn
       - run: 
           name: Publish to Visual Studio Code Extension Marketplace
-          command: vsce publish -p $VSCODE_TOKEN
+          command: vsce publish --yarn -p $VSCODE_TOKEN
       - run:
           name: Publish to Open VSX
           command: npx ovsx publish -p $VSX_TOKEN
