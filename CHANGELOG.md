@@ -1,3 +1,5 @@
+# [1.0.0](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.8.3...v1.0.0) (2021-01-14)
+
 ## [0.8.3](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v0.8.2...v0.8.3) (2020-12-18)
 
 
