@@ -16,7 +16,7 @@ const extensionConfig = {
         path: path.resolve(__dirname, 'build', 'ext-src'),
         filename: 'extension.js',
         libraryTarget: "commonjs2",
-        devtoolModuleFilenameTemplate: "../[resource-path]",
+        devtoolModuleFilenameTemplate: "file:///[absolute-resource-path]",
     },
     devtool: 'source-map',
     externals: {
