@@ -1,3 +1,10 @@
+## [1.0.5](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.4...v1.0.5) (2021-01-14)
+
+
+### Bug Fixes
+
+* webpack bundle and goodbye node_modules ([55287f1](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/55287f197e0f8e479acef28919e0a6bd4ec4151f))
+
 ## [1.0.4](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.3...v1.0.4) (2021-01-14)
 
 
