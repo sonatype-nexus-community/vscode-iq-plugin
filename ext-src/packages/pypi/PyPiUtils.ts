@@ -44,7 +44,7 @@ export class PyPiUtils {
         if (dep.startsWith("#")) {
           console.debug("Found comment, skipping");
         } else {
-          const dependencyParts: string[] = dep.trim().split("==");
+          const dependencyParts: string[] = dep.split(";")[0].trim().split("==");
           if (!dependencyParts || dependencyParts.length != 2) {
             // Short circuit, we couldn't split, move on to next one
             return;
