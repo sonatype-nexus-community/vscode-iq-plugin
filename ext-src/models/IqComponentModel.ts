@@ -145,6 +145,10 @@ export class IqComponentModel implements ComponentModel {
                 progress.report({message: "Morphing results into something usable", increment: 90});
 
                 for (let resultEntry of results.components) {
+                  if (resultEntry.componentIdentifier == null) {
+                    this.logger.log(LogLevel.ERROR, `missing componentIdentifier`, resultEntry);
+                    throw new Error(`missing componentIdentifier. see log for details`);
+                  }
                   let purl = resultEntry.packageUrl;
                   if (resultEntry.componentIdentifier.format == 'golang' && resultEntry.packageUrl.includes("incompatible")) {
                     purl = purl.replace("%20", "+");
