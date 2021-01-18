@@ -105,7 +105,13 @@ Then:
 
 `Debug > Launch Extension`
 
-If you are working on functionality that requires IQ Server, you'll need an instance running, and configured in the settings for the project. OSS Index will work out of the box.
+`Debug > Start Debugging`
+
+More information is written to a log file. You can find the log file by looking in the `Sonatype IQ Extension` channel of the 
+`Output` of the vscode instance you launched for debugging. 
+![log-file-location](media/log-file-location.png)
+ 
+If you are working on functionality that requires IQ Server, you'll need an instance running, and configured in the settings for the project. OSS Index should work right out of the box.
 
 All of the React specific code can be found in `src`. The rest of the code is contained within `ext-src` and this is what communicates with either OSS Index or IQ Server.
 
