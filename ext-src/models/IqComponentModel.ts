@@ -145,7 +145,7 @@ export class IqComponentModel implements ComponentModel {
                 progress.report({message: "Morphing results into something usable", increment: 90});
 
                 for (let resultEntry of results.components) {
-                  if (resultEntry.componentIdentifier == null) {
+                  if (!resultEntry.componentIdentifier) {
                     this.logger.log(LogLevel.ERROR, `missing componentIdentifier`, resultEntry);
                     throw new Error(`missing componentIdentifier. see log for details`);
                   }
