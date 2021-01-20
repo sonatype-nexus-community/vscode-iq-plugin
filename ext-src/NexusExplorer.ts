@@ -238,9 +238,33 @@ export class NexusExplorer {
     this.nexusExplorerProvider.doRefresh();
   }
 
-  public updateApplicationID(applicationID: string) {
+  public updateIQAppID(applicationID: string) {
     if (this.componentModel instanceof IqComponentModel) {
       this.componentModel.applicationPublicId = applicationID;
+
+      this.nexusExplorerProvider.doRefresh();
+    }
+  }
+
+  public updateIQUrl(url: string) {
+    if (this.componentModel instanceof IqComponentModel) {
+      this.componentModel.url = url;
+
+      this.nexusExplorerProvider.doRefresh();
+    }
+  }
+
+  public updateIQUser(user: string) {
+    if (this.componentModel instanceof IqComponentModel) {
+      this.componentModel.username = user;
+
+      this.nexusExplorerProvider.doRefresh();
+    }
+  }
+
+  public updateIQPassword(password: string) {
+    if (this.componentModel instanceof IqComponentModel) {
+      this.componentModel.password = password;
 
       this.nexusExplorerProvider.doRefresh();
     }

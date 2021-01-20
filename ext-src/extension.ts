@@ -15,7 +15,7 @@
  */
 import * as vscode from 'vscode';
 import { NexusExplorer } from './NexusExplorer';
-import { NEXUS_EXPLORER_DATA_SOURCE, NEXUS_IQ_PUBLIC_APPLICATION_ID } from './utils/Config';
+import { NEXUS_EXPLORER_DATA_SOURCE, NEXUS_IQ_PUBLIC_APPLICATION_ID, NEXUS_IQ_SERVER_URL, NEXUS_IQ_USERNAME, NEXUS_IQ_USER_PASSWORD } from './utils/Config';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -28,7 +28,19 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 
 		if (event.affectsConfiguration(NEXUS_IQ_PUBLIC_APPLICATION_ID)) {
-			explorer.updateApplicationID(vscode.workspace.getConfiguration().get(NEXUS_IQ_PUBLIC_APPLICATION_ID) + "");
+			explorer.updateIQAppID(vscode.workspace.getConfiguration().get(NEXUS_IQ_PUBLIC_APPLICATION_ID) + "");
+		}
+
+		if (event.affectsConfiguration(NEXUS_IQ_SERVER_URL)) {
+			explorer.updateIQUrl(vscode.workspace.getConfiguration().get(NEXUS_IQ_SERVER_URL) + "");
+		}
+
+		if (event.affectsConfiguration(NEXUS_IQ_USERNAME)) {
+			explorer.updateIQUser(vscode.workspace.getConfiguration().get(NEXUS_IQ_USERNAME) + "");
+		}
+
+		if (event.affectsConfiguration(NEXUS_IQ_USER_PASSWORD)) {
+			explorer.updateIQPassword(vscode.workspace.getConfiguration().get(NEXUS_IQ_USER_PASSWORD) + "");
 		}
 	});
 
