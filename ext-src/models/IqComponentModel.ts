@@ -25,6 +25,14 @@ import { ILogger, LogLevel } from "../utils/Logger";
 import { PackageType } from "../packages/PackageType";
 import { CycloneDXSbomCreator } from "../cyclonedx/CycloneDXGenerator";
 import { ReportResponse } from "../services/ReportResponse";
+import { 
+  NEXUS_EXPLORER_DATA_SOURCE, 
+  NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS, 
+  NEXUS_IQ_PUBLIC_APPLICATION_ID, 
+  NEXUS_IQ_SERVER_URL, 
+  NEXUS_IQ_STRICT_SSL, 
+  NEXUS_IQ_USERNAME, 
+  NEXUS_IQ_USER_PASSWORD } from "../utils/Config";
 
 export class IqComponentModel implements ComponentModel {
     components = new Array<ComponentEntry>();
@@ -40,14 +48,14 @@ export class IqComponentModel implements ComponentModel {
     constructor(
       options: ComponentModelOptions
     ) {
-      this.dataSourceType = options.configuration.get("nexusExplorer.dataSource", "ossindex");
-      let url = options.configuration.get("nexusIQ.serverUrl") + "";
-      let username = options.configuration.get("nexusIQ.username") + "";
+      this.dataSourceType = options.configuration.get(NEXUS_EXPLORER_DATA_SOURCE, "ossindex");
+      let url = options.configuration.get(NEXUS_IQ_SERVER_URL) + "";
+      let username = options.configuration.get(NEXUS_IQ_USERNAME) + "";
       let maximumEvaluationPollAttempts = parseInt(
-        options.configuration.get("nexusIQ.maximumEvaluationPollAttempts") + "", 10);
-      this.applicationPublicId = options.configuration.get("nexusIQ.applicationId") + "";
-      let password = options.configuration.get("nexusIQ.userPassword") + "";
-      let strictSSL = options.configuration.get("nexusIQ.strictSSL") as boolean;
+        options.configuration.get(NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS) + "", 10);
+      this.applicationPublicId = options.configuration.get(NEXUS_IQ_PUBLIC_APPLICATION_ID) + "";
+      let password = options.configuration.get(NEXUS_IQ_USER_PASSWORD) + "";
+      let strictSSL = options.configuration.get(NEXUS_IQ_STRICT_SSL) as boolean;
       this.requestService = new IqRequestService(url, username, password, maximumEvaluationPollAttempts, strictSSL, options.logger);
       this.logger = options.logger;
     }

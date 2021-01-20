@@ -237,4 +237,12 @@ export class NexusExplorer {
 
     this.nexusExplorerProvider.doRefresh();
   }
+
+  public updateApplicationID(applicationID: string) {
+    if (this.componentModel instanceof IqComponentModel) {
+      this.componentModel.applicationPublicId = applicationID;
+
+      this.nexusExplorerProvider.doRefresh();
+    }
+  }
 }
