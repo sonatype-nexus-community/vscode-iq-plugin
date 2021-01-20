@@ -21,7 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const explorer = new NexusExplorer(context);
 
-	// Listen to changes of the configuration, and if it's a change to the datasource, reload the dang thing
+	// Listen to changes of the configuration, and updates things if we need to
 	const eventConfigDisposable = vscode.workspace.onDidChangeConfiguration((event) => {
 		if (event.affectsConfiguration(NEXUS_EXPLORER_DATA_SOURCE)) {
 			explorer.switchComponentModel(vscode.workspace.getConfiguration().get(NEXUS_EXPLORER_DATA_SOURCE) + "");
