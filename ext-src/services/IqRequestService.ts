@@ -26,6 +26,7 @@ import { ReportResponse } from './ReportResponse';
 import { PackageURL } from 'packageurl-js';
 import { VulnerabilityResponse } from './VulnerabilityResponse';
 import { RemediationResponse } from './RemediationResponse';
+import { ApplicationResponse } from './ApplicationReponse';
 
 export class IqRequestService implements RequestService {
   readonly evaluationPollDelayMs = 2000;
@@ -69,6 +70,10 @@ export class IqRequestService implements RequestService {
   }
 
   public getApplicationId(applicationPublicId: string): Promise<string> {
+    if (applicationPublicId === '') {
+      throw Error(`You must provide a non empty public application ID in your Sonatype IQ Server Config`);
+    }
+
     this.logger.log(LogLevel.TRACE, `Getting application ID from public ID: ${applicationPublicId}`);
 
     let url = `${this.url}/api/v2/applications?publicId=${applicationPublicId}`;
@@ -81,10 +86,23 @@ export class IqRequestService implements RequestService {
           agent: this.agent
         }).then(async (res) => {
           if (res.ok) {
-            let json = await res.json();
-            resolve(JSON.stringify(json));
-            return;
+            let appRep: ApplicationResponse = await res.json();
+
+            if (appRep && appRep.applications.length > 0) {
+              resolve(appRep.applications[0].id);
+              return;
+            } else {
+              this.logger.log(
+                LogLevel.ERROR,
+                `No valid application found using the public ID: ${applicationPublicId}`, 
+                url,
+                appRep
+              );
+              reject(`No valid application found using the public ID: ${applicationPublicId}`);
+              return;
+            }
           }
+
           let body = await res.text();
           this.logger.log(
             LogLevel.TRACE, 

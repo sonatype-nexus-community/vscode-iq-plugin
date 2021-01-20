@@ -41,6 +41,9 @@ const extensionConfig = {
                 }
             }]
         }]
+    },
+    optimization: {
+        minimize: false
     }
 }
 

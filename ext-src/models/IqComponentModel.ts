@@ -96,12 +96,10 @@ export class IqComponentModel implements ComponentModel {
               this.logger.log(LogLevel.DEBUG, `Getting Internal ID from Public ID: ${this.applicationPublicId}`);
               progress.report({message: "Getting IQ Server Internal Application ID", increment: 40});
               
-              let response: string = await this.requestService.getApplicationId(this.applicationPublicId);
-              this.logger.log(LogLevel.TRACE, `Obtained internal application ID response`, response);
-              
-              let appRep = JSON.parse(response);
+              let internalID: string = await this.requestService.getApplicationId(this.applicationPublicId);
+              this.logger.log(LogLevel.TRACE, `Obtained internal application ID response`, internalID);
         
-              this.requestService.setApplicationId(appRep.applications[0].id);
+              this.requestService.setApplicationId(internalID);
               this.logger.log(
                 LogLevel.DEBUG, 
                 `Set application internal ID: ${this.requestService.getApplicationInternalId()}`
