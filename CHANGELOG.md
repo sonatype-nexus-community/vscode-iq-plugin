@@ -1,3 +1,10 @@
+## [1.0.10](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.9...v1.0.10) (2021-01-20)
+
+
+### Bug Fixes
+
+* Better error from a bad application ID response ([#177](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/177)) ([57e4cc8](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/57e4cc8a8390c5e6ac43089089553f08a85d2067))
+
 ## [1.0.9](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.8...v1.0.9) (2021-01-14)
 
 
