@@ -25,34 +25,22 @@ export function activate(context: vscode.ExtensionContext) {
 	// Listen to changes of the configuration, and updates things if we need to
 	const eventConfigDisposable = vscode.workspace.onDidChangeConfiguration((event) => {
 		if (event.affectsConfiguration(NEXUS_EXPLORER_DATA_SOURCE)) {
-			explorer.switchComponentModel(vscode.workspace.getConfiguration().get(NEXUS_EXPLORER_DATA_SOURCE) + "");
+			explorer.switchComponentModel(vscode.workspace.getConfiguration().get(NEXUS_EXPLORER_DATA_SOURCE) as string);
 		}
 
 		if (event.affectsConfiguration(NEXUS_IQ_PUBLIC_APPLICATION_ID)) {
-			explorer.updateIQAppID(vscode.workspace.getConfiguration().get(NEXUS_IQ_PUBLIC_APPLICATION_ID) + "");
+			explorer.updateIQAppID(vscode.workspace.getConfiguration().get(NEXUS_IQ_PUBLIC_APPLICATION_ID) as string);
 		}
 
 		if (event.affectsConfiguration(NEXUS_IQ_SERVER_URL) ||
 			event.affectsConfiguration(NEXUS_IQ_USERNAME) || 
 			event.affectsConfiguration(NEXUS_IQ_USER_PASSWORD)) {
 			explorer.refreshIQRequestService(
-				vscode.workspace.getConfiguration().get(NEXUS_IQ_SERVER_URL) + "",
-				vscode.workspace.getConfiguration().get(NEXUS_IQ_USERNAME) + "",
-				vscode.workspace.getConfiguration().get(NEXUS_IQ_USER_PASSWORD) + ""
+				{ url: vscode.workspace.getConfiguration().get(NEXUS_IQ_SERVER_URL) as string,
+				 username: vscode.workspace.getConfiguration().get(NEXUS_IQ_USERNAME) as string,
+				 token: vscode.workspace.getConfiguration().get(NEXUS_IQ_USER_PASSWORD) as string}
 			)
 		}
-
-		// if (event.affectsConfiguration(NEXUS_IQ_SERVER_URL)) {
-		// 	explorer.updateIQUrl(vscode.workspace.getConfiguration().get(NEXUS_IQ_SERVER_URL) + "");
-		// }
-
-		// if (event.affectsConfiguration(NEXUS_IQ_USERNAME)) {
-		// 	explorer.updateIQUser(vscode.workspace.getConfiguration().get(NEXUS_IQ_USERNAME) + "");
-		// }
-
-		// if (event.affectsConfiguration(NEXUS_IQ_USER_PASSWORD)) {
-		// 	explorer.updateIQPassword(vscode.workspace.getConfiguration().get(NEXUS_IQ_USER_PASSWORD) + "");
-		// }
 	});
 
 	context.subscriptions.push(eventConfigDisposable);

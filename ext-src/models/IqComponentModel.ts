@@ -41,25 +41,23 @@ export class IqComponentModel implements ComponentModel {
       ComponentEntry
     >();
     requestService: RequestService;
-    dataSourceType: string;
     applicationPublicId: string;
-    url: string;
-    username: string;
-    password: string;
     private logger: ILogger;
   
     constructor(
       options: ComponentModelOptions
     ) {
-      this.dataSourceType = options.configuration.get(NEXUS_EXPLORER_DATA_SOURCE, "ossindex");
-      this.url = options.configuration.get(NEXUS_IQ_SERVER_URL) + "";
-      this.username = options.configuration.get(NEXUS_IQ_USERNAME) + "";
-      let maximumEvaluationPollAttempts = parseInt(
-        options.configuration.get(NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS) + "", 10);
       this.applicationPublicId = options.configuration.get(NEXUS_IQ_PUBLIC_APPLICATION_ID) + "";
-      this.password = options.configuration.get(NEXUS_IQ_USER_PASSWORD) + "";
-      let strictSSL = options.configuration.get(NEXUS_IQ_STRICT_SSL) as boolean;
-      this.requestService = new IqRequestService(this.url, this.username, this.password, maximumEvaluationPollAttempts, strictSSL, options.logger);
+
+      const url = options.configuration.get(NEXUS_IQ_SERVER_URL) + "";
+      const username = options.configuration.get(NEXUS_IQ_USERNAME) + "";
+      const  maximumEvaluationPollAttempts = parseInt(
+        options.configuration.get(NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS) + "", 10);
+      const password = options.configuration.get(NEXUS_IQ_USER_PASSWORD) + "";
+      const strictSSL = options.configuration.get(NEXUS_IQ_STRICT_SSL) as boolean;
+
+      this.requestService = new IqRequestService(url, username, password, maximumEvaluationPollAttempts, strictSSL, options.logger);
+      
       this.logger = options.logger;
     }
   

@@ -20,6 +20,7 @@ import { VulnerabilityResponse } from './VulnerabilityResponse';
 import { RemediationResponse } from './RemediationResponse';
 import { ComponentDetails } from './ComponentDetails';
 import { PackageURL } from 'packageurl-js';
+import { RefreshOptions } from "../NexusExplorer";
 
 export interface RequestService extends BaseRequestService {
   getApplicationId(applicationPublicId: string): Promise<string>;
@@ -31,8 +32,7 @@ export interface RequestService extends BaseRequestService {
   getVulnerabilityDetails(vulnID: string): Promise<VulnerabilityResponse>;
   getRemediation(purl: string): Promise<RemediationResponse>;
   showSelectedVersion(purl: string): Promise<ComponentDetails>
-  setUrl(user: string): void;
-  setUser(user: string): void;
+  setOptions(options: RefreshOptions): void;
   setPassword(password: string): void;
   isPasswordSet(): boolean;
   setApplicationId(s: string): void;
