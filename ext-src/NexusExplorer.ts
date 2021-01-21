@@ -247,18 +247,19 @@ export class NexusExplorer {
     }
   }
 
-  // public updateIQUrl(url: string) {
-  //   if (this.componentModel instanceof IqComponentModel) {
-  //     this.componentModel.url = url;
+  public updateIQUrl(url: string) {
+    if (this.componentModel instanceof IqComponentModel) {
+      this.componentModel.url = url;
+      this.componentModel.requestService.setUrl(url);
 
-  //     this.nexusExplorerProvider.doRefresh();
-  //   }
-  // }
+      this.nexusExplorerProvider.doRefresh();
+    }
+  }
 
   public updateIQUser(user: string) {
     if (this.componentModel instanceof IqComponentModel) {
       this.componentModel.username = user;
-      this.componentModel.requestService.setUser(user)
+      this.componentModel.requestService.setUser(user);
 
       this.nexusExplorerProvider.doRefresh();
     }

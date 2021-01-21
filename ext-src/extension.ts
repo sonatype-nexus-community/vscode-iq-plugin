@@ -31,9 +31,9 @@ export function activate(context: vscode.ExtensionContext) {
 			explorer.updateIQAppID(vscode.workspace.getConfiguration().get(NEXUS_IQ_PUBLIC_APPLICATION_ID) + "");
 		}
 
-		// if (event.affectsConfiguration(NEXUS_IQ_SERVER_URL)) {
-		// 	explorer.updateIQUrl(vscode.workspace.getConfiguration().get(NEXUS_IQ_SERVER_URL) + "");
-		// }
+		if (event.affectsConfiguration(NEXUS_IQ_SERVER_URL)) {
+			explorer.updateIQUrl(vscode.workspace.getConfiguration().get(NEXUS_IQ_SERVER_URL) + "");
+		}
 
 		if (event.affectsConfiguration(NEXUS_IQ_USERNAME)) {
 			explorer.updateIQUser(vscode.workspace.getConfiguration().get(NEXUS_IQ_USERNAME) + "");

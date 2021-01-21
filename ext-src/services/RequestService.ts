@@ -31,6 +31,7 @@ export interface RequestService extends BaseRequestService {
   getVulnerabilityDetails(vulnID: string): Promise<VulnerabilityResponse>;
   getRemediation(purl: string): Promise<RemediationResponse>;
   showSelectedVersion(purl: string): Promise<ComponentDetails>
+  setUrl(user: string): void;
   setUser(user: string): void;
   setPassword(password: string): void;
   isPasswordSet(): boolean;

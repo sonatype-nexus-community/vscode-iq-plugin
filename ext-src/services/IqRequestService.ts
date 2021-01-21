@@ -30,7 +30,7 @@ import { ApplicationResponse } from './ApplicationReponse';
 
 export class IqRequestService implements RequestService {
   readonly evaluationPollDelayMs = 2000;
-  private agent: Agent;
+  private agent: Agent = this.getAgent(false, false);
   applicationId: string = "";
 
   constructor(
@@ -42,12 +42,16 @@ export class IqRequestService implements RequestService {
     readonly logger: ILogger
   ) 
   {
+    this.setUrl(url)
+    this.logger.log(LogLevel.INFO, `Created new IQ Request Service at: `, url);
+  }
+
+  public setUrl(url: string) {
     if (url.endsWith("/")) {
       this.url = url.replace(/\/$/, "");
     }
-    this.logger.log(LogLevel.TRACE, `Creating new IQ Request Service`, url);
-
-    this.agent = this.getAgent(this.strictSSL, url.startsWith('https'));
+    this.agent = this.getAgent(this.strictSSL, this.url.startsWith('https'));
+    this.logger.log(LogLevel.TRACE, `Setting IQ url to: `, this.url);
   }
 
   public setUser(user: string) {
