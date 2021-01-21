@@ -247,28 +247,47 @@ export class NexusExplorer {
     }
   }
 
-  public updateIQUrl(url: string) {
+  // public updateIQUrl(url: string) {
+  //   if (this.componentModel instanceof IqComponentModel) {
+  //     this.componentModel.url = url;
+  //     this.componentModel.requestService.setUrl(url);
+
+  //     this.nexusExplorerProvider.doRefresh();
+  //   }
+  // }
+
+  // public updateIQUser(user: string) {
+  //   if (this.componentModel instanceof IqComponentModel) {
+  //     this.componentModel.username = user;
+  //     this.componentModel.requestService.setUser(user);
+
+  //     this.nexusExplorerProvider.doRefresh();
+  //   }
+  // }
+
+  // public updateIQPassword(password: string) {
+  //   if (this.componentModel instanceof IqComponentModel) {
+  //     this.componentModel.password = password;
+  //     this.componentModel.requestService.setPassword(password);
+
+  //     this.nexusExplorerProvider.doRefresh();
+  //   }
+  // }
+
+  public refreshIQRequestService(url?: string, user?: string, password?: string) {
     if (this.componentModel instanceof IqComponentModel) {
-      this.componentModel.url = url;
-      this.componentModel.requestService.setUrl(url);
-
-      this.nexusExplorerProvider.doRefresh();
-    }
-  }
-
-  public updateIQUser(user: string) {
-    if (this.componentModel instanceof IqComponentModel) {
-      this.componentModel.username = user;
-      this.componentModel.requestService.setUser(user);
-
-      this.nexusExplorerProvider.doRefresh();
-    }
-  }
-
-  public updateIQPassword(password: string) {
-    if (this.componentModel instanceof IqComponentModel) {
-      this.componentModel.password = password;
-      this.componentModel.requestService.setPassword(password)
+      if (url) {
+        this.componentModel.url = url;
+        this.componentModel.requestService.setUrl(url);
+      }
+      if (user) {
+        this.componentModel.username = user;
+        this.componentModel.requestService.setUser(user);
+      }
+      if (password) {
+        this.componentModel.password = password;
+        this.componentModel.requestService.setPassword(password);
+      }
 
       this.nexusExplorerProvider.doRefresh();
     }
