@@ -1,3 +1,10 @@
+## [1.0.11](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.10...v1.0.11) (2021-01-21)
+
+
+### Bug Fixes
+
+* Refresh IQ stuff when App ID is changed ([#178](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/178)) ([49a9028](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/49a9028a39321ce1e15b6cf61963227ca8fad0ff))
+
 ## [1.0.10](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.9...v1.0.10) (2021-01-20)
 
 
