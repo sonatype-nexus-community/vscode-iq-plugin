@@ -17,7 +17,7 @@ import fetch from 'node-fetch';
 import { Headers } from 'node-fetch';
 import { RequestService } from "./RequestService";
 import { RequestHelpers } from "./RequestHelpers";
-import { Agent as HttpsAgent }  from "https";
+import { Agent as HttpsAgent, RequestOptions }  from "https";
 import { Agent } from 'http';
 import { ILogger, LogLevel } from '../utils/Logger';
 import { ThirdPartyAPIResponse } from './ThirdPartyApiResponse';
@@ -27,10 +27,11 @@ import { PackageURL } from 'packageurl-js';
 import { VulnerabilityResponse } from './VulnerabilityResponse';
 import { RemediationResponse } from './RemediationResponse';
 import { ApplicationResponse } from './ApplicationReponse';
+import { RefreshOptions } from '../NexusExplorer';
 
 export class IqRequestService implements RequestService {
   readonly evaluationPollDelayMs = 2000;
-  private agent: Agent;
+  private agent: Agent = this.getAgent(false, false);
   applicationId: string = "";
 
   constructor(
@@ -42,12 +43,32 @@ export class IqRequestService implements RequestService {
     readonly logger: ILogger
   ) 
   {
-    if (url.endsWith("/")) {
-      this.url = url.replace(/\/$/, "");
-    }
-    this.logger.log(LogLevel.TRACE, `Creating new IQ Request Service`, url);
+    this.setUrl(url);
 
-    this.agent = this.getAgent(this.strictSSL, url.startsWith('https'));
+    this.logger.log(LogLevel.INFO, `Created new IQ Request Service at: `, url);
+  }
+
+  public setOptions(options: RefreshOptions) {
+    if (options.url) {
+      this.setUrl(options.url);
+    }
+    if (options.username) {
+      this.user = options.username;
+    }
+    if (options.token) { 
+      this.password = options.token;
+    }
+  }
+
+  private setUrl(url: string) {
+    this.logger.log(LogLevel.TRACE, `Setting IQ url to: `, this.url);
+
+    this.url = url.replace(/\/$/, "");
+
+    this.agent = this.getAgent(
+      this.strictSSL, 
+      this.url.startsWith('https')
+    );
   }
 
   public setPassword(password: string) {

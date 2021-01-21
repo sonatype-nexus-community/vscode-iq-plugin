@@ -13,20 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import {url} from 'inspector';
 import * as vscode from 'vscode';
 import { NexusExplorer } from './NexusExplorer';
+import { NEXUS_EXPLORER_DATA_SOURCE, NEXUS_IQ_PUBLIC_APPLICATION_ID, NEXUS_IQ_SERVER_URL, NEXUS_IQ_USERNAME, NEXUS_IQ_USER_PASSWORD } from './utils/Config';
 
 export function activate(context: vscode.ExtensionContext) {
 
 	const explorer = new NexusExplorer(context);
 
-	// Listen to changes of the configuration, and if it's a change to the datasource, reload the dang thing
-	vscode.workspace.onDidChangeConfiguration((event) => {
-		let affected = event.affectsConfiguration("nexusExplorer.dataSource");
+	// Listen to changes of the configuration, and updates things if we need to
+	const eventConfigDisposable = vscode.workspace.onDidChangeConfiguration((event) => {
+		if (event.affectsConfiguration(NEXUS_EXPLORER_DATA_SOURCE)) {
+			explorer.switchComponentModel(vscode.workspace.getConfiguration().get(NEXUS_EXPLORER_DATA_SOURCE) as string);
+		}
 
-		if (affected) {
-			let source = vscode.workspace.getConfiguration().get("nexusExplorer.dataSource") + "";
-			explorer.switchComponentModel(source);
+		if (event.affectsConfiguration(NEXUS_IQ_PUBLIC_APPLICATION_ID)) {
+			explorer.updateIQAppID(vscode.workspace.getConfiguration().get(NEXUS_IQ_PUBLIC_APPLICATION_ID) as string);
+		}
+
+		if (event.affectsConfiguration(NEXUS_IQ_SERVER_URL) ||
+			event.affectsConfiguration(NEXUS_IQ_USERNAME) || 
+			event.affectsConfiguration(NEXUS_IQ_USER_PASSWORD)) {
+			explorer.refreshIQRequestService(
+				{ url: vscode.workspace.getConfiguration().get(NEXUS_IQ_SERVER_URL) as string,
+				 username: vscode.workspace.getConfiguration().get(NEXUS_IQ_USERNAME) as string,
+				 token: vscode.workspace.getConfiguration().get(NEXUS_IQ_USER_PASSWORD) as string}
+			)
 		}
 	});
+
+	context.subscriptions.push(eventConfigDisposable);
 }
