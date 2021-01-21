@@ -22,6 +22,7 @@ import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
 import { ComponentModel } from "./models/ComponentModel";
 import { ComponentEntry } from "./models/ComponentEntry";
 import { ILogger, Logger, LogLevel } from './utils/Logger';
+import {NEXUS_IQ_SERVER_URL} from "./utils/Config";
 
 export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentEntry> {
   private editor?: vscode.TextEditor;
@@ -246,17 +247,18 @@ export class NexusExplorer {
     }
   }
 
-  public updateIQUrl(url: string) {
-    if (this.componentModel instanceof IqComponentModel) {
-      this.componentModel.url = url;
+  // public updateIQUrl(url: string) {
+  //   if (this.componentModel instanceof IqComponentModel) {
+  //     this.componentModel.url = url;
 
-      this.nexusExplorerProvider.doRefresh();
-    }
-  }
+  //     this.nexusExplorerProvider.doRefresh();
+  //   }
+  // }
 
   public updateIQUser(user: string) {
     if (this.componentModel instanceof IqComponentModel) {
       this.componentModel.username = user;
+      this.componentModel.requestService.setUser(user)
 
       this.nexusExplorerProvider.doRefresh();
     }
@@ -265,6 +267,7 @@ export class NexusExplorer {
   public updateIQPassword(password: string) {
     if (this.componentModel instanceof IqComponentModel) {
       this.componentModel.password = password;
+      this.componentModel.requestService.setPassword(password)
 
       this.nexusExplorerProvider.doRefresh();
     }

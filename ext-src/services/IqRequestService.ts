@@ -50,6 +50,10 @@ export class IqRequestService implements RequestService {
     this.agent = this.getAgent(this.strictSSL, url.startsWith('https'));
   }
 
+  public setUser(user: string) {
+    this.user = user
+  }
+
   public setPassword(password: string) {
     this.password = password;
   }
