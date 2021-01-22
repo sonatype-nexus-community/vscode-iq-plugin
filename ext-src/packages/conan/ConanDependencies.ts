@@ -26,7 +26,7 @@ import { ConanUtils } from "./ConanUtils";
 * @class ConanDependencies
 */
 export class ConanDependencies implements PackageDependencies {
-  private theseAreTheLockFilesIKnow: Array<string> = ["composer.lock", "Cargo.lock", "Gemfile.lock", "yarn.lock", "renv.lock"];
+  private theseAreTheLockFilesIKnow: Array<string> = ["composer.lock", "Cargo.lock", "Gemfile.lock", "yarn.lock", "renv.lock", "poetry.lock"];
 
   constructor(private options: PackageDependenciesOptions) {}
 
