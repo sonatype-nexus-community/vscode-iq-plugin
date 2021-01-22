@@ -1,3 +1,10 @@
+## [1.0.12](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.11...v1.0.12) (2021-01-22)
+
+
+### Bug Fixes
+
+* Add poetry.lock file to the theseAreTheLockFilesIKnow array in ConanUtils.ts ([#179](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/179)) ([9780711](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/978071117988470298353bd2e65a2425141a4604))
+
 ## [1.0.11](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.10...v1.0.11) (2021-01-21)
 
 
