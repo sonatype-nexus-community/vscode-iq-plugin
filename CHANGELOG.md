@@ -1,3 +1,10 @@
+## [1.0.13](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.12...v1.0.13) (2021-01-26)
+
+
+### Bug Fixes
+
+* these extra commands and events were from the original template and can be removed ([ab8b33b](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/ab8b33becf786db0935c7792ccfac96d75bd54ce))
+
 ## [1.0.12](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.11...v1.0.12) (2021-01-22)
 
 
