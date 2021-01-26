@@ -30,12 +30,7 @@
   },
   "activationEvents": [
     "onCommand:react-webview.start",
-    "onView:nodeDependencies",
-    "onView:nexusExplorer",
-    "onView:testView",
-    "onLanguage:json",
-    "onLanguage:jsonc",
-    "onCommand:sample.reveal"
+    "onView:nexusExplorer"
   ],
   "main": "./build/ext-src/extension.js",
   "contributes": {
