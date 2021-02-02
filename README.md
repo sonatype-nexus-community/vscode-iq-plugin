@@ -131,13 +131,13 @@ We care a lot about making the world a safer place, and that's why we created th
 ## Releasing
 
 We use [semantic-release](https://github.com/semantic-release/semantic-release) to generate releases. For example,
-to perform a "patch" release, add a commit to master with a comment like:
+to perform a "patch" release, add a commit to main with a comment like:
 
 ```
 fix: `policyViolations of undefined` when loading a python project with requirements.txt (see Issue #127) 
 ```
 
-Without such a commit comment, commits to the `master` branch will cause a build failure during the release
+Without such a commit comment, commits to the `main` branch will cause a build failure during the release
 process due to an attempt to reuse an existing version number.
 
 To avoid such build failures without performing a release, be sure your commit message includes `[skip ci] `.
