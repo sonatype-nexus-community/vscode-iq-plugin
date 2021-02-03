@@ -1,3 +1,10 @@
+## [1.0.14](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.13...v1.0.14) (2021-02-03)
+
+
+### Bug Fixes
+
+* Switch over to main from master ([#181](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/181)) ([4ae7681](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/4ae76811fa09aabeaf1f0b4dff203d616ded344d))
+
 ## [1.0.13](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.12...v1.0.13) (2021-01-26)
 
 
