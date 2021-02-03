@@ -23,28 +23,28 @@ Good news for polyglots -- the extension allows you to view violations across mu
 
 ### Sonatype Nexus IQ Scan
 
-![IQ Screenshot](media/iq-screenshot.png)
+![IQ Screenshot](https://github.com/sonatype-nexus-community/vscode-iq-plugin/raw/main/media/iq-screenshot.png)
 
 ### OSS Index Scan
 
-![OSSI Screenshot](media/ossi-screenshot.png)
+![OSSI Screenshot](https://github.com/sonatype-nexus-community/vscode-iq-plugin/raw/main/media/ossi-screenshot.png)
 
 ## Installation
 
 - Install from the [marketplace link](https://marketplace.visualstudio.com/items?itemName=SonatypeCommunity.vscode-iq-plugin)
 - Install directly from the VSCode extension interface:
 
-![Install Screenshot](media/install-screenshot.png)
+![Install Screenshot](https://github.com/sonatype-nexus-community/vscode-iq-plugin/raw/main/media/install-screenshot.png)
 
 ## Configuration
 
 Configuration is done in VSCode's extension settings: `Preferences > Settings > Sonatype Explorer`
 
-![VS Code Settings](media/animated-settings.gif)
+![VS Code Settings](https://github.com/sonatype-nexus-community/vscode-iq-plugin/raw/main/media/animated-settings.gif)
 
 If you are a commercial Sonatype IQ user, switch the data source to `iqServer` and enter your IQ endpoint and credentials.  You can enter your password which will be stored in cleartext, or you can leave this blank and be prompted for a password on start-up:
 
-![VSCode Settings](media/iqserver-passwordprompt-dark.png)
+![VSCode Settings](https://github.com/sonatype-nexus-community/vscode-iq-plugin/raw/main/media/iqserver-passwordprompt-dark.png)
 
 Additonally, you can create a [user token](https://help.sonatype.com/iqserver/automating/rest-apis/user-token-rest-api---v2) and save this in the password field instead so you are not storing credentials in plain text.
 
@@ -52,7 +52,7 @@ Additonally, you can create a [user token](https://help.sonatype.com/iqserver/au
 
 The extension supports color theme changes dynamically.
 
-![Theme Screenshot](media/light-theme-screenshot.png)
+![Theme Screenshot](https://github.com/sonatype-nexus-community/vscode-iq-plugin/raw/main/media/light-theme-screenshot.png)
 
 ### Known Quirks
 
@@ -110,7 +110,7 @@ Then:
 
 More information is written to a log file. You can find the log file by looking in the `Sonatype IQ Extension` channel of the 
 `Output` of the vscode instance you launched for debugging. 
-![log-file-location](media/log-file-location.png)
+![log-file-location](https://github.com/sonatype-nexus-community/vscode-iq-plugin/raw/main/media/log-file-location.png)
  
 If you are working on functionality that requires IQ Server, you'll need an instance running, and configured in the settings for the project. OSS Index should work right out of the box.
 
