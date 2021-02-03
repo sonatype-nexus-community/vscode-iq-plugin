@@ -84,15 +84,27 @@ export class OssIndexComponentModel implements ComponentModel {
             this.logger.log(LogLevel.TRACE, `Obtained results from OSS Index`, results);
   
             progress.report({message: "Morphing OSS Index results into something usable", increment: 75});
-            // this.components = results.map(x => {
-            //   let purl: PackageURL = PackageURL.fromString(x.coordinates);
-            //   let name = (purl.namespace) ? purl.namespace + " : " + purl.name : purl.name;
-            //   let format = purl.type;
-            //   let version = purl.version;
-            //   let componentEntry = new ComponentEntry(name, version!, format, ScanType.OssIndex);
-            //   componentEntry.ossIndexData = x;
-            //   return componentEntry;
-            // });
+
+            let comps: Map<string, ComponentEntry[]> = new Map();
+
+            results.map((val) => {
+              let purl: PackageURL = PackageURL.fromString(val.coordinates);
+              let name = (purl.namespace) ? purl.namespace + " : " + purl.name : purl.name;
+              let format = purl.type;
+              let version = purl.version;
+              let componentEntry = new ComponentEntry(name, version!, format, ScanType.OssIndex);
+              componentEntry.ossIndexData = val;
+
+              const collection = comps.get(componentEntry.maxPolicyGroup());
+              if (!collection) {
+                comps.set(componentEntry.maxPolicyGroup(), [componentEntry]);
+              } else {
+                collection.push(componentEntry);
+              }
+            });
+
+            this.components.push(...Array.from(comps, ([name, value]) => new PolicyItem(name, value)));
+
             progress.report({message: "Done!", increment: 100});
 
             resolve(this.components);
