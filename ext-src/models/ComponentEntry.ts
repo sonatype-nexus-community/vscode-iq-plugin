@@ -16,8 +16,10 @@
 import { ReportComponent } from "../services/ReportResponse";
 import { PolicyViolation } from "../types/PolicyViolation";
 import { ScanType } from "../types/ScanType";
+import { PolicyItem } from "../PolicyItem";
+import * as path from "path";
 
-export class ComponentEntry {
+export class ComponentEntry extends PolicyItem {
   scope: string = "";
   failure: string = "";
   policyViolations: Array<PolicyViolation> = [];
@@ -25,7 +27,22 @@ export class ComponentEntry {
   nexusIQData?: NexusIQData = undefined;
   ossIndexData?: any = undefined;
 
-  constructor(readonly name: string, readonly version: string, readonly format: string, readonly scanType: ScanType) {
+  constructor(
+    readonly name: string, 
+    readonly version: string, 
+    readonly format: string, 
+    readonly scanType: ScanType) 
+  {
+    super(`${format}: ${name} @ ${version}`);
+
+    this.command = {
+      command: "nexusExplorer.viewNode",
+      title: "Select Node",
+      arguments: [this]
+    };
+    
+    let maxThreat = this.maxPolicy();
+    this.tooltip = `Name: ${name}\nVersion: ${version}\nPolicy: ${maxThreat}`;
   }
 
   public toString(): string {
@@ -60,6 +77,20 @@ export class ComponentEntry {
       }
     }
     return maxThreatLevel;
+  }
+
+  public maxPolicyGroup(): string {
+    if (this.maxPolicy() < 1) {
+      return "none"
+    } else if (this.maxPolicy() < 2) {
+      return "low"
+    } else if (this.maxPolicy() < 4) {
+      return "moderate"
+    } else if (this.maxPolicy() < 8) {
+      return "severe"
+    } else {
+      return "critical"
+    }
   }
 
   public iconName(): string {

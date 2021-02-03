@@ -22,6 +22,7 @@ import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
 import { ComponentEntry, NexusIQData } from "./models/ComponentEntry";
 import { ReportComponent } from "./services/ReportResponse";
 import { PackageURL } from 'packageurl-js';
+import { PolicyItem } from "./PolicyItem";
 
 export class ComponentInfoPanel {
   /**
@@ -45,7 +46,7 @@ export class ComponentInfoPanel {
 
   public static createOrShow(
     extensionPath: string,
-    newComponent: ComponentEntry,
+    newComponent: PolicyItem,
     componenentModel: ComponentModel
   ) {
 
@@ -56,7 +57,7 @@ export class ComponentInfoPanel {
     // If we already have a panel, show it.
     if (ComponentInfoPanel.currentPanel) {
       ComponentInfoPanel.currentPanel._panel.reveal(column);
-      ComponentInfoPanel.currentPanel.showComponent(newComponent);
+      ComponentInfoPanel.currentPanel.showComponent(newComponent as ComponentEntry);
       return;
     }
 
@@ -82,7 +83,7 @@ export class ComponentInfoPanel {
       extensionPath,
       componenentModel
     );
-    ComponentInfoPanel.currentPanel.showComponent(newComponent);
+    ComponentInfoPanel.currentPanel.showComponent(newComponent as ComponentEntry);
   }
 
   private static getSettings() {
@@ -252,12 +253,12 @@ export class ComponentInfoPanel {
       this._panel.title = `${scanTitle} Scan: ${this.component.name}@${this.component.version}`;
       console.log("posting message: artifact", this.component);
 
-      this.showAllVersions();
-
       this._panel.webview.postMessage({
         command: "artifact",
         component: this.component
       });
+
+      this.showAllVersions();
     }
   }
 

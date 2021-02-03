@@ -24,9 +24,10 @@ import { ComponentEntry } from "./ComponentEntry";
 import { PackageURL } from 'packageurl-js';
 import { ComponentModelOptions } from "./ComponentModelOptions";
 import { ILogger, LogLevel } from "../utils/Logger";
+import { PolicyItem } from "../PolicyItem";
 
 export class OssIndexComponentModel implements ComponentModel {
-  components = new Array<ComponentEntry>();
+  components = new Array<PolicyItem>();
   requestService: LiteRequestService;
   dataSourceType: string = "ossindex";
   logger: ILogger;
@@ -83,15 +84,15 @@ export class OssIndexComponentModel implements ComponentModel {
             this.logger.log(LogLevel.TRACE, `Obtained results from OSS Index`, results);
   
             progress.report({message: "Morphing OSS Index results into something usable", increment: 75});
-            this.components = results.map(x => {
-              let purl: PackageURL = PackageURL.fromString(x.coordinates);
-              let name = (purl.namespace) ? purl.namespace + " : " + purl.name : purl.name;
-              let format = purl.type;
-              let version = purl.version;
-              let componentEntry = new ComponentEntry(name, version!, format, ScanType.OssIndex);
-              componentEntry.ossIndexData = x;
-              return componentEntry;
-            });
+            // this.components = results.map(x => {
+            //   let purl: PackageURL = PackageURL.fromString(x.coordinates);
+            //   let name = (purl.namespace) ? purl.namespace + " : " + purl.name : purl.name;
+            //   let format = purl.type;
+            //   let version = purl.version;
+            //   let componentEntry = new ComponentEntry(name, version!, format, ScanType.OssIndex);
+            //   componentEntry.ossIndexData = x;
+            //   return componentEntry;
+            // });
             progress.report({message: "Done!", increment: 100});
 
             resolve(this.components);

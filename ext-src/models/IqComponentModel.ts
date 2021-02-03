@@ -33,9 +33,10 @@ import {
   NEXUS_IQ_STRICT_SSL, 
   NEXUS_IQ_USERNAME, 
   NEXUS_IQ_USER_PASSWORD } from "../utils/Config";
+import { PolicyItem } from '../PolicyItem';
 
 export class IqComponentModel implements ComponentModel {
-    components = new Array<ComponentEntry>();
+    components = new Array<PolicyItem>();
     coordsToComponent: Map<string, ComponentEntry> = new Map<
       string,
       ComponentEntry
@@ -171,7 +172,18 @@ export class IqComponentModel implements ComponentModel {
                   }
                 }
 
-                this.components.push(...Array.from(this.coordsToComponent, ([name, value]) => (value)));
+                let comps: Map<string, ComponentEntry[]> = new Map();
+
+                this.coordsToComponent.forEach((val) => {
+                  const collection = comps.get(val.maxPolicyGroup());
+                  if (!collection) {
+                    comps.set(val.maxPolicyGroup(), [val]);
+                  } else {
+                    collection.push(val);
+                  }
+                });
+
+                this.components.push(...Array.from(comps, ([name, value]) => new PolicyItem(name, value)));
               }
 
               resolve();

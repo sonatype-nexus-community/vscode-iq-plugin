@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 import * as vscode from "vscode";
-import * as path from "path";
 
 import { ComponentInfoPanel } from "./ComponentInfoPanel";
 import { IqComponentModel } from "./models/IqComponentModel";
@@ -22,13 +21,15 @@ import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
 import { ComponentModel } from "./models/ComponentModel";
 import { ComponentEntry } from "./models/ComponentEntry";
 import { ILogger, Logger, LogLevel } from './utils/Logger';
-import {NEXUS_IQ_SERVER_URL} from "./utils/Config";
+import { PolicyItem } from './PolicyItem';
 
-export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentEntry> {
+export class NexusExplorerProvider implements vscode.TreeDataProvider<PolicyItem> {
   private editor?: vscode.TextEditor;
 
   private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
   readonly onDidChangeTreeData: vscode.Event<any> = this._onDidChangeTreeData.event;
+
+  data: PolicyItem[] = new Array();
 
   constructor(
     private context: vscode.ExtensionContext,
@@ -57,10 +58,9 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
   }
 
   doRefresh(): void {
-    let sortPolicyDescending: boolean = true;
     this.reloadComponentModel().then(() => {
       if (this.componentModel.components.length > 0) {
-        this.sortByPolicy(sortPolicyDescending);
+        this.doSoftRefresh();
       }
     });
   }
@@ -69,57 +69,19 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
     this._onDidChangeTreeData.fire(undefined);
   }
 
-  sortByName(sortNameAscending: boolean): void {
-    this.componentModel.components.sort((a, b) => {
-      if (sortNameAscending) {
-        return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1;
-      } else {
-        return b.name.toLowerCase() > a.name.toLowerCase() ? 1 : -1;
-      }
-    });
-    this.doSoftRefresh();
-  }
-
-  sortByPolicy(sortPolicyDescending: boolean): void {
-    this.componentModel.components.sort((a, b) => {
-      if (sortPolicyDescending) {
-        return b.maxPolicy() - a.maxPolicy();
-      } else {
-        return a.maxPolicy() - b.maxPolicy();
-      }
-    });
-    this.doSoftRefresh();
-  }
-
   private reloadComponentModel(): Promise<any> {
     return this.componentModel.evaluateComponents();
   }
 
-  getTreeItem(entry: ComponentEntry): vscode.TreeItem {
-    let treeItem: vscode.TreeItem = new vscode.TreeItem(
-      entry.toString(),
-      vscode.TreeItemCollapsibleState.None
-    );
-    treeItem.iconPath = this.context.asAbsolutePath(
-      path.join("resources", entry.iconName())
-    );
-    treeItem.command = {
-      command: "nexusExplorer.viewNode",
-      title: "Select Node",
-      arguments: [entry]
-    };
-    let maxThreat = entry.maxPolicy();
-    treeItem.tooltip = `Name: ${entry.name}\nVersion: ${entry.version}\nHash: ${entry.hash}\nPolicy: ${maxThreat}`;
-
-    return treeItem;
+  getTreeItem(entry: PolicyItem): vscode.TreeItem|Thenable<vscode.TreeItem> {
+    return entry;
   }
 
-  getChildren(entry?: ComponentEntry): ComponentEntry[] | null {
+  getChildren(entry?: PolicyItem|undefined): vscode.ProviderResult<PolicyItem[]> {
     if (entry === undefined) {
       return this.componentModel.components;
-    } else {
-      return null;
-    }
+    } 
+    return entry.children;
   }
 
   select(range: vscode.Range) {
@@ -133,9 +95,7 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
 
 export class NexusExplorer {
   
-  private sortPolicyDescending: boolean = true;
-  private sortNameAscending: boolean = true;
-  private nexusViewer: vscode.TreeView<ComponentEntry>;
+  private nexusViewer: vscode.TreeView<PolicyItem>;
   private componentModel: ComponentModel;
   private nexusExplorerProvider: NexusExplorerProvider;
   private logger: ILogger;
@@ -168,38 +128,17 @@ export class NexusExplorer {
     });
 
     vscode.commands.registerCommand("nexusExplorer.refresh", () => {
-      this.sortPolicyDescending = true;
-      this.sortNameAscending = true;
       this.nexusExplorerProvider.doRefresh();
-    });
-
-    vscode.commands.registerCommand("nexusExplorer.sortByPolicy", () => {
-      this.sortByPolicy();
-    });
-
-    vscode.commands.registerCommand("nexusExplorer.sortByName", () => {
-      this.sortByName();
     });
 
     vscode.commands.registerCommand("nexusExplorer.revealResource", () => {
       this.reveal();
     });
+
     vscode.commands.registerCommand(
       "nexusExplorer.viewNode",
-      (node: ComponentEntry) => this.viewNode(node)
+      (node: PolicyItem) => this.viewNode(node)
     );
-  }
-
-  private sortByName() {
-    this.nexusExplorerProvider.sortByName(this.sortNameAscending);
-    this.sortNameAscending = !this.sortNameAscending;
-    this.sortPolicyDescending = true;
-  }
-
-  private sortByPolicy() {
-    this.nexusExplorerProvider.sortByPolicy(this.sortPolicyDescending);
-    this.sortPolicyDescending = !this.sortPolicyDescending;
-    this.sortNameAscending = true;
   }
 
   private reveal(): Thenable<void> | undefined {
@@ -210,14 +149,14 @@ export class NexusExplorer {
     return undefined;
   }
 
-  private getNode(): ComponentEntry | undefined {
+  private getNode(): PolicyItem | undefined {
     if (this.componentModel.components.length > 0) {
       return this.componentModel.components[0];
     }
     return undefined;
   }
 
-  private viewNode(entry: ComponentEntry) {
+  private viewNode(entry: PolicyItem) {
     ComponentInfoPanel.createOrShow(
       this.context.extensionPath,
       entry,

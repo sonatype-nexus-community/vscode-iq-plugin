@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ComponentEntry } from "./ComponentEntry";
+import { PolicyItem } from "../PolicyItem";
 
 export interface ComponentModel {
-  components: Array<ComponentEntry>;
+  components: Array<PolicyItem>;
 }
