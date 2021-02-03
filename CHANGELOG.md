@@ -1,3 +1,10 @@
+## [1.0.15](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.14...v1.0.15) (2021-02-03)
+
+
+### Bug Fixes
+
+* just a tiny newline to test something ([b728de9](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/b728de9c172ef222066779f0ecd41e9aacef88fd))
+
 ## [1.0.14](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.13...v1.0.14) (2021-02-03)
 
 
