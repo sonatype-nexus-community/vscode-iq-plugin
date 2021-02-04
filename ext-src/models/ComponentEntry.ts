@@ -17,7 +17,7 @@ import { ReportComponent } from "../services/ReportResponse";
 import { PolicyViolation } from "../types/PolicyViolation";
 import { ScanType } from "../types/ScanType";
 import { PolicyItem } from "../PolicyItem";
-import * as path from "path";
+import { join } from "path";
 
 export class ComponentEntry extends PolicyItem {
   scope: string = "";
@@ -26,6 +26,7 @@ export class ComponentEntry extends PolicyItem {
   hash: string = "";
   nexusIQData?: NexusIQData = undefined;
   ossIndexData?: any = undefined;
+  tooltip = this.toString();
 
   constructor(
     readonly name: string, 
@@ -40,9 +41,6 @@ export class ComponentEntry extends PolicyItem {
       title: "Select Node",
       arguments: [this]
     };
-    
-    let maxThreat = this.maxPolicy();
-    this.tooltip = `Name: ${name}\nVersion: ${version}\nPolicy: ${maxThreat}`;
   }
 
   public toString(): string {
@@ -81,15 +79,15 @@ export class ComponentEntry extends PolicyItem {
 
   public maxPolicyGroup(): string {
     if (this.maxPolicy() < 1) {
-      return "none"
+      return "None"
     } else if (this.maxPolicy() < 2) {
-      return "low"
+      return "Low"
     } else if (this.maxPolicy() < 4) {
-      return "moderate"
+      return "Moderate"
     } else if (this.maxPolicy() < 8) {
-      return "severe"
+      return "Severe"
     } else {
-      return "critical"
+      return "Critical"
     }
   }
 
@@ -98,6 +96,7 @@ export class ComponentEntry extends PolicyItem {
       (this.scanType == ScanType.OssIndex && !this.ossIndexData )) {
       return "loading.gif";
     }
+
     let maxThreatLevel = this.maxPolicy();
 
     // TODO what is the right way to display threat level graphically?

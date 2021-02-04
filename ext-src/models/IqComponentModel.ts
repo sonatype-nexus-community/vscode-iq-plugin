@@ -34,6 +34,7 @@ import {
   NEXUS_IQ_USERNAME, 
   NEXUS_IQ_USER_PASSWORD } from "../utils/Config";
 import { PolicyItem } from '../PolicyItem';
+import { join } from "path";
 
 export class IqComponentModel implements ComponentModel {
     components = new Array<PolicyItem>();
@@ -44,6 +45,7 @@ export class IqComponentModel implements ComponentModel {
     requestService: RequestService;
     applicationPublicId: string;
     private logger: ILogger;
+    private extensionPath: string;
   
     constructor(
       options: ComponentModelOptions
@@ -59,6 +61,7 @@ export class IqComponentModel implements ComponentModel {
 
       this.requestService = new IqRequestService(url, username, password, maximumEvaluationPollAttempts, strictSSL, options.logger);
       
+      this.extensionPath = options.extensionPath;
       this.logger = options.logger;
     }
   
@@ -169,6 +172,7 @@ export class IqComponentModel implements ComponentModel {
                     componentEntry!.policyViolations = resultEntry.violations;
                     componentEntry!.hash = resultEntry.hash;
                     componentEntry!.nexusIQData = { component: resultEntry };
+                    componentEntry.iconPath = join(this.extensionPath, componentEntry.iconName());
                   }
                 }
 

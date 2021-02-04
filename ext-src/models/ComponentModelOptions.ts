@@ -19,4 +19,5 @@ import { ILogger } from "../utils/Logger";
 export interface ComponentModelOptions {
     configuration: WorkspaceConfiguration;
     logger: ILogger;
+    extensionPath: string;
 }

@@ -19,11 +19,11 @@ import { ComponentInfoPanel } from "./ComponentInfoPanel";
 import { IqComponentModel } from "./models/IqComponentModel";
 import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
 import { ComponentModel } from "./models/ComponentModel";
-import { ComponentEntry } from "./models/ComponentEntry";
 import { ILogger, Logger, LogLevel } from './utils/Logger';
 import { PolicyItem } from './PolicyItem';
 
 export class NexusExplorerProvider implements vscode.TreeDataProvider<PolicyItem> {
+  readonly sortOrder = ['Critical', 'Severe', 'Moderate', 'Low', 'None'];
   private editor?: vscode.TextEditor;
 
   private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
@@ -60,6 +60,18 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<PolicyItem
   doRefresh(): void {
     this.reloadComponentModel().then(() => {
       if (this.componentModel.components.length > 0) {
+        this.componentModel.components.sort((a, b) => {
+          return this.sortOrder.indexOf(a.label!) - this.sortOrder.indexOf(b.label!);
+        });
+
+        const nonePolicyItem = this.componentModel.components.find((val) => val.label === 'None');
+
+        if (nonePolicyItem) nonePolicyItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+
+        this.componentModel.components.map((val) => {
+          val.label = `${val.label} (${val.children!.length})`;
+        });
+
         this.doSoftRefresh();
       }
     });
@@ -113,9 +125,9 @@ export class NexusExplorer {
       configuration.get("nexusExplorer.dataSource", "ossindex") + "" ==
       "iqServer"
     ) {
-      this.componentModel = new IqComponentModel({configuration: configuration, logger: this.logger});
+      this.componentModel = new IqComponentModel({configuration: configuration, logger: this.logger, extensionPath: this.context.asAbsolutePath("resources")});
     } else {
-      this.componentModel = new OssIndexComponentModel({configuration: configuration, logger: this.logger});
+      this.componentModel = new OssIndexComponentModel({configuration: configuration, logger: this.logger, extensionPath: this.context.asAbsolutePath("resources")});
     }
 
     this.nexusExplorerProvider = new NexusExplorerProvider(
@@ -168,9 +180,9 @@ export class NexusExplorer {
     let configuration = vscode.workspace.getConfiguration();
 
     if (scanType == "iqServer") {
-      this.componentModel = new IqComponentModel({configuration: configuration, logger: this.logger});
+      this.componentModel = new IqComponentModel({configuration: configuration, logger: this.logger, extensionPath: this.context.asAbsolutePath("resources")});
     } else if (scanType == "ossindex") {
-      this.componentModel = new OssIndexComponentModel({configuration: configuration, logger: this.logger});
+      this.componentModel = new OssIndexComponentModel({configuration: configuration, logger: this.logger, extensionPath: this.context.asAbsolutePath("resources")});
     }
 
     this.nexusExplorerProvider.updateComponentModel(this.componentModel);

@@ -25,12 +25,14 @@ import { PackageURL } from 'packageurl-js';
 import { ComponentModelOptions } from "./ComponentModelOptions";
 import { ILogger, LogLevel } from "../utils/Logger";
 import { PolicyItem } from "../PolicyItem";
+import { join } from "path";
 
 export class OssIndexComponentModel implements ComponentModel {
   components = new Array<PolicyItem>();
   requestService: LiteRequestService;
   dataSourceType: string = "ossindex";
-  logger: ILogger;
+  private logger: ILogger;
+  private extensionPath: string;
   
   constructor(
     options: ComponentModelOptions
@@ -38,6 +40,7 @@ export class OssIndexComponentModel implements ComponentModel {
     let username = options.configuration.get("ossindex.username") + "";
     let password = options.configuration.get("ossindex.password") + "";
     this.logger = options.logger;
+    this.extensionPath = options.extensionPath;
     this.requestService = new OssIndexRequestService(username, password, options.logger);
   }
   
@@ -94,6 +97,7 @@ export class OssIndexComponentModel implements ComponentModel {
               let version = purl.version;
               let componentEntry = new ComponentEntry(name, version!, format, ScanType.OssIndex);
               componentEntry.ossIndexData = val;
+              componentEntry.iconPath = join(this.extensionPath, componentEntry.iconName());
 
               const collection = comps.get(componentEntry.maxPolicyGroup());
               if (!collection) {
