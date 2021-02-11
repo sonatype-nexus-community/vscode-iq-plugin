@@ -1,3 +1,10 @@
+## [1.0.19](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.18...v1.0.19) (2021-02-11)
+
+
+### Bug Fixes
+
+* handling trailing slash for iq report url  ([#183](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/183)) ([fcd2490](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/fcd2490baf425b6c2b89d06594827c8bd7e1a647))
+
 ## [1.0.18](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.17...v1.0.18) (2021-02-11)
 
 
