@@ -181,6 +181,8 @@ export class IqComponentModel implements ComponentModel {
               resolve();
             }).then(() => {
               if (!this.reportUrl.startsWith(this.url)) {
+                // remove trailing slash if it exists
+                this.url = this.url.replace(/\/$/, "")
                 this.reportUrl = `${this.url}/${this.reportUrl}`;
               }
               
