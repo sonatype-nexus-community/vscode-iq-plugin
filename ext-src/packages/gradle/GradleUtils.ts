@@ -52,20 +52,28 @@ export class GradleUtils {
   }
 
   private parseGradleDependencyTree(output: string): Array<MavenPackage> {
-    console.debug(
-      "------------------------------------------------------------------------------"
-    );
+
     let dependencyList: MavenPackage[] = [];
 
+    let start: boolean = false;
+    const regexReplace: RegExp = /[| ]*[\\+]*[---]{3}/;
     const dependencyLines = output.split("\n");
     dependencyLines.forEach((dep) => {
-      console.debug(dep);
-      if (dep.trim().includes("\\---")) {
-        //ignore empty lines
-        const dependencyParts: string[] = dep.trim().replace("\\--- ", "").split(":");
-        const group: string = dependencyParts[0];
-        const artifact: string = dependencyParts[1];
-        const version: string = dependencyParts[2];
+      if (dep.includes('runtimeClasspath')) {
+        start = true;
+        return;
+      }
+
+      if (start) {
+        if (dep === '') {
+          start = false;
+          return;
+        }
+        const replaceAndTrim = dep.replace(regexReplace, "").trim();
+        const coords = replaceAndTrim.split(":");
+        const group: string = coords[0];
+        const artifact: string = coords[1];
+        const version: string = coords[2];
 
         if (artifact && group && version) {
           const dependencyObject: MavenPackage = new MavenPackage(
@@ -74,12 +82,13 @@ export class GradleUtils {
             version,
             "jar"
           );
+
           dependencyList.push(dependencyObject);
         } else {
           console.warn(
             "Skipping dependency: " +
               dep +
-              " due to missing data (artifact, version, and/or extension)"
+              " due to missing data (artifact, group, and/or version)"
           );
         }
       }
