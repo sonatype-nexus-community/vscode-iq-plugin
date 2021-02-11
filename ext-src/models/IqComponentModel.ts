@@ -43,20 +43,22 @@ export class IqComponentModel implements ComponentModel {
     requestService: RequestService;
     applicationPublicId: string;
     private logger: ILogger;
+    private url: string = "";
+    private reportUrl: string = "";
   
     constructor(
       options: ComponentModelOptions
     ) {
       this.applicationPublicId = options.configuration.get(NEXUS_IQ_PUBLIC_APPLICATION_ID) + "";
 
-      const url = options.configuration.get(NEXUS_IQ_SERVER_URL) + "";
+      this.url = options.configuration.get(NEXUS_IQ_SERVER_URL) + "";
       const username = options.configuration.get(NEXUS_IQ_USERNAME) + "";
       const  maximumEvaluationPollAttempts = parseInt(
         options.configuration.get(NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS) + "", 10);
       const password = options.configuration.get(NEXUS_IQ_USER_PASSWORD) + "";
       const strictSSL = options.configuration.get(NEXUS_IQ_STRICT_SSL) as boolean;
 
-      this.requestService = new IqRequestService(url, username, password, maximumEvaluationPollAttempts, strictSSL, options.logger);
+      this.requestService = new IqRequestService(this.url, username, password, maximumEvaluationPollAttempts, strictSSL, options.logger);
       
       this.logger = options.logger;
     }
@@ -134,6 +136,8 @@ export class IqComponentModel implements ComponentModel {
               if (resultData) {
                 let id: string = "";
                 if (resultData.reportHtmlUrl) {
+                  this.reportUrl = resultData.reportHtmlUrl;
+
                   let parts = /[^/]*$/.exec(resultData!.reportHtmlUrl!);
                   
                   if (parts) {
@@ -176,7 +180,12 @@ export class IqComponentModel implements ComponentModel {
 
               resolve();
             }).then(() => {
-              window.setStatusBarMessage("Nexus IQ Server Results in, build with confidence!", 5000);
+              if (!this.reportUrl.startsWith(this.url)) {
+                this.reportUrl = `${this.url}/${this.reportUrl}`;
+              }
+              
+              window.showInformationMessage(`Nexus IQ Server Results in, build with confidence!\n Report available at: ${this.reportUrl}`);
+              window.setStatusBarMessage(`Nexus IQ Server Results in, build with confidence!`, 5000);
             }, 
             (failure) => {
               this.logger.log(LogLevel.ERROR, `Nexus IQ extension failure`, failure);
