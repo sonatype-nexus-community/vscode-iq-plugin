@@ -50,8 +50,8 @@ export class IqComponentModel implements ComponentModel {
       options: ComponentModelOptions
     ) {
       this.applicationPublicId = options.configuration.get(NEXUS_IQ_PUBLIC_APPLICATION_ID) + "";
-
-      this.url = options.configuration.get(NEXUS_IQ_SERVER_URL) + "";
+      // remove trailing slash if it exists
+      this.url = String(options.configuration.get(NEXUS_IQ_SERVER_URL)).replace(/\/$/, "");
       const username = options.configuration.get(NEXUS_IQ_USERNAME) + "";
       const  maximumEvaluationPollAttempts = parseInt(
         options.configuration.get(NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS) + "", 10);
