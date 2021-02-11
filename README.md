@@ -13,6 +13,7 @@ Good news for polyglots -- the extension allows you to view violations across mu
 
 - npm/yarn (`npm install` or `yarn install` required)
 - maven (`pom.xml`)
+- Gradle (`build.gradle`)
 - python (`requirements.txt` or `poetry.lock`)
 - RubyGems (`Gemfile.lock`)
 - Golang (`dep` or `go mod`)
