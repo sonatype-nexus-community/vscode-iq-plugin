@@ -25,6 +25,7 @@ import { CargoDependencies } from "./cargo/CargoDependencies";
 import { PackageDependencies } from "./PackageDependencies";
 import { ILogger } from "../utils/Logger";
 import { ConanDependencies } from "./conan/ConanDependencies";
+import { GradleDependencies } from "./gradle/GradleDependencies";
 
 export class LiteComponentContainer {
   Possible: Array<PackageDependencies> = [];
@@ -42,6 +43,7 @@ export class LiteComponentContainer {
     this.Possible.push(new ComposerDependencies({logger}));
     this.Possible.push(new CargoDependencies({logger}));
     this.Possible.push(new ConanDependencies({logger}));
+    this.Possible.push(new GradleDependencies({logger}));
 
     this.Possible.forEach(i => {
       if(i.checkIfValid()) {
