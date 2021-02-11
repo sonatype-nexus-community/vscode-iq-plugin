@@ -1,3 +1,10 @@
+## [1.0.17](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.16...v1.0.17) (2021-02-11)
+
+
+### Bug Fixes
+
+* Gradle - minimal format implementation ([#182](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/182)) ([dc48891](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/dc4889194d576f346472c8d2118d6120e084d276))
+
 ## [1.0.16](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.15...v1.0.16) (2021-02-03)
 
 
