@@ -35,7 +35,7 @@ export class GradleDependencies implements PackageDependencies {
       let componentEntry = new ComponentEntry(
         pkg.Group + ":" + pkg.Name,
         pkg.Version,
-        "maven",
+        "gradle",
         ScanType.NexusIq
       );
       map.set(
