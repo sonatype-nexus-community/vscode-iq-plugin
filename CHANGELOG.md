@@ -1,3 +1,10 @@
+## [1.0.18](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.17...v1.0.18) (2021-02-11)
+
+
+### Bug Fixes
+
+* why not give someone the report url ([3631991](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/36319918baf1735863e18aab5466b7de22f0a3fa))
+
 ## [1.0.17](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.16...v1.0.17) (2021-02-11)
 
 
