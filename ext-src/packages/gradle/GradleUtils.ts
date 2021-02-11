@@ -23,7 +23,7 @@ export class GradleUtils {
 
     let gradleCommand;
     try {
-      gradleCommand = `./gradlew dependencies --configuration default`;
+      gradleCommand = `gradle dependencies --configuration runtimeClasspath`;
 
       let { stdout, stderr } = await exec(gradleCommand, {
         cwd: PackageDependenciesHelper.getWorkspaceRoot(),
