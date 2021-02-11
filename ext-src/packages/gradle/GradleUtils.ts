@@ -73,9 +73,17 @@ export class GradleUtils {
         const coords = replaceAndTrim.split(":");
         const group: string = coords[0];
         const artifact: string = coords[1];
-        const version: string = coords[2];
+        let version: string = coords[2];
 
         if (artifact && group && version) {
+          if (version.includes("(*")) {
+            console.warn("Omitted version");
+            return;
+          }
+          if (version.includes(">")) {
+            version = version.split(">")[1].trim();
+          }
+
           const dependencyObject: MavenPackage = new MavenPackage(
             artifact,
             group,
