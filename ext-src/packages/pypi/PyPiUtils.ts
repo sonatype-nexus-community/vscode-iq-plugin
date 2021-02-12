@@ -45,7 +45,7 @@ export class PyPiUtils {
           console.debug("Found comment, skipping");
         } else {
           // remove any conditionals after semicolon, split result to get package and version
-          const dependencyParts: string[] = dep.split(";")[0].trim().split("==");
+          const dependencyParts: string[] = dep.split(";")[0].trim().split(/==|~=/);
           if (!dependencyParts || dependencyParts.length != 2) {
             // Short circuit, we couldn't split, move on to next one
             return;
