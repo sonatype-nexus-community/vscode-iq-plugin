@@ -49,13 +49,13 @@ export class IqComponentModel implements ComponentModel {
     constructor(
       options: ComponentModelOptions
     ) {
-      this.applicationPublicId = options.configuration.get(NEXUS_IQ_PUBLIC_APPLICATION_ID) + "";
-      // remove trailing slash if it exists
-      this.url = String(options.configuration.get(NEXUS_IQ_SERVER_URL)).replace(/\/$/, "");
-      const username = options.configuration.get(NEXUS_IQ_USERNAME) + "";
+      this.applicationPublicId = options.configuration.get(NEXUS_IQ_PUBLIC_APPLICATION_ID) as string;
+      this.url = options.configuration.get(NEXUS_IQ_SERVER_URL) as string;
+      const username = options.configuration.get(NEXUS_IQ_USERNAME) as string;
+      // this one is converted rather than cast as string
       const  maximumEvaluationPollAttempts = parseInt(
-        options.configuration.get(NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS) + "", 10);
-      const password = options.configuration.get(NEXUS_IQ_USER_PASSWORD) + "";
+        String(options.configuration.get(NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS)), 10);
+      const password = options.configuration.get(NEXUS_IQ_USER_PASSWORD) as string;
       const strictSSL = options.configuration.get(NEXUS_IQ_STRICT_SSL) as boolean;
 
       this.requestService = new IqRequestService(this.url, username, password, maximumEvaluationPollAttempts, strictSSL, options.logger);
@@ -181,7 +181,7 @@ export class IqComponentModel implements ComponentModel {
               resolve();
             }).then(() => {
               if (!this.reportUrl.startsWith(this.url)) {
-                this.reportUrl = `${this.url}/${this.reportUrl}`;
+                this.reportUrl = new URL(this.reportUrl, this.url).href
               }
               
               window.showInformationMessage(`Nexus IQ Server Results in, build with confidence!\n Report available at: ${this.reportUrl}`);
