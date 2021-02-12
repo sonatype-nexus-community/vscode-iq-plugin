@@ -1,3 +1,10 @@
+## [1.0.20](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.19...v1.0.20) (2021-02-12)
+
+
+### Bug Fixes
+
+* Split on == and ~= for requirements.txt ([#185](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/185)) ([b288252](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/b2882526f9907c5778c5e20b62ae34eec20b7ff7)), closes [#184](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/184)
+
 ## [1.0.19](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.18...v1.0.19) (2021-02-11)
 
 
