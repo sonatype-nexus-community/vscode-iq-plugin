@@ -50,13 +50,13 @@ export class IqRequestService implements RequestService {
 
   public setOptions(options: RefreshOptions) {
     if (options.url) {
-      this.setUrl(options.url);
+      this.setUrl((process.env.IQ_SERVER ? process.env.IQ_SERVER : options.url));
     }
     if (options.username) {
-      this.user = options.username;
+      this.user = (process.env.IQ_USERNAME ? process.env.IQ_USERNAME : options.username);
     }
     if (options.token) { 
-      this.password = options.token;
+      this.password = (process.env.IQ_TOKEN ? process.env.IQ_TOKEN : options.token);
     }
   }
 
