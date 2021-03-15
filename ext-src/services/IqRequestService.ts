@@ -33,6 +33,7 @@ export class IqRequestService implements RequestService {
   readonly evaluationPollDelayMs = 2000;
   private agent: Agent = this.getAgent(false, false);
   applicationId: string = "";
+  stage: string = "develop";
 
   constructor(
     private url: string,
@@ -90,6 +91,12 @@ export class IqRequestService implements RequestService {
     return this.applicationId;
   }
 
+  public setStage(stage: string | undefined) {
+    if (stage && stage != "") {
+      this.stage = stage;
+    }
+  }
+
   public getApplicationId(applicationPublicId: string): Promise<string> {
     if (applicationPublicId === '') {
       throw Error(`You must provide a non empty public application ID in your Sonatype IQ Server Config`);
@@ -145,7 +152,7 @@ export class IqRequestService implements RequestService {
     sbom: string,
     applicationInternalId: string
   ): Promise<string> {
-    let url: string = `${this.url}/api/v2/scan/applications/${applicationInternalId}/sources/vscode-iq-extension?stageId=develop`
+    let url: string = `${this.url}/api/v2/scan/applications/${applicationInternalId}/sources/vscode-iq-extension?stageId=${this.stage}`
 
     return new Promise((resolve, reject) => {
       fetch(

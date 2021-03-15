@@ -37,4 +37,5 @@ export interface RequestService extends BaseRequestService {
   isPasswordSet(): boolean;
   setApplicationId(s: string): void;
   getApplicationInternalId(): string;
+  setStage(s: string): void;
 }

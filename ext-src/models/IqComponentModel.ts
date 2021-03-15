@@ -78,6 +78,7 @@ export class IqComponentModel implements ComponentModel {
         const doc = load(readFileSync(rcPath, 'utf8')) as IQServerRC;
         
         this.applicationPublicId = (doc.NEXUS_IQ_APPLICATION ? doc.NEXUS_IQ_APPLICATION : this.applicationPublicId);
+        this.requestService.setStage(doc.NEXUS_IQ_STAGE);
       }
     }
   
