@@ -18,3 +18,7 @@ export interface IQServerRC {
   NEXUS_IQ_STAGE: string | undefined
   NEXUS_IQ_URL: string | undefined
 }
+
+const STAGE_ACCEPTABLE_VALUES = ["develop", "build", "release", "stage-release", "operate"];
+
+export { STAGE_ACCEPTABLE_VALUES };

@@ -28,6 +28,7 @@ import { VulnerabilityResponse } from './VulnerabilityResponse';
 import { RemediationResponse } from './RemediationResponse';
 import { ApplicationResponse } from './ApplicationReponse';
 import { RefreshOptions } from '../NexusExplorer';
+import { STAGE_ACCEPTABLE_VALUES } from '../types/IQServerRC';
 
 export class IqRequestService implements RequestService {
   readonly evaluationPollDelayMs = 2000;
@@ -92,7 +93,7 @@ export class IqRequestService implements RequestService {
   }
 
   public setStage(stage: string | undefined) {
-    if (stage && stage != "") {
+    if (stage && STAGE_ACCEPTABLE_VALUES.includes(stage)) {
       this.stage = stage;
     }
   }
