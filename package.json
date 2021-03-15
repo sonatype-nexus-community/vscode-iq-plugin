@@ -169,12 +169,12 @@
           "nexusIQ.username": {
             "type": "string",
             "default": "admin",
-            "description": "Your Nexus IQ user name"
+            "description": "Your Nexus IQ user name (can be overriden with environment variable of NEXUS_IQ_USERNAME)"
           },
           "nexusIQ.userPassword": {
             "type": "string",
             "default": "admin123",
-            "description": "Your Nexus IQ password"
+            "description": "Your Nexus IQ password (can be overriden with environment variable of NEXUS_IQ_TOKEN)"
           }
         }
       }
