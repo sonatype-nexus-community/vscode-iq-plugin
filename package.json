@@ -159,7 +159,7 @@
           "nexusIQ.serverUrl": {
             "type": "string",
             "default": "http://127.0.0.1:8070",
-            "description": "URL (including port) of the Nexus IQ Server (default: $IQ_SERVER from environment)"
+            "description": "URL endpoint of the Nexus IQ Server (overridden by $IQ_SERVER from environment)"
           },
           "nexusIQ.strictSSL": {
             "type": "boolean",
@@ -169,12 +169,12 @@
           "nexusIQ.username": {
             "type": "string",
             "default": "admin",
-            "description": "Your Nexus IQ user name (default: $IQ_USERNAME from environment)"
+            "description": "Nexus IQ user name/token (overridden by $IQ_USERNAME from environment)"
           },
           "nexusIQ.userPassword": {
             "type": "string",
             "default": "admin123",
-            "description": "Your Nexus IQ password (default: $IQ_TOKEN from environment)"
+            "description": "Nexus IQ password (default: $IQ_TOKEN from environment)"
           }
         }
       }
