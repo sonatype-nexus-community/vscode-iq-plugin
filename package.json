@@ -149,7 +149,7 @@
           "nexusIQ.applicationId": {
             "type": "string",
             "default": "sandbox-application",
-            "description": "Your Nexus IQ Application Id"
+            "description": "Nexus IQ Application ID (overridden by .iqserverrc file)"
           },
           "nexusIQ.maximumEvaluationPollAttempts": {
             "type": "number",
@@ -159,7 +159,7 @@
           "nexusIQ.serverUrl": {
             "type": "string",
             "default": "http://127.0.0.1:8070",
-            "description": "URL (including port) of the Nexus IQ Server"
+            "description": "URL endpoint of Nexus IQ (overridden by .iqserverrc file)"
           },
           "nexusIQ.strictSSL": {
             "type": "boolean",
