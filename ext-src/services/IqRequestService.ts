@@ -297,7 +297,7 @@ export class IqRequestService implements RequestService {
     return new Promise((resolve, reject) => {
       const request = { packageUrl: purl };
 
-      let url = `${this.url}/api/v2/components/remediation/application/${this.applicationId}?stageId=develop`;
+      let url = `${this.url}/api/v2/components/remediation/application/${this.applicationId}?stageId=${this.stage}`;
 
       fetch(
         url, 
