@@ -26,7 +26,6 @@ import { PackageType } from "../packages/PackageType";
 import { CycloneDXSbomCreator } from "../cyclonedx/CycloneDXGenerator";
 import { ReportResponse } from "../services/ReportResponse";
 import { 
-  NEXUS_EXPLORER_DATA_SOURCE, 
   NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS, 
   NEXUS_IQ_PUBLIC_APPLICATION_ID, 
   NEXUS_IQ_SERVER_URL, 
@@ -50,15 +49,15 @@ export class IqComponentModel implements ComponentModel {
       options: ComponentModelOptions
     ) {
       this.applicationPublicId = options.configuration.get(NEXUS_IQ_PUBLIC_APPLICATION_ID) as string;
-      this.url = options.configuration.get(NEXUS_IQ_SERVER_URL) as string;
-      const username = options.configuration.get(NEXUS_IQ_USERNAME) as string;
-      // this one is converted rather than cast as string
+      this.url = (process.env.IQ_SERVER ? process.env.IQ_SERVER : options.configuration.get(NEXUS_IQ_SERVER_URL) as string);
+      const username = (process.env.IQ_USERNAME ? process.env.IQ_USERNAME : options.configuration.get(NEXUS_IQ_USERNAME) as string);
+      const token = (process.env.IQ_TOKEN ? process.env.IQ_TOKEN : options.configuration.get(NEXUS_IQ_USER_PASSWORD) as string);
+      
       const  maximumEvaluationPollAttempts = parseInt(
         String(options.configuration.get(NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS)), 10);
-      const password = options.configuration.get(NEXUS_IQ_USER_PASSWORD) as string;
       const strictSSL = options.configuration.get(NEXUS_IQ_STRICT_SSL) as boolean;
 
-      this.requestService = new IqRequestService(this.url, username, password, maximumEvaluationPollAttempts, strictSSL, options.logger);
+      this.requestService = new IqRequestService(this.url, username, token, maximumEvaluationPollAttempts, strictSSL, options.logger);
       
       this.logger = options.logger;
     }
