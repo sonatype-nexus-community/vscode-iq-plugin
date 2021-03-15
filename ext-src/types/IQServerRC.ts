@@ -16,4 +16,5 @@
 export interface IQServerRC {
   NEXUS_IQ_APPLICATION: string | undefined
   NEXUS_IQ_STAGE: string | undefined
+  NEXUS_IQ_URL: string | undefined
 }

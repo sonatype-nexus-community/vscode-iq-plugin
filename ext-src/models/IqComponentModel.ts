@@ -79,6 +79,7 @@ export class IqComponentModel implements ComponentModel {
         
         this.applicationPublicId = (doc.NEXUS_IQ_APPLICATION ? doc.NEXUS_IQ_APPLICATION : this.applicationPublicId);
         this.requestService.setStage(doc.NEXUS_IQ_STAGE);
+        this.url = (doc.NEXUS_IQ_URL ? doc.NEXUS_IQ_URL : this.url);
       }
     }
   
