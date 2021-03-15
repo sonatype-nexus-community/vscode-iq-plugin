@@ -75,7 +75,7 @@ export class IqComponentModel implements ComponentModel {
     private async checkRCFile(): Promise<void> {
       const rcPath = join(PackageDependenciesHelper.getWorkspaceRoot(), ".iqserverrc");
       if (existsSync(rcPath)) {
-        const doc: IQServerRC = load(readFileSync(rcPath), 'utf8');
+        const doc = load(readFileSync(rcPath, 'utf8')) as IQServerRC;
         
         this.applicationPublicId = (doc.NEXUS_IQ_APPLICATION ? doc.NEXUS_IQ_APPLICATION : this.applicationPublicId);
       }
