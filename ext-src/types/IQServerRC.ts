@@ -13,12 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export interface ComponentCoordinate {
-    version: string,
-    namespace?: string,
-    name?: string,
-    packageId?: string,
-    artifactId?: string,
-    groupId?: string,
-    extension?: string
+export interface IQServerRC {
+  NEXUS_IQ_APPLICATION: string | undefined
+  NEXUS_IQ_STAGE: string | undefined
 }

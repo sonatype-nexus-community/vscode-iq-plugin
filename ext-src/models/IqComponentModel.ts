@@ -26,13 +26,17 @@ import { PackageType } from "../packages/PackageType";
 import { CycloneDXSbomCreator } from "../cyclonedx/CycloneDXGenerator";
 import { ReportResponse } from "../services/ReportResponse";
 import { 
-  NEXUS_EXPLORER_DATA_SOURCE, 
   NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS, 
   NEXUS_IQ_PUBLIC_APPLICATION_ID, 
   NEXUS_IQ_SERVER_URL, 
   NEXUS_IQ_STRICT_SSL, 
   NEXUS_IQ_USERNAME, 
   NEXUS_IQ_USER_PASSWORD } from "../utils/Config";
+import { IQServerRC } from '../types/IQServerRC';
+import { existsSync, readFileSync } from "fs";
+import { load } from 'js-yaml';
+import { PackageDependenciesHelper } from "../packages/PackageDependenciesHelper";
+import { join } from "path";
 
 export class IqComponentModel implements ComponentModel {
     components = new Array<ComponentEntry>();
@@ -67,8 +71,21 @@ export class IqComponentModel implements ComponentModel {
       this.logger.log(LogLevel.DEBUG, "Starting IQ Evaluation of Components");
       return this.performIqScan();
     }
+
+    private async checkRCFile(): Promise<void> {
+      const rcPath = join(PackageDependenciesHelper.getWorkspaceRoot(), ".iqserverrc");
+      if (existsSync(rcPath)) {
+        const doc: IQServerRC = load(readFileSync(rcPath), 'utf8');
+        
+        this.applicationPublicId = (doc.NEXUS_IQ_APPLICATION ? doc.NEXUS_IQ_APPLICATION : this.applicationPublicId);
+      }
+    }
   
     private async performIqScan(): Promise<any> {
+      
+      this.logger.log(LogLevel.DEBUG, "Checking for existence of .iqserverrc");
+      await this.checkRCFile();
+
       return new Promise<void>((resolve, reject) => {
         try {
           let componentContainer = new ComponentContainer(this.logger);
