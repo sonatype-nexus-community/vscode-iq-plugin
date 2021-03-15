@@ -208,6 +208,7 @@
   },
   "devDependencies": {
     "@types/jest": "^22.2.3",
+    "@types/js-yaml": "^4.0.0",
     "@types/node": "^12.12.6",
     "@types/node-fetch": "^2.5.7",
     "@types/react": "^16.14.2",
