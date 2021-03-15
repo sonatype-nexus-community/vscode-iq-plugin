@@ -33,6 +33,7 @@ export interface RequestService extends BaseRequestService {
   getRemediation(purl: string): Promise<RemediationResponse>;
   showSelectedVersion(purl: string): Promise<ComponentDetails>
   setOptions(options: RefreshOptions): void;
+  setURL(u: string): void;
   setPassword(password: string): void;
   isPasswordSet(): boolean;
   setApplicationId(s: string): void;

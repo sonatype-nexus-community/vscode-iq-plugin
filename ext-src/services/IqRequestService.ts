@@ -44,14 +44,14 @@ export class IqRequestService implements RequestService {
     readonly logger: ILogger
   ) 
   {
-    this.setUrl(url);
+    this.setURL(url);
 
     this.logger.log(LogLevel.INFO, `Created new IQ Request Service at: `, url);
   }
 
   public setOptions(options: RefreshOptions) {
     if (options.url) {
-      this.setUrl(options.url);
+      this.setURL(options.url);
     }
     if (options.username) {
       this.user = options.username;
@@ -61,7 +61,7 @@ export class IqRequestService implements RequestService {
     }
   }
 
-  private setUrl(url: string) {
+  public setURL(url: string) {
     this.logger.log(LogLevel.TRACE, `Setting IQ url to: `, this.url);
 
     this.url = url.replace(/\/$/, "");
