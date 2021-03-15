@@ -78,7 +78,7 @@ export class IqComponentModel implements ComponentModel {
         const doc = load(readFileSync(rcPath, 'utf8')) as IQServerRC;
         
         this.applicationPublicId = (doc.NEXUS_IQ_APPLICATION ? doc.NEXUS_IQ_APPLICATION : this.applicationPublicId);
-        this.requestService.setStage(doc.NEXUS_IQ_STAGE);
+        this.requestService.setStage((doc.NEXUS_IQ_STAGE ? doc.NEXUS_IQ_STAGE : "develop"));
         this.requestService.setURL((doc.NEXUS_IQ_URL ? doc.NEXUS_IQ_URL : this.url));
 
         this.logger.log(LogLevel.INFO, "Updated settings based on .iqserverrc");
