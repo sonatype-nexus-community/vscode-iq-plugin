@@ -77,11 +77,13 @@ export class IqComponentModel implements ComponentModel {
       if (existsSync(rcPath)) {
         const doc = load(readFileSync(rcPath, 'utf8')) as SonatypeRC;
         
-        this.applicationPublicId = (doc.IQ.PUBLIC_APPLICATION ? doc.IQ.PUBLIC_APPLICATION : this.applicationPublicId);
-        this.requestService.setStage((doc.IQ.STAGE ? doc.IQ.STAGE : "develop"));
-        this.requestService.setURL((doc.IQ.URL ? doc.IQ.URL : this.url));
+        if (doc.iq) {
+          this.applicationPublicId = (doc.iq.PublicApplication ? doc.iq.PublicApplication : this.applicationPublicId);
+          this.requestService.setStage((doc.iq.Stage ? doc.iq.Stage : "develop"));
+          this.requestService.setURL((doc.iq.Server ? doc.iq.Server : this.url));
 
-        this.logger.log(LogLevel.INFO, "Updated settings based on .sonatyperc");
+          this.logger.log(LogLevel.INFO, "Updated settings based on .sonatyperc");
+        }
       }
     }
   

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 export interface SonatypeRC {
-  IQ: IQOptions
+  iq: IQOptions
 }
 
 export interface IQOptions {
-  PUBLIC_APPLICATION: string | undefined
-  STAGE: string | undefined
-  URL: string | undefined
+  PublicApplication: string | undefined
+  Stage: string | undefined
+  Server: string | undefined
 }
 
 const STAGE_ACCEPTABLE_VALUES = ["develop", "build", "release", "stage-release", "operate"];
