@@ -13,10 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export interface IQServerRC {
-  NEXUS_IQ_APPLICATION: string | undefined
-  NEXUS_IQ_STAGE: string | undefined
-  NEXUS_IQ_URL: string | undefined
+export interface SonatypeRC {
+  IQ: IQOptions
+}
+
+export interface IQOptions {
+  PUBLIC_APPLICATION: string | undefined
+  STAGE: string | undefined
+  URL: string | undefined
 }
 
 const STAGE_ACCEPTABLE_VALUES = ["develop", "build", "release", "stage-release", "operate"];

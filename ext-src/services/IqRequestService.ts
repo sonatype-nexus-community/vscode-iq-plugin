@@ -17,7 +17,7 @@ import fetch from 'node-fetch';
 import { Headers } from 'node-fetch';
 import { RequestService } from "./RequestService";
 import { RequestHelpers } from "./RequestHelpers";
-import { Agent as HttpsAgent, RequestOptions }  from "https";
+import { Agent as HttpsAgent }  from "https";
 import { Agent } from 'http';
 import { ILogger, LogLevel } from '../utils/Logger';
 import { ThirdPartyAPIResponse } from './ThirdPartyApiResponse';
@@ -28,7 +28,7 @@ import { VulnerabilityResponse } from './VulnerabilityResponse';
 import { RemediationResponse } from './RemediationResponse';
 import { ApplicationResponse } from './ApplicationReponse';
 import { RefreshOptions } from '../NexusExplorer';
-import { STAGE_ACCEPTABLE_VALUES } from '../types/IQServerRC';
+import { STAGE_ACCEPTABLE_VALUES } from '../types/SonatypeRC';
 
 export class IqRequestService implements RequestService {
   readonly evaluationPollDelayMs = 2000;

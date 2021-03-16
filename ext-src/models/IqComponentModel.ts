@@ -32,7 +32,7 @@ import {
   NEXUS_IQ_STRICT_SSL, 
   NEXUS_IQ_USERNAME, 
   NEXUS_IQ_USER_PASSWORD } from "../utils/Config";
-import { IQServerRC } from '../types/IQServerRC';
+import { SonatypeRC } from '../types/SonatypeRC';
 import { existsSync, readFileSync } from "fs";
 import { load } from 'js-yaml';
 import { PackageDependenciesHelper } from "../packages/PackageDependenciesHelper";
@@ -73,21 +73,21 @@ export class IqComponentModel implements ComponentModel {
     }
 
     private async checkRCFile(): Promise<void> {
-      const rcPath = join(PackageDependenciesHelper.getWorkspaceRoot(), ".iqserverrc");
+      const rcPath = join(PackageDependenciesHelper.getWorkspaceRoot(), ".sonatyperc");
       if (existsSync(rcPath)) {
-        const doc = load(readFileSync(rcPath, 'utf8')) as IQServerRC;
+        const doc = load(readFileSync(rcPath, 'utf8')) as SonatypeRC;
         
-        this.applicationPublicId = (doc.NEXUS_IQ_APPLICATION ? doc.NEXUS_IQ_APPLICATION : this.applicationPublicId);
-        this.requestService.setStage((doc.NEXUS_IQ_STAGE ? doc.NEXUS_IQ_STAGE : "develop"));
-        this.requestService.setURL((doc.NEXUS_IQ_URL ? doc.NEXUS_IQ_URL : this.url));
+        this.applicationPublicId = (doc.IQ.PUBLIC_APPLICATION ? doc.IQ.PUBLIC_APPLICATION : this.applicationPublicId);
+        this.requestService.setStage((doc.IQ.STAGE ? doc.IQ.STAGE : "develop"));
+        this.requestService.setURL((doc.IQ.URL ? doc.IQ.URL : this.url));
 
-        this.logger.log(LogLevel.INFO, "Updated settings based on .iqserverrc");
+        this.logger.log(LogLevel.INFO, "Updated settings based on .sonatyperc");
       }
     }
   
     private async performIqScan(): Promise<any> {
       
-      this.logger.log(LogLevel.DEBUG, "Checking for existence of .iqserverrc");
+      this.logger.log(LogLevel.DEBUG, "Checking for existence of .sonatyperc");
       await this.checkRCFile();
 
       return new Promise<void>((resolve, reject) => {
