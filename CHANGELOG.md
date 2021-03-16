@@ -1,3 +1,10 @@
+## [1.0.21](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.20...v1.0.21) (2021-03-15)
+
+
+### Bug Fixes
+
+* Pick up username or token from environment variables ([#187](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/187)) ([a2c4f84](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/a2c4f8470e4776a2c9d3591123fc4dc47aafeaee))
+
 ## [1.0.20](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.19...v1.0.20) (2021-02-12)
 
 

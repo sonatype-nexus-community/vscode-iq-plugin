@@ -2,7 +2,7 @@
   "name": "vscode-iq-plugin",
   "displayName": "Sonatype Nexus IQ Extension for VSCode",
   "description": "Sonatype Nexus IQ Extension for VSCode",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "author": {
     "name": "community-group"
   },
@@ -149,7 +149,7 @@
           "nexusIQ.applicationId": {
             "type": "string",
             "default": "sandbox-application",
-            "description": "Nexus IQ Application ID (overridden by .iqserverrc file)"
+            "description": "Nexus IQ Application ID (overridden by .sonatyperc file)"
           },
           "nexusIQ.maximumEvaluationPollAttempts": {
             "type": "number",
@@ -159,7 +159,7 @@
           "nexusIQ.serverUrl": {
             "type": "string",
             "default": "http://127.0.0.1:8070",
-            "description": "URL endpoint of Nexus IQ (overridden by .iqserverrc file)"
+            "description": "URL endpoint of Nexus IQ Server (overridden by .sonatyperc file)"
           },
           "nexusIQ.strictSSL": {
             "type": "boolean",
@@ -169,12 +169,12 @@
           "nexusIQ.username": {
             "type": "string",
             "default": "admin",
-            "description": "Your Nexus IQ user name"
+            "description": "Nexus IQ user name/token (overridden by $IQ_USERNAME from environment)"
           },
           "nexusIQ.userPassword": {
             "type": "string",
             "default": "admin123",
-            "description": "Your Nexus IQ password"
+            "description": "Nexus IQ password (default: $IQ_TOKEN from environment)"
           }
         }
       }

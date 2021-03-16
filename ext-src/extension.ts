@@ -13,10 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {url} from 'inspector';
 import * as vscode from 'vscode';
 import { NexusExplorer } from './NexusExplorer';
-import { NEXUS_EXPLORER_DATA_SOURCE, NEXUS_IQ_PUBLIC_APPLICATION_ID, NEXUS_IQ_SERVER_URL, NEXUS_IQ_USERNAME, NEXUS_IQ_USER_PASSWORD } from './utils/Config';
+import { 
+	NEXUS_EXPLORER_DATA_SOURCE, 
+	NEXUS_IQ_PUBLIC_APPLICATION_ID, 
+	NEXUS_IQ_SERVER_URL, 
+	NEXUS_IQ_USERNAME, 
+	NEXUS_IQ_USER_PASSWORD } from './utils/Config';
 
 export function activate(context: vscode.ExtensionContext) {
 
