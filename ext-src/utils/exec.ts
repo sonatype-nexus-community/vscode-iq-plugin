@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 import * as cp from 'child_process';
-import * as process from 'process';
 
 export function exec(command: string, options: cp.ExecOptions): Promise<{ stdout: string; stderr: string }> {
 	options.env = { ...process.env, ...options.env }
