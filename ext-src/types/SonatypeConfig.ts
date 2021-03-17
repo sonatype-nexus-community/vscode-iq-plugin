@@ -13,9 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ILogger } from "../utils/Logger";
-
-export interface PackageDependenciesOptions {
-    logger: ILogger
-    includeDev: boolean
+export interface SonatypeConfig {
+  iq: IQOptions | undefined
+  application: ApplicationOptions | undefined
 }
+
+export interface IQOptions {
+  PublicApplication: string | undefined
+  Stage: string | undefined
+  Server: string | undefined
+}
+
+export interface ApplicationOptions {
+  IncludeDev: boolean | undefined
+}
+
+const STAGE_ACCEPTABLE_VALUES = ["develop", "build", "release", "stage-release", "operate"];
+
+const SONATYPE_CONFIG_FILE_NAME = '.sonatype-config';
+
+const DEFAULT_STAGE_VALUE = 'develop';
+
+export { STAGE_ACCEPTABLE_VALUES, SONATYPE_CONFIG_FILE_NAME, DEFAULT_STAGE_VALUE };

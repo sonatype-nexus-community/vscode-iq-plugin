@@ -31,7 +31,7 @@ export class NpmDependencies implements PackageDependencies {
   public async packageForService(): Promise<Array<NpmPackage>> {
     try {
       const npmUtils = new NpmUtils();
-      const deps = await npmUtils.getDependencyArray();
+      const deps = await npmUtils.getDependencyArray(this.options.includeDev);
       return Promise.resolve(deps);
     }
     catch (e) {

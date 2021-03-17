@@ -26,6 +26,7 @@ import { PackageType } from "../packages/PackageType";
 import { CycloneDXSbomCreator } from "../cyclonedx/CycloneDXGenerator";
 import { ReportResponse } from "../services/ReportResponse";
 import { 
+  LoadSonatypeConfig,
   NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS, 
   NEXUS_IQ_PUBLIC_APPLICATION_ID, 
   NEXUS_IQ_SERVER_URL, 
@@ -37,6 +38,7 @@ import { existsSync, readFileSync } from "fs";
 import { load } from 'js-yaml';
 import { PackageDependenciesHelper } from "../packages/PackageDependenciesHelper";
 import { join } from "path";
+import { DEFAULT_STAGE_VALUE, SONATYPE_CONFIG_FILE_NAME } from "../types/SonatypeConfig";
 
 export class IqComponentModel implements ComponentModel {
     components = new Array<ComponentEntry>();
@@ -73,23 +75,20 @@ export class IqComponentModel implements ComponentModel {
     }
 
     private async checkRCFile(): Promise<void> {
-      const rcPath = join(PackageDependenciesHelper.getWorkspaceRoot(), ".sonatyperc");
-      if (existsSync(rcPath)) {
-        const doc = load(readFileSync(rcPath, 'utf8')) as SonatypeRC;
-        
-        if (doc.iq) {
-          this.applicationPublicId = (doc.iq.PublicApplication ? doc.iq.PublicApplication : this.applicationPublicId);
-          this.requestService.setStage((doc.iq.Stage ? doc.iq.Stage : "develop"));
-          this.requestService.setURL((doc.iq.Server ? doc.iq.Server : this.url));
+      const doc = LoadSonatypeConfig();
+      
+      if (doc && doc.iq) {
+        this.applicationPublicId = (doc.iq.PublicApplication ? doc.iq.PublicApplication : this.applicationPublicId);
+        this.requestService.setStage((doc.iq.Stage ? doc.iq.Stage : DEFAULT_STAGE_VALUE));
+        this.requestService.setURL((doc.iq.Server ? doc.iq.Server : this.url));
 
-          this.logger.log(LogLevel.INFO, "Updated settings based on .sonatyperc");
-        }
+        this.logger.log(LogLevel.INFO, `Updated settings based on ${SONATYPE_CONFIG_FILE_NAME}`);
       }
     }
   
     private async performIqScan(): Promise<any> {
       
-      this.logger.log(LogLevel.DEBUG, "Checking for existence of .sonatyperc");
+      this.logger.log(LogLevel.DEBUG, `Checking for existence of ${SONATYPE_CONFIG_FILE_NAME}`);
       await this.checkRCFile();
 
       return new Promise<void>((resolve, reject) => {

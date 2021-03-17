@@ -13,6 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { existsSync, readFileSync } from "fs";
+import { load } from "js-yaml";
+import { join } from "path";
+import { PackageDependenciesHelper } from "../packages/PackageDependenciesHelper";
+import { SonatypeConfig, SONATYPE_CONFIG_FILE_NAME } from "../types/SonatypeConfig";
+
 const NEXUS_EXPLORER_BASE = "nexusExplorer";
 const NEXUS_IQ_BASE = "nexusIQ";
 
@@ -24,6 +30,18 @@ const NEXUS_IQ_PUBLIC_APPLICATION_ID = NEXUS_IQ_BASE.concat(".", "applicationId"
 const NEXUS_IQ_USER_PASSWORD = NEXUS_IQ_BASE.concat(".", "userPassword");
 const NEXUS_IQ_STRICT_SSL = NEXUS_IQ_BASE.concat(".", "strictSSL");
 
+const LoadSonatypeConfig = (): SonatypeConfig | undefined => {
+    const rcPath = join(PackageDependenciesHelper.getWorkspaceRoot(), SONATYPE_CONFIG_FILE_NAME);
+    
+    if (existsSync(rcPath)) {
+      const doc = load(readFileSync(rcPath, 'utf8')) as SonatypeConfig;
+
+      return doc;
+    }
+
+    return undefined;
+};
+
 export {
     NEXUS_EXPLORER_DATA_SOURCE,
     NEXUS_IQ_SERVER_URL,
@@ -31,5 +49,6 @@ export {
     NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS,
     NEXUS_IQ_PUBLIC_APPLICATION_ID,
     NEXUS_IQ_USER_PASSWORD,
-    NEXUS_IQ_STRICT_SSL
+    NEXUS_IQ_STRICT_SSL,
+    LoadSonatypeConfig
 };

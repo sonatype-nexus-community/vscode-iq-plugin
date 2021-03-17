@@ -19,7 +19,7 @@ import { listInstalled } from 'list-installed';
 import { PackageJson } from 'type-fest';
 
 export class NpmUtils {
-  public async getDependencyArray(): Promise<Array<NpmPackage>> {
+  public async getDependencyArray(includeDev: boolean = true): Promise<Array<NpmPackage>> {
     try {
       let pkgs = await listInstalled(PackageDependenciesHelper.getWorkspaceRoot());
 
@@ -27,15 +27,18 @@ export class NpmUtils {
         return Promise.reject("No npm dependencies installed, make sure to install your dependencies");
       }
 
-      return Promise.resolve(this.parseListInstalled(pkgs));
+      return Promise.resolve(this.parseListInstalled(pkgs, includeDev));
     } catch (ex) {
       return Promise.reject(`Uh oh, spaghetti-o, something went wrong. Most likely you don't have your dependencies installed, so try running npm i or yarn and retrying! Exception message: ${ex}`);
     }
   }
 
-  private parseListInstalled(pkgs: Map<String, PackageJson>): Array<NpmPackage>{
+  private parseListInstalled(pkgs: Map<String, PackageJson>, includeDev: boolean = true): Array<NpmPackage>{
     let res: Array<NpmPackage> = new Array();
     for (let [name, packageJson] of pkgs.entries()) {
+      if (!includeDev && packageJson.hasOwnProperty("_development")) {
+        continue;
+      }
       if (packageJson.version && packageJson.name) {
         let parts = packageJson.name!.split("/");
         if (parts && parts.length > 1) {
