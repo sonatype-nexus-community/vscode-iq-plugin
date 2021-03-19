@@ -53,15 +53,15 @@ If you are a commercial Sonatype IQ user, switch the data source to `iqServer` a
 
 ### Preferred Commercial Settings
 
-It's preferable to set your environment variables for authentication, and use a `.sonatyperc` file for the rest.
+It's preferable to set your environment variables for authentication, and use a `.sonatype-config` file for the rest.
 
 The `IQ_USERNAME` and `IQ_TOKEN` environment variables will be used for authentication.  If your org uses a secrets manager these may already be set for you.
 
 If you are able to login to IQ but don't have tokens, you can create a [user/pass token pair](https://help.sonatype.com/iqserver/automating/rest-apis/user-token-rest-api---v2) and set those values to `IQ_USERNAME` and `IQ_TOKEN`.
 
-The rest of the configuration is handled in the `.sonatyperc` file.  Some of your projects may already have this file, in which case you can immediately run an evaluation.
+The rest of the configuration is handled in the `.sonatype-config` file.  Some of your projects may already have this file, in which case you can immediately run an evaluation.
 
-You can add a `.sonatyperc` file to the root of your project if it doesn't exist with the following format:
+You can add a `.sonatype-config` file to the root of your project if it doesn't exist with the following format:
 
 ```
 ---
