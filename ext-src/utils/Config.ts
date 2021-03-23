@@ -45,9 +45,9 @@ const LoadSonatypeConfig = (): SonatypeConfig | undefined => {
   */ 
   const sonatypeConfigPath = join(PackageDependenciesHelper.getWorkspaceRoot(), SONATYPE_CONFIG_FILE_NAME);
 
-  const sonatypeConfigWithYamlPath = join(PackageDependenciesHelper.getWorkspaceRoot(), SONATYPE_CONFIG_FILE_NAME, DOT_YAML_EXTENSION);
+  const sonatypeConfigWithYamlPath = join(PackageDependenciesHelper.getWorkspaceRoot(), SONATYPE_CONFIG_FILE_NAME + DOT_YAML_EXTENSION);
 
-  const sonatypeConfigWithYmlPath = join(PackageDependenciesHelper.getWorkspaceRoot(), SONATYPE_CONFIG_FILE_NAME, DOT_YML_EXTENSION);
+  const sonatypeConfigWithYmlPath = join(PackageDependenciesHelper.getWorkspaceRoot(), SONATYPE_CONFIG_FILE_NAME + DOT_YML_EXTENSION);
   
   if (existsSync(sonatypeConfigPath)) {
     const doc = load(readFileSync(sonatypeConfigPath, 'utf8')) as SonatypeConfig;
