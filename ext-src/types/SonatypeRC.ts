@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export interface ComponentCoordinate {
-    version: string,
-    namespace?: string,
-    name?: string,
-    packageId?: string,
-    artifactId?: string,
-    groupId?: string,
-    extension?: string
+export interface SonatypeRC {
+  iq: IQOptions
 }
+
+export interface IQOptions {
+  PublicApplication: string | undefined
+  Stage: string | undefined
+  Server: string | undefined
+}
+
+const STAGE_ACCEPTABLE_VALUES = ["develop", "build", "release", "stage-release", "operate"];
+
+export { STAGE_ACCEPTABLE_VALUES };

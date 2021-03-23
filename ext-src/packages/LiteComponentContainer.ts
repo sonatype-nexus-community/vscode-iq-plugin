@@ -26,24 +26,34 @@ import { PackageDependencies } from "./PackageDependencies";
 import { ILogger } from "../utils/Logger";
 import { ConanDependencies } from "./conan/ConanDependencies";
 import { GradleDependencies } from "./gradle/GradleDependencies";
+import { SonatypeConfig } from "../types/SonatypeConfig";
+import { LoadSonatypeConfig } from "../utils/Config";
 
 export class LiteComponentContainer {
   Possible: Array<PackageDependencies> = [];
   Valid: Array<PackageDependencies> = [];
 
   constructor(readonly logger: ILogger) {
+    const doc: SonatypeConfig | undefined = LoadSonatypeConfig();
+
+    let includeDev: boolean = true;
+
+    if (doc && doc.application && doc.application.IncludeDev !== undefined) {
+      includeDev = doc.application.IncludeDev;
+    }
+
     // To add a new format, you just need to push another implementation to this list
-    this.Possible.push(new RubyGemsDependencies({logger}));
-    this.Possible.push(new NpmDependencies({logger}));
-    this.Possible.push(new PyPIDependencies({logger}));
-    this.Possible.push(new GolangDependencies({logger}));
-    this.Possible.push(new MavenDependencies({logger}));
-    this.Possible.push(new RDependencies({logger}));
-    this.Possible.push(new PoetryDependencies({logger}));
-    this.Possible.push(new ComposerDependencies({logger}));
-    this.Possible.push(new CargoDependencies({logger}));
-    this.Possible.push(new ConanDependencies({logger}));
-    this.Possible.push(new GradleDependencies({logger}));
+    this.Possible.push(new RubyGemsDependencies({logger, includeDev}));
+    this.Possible.push(new NpmDependencies({logger, includeDev}));
+    this.Possible.push(new PyPIDependencies({logger, includeDev}));
+    this.Possible.push(new GolangDependencies({logger, includeDev}));
+    this.Possible.push(new MavenDependencies({logger, includeDev}));
+    this.Possible.push(new RDependencies({logger, includeDev}));
+    this.Possible.push(new PoetryDependencies({logger, includeDev}));
+    this.Possible.push(new ComposerDependencies({logger, includeDev}));
+    this.Possible.push(new CargoDependencies({logger, includeDev}));
+    this.Possible.push(new ConanDependencies({logger, includeDev}));
+    this.Possible.push(new GradleDependencies({logger, includeDev}));
 
     this.Possible.forEach(i => {
       if(i.checkIfValid()) {

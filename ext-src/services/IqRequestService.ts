@@ -17,7 +17,7 @@ import fetch from 'node-fetch';
 import { Headers } from 'node-fetch';
 import { RequestService } from "./RequestService";
 import { RequestHelpers } from "./RequestHelpers";
-import { Agent as HttpsAgent, RequestOptions }  from "https";
+import { Agent as HttpsAgent }  from "https";
 import { Agent } from 'http';
 import { ILogger, LogLevel } from '../utils/Logger';
 import { ThirdPartyAPIResponse } from './ThirdPartyApiResponse';
@@ -28,11 +28,13 @@ import { VulnerabilityResponse } from './VulnerabilityResponse';
 import { RemediationResponse } from './RemediationResponse';
 import { ApplicationResponse } from './ApplicationReponse';
 import { RefreshOptions } from '../NexusExplorer';
+import { STAGE_ACCEPTABLE_VALUES } from '../types/SonatypeRC';
 
 export class IqRequestService implements RequestService {
   readonly evaluationPollDelayMs = 2000;
   private agent: Agent = this.getAgent(false, false);
   applicationId: string = "";
+  stage: string = "develop";
 
   constructor(
     private url: string,
@@ -43,14 +45,14 @@ export class IqRequestService implements RequestService {
     readonly logger: ILogger
   ) 
   {
-    this.setUrl(url);
+    this.setURL(url);
 
     this.logger.log(LogLevel.INFO, `Created new IQ Request Service at: `, url);
   }
 
   public setOptions(options: RefreshOptions) {
     if (options.url) {
-      this.setUrl((process.env.IQ_SERVER ? process.env.IQ_SERVER : options.url));
+      this.setURL((process.env.IQ_SERVER ? process.env.IQ_SERVER : options.url));
     }
     if (options.username) {
       this.user = (process.env.IQ_USERNAME ? process.env.IQ_USERNAME : options.username);
@@ -60,7 +62,7 @@ export class IqRequestService implements RequestService {
     }
   }
 
-  private setUrl(url: string) {
+  public setURL(url: string) {
     this.logger.log(LogLevel.TRACE, `Setting IQ url to: `, this.url);
 
     this.url = url.replace(/\/$/, "");
@@ -88,6 +90,12 @@ export class IqRequestService implements RequestService {
 
   public getApplicationInternalId(): string {
     return this.applicationId;
+  }
+
+  public setStage(stage: string | undefined) {
+    if (stage && STAGE_ACCEPTABLE_VALUES.includes(stage)) {
+      this.stage = stage;
+    }
   }
 
   public getApplicationId(applicationPublicId: string): Promise<string> {
@@ -145,7 +153,7 @@ export class IqRequestService implements RequestService {
     sbom: string,
     applicationInternalId: string
   ): Promise<string> {
-    let url: string = `${this.url}/api/v2/scan/applications/${applicationInternalId}/sources/vscode-iq-extension?stageId=develop`
+    let url: string = `${this.url}/api/v2/scan/applications/${applicationInternalId}/sources/vscode-iq-extension?stageId=${this.stage}`
 
     return new Promise((resolve, reject) => {
       fetch(
@@ -289,7 +297,7 @@ export class IqRequestService implements RequestService {
     return new Promise((resolve, reject) => {
       const request = { packageUrl: purl };
 
-      let url = `${this.url}/api/v2/components/remediation/application/${this.applicationId}?stageId=develop`;
+      let url = `${this.url}/api/v2/components/remediation/application/${this.applicationId}?stageId=${this.stage}`;
 
       fetch(
         url, 

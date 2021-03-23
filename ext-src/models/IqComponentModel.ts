@@ -26,12 +26,19 @@ import { PackageType } from "../packages/PackageType";
 import { CycloneDXSbomCreator } from "../cyclonedx/CycloneDXGenerator";
 import { ReportResponse } from "../services/ReportResponse";
 import { 
+  LoadSonatypeConfig,
   NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS, 
   NEXUS_IQ_PUBLIC_APPLICATION_ID, 
   NEXUS_IQ_SERVER_URL, 
   NEXUS_IQ_STRICT_SSL, 
   NEXUS_IQ_USERNAME, 
   NEXUS_IQ_USER_PASSWORD } from "../utils/Config";
+import { SonatypeRC } from '../types/SonatypeRC';
+import { existsSync, readFileSync } from "fs";
+import { load } from 'js-yaml';
+import { PackageDependenciesHelper } from "../packages/PackageDependenciesHelper";
+import { join } from "path";
+import { DEFAULT_STAGE_VALUE, SONATYPE_CONFIG_FILE_NAME } from "../types/SonatypeConfig";
 
 export class IqComponentModel implements ComponentModel {
     components = new Array<ComponentEntry>();
@@ -66,8 +73,24 @@ export class IqComponentModel implements ComponentModel {
       this.logger.log(LogLevel.DEBUG, "Starting IQ Evaluation of Components");
       return this.performIqScan();
     }
+
+    private async checkRCFile(): Promise<void> {
+      const doc = LoadSonatypeConfig();
+      
+      if (doc && doc.iq) {
+        this.applicationPublicId = (doc.iq.PublicApplication ? doc.iq.PublicApplication : this.applicationPublicId);
+        this.requestService.setStage((doc.iq.Stage ? doc.iq.Stage : DEFAULT_STAGE_VALUE));
+        this.requestService.setURL((doc.iq.Server ? doc.iq.Server : this.url));
+
+        this.logger.log(LogLevel.INFO, `Updated settings based on ${SONATYPE_CONFIG_FILE_NAME}`);
+      }
+    }
   
     private async performIqScan(): Promise<any> {
+      
+      this.logger.log(LogLevel.DEBUG, `Checking for existence of ${SONATYPE_CONFIG_FILE_NAME}`);
+      await this.checkRCFile();
+
       return new Promise<void>((resolve, reject) => {
         try {
           let componentContainer = new ComponentContainer(this.logger);

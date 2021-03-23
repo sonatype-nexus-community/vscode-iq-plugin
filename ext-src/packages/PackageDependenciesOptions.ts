@@ -17,4 +17,5 @@ import { ILogger } from "../utils/Logger";
 
 export interface PackageDependenciesOptions {
     logger: ILogger
+    includeDev: boolean
 }
