@@ -17,7 +17,7 @@ import { existsSync, readFileSync } from "fs";
 import { load } from "js-yaml";
 import { join } from "path";
 import { PackageDependenciesHelper } from "../packages/PackageDependenciesHelper";
-import { SonatypeConfig, SONATYPE_CONFIG_FILE_NAME } from "../types/SonatypeConfig";
+import { DOT_YAML_EXTENSION, SonatypeConfig, SONATYPE_CONFIG_FILE_NAME } from "../types/SonatypeConfig";
 
 const NEXUS_EXPLORER_BASE = "nexusExplorer";
 const NEXUS_IQ_BASE = "nexusIQ";
@@ -30,11 +30,27 @@ const NEXUS_IQ_PUBLIC_APPLICATION_ID = NEXUS_IQ_BASE.concat(".", "applicationId"
 const NEXUS_IQ_USER_PASSWORD = NEXUS_IQ_BASE.concat(".", "userPassword");
 const NEXUS_IQ_STRICT_SSL = NEXUS_IQ_BASE.concat(".", "strictSSL");
 
+
+/**
+ * LoadSonatypeConfig will look for the existence of `.sonatype-config` or
+ * `.sonatype-config.yaml`, attempt to load it into a SonatypeConfig interface
+ * and return it. If nothing is found, it returns undefined.
+ * 
+ * @returns SonatypeConfig or undefined if no config found
+ */
 const LoadSonatypeConfig = (): SonatypeConfig | undefined => {
-    const rcPath = join(PackageDependenciesHelper.getWorkspaceRoot(), SONATYPE_CONFIG_FILE_NAME);
+    const sonatypeConfigPath = join(PackageDependenciesHelper.getWorkspaceRoot(), SONATYPE_CONFIG_FILE_NAME);
+
+    const sonatypeConfigWithYamlPath = join(PackageDependenciesHelper.getWorkspaceRoot(), SONATYPE_CONFIG_FILE_NAME, DOT_YAML_EXTENSION);
     
-    if (existsSync(rcPath)) {
-      const doc = load(readFileSync(rcPath, 'utf8')) as SonatypeConfig;
+    if (existsSync(sonatypeConfigPath)) {
+      const doc = load(readFileSync(sonatypeConfigPath, 'utf8')) as SonatypeConfig;
+
+      return doc;
+    }
+
+    if (existsSync(sonatypeConfigWithYamlPath)) {
+      const doc = load(readFileSync(sonatypeConfigWithYamlPath, 'utf8')) as SonatypeConfig;
 
       return doc;
     }
