@@ -1,3 +1,10 @@
+## [1.0.22](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.21...v1.0.22) (2021-03-23)
+
+
+### Bug Fixes
+
+* Get application specific config from a .sonatype-config file ([#188](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/188)) ([f9c7079](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/f9c7079235967e4e0ae6fc05c0837aba80892a9b))
+
 ## [1.0.21](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.20...v1.0.21) (2021-03-15)
 
 
