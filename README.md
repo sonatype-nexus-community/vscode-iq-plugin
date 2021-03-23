@@ -61,7 +61,7 @@ If you are able to login to IQ but don't have tokens, you can create a [user/pas
 
 The rest of the configuration is handled in the `.sonatype-config` file.  Some of your projects may already have this file, in which case you can immediately run an evaluation.
 
-You can add a `.sonatype-config` file to the root of your project if it doesn't exist with the following format:
+You can add a `.sonatype-config` (`.sonatype-config.yaml` is also valid) file to the root of your project if it doesn't exist with the following format:
 
 ```
 ---
