@@ -1,3 +1,10 @@
+## [1.0.23](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.22...v1.0.23) (2021-03-24)
+
+
+### Bug Fixes
+
+* Merge Process Environment on Exec Calls ([#192](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/192)) ([7eaa72f](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/7eaa72f622c524df32ed6de5b6b84775a967db51))
+
 ## [1.0.22](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.21...v1.0.22) (2021-03-23)
 
 
