@@ -104,6 +104,8 @@ To switch to excluding dev dependencies, create a `.sonatype-config` file in you
         IncludeDev: false
 ```
 
+The extension will do it's best to exclude dev dependencies based on the indicated formats above, by checking this true/false value.
+
 ## Themes
 
 The extension supports color theme changes dynamically.
