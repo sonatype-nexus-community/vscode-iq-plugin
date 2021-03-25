@@ -19,6 +19,7 @@ import { listInstalled } from 'list-installed';
 import { PackageJson } from 'type-fest';
 
 export class NpmUtils {
+
   public async getDependencyArray(includeDev: boolean = true): Promise<Array<NpmPackage>> {
     try {
       let pkgs = await listInstalled(PackageDependenciesHelper.getWorkspaceRoot());

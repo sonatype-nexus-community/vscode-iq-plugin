@@ -19,11 +19,14 @@ import { MavenPackage } from "../maven/MavenPackage";
 
 export class GradleUtils {
 
-  public async getDependencyArray(): Promise<any> {
+  public async getDependencyArray(includeDev: boolean = true): Promise<any> {
 
     let gradleCommand;
     try {
-      gradleCommand = `gradle dependencies --configuration runtimeClasspath`;
+      gradleCommand = `gradle dependencies`;
+      if (!includeDev) { 
+        gradleCommand += ` --configuration runtimeClasspath`;
+      }
 
       let { stdout, stderr } = await exec(gradleCommand, {
         cwd: PackageDependenciesHelper.getWorkspaceRoot(),
@@ -40,7 +43,7 @@ export class GradleUtils {
         );
       }
 
-      return Promise.resolve(this.parseGradleDependencyTree(stdout));
+      return Promise.resolve(this.parseGradleDependencyTree(stdout, includeDev));
     } catch (e) {
       return Promise.reject(
         "gradle command failed, try running it manually to see what went wrong:" +
@@ -51,7 +54,8 @@ export class GradleUtils {
     }
   }
 
-  private parseGradleDependencyTree(output: string): Array<MavenPackage> {
+  private parseGradleDependencyTree(output: string, includeDev: boolean): Array<MavenPackage> {
+    const configuration: string = (includeDev) ? 'testRuntimeClasspath' : 'runtimeClasspath';
 
     let dependencyList: MavenPackage[] = [];
 
@@ -59,7 +63,7 @@ export class GradleUtils {
     const regexReplace: RegExp = /[| ]*[\\+]*[---]{3}/;
     const dependencyLines = output.split("\n");
     dependencyLines.forEach((dep) => {
-      if (dep.includes('runtimeClasspath')) {
+      if (dep.includes(configuration)) {
         start = true;
         return;
       }

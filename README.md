@@ -100,9 +100,9 @@ To switch to excluding dev dependencies, create a `.sonatype-config` file in you
 ```yml
 ---
     application:
+        # true or false!
         IncludeDev: false
 ```
-
 
 ## Themes
 
