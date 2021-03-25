@@ -49,7 +49,7 @@ export class MavenDependencies implements PackageDependencies {
   public async packageForService(): Promise<Array<MavenPackage>> {
     try {
       const mavenUtils = new MavenUtils();
-      const deps = await mavenUtils.getDependencyArray();
+      const deps = await mavenUtils.getDependencyArray(this.options.includeDev);
       return Promise.resolve(deps);
     }
     catch (e) {
