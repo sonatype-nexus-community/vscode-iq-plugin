@@ -187,7 +187,7 @@
             "default": "admin",
             "description": "OSSIndex user name (overridden by $OSSI_USERNAME from environment)"
           },
-          "ossindex.password": {
+          "ossindex.userPassword": {
             "type": "string",
             "default": "admin123",
             "description": "OSSIndex password (default: $OSSI_TOKEN from environment)"
