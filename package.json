@@ -185,12 +185,12 @@
           "ossindex.username": {
             "type": "string",
             "default": "admin",
-            "description": "OSSIndex user name (overridden by $OSS_USERNAME from environment)"
+            "description": "OSSIndex user name (overridden by $OSSI_USERNAME from environment)"
           },
           "ossindex.Password": {
             "type": "string",
             "default": "admin123",
-            "description": "OSSIndex password (default: $OSS_TOKEN from environment)"
+            "description": "OSSIndex password (default: $OSSI_TOKEN from environment)"
           }
         }
       }
