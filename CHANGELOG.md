@@ -1,3 +1,10 @@
+## [1.0.24](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.23...v1.0.24) (2021-03-26)
+
+
+### Bug Fixes
+
+* Ensure url is set if loaded from config ([#196](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/196)) ([e1f1dcf](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/e1f1dcf0acbe5e0df91028aea8c35ac88579fb6f))
+
 ## [1.0.23](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.22...v1.0.23) (2021-03-24)
 
 
