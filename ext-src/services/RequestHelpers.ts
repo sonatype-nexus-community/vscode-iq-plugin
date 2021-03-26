@@ -26,6 +26,10 @@ export class RequestHelpers {
     return { 'User-Agent': `Nexus_IQ_Visual_Studio_Code/${this.getExtensionVersion()} (${environment} ${environmentVersion}; ${system}; VSCode: ${version})` };
   }
 
+  public static getBasicAuth(user: string, pass: string): string {
+    return `Basic ${Buffer.from(`${user}:${pass}`).toString('base64')}`;
+  }
+  
   private static getExtensionVersion() {
     let extension = extensions.getExtension('SonatypeCommunity.vscode-iq-plugin');
     if (extension != undefined) {
