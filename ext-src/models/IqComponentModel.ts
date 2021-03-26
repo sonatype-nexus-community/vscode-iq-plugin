@@ -81,6 +81,8 @@ export class IqComponentModel implements ComponentModel {
         this.applicationPublicId = (doc.iq.PublicApplication ? doc.iq.PublicApplication : this.applicationPublicId);
         this.requestService.setStage((doc.iq.Stage ? doc.iq.Stage : DEFAULT_STAGE_VALUE));
         this.requestService.setURL((doc.iq.Server ? doc.iq.Server : this.url));
+        
+        this.url = (doc.iq.Server ? doc.iq.Server : this.url);
 
         this.logger.log(LogLevel.INFO, `Updated settings based on ${SONATYPE_CONFIG_FILE_NAME}`);
       }

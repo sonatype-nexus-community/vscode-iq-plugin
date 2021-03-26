@@ -149,7 +149,7 @@
           "nexusIQ.applicationId": {
             "type": "string",
             "default": "sandbox-application",
-            "description": "Nexus IQ Application ID (overridden by .sonatyperc file)"
+            "description": "Nexus IQ Application ID (overridden by .sonatype-config file)"
           },
           "nexusIQ.maximumEvaluationPollAttempts": {
             "type": "number",
@@ -159,7 +159,7 @@
           "nexusIQ.serverUrl": {
             "type": "string",
             "default": "http://127.0.0.1:8070",
-            "description": "URL endpoint of Nexus IQ Server (overridden by .sonatyperc file)"
+            "description": "URL endpoint of Nexus IQ Server (overridden by .sonatype-config file)"
           },
           "nexusIQ.strictSSL": {
             "type": "boolean",
