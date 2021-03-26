@@ -34,8 +34,8 @@ export class OssIndexComponentModel implements ComponentModel {
   constructor(
     options: ComponentModelOptions
   ) {
-    let username = options.configuration.get("ossindex.username") + "";
-    let password = options.configuration.get("ossindex.password") + "";
+    let username = process.env.OSS_USERNAME ? process.env.OSS_USERNAME : options.configuration.get("ossindex.username") + "";
+    let password = process.env.OSS_PASSWORD ? process.env.OSS_PASSWORD : options.configuration.get("ossindex.password") + "";
     this.logger = options.logger;
     this.requestService = new OssIndexRequestService(username, password, options.logger);
   }
