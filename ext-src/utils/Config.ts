@@ -33,7 +33,7 @@ const NEXUS_IQ_STRICT_SSL = NEXUS_IQ_BASE.concat(".", "strictSSL");
 const OSS_INDEX_BASE = "ossindex";
 
 const OSS_INDEX_USERNAME = OSS_INDEX_BASE.concat(".", "username");
-const OSS_INDEX_TOKEN = OSS_INDEX_BASE.concat(".", "userPassword");
+const OSS_INDEX_TOKEN = OSS_INDEX_BASE.concat(".", "userToken");
 
 
 /**
