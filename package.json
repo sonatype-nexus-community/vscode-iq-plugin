@@ -177,7 +177,24 @@
             "description": "Nexus IQ password (default: $IQ_TOKEN from environment)"
           }
         }
+      },
+      {
+        "type": "object",
+        "title": "Sonatype OSSIndex configuration",
+        "properties": {
+          "ossindex.username": {
+            "type": "string",
+            "default": "admin",
+            "description": "OSSIndex user name (overridden by $OSS_USERNAME from environment)"
+          },
+          "ossindex.Password": {
+            "type": "string",
+            "default": "admin123",
+            "description": "OSSIndex password (default: $OSS_TOKEN from environment)"
+          }
+        }
       }
+
     ]
   },
   "scripts": {
