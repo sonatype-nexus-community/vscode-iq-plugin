@@ -182,14 +182,14 @@
         "type": "object",
         "title": "Sonatype OSSIndex configuration",
         "properties": {
-          "ossindex.username": {
+          "ossi.Username": {
             "type": "string",
-            "default": "admin",
+            "default": "",
             "description": "OSSIndex user name (overridden by $OSSI_USERNAME from environment)"
           },
-          "ossindex.userToken": {
+          "ossi.Token": {
             "type": "string",
-            "default": "admin123",
+            "default": "",
             "description": "OSSIndex password (default: $OSSI_TOKEN from environment)"
           }
         }

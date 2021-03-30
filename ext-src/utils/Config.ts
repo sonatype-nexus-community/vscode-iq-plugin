@@ -30,10 +30,10 @@ const NEXUS_IQ_PUBLIC_APPLICATION_ID = NEXUS_IQ_BASE.concat(".", "applicationId"
 const NEXUS_IQ_USER_PASSWORD = NEXUS_IQ_BASE.concat(".", "userPassword");
 const NEXUS_IQ_STRICT_SSL = NEXUS_IQ_BASE.concat(".", "strictSSL");
 
-const OSS_INDEX_BASE = "ossindex";
+const OSS_INDEX_BASE = "ossi";
 
-const OSS_INDEX_USERNAME = OSS_INDEX_BASE.concat(".", "username");
-const OSS_INDEX_TOKEN = OSS_INDEX_BASE.concat(".", "userToken");
+const OSS_INDEX_USERNAME = OSS_INDEX_BASE.concat(".", "Username");
+const OSS_INDEX_TOKEN = OSS_INDEX_BASE.concat(".", "Token");
 
 
 /**
