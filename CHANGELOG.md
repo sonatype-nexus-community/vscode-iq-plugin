@@ -1,3 +1,10 @@
+## [1.0.25](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.24...v1.0.25) (2021-03-31)
+
+
+### Bug Fixes
+
+* OSS Index environment variables ([#197](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/197)) ([c9e4c3e](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/c9e4c3e9dff8032fe91ba6c13fde40b57ff45e8e))
+
 ## [1.0.24](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.23...v1.0.24) (2021-03-26)
 
 
