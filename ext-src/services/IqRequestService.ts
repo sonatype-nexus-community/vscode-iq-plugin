@@ -524,13 +524,9 @@ export class IqRequestService implements RequestService {
     const meta = RequestHelpers.getUserAgentHeader();
 
     const headers = new Headers(meta);
-    headers.append('Authorization', this.getBasicAuth());
+    headers.append('Authorization', RequestHelpers.getBasicAuth(this.user, this.password));
 
     return headers;
-  }
-
-  private getBasicAuth(): string {
-    return `Basic ${Buffer.from(`${this.user}:${this.password}`).toString('base64')}`;
   }
 
   private getAgent(strictSSL: boolean, isHttps: boolean): Agent {

@@ -24,6 +24,7 @@ import { ComponentEntry } from "./ComponentEntry";
 import { PackageURL } from 'packageurl-js';
 import { ComponentModelOptions } from "./ComponentModelOptions";
 import { ILogger, LogLevel } from "../utils/Logger";
+import { OSS_INDEX_USERNAME, OSS_INDEX_TOKEN} from "../utils/Config";
 
 export class OssIndexComponentModel implements ComponentModel {
   components = new Array<ComponentEntry>();
@@ -34,8 +35,8 @@ export class OssIndexComponentModel implements ComponentModel {
   constructor(
     options: ComponentModelOptions
   ) {
-    let username = options.configuration.get("ossindex.username") + "";
-    let password = options.configuration.get("ossindex.password") + "";
+    const username = (process.env.OSSI_USERNAME ? process.env.OSSI_USERNAME : options.configuration.get(OSS_INDEX_USERNAME) as string);
+    const password = (process.env.OSSI_TOKEN ? process.env.OSSI_TOKEN : options.configuration.get(OSS_INDEX_TOKEN) as string);
     this.logger = options.logger;
     this.requestService = new OssIndexRequestService(username, password, options.logger);
   }

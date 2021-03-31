@@ -66,9 +66,16 @@ export class OssIndexRequestService implements LiteRequestService {
     })
   }
 
+  
+
   private async callOssIndex(purls: String[]): Promise<any> {
     const headers = new Headers(RequestHelpers.getUserAgentHeader());
     headers.append('Content-Type', 'application/json');
+
+    if (this.username != "" && this.password != "") {
+      headers.append('Authorization', RequestHelpers.getBasicAuth(this.username, this.password));
+    }
+    
     this.logger.log(LogLevel.TRACE, "Got User Agent");
 
     return new Promise((resolve, reject) => {
