@@ -21,7 +21,7 @@ import { join } from 'path';
 import { PackageDependenciesHelper } from '../PackageDependenciesHelper';
 
 export class PoetryUtils {
-  public async getDependencyArray(): Promise<Array<PyPIPackage>> {
+  public async getDependencyArray(includeDev: boolean = true): Promise<Array<PyPIPackage>> {
     try {
         const toml = readFileSync(join(PackageDependenciesHelper.getWorkspaceRoot(), "poetry.lock"));
         const poetry: Poetry = parse(toml.toString());
@@ -30,6 +30,9 @@ export class PoetryUtils {
           let res: Array<PyPIPackage> = new Array();
 
           poetry.package.forEach(pkg => {
+            if (!includeDev && pkg.category === "dev") {
+              return;
+            }
             res.push(new PyPIPackage(pkg.name, pkg.version, "tar.gz", ""));
           });
 

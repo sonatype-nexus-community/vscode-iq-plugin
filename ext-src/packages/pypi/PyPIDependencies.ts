@@ -23,7 +23,7 @@ import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
 
 export class PyPIDependencies implements PackageDependencies {
 
-  constructor(private options: PackageDependenciesOptions) {}
+  constructor(readonly options: PackageDependenciesOptions) {}
 
   public checkIfValid(): boolean {
     return PackageDependenciesHelper.doesPathExist(PackageDependenciesHelper.getWorkspaceRoot(), "requirements.txt");

@@ -53,7 +53,7 @@ export class PoetryDependencies extends PyPIDependencies implements PackageDepen
   public async packageForService(): Promise<Array<PyPIPackage>> {
     try {
       const poetryUtils = new PoetryUtils();
-      const deps = await poetryUtils.getDependencyArray();
+      const deps = await poetryUtils.getDependencyArray(this.options.includeDev);
       return Promise.resolve(deps);
     }
     catch (e) {

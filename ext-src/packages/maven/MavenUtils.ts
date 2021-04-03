@@ -23,7 +23,7 @@ import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { MavenPackage } from "./MavenPackage";
 
 export class MavenUtils {
-  public async getDependencyArray(): Promise<any> {
+  public async getDependencyArray(includeDev: boolean = true): Promise<any> {
     let mvnCommand;
     try {
       const pomFile = path.join(PackageDependenciesHelper.getWorkspaceRoot(), "pom.xml");
@@ -54,7 +54,7 @@ export class MavenUtils {
 
       temp.cleanupSync();
 
-      return Promise.resolve(this.parseMavenDependencyTree(dependencyTree));
+      return Promise.resolve(this.parseMavenDependencyTree(dependencyTree, includeDev));
     } catch (e) {
       return Promise.reject(
         "mvn dependency:tree failed, try running it manually to see what went wrong:" +
@@ -65,7 +65,7 @@ export class MavenUtils {
     }
   }
 
-  private parseMavenDependencyTree(dependencyTree: string): Array<MavenPackage> {
+  private parseMavenDependencyTree(dependencyTree: string, includeDev: boolean): Array<MavenPackage> {
     // For example output, see: https://maven.apache.org/plugins/maven-dependency-plugin/examples/resolving-conflicts-using-the-dependency-tree.html
     const dependencies: string = dependencyTree.replace(
       /[\| ]*[\\+][\\-]/g,
@@ -93,27 +93,32 @@ export class MavenUtils {
           const version: string = dependencyParts[3];
           const scope: string = dependencyParts[4];
 
-          if ("test" != scope) {
-            if (artifact && extension && version) {
-              const dependencyObject: MavenPackage = new MavenPackage(
-                artifact,
-                group,
-                version,
-                extension
-              );
-              if (!dependencyListString.has(dependencyObject.toPurl()))
-              {
-                dependencyListString.add(dependencyObject.toPurl())
-                dependencyList.push(dependencyObject);
-              }
-            } else {
-              console.warn(
-                "Skipping dependency: " +
-                  dep +
-                  " due to missing data (artifact, version, and/or extension)"
-              );
+          
+          if (artifact && extension && version) {
+            if (!includeDev && scope === "test") {
+              return;
             }
+
+            const dependencyObject: MavenPackage = new MavenPackage(
+              artifact,
+              group,
+              version,
+              extension
+            );
+            
+            if (!dependencyListString.has(dependencyObject.toPurl()))
+            {
+              dependencyListString.add(dependencyObject.toPurl())
+              dependencyList.push(dependencyObject);
+            }
+          } else {
+            console.warn(
+              "Skipping dependency: " +
+                dep +
+                " due to missing data (artifact, version, and/or extension)"
+            );
           }
+          
         }
       }
     });
