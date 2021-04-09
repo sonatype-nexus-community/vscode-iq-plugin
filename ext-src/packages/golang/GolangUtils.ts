@@ -94,8 +94,6 @@ export class GolangUtils {
             const pkg = new GolangPackage(dep.Path, version);
 
             golangPackages.push(pkg);
-  
-            console.log("added", dep);
           }
         })
         .on('error', (err) => {
