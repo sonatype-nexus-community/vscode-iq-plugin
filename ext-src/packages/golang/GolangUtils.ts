@@ -17,6 +17,9 @@ import { exec } from "../../utils/exec";
 import { join } from 'path';
 import { readFileSync } from 'fs';
 import { parse } from 'toml';
+import parser from 'stream-json';
+import {Readable} from 'stream';
+import { streamValues } from 'stream-json/streamers/StreamValues';
 
 import { GolangPackage } from "./GolangPackage";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
@@ -26,18 +29,21 @@ export class GolangUtils {
   public async getDependencyArray(scanType: string): Promise<Array<GolangPackage>> {
     try {
       if (scanType === GO_MOD_SUM) {
-        // TODO: When running this command, Golang is now using the workspace root to establish a GOCACHE, we should use some other temporary area or try and suss out the real one
-        let { stdout, stderr } = await exec(`go list -m all`, {
+
+        // TODO: When running this command, Golang is now using the workspace root to establish a GOCACHE, 
+        // we should use some other temporary area or try and suss out the real one
+        let { stdout, stderr } = await exec(`go list -m -json all`, {
           cwd: PackageDependenciesHelper.getWorkspaceRoot(),
           env: {
-            "NODE_ENV": "production",
             "PATH": process.env["PATH"],
             "HOME": this.getGoCacheDirectory()
           }
         });
 
         if (stdout != "" && stderr === "") {
-          return Promise.resolve(this.parseGolangDependencies(stdout));
+          const golangDeps = await this.parseGoModDependencies(Readable.from(stdout));
+
+          return Promise.resolve(golangDeps);
         } else {
           return Promise.reject(
             new Error(
@@ -46,12 +52,11 @@ export class GolangUtils {
           );
         }
       }
+
       if (scanType === DEP_LOCK) {
         let goPkgLockPath: string = join(PackageDependenciesHelper.getWorkspaceRoot(), DEP_LOCK);
         let goPkgContents: string = readFileSync(goPkgLockPath, "utf8");
         let depList: any = parse(goPkgContents);
-
-        console.log(depList);
 
         return Promise.resolve(this.parseGolangDepDependencies(depList.projects));
       } else {
@@ -70,6 +75,38 @@ export class GolangUtils {
     return "/tmp/gocache/";
   }
 
+  private parseGoModDependencies(readable: Readable): Promise<Array<GolangPackage>> {
+    return new Promise((resolve, reject) => {
+      let golangPackages = new Array<GolangPackage>();
+  
+      readable
+        .pipe(parser({jsonStreaming: true}))
+        .pipe(streamValues())
+        .on('data', ({key, value}) => {
+          const dep = value as GoModDependency;
+
+          let version = dep.Version;
+          if (dep.Replace) {
+            version = dep.Replace.Version;
+          }
+
+          if (version) {
+            const pkg = new GolangPackage(dep.Path, version);
+
+            golangPackages.push(pkg);
+  
+            console.log("added", dep);
+          }
+        })
+        .on('error', (err) => {
+          reject(err);
+        })
+        .on('end', () => {
+          resolve(golangPackages);
+        });
+    });
+  }
+
   private parseGolangDepDependencies(projectList: [any]): Array<GolangPackage> {
     let dependencyList: GolangPackage[] = [];
 
@@ -81,24 +118,23 @@ export class GolangUtils {
 
     return dependencyList;
   }
+}
 
-  private parseGolangDependencies(dependencyTree: string): Array<GolangPackage> {
-    let dependencyList: GolangPackage[] = [];
+export interface GoModDependency {
+  Path:      string;
+  Version?:   string;
+  Replace?:   Replace;
+  Indirect:  boolean;
+  Dir:       string;
+  GoMod:     string;
+  GoVersion: string;
+}
 
-    const dependencyLines = dependencyTree.split("\n");
-
-    dependencyLines.forEach((dep, index) => {
-      if (index > 0 && dep != "") {
-        const dependencyParts: string[] = dep.trim().split(" ");
-        const fullName: string = dependencyParts[0];
-        const version: string = dependencyParts[1];
-        dependencyList.push(
-          new GolangPackage(
-            fullName, 
-            version));
-      }
-    });
-
-    return dependencyList;
-  }
+export interface Replace {
+  Path:      string;
+  Version:   string;
+  Time:      Date;
+  Dir:       string;
+  GoMod:     string;
+  GoVersion: string;
 }
