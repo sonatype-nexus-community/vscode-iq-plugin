@@ -18,7 +18,7 @@ import { join } from 'path';
 import { readFileSync } from 'fs';
 import { parse } from 'toml';
 import parser from 'stream-json';
-import {Readable} from 'stream';
+import { Readable } from 'stream';
 import { streamValues } from 'stream-json/streamers/StreamValues';
 
 import { GolangPackage } from "./GolangPackage";
