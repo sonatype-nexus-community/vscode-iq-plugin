@@ -29,7 +29,9 @@ export class GradleUtils {
     let gradleCommand: string = "";
 
     try {
-      if (commandExists.sync(this.GRADLE)) {
+      const gradleExists = commandExists.sync(this.GRADLE);
+
+      if (gradleExists) {
         gradleCommandBaseCommand = this.GRADLE;
       } else {
         gradleCommandBaseCommand = (process.platform === 'win32') ? this.GRADLEW_BAT : this.GRADLEW;

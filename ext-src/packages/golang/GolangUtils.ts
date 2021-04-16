@@ -82,7 +82,7 @@ export class GolangUtils {
       readable
         .pipe(parser({jsonStreaming: true}))
         .pipe(streamValues())
-        .on('data', ({key, value}) => {
+        .on('data', ({key, value}: any) => {
           const dep = value as GoModDependency;
 
           let version = dep.Version;
@@ -96,7 +96,7 @@ export class GolangUtils {
             golangPackages.push(pkg);
           }
         })
-        .on('error', (err) => {
+        .on('error', (err: any) => {
           reject(err);
         })
         .on('end', () => {
