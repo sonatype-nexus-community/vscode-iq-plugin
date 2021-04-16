@@ -1,3 +1,10 @@
+## [1.0.26](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.25...v1.0.26) (2021-04-16)
+
+
+### Bug Fixes
+
+* Try out using the Gradle Wrapper ([#201](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/201)) ([de4cf33](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/de4cf338de4defb8e98e71ebcbf76689fc3b113d))
+
 ## [1.0.25](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.24...v1.0.25) (2021-03-31)
 
 
