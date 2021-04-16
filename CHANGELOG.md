@@ -1,3 +1,10 @@
+## [1.0.28](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.27...v1.0.28) (2021-04-16)
+
+
+### Bug Fixes
+
+* Golang build error, and minor tweak to Gradle ([330c5cb](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/330c5cb856aeec2ecdd644eec4688064b0e6a698))
+
 ## [1.0.27](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.26...v1.0.27) (2021-04-16)
 
 
