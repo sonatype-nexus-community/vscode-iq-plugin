@@ -16,16 +16,28 @@
 import { exec } from "../../utils/exec";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { MavenPackage } from "../maven/MavenPackage";
+import commandExists from "command-exists";
 
 export class GradleUtils {
+  private readonly GRADLE = `gradle`;
+  private readonly GRADLEW = `./gradlew`;
+  private readonly GRADLEW_BAT = `gradlew.bat`;
+  private readonly gradleArguments = `dependencies --configuration runtimeClasspath`;
 
   public async getDependencyArray(): Promise<any> {
+    let gradleCommandBaseCommand: string = "";
+    let gradleCommand: string = "";
 
-    let gradleCommand;
     try {
-      gradleCommand = `gradle dependencies --configuration runtimeClasspath`;
+      if (commandExists.sync(this.GRADLE)) {
+        gradleCommandBaseCommand = this.GRADLE;
+      } else {
+        gradleCommandBaseCommand = (process.platform === 'win32') ? this.GRADLEW_BAT : this.GRADLEW;
+      }
+      gradleCommand = `${gradleCommandBaseCommand} ${this.gradleArguments}`;
 
-      let { stdout, stderr } = await exec(gradleCommand, {
+
+      const { stdout, stderr } = await exec(gradleCommand, {
         cwd: PackageDependenciesHelper.getWorkspaceRoot(),
         env: {
           PATH: process.env.PATH
@@ -35,7 +47,7 @@ export class GradleUtils {
       if (stdout === "" && stderr != "") {
         return Promise.reject(
           new Error(
-            "Error occurred in running gradle. Please check that gradle is on your PATH."
+            `Error occurred in running ${gradleCommandBaseCommand}. Please check that ${gradleCommandBaseCommand} exists or is on your PATH.`
           )
         );
       }
@@ -43,7 +55,7 @@ export class GradleUtils {
       return Promise.resolve(this.parseGradleDependencyTree(stdout));
     } catch (e) {
       return Promise.reject(
-        "gradle command failed, try running it manually to see what went wrong:" +
+        `${gradleCommand} command failed, try running it manually to see what went wrong:` +
           gradleCommand +
           ", " +
           e.error
