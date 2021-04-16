@@ -1,3 +1,10 @@
+## [1.0.27](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.26...v1.0.27) (2021-04-16)
+
+
+### Bug Fixes
+
+* Golang Improvement: Use go list -m -json all so we get the replace stuff on the easy ([#198](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/198)) ([b27bd7a](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/b27bd7a257d5207a4ac6b65ba6a8b9eed7e424d5))
+
 ## [1.0.26](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.25...v1.0.26) (2021-04-16)
 
 
