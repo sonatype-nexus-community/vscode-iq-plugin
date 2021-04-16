@@ -17,36 +17,59 @@ import { exec } from "../../utils/exec";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { MavenPackage } from "../maven/MavenPackage";
 import commandExists from "command-exists";
+import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
+import { ILogger, LogLevel } from "../../utils/Logger";
 
 export class GradleUtils {
+  private logger: ILogger;
+
+  constructor(options: PackageDependenciesOptions) {
+    this.logger = options.logger;
+  }
+
   private readonly GRADLE = `gradle`;
   private readonly GRADLEW = `./gradlew`;
   private readonly GRADLEW_BAT = `gradlew.bat`;
   private readonly gradleArguments = `dependencies --configuration runtimeClasspath`;
 
   public async getDependencyArray(): Promise<any> {
+    this.logger.log(LogLevel.DEBUG, `Starting to attempt to get gradle dependencies`);
+
     let gradleCommandBaseCommand: string = "";
     let gradleCommand: string = "";
 
     try {
       const gradleExists = commandExists.sync(this.GRADLE);
+      this.logger.log(LogLevel.DEBUG, `Does gradle exist as a command?`, gradleExists);
 
       if (gradleExists) {
         gradleCommandBaseCommand = this.GRADLE;
+
+        this.logger.log(LogLevel.INFO, `Set gradle Command Base Command`, gradleCommandBaseCommand);
       } else {
+        this.logger.log(LogLevel.INFO, `Operating system determination`, process.platform);
+        
         gradleCommandBaseCommand = (process.platform === 'win32') ? this.GRADLEW_BAT : this.GRADLEW;
+
+        this.logger.log(LogLevel.INFO, `Set gradle Command Base Command`, gradleCommandBaseCommand);
       }
       gradleCommand = `${gradleCommandBaseCommand} ${this.gradleArguments}`;
 
+      this.logger.log(LogLevel.INFO, `Full gradle command constructed`, gradleCommand);
 
+
+      this.logger.log(LogLevel.DEBUG, `Attempting to run gradle command`, gradleCommand);
       const { stdout, stderr } = await exec(gradleCommand, {
         cwd: PackageDependenciesHelper.getWorkspaceRoot(),
         env: {
           PATH: process.env.PATH
         }
       });
+      this.logger.log(LogLevel.DEBUG, `Gradle command has run`, gradleCommand);
 
       if (stdout === "" && stderr != "") {
+        this.logger.log(LogLevel.ERROR, `StdErr has information from running gradle command`, gradleCommand, stderr);
+
         return Promise.reject(
           new Error(
             `Error occurred in running ${gradleCommandBaseCommand}. Please check that ${gradleCommandBaseCommand} exists or is on your PATH.`
