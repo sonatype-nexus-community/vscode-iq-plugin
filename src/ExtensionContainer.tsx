@@ -81,7 +81,9 @@ class ExtensionContainer extends React.Component<AppProps, AppState> {
               />
           </div>
           <div className="main">
-            <SelectedVersionDetails />
+            <SelectedVersionDetails 
+              selectedVersion={this.state.selectedVersion} 
+              currentVersion={this.state.initialVersion} />
           </div>
         </React.Fragment>
     </VersionsContextProvider>
