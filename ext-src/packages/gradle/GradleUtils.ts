@@ -16,16 +16,22 @@
 import { exec } from "../../utils/exec";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { MavenPackage } from "../maven/MavenPackage";
+import commandExistsSync from "command-exists";
 
 export class GradleUtils {
+  private gradleArguments = `dependencies --configuration runtimeClasspath`;
 
   public async getDependencyArray(): Promise<any> {
-
     let gradleCommand;
-    try {
-      gradleCommand = `gradle dependencies --configuration runtimeClasspath`;
 
-      let { stdout, stderr } = await exec(gradleCommand, {
+    try {
+      if (commandExistsSync('gradle')) {
+        gradleCommand = `gradle ${this.gradleArguments}`;
+      } else {
+        gradleCommand = (process.platform === 'win32') ? `gradlew.bat ${this.gradleArguments}` : gradleCommand = `gradlew ${this.gradleArguments}`;
+      }
+
+      const { stdout, stderr } = await exec(gradleCommand, {
         cwd: PackageDependenciesHelper.getWorkspaceRoot(),
         env: {
           PATH: process.env.PATH
