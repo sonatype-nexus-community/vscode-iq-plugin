@@ -53,7 +53,7 @@ export class IqMultiProjectComponentModel implements ComponentModel {
    * 
    * @var Array<Application>
    */
-  private applications = new Array<Application>();
+  applications = new Array<Application>();
 
   private logger: ILogger;
   private url: string = "";

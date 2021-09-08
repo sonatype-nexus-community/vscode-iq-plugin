@@ -41,7 +41,7 @@ export class OssIndexComponentModel implements ComponentModel {
    * 
    * @var Array<Application>
    */
-  private applications = new Array<Application>();
+  applications = new Array<Application>();
 
   private dummyApplication = new Application('ALL', 'TBC', PackageDependenciesHelper.getWorkspaceRoot())
 
@@ -68,7 +68,7 @@ export class OssIndexComponentModel implements ComponentModel {
   }
 
   public evaluateWorkspaceFolders() {
-    // Nothing to do for OSSIndex right now
+    // Nothing to do for OSSIndex right noww
   }
 
   public evaluateComponents(): Promise<any> {
