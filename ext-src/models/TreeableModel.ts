@@ -13,25 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { TreeableModel } from "./TreeableModel";
-
-export class Application implements TreeableModel {
-
-    constructor(readonly name: string, readonly nexusIqApplicationId: string, readonly workspaceFolder: string) { }
-
-    public getLabel(): string {
-        return this.name
-    }
-
-    public hasChildren(): boolean {
-        return true;
-    }
-
-    public getTooltip(): string {
-        return `Application: ${this.name}\nNexus IQ ID: ${this.nexusIqApplicationId}\nLocation: ${this.workspaceFolder}`;
-    }
-
-    public iconName(): string {
-        return `policy_badge.png`;
-    }
+export interface TreeableModel {
+    getLabel(): string;
+    hasChildren(): boolean;
+    getTooltip(): string;
+    iconName(): string;
 }

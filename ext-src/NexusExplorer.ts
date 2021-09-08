@@ -21,10 +21,11 @@ import { ComponentEntry } from "./models/ComponentEntry";
 import { ComponentModel } from "./models/ComponentModel";
 import { IqMultiProjectComponentModel } from "./models/IqMultiProjectComponentModel";
 import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
+import { TreeableModel } from "./models/TreeableModel";
 import { ILogger, Logger, LogLevel } from './utils/Logger';
 
 
-export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentEntry> {
+export class NexusExplorerProvider implements vscode.TreeDataProvider<TreeableModel> {
   private editor?: vscode.TextEditor;
 
   private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
@@ -95,30 +96,34 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
     return this.componentModel.evaluateComponents();
   }
 
-  getTreeItem(entry: ComponentEntry): vscode.TreeItem {
+  getTreeItem(entry: TreeableModel): vscode.TreeItem {
     let treeItem: vscode.TreeItem = new vscode.TreeItem(
-      entry.toString(),
-      vscode.TreeItemCollapsibleState.None
+      entry.getLabel(),
+      (entry.hasChildren() ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None)
     );
     treeItem.iconPath = this.context.asAbsolutePath(
       path.join("resources", entry.iconName())
     );
-    treeItem.command = {
-      command: "nexusExplorer.viewNode",
-      title: "Select Node",
-      arguments: [entry]
-    };
-    let maxThreat = entry.maxPolicy();
-    treeItem.tooltip = `Application: ${entry.application.name}\nName: ${entry.name}\nVersion: ${entry.version}\nHash: ${entry.hash}\nPolicy: ${maxThreat}`;
+    if (!entry.hasChildren()) {
+      treeItem.command = {
+        command: "nexusExplorer.viewNode",
+        title: "Select Node",
+        arguments: [entry]
+      };
+    }
+    treeItem.tooltip = entry.getTooltip();
 
     return treeItem;
   }
 
-  getChildren(entry?: ComponentEntry): ComponentEntry[] | null {
+  getChildren(entry?: TreeableModel): TreeableModel[] | null {
     if (entry === undefined) {
-      return this.componentModel.components;
+      return this.componentModel.applications;
     } else {
-      return null;
+      let childComponents = this.componentModel.components.filter(function (item: ComponentEntry) {
+        return item.application.name == entry.getLabel()
+      });
+      return childComponents;
     }
   }
 
@@ -135,7 +140,7 @@ export class NexusExplorer {
 
   private sortPolicyDescending: boolean = true;
   private sortNameAscending: boolean = true;
-  private nexusViewer: vscode.TreeView<ComponentEntry>;
+  private nexusViewer: vscode.TreeView<TreeableModel>;
   private componentModel: ComponentModel;
   private nexusExplorerProvider: NexusExplorerProvider;
   private logger: ILogger;

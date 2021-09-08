@@ -17,8 +17,10 @@ import { ReportComponent } from "../services/ReportResponse";
 import { PolicyViolation } from "../types/PolicyViolation";
 import { ScanType } from "../types/ScanType";
 import { Application } from "./Application";
+import { TreeableModel } from "./TreeableModel";
 
-export class ComponentEntry {
+
+export class ComponentEntry implements TreeableModel {
   scope: string = "";
   failure: string = "";
   policyViolations: Array<PolicyViolation> = [];
@@ -27,6 +29,18 @@ export class ComponentEntry {
   ossIndexData?: any = undefined;
 
   constructor(readonly name: string, readonly version: string, readonly format: string, readonly scanType: ScanType, readonly application: Application) { }
+
+  public getLabel(): string {
+    return this.toString();
+  }
+
+  public hasChildren(): boolean {
+    return false;
+  }
+
+  public getTooltip(): string {
+    return `Name: ${this.name}\nVersion: ${this.version}\nHash: ${this.hash}\nPolicy: ${this.maxPolicy()}`;
+  }
 
   public toString(): string {
     return `${this.application.name}: ${this.format}: ${this.name} @ ${this.version}`;
