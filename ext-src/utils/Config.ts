@@ -16,7 +16,7 @@
 import { existsSync, readFileSync } from "fs";
 import { load } from "js-yaml";
 import { join } from "path";
-import { PackageDependenciesHelper } from "../packages/PackageDependenciesHelper";
+import { Application } from "../models/Application";
 import { DOT_YAML_EXTENSION, DOT_YML_EXTENSION, SonatypeConfig, SONATYPE_CONFIG_FILE_NAME } from "../types/SonatypeConfig";
 
 const NEXUS_EXPLORER_BASE = "nexusExplorer";
@@ -43,17 +43,17 @@ const OSS_INDEX_TOKEN = OSS_INDEX_BASE.concat(".", "Token");
  * 
  * @returns SonatypeConfig or undefined if no config found
  */
-const LoadSonatypeConfig = (): SonatypeConfig | undefined => {
+const LoadSonatypeConfig = (application: Application): SonatypeConfig | undefined => {
   /* 
   * TODO: this is a bit silly for three files that are more or less the same, we should switch to checking for a glob or something
   * However, left it as this for now so I could have some time to find the best library to do so, or use node.js libraries itself
-  */ 
-  const sonatypeConfigPath = join(PackageDependenciesHelper.getWorkspaceRoot(), SONATYPE_CONFIG_FILE_NAME);
+  */
+  const sonatypeConfigPath = join(application.workspaceFolder, SONATYPE_CONFIG_FILE_NAME);
 
-  const sonatypeConfigWithYamlPath = join(PackageDependenciesHelper.getWorkspaceRoot(), SONATYPE_CONFIG_FILE_NAME + DOT_YAML_EXTENSION);
+  const sonatypeConfigWithYamlPath = join(application.workspaceFolder, SONATYPE_CONFIG_FILE_NAME + DOT_YAML_EXTENSION);
 
-  const sonatypeConfigWithYmlPath = join(PackageDependenciesHelper.getWorkspaceRoot(), SONATYPE_CONFIG_FILE_NAME + DOT_YML_EXTENSION);
-  
+  const sonatypeConfigWithYmlPath = join(application.workspaceFolder, SONATYPE_CONFIG_FILE_NAME + DOT_YML_EXTENSION);
+
   if (existsSync(sonatypeConfigPath)) {
     const doc = load(readFileSync(sonatypeConfigPath, 'utf8')) as SonatypeConfig;
 
@@ -76,14 +76,15 @@ const LoadSonatypeConfig = (): SonatypeConfig | undefined => {
 };
 
 export {
-    OSS_INDEX_USERNAME,
-    OSS_INDEX_TOKEN,
-    NEXUS_EXPLORER_DATA_SOURCE,
-    NEXUS_IQ_SERVER_URL,
-    NEXUS_IQ_USERNAME,
-    NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS,
-    NEXUS_IQ_PUBLIC_APPLICATION_ID,
-    NEXUS_IQ_USER_PASSWORD,
-    NEXUS_IQ_STRICT_SSL,
-    LoadSonatypeConfig
+  OSS_INDEX_USERNAME,
+  OSS_INDEX_TOKEN,
+  NEXUS_EXPLORER_DATA_SOURCE,
+  NEXUS_IQ_SERVER_URL,
+  NEXUS_IQ_USERNAME,
+  NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS,
+  NEXUS_IQ_PUBLIC_APPLICATION_ID,
+  NEXUS_IQ_USER_PASSWORD,
+  NEXUS_IQ_STRICT_SSL,
+  LoadSonatypeConfig
 };
+

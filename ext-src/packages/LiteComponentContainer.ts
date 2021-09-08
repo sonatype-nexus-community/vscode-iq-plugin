@@ -25,7 +25,7 @@ export class LiteComponentContainer {
   Valid: Array<PackageDependencies> = [];
 
   constructor(readonly logger: ILogger, private applications: Array<Application>) {
-    const doc: SonatypeConfig | undefined = LoadSonatypeConfig();
+    const doc: SonatypeConfig | undefined = LoadSonatypeConfig(this.applications[0]);
 
     let includeDev: boolean = true;
 
