@@ -66,6 +66,10 @@ export class IqComponentModel implements ComponentModel {
     this.logger = options.logger;
   }
 
+  public evaluateWorkspaceFolders() {
+    // Nothing to do
+  }
+
   public evaluateComponents(): Promise<any> {
     this.logger.log(LogLevel.DEBUG, "Starting IQ Evaluation of Components");
     return this.performIqScan();

@@ -67,6 +67,10 @@ export class OssIndexComponentModel implements ComponentModel {
     })
   }
 
+  public evaluateWorkspaceFolders() {
+    // Nothing to do for OSSIndex right now
+  }
+
   public evaluateComponents(): Promise<any> {
     console.debug("evaluateComponents");
     return this.performOssIndexScan();

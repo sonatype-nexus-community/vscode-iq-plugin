@@ -15,6 +15,7 @@
  */
 import * as path from "path";
 import * as vscode from "vscode";
+import { WorkspaceFoldersChangeEvent } from "vscode";
 import { ComponentInfoPanel } from "./ComponentInfoPanel";
 import { ComponentEntry } from "./models/ComponentEntry";
 import { ComponentModel } from "./models/ComponentModel";
@@ -187,6 +188,12 @@ export class NexusExplorer {
       "nexusExplorer.viewNode",
       (node: ComponentEntry) => this.viewNode(node)
     );
+
+    vscode.workspace.onDidChangeWorkspaceFolders((e: WorkspaceFoldersChangeEvent) => {
+      this.logger.log(LogLevel.DEBUG, `Workspace folders have been changed (${e.added.length} added, ${e.removed.length} removed)!`);
+      this.componentModel.evaluateWorkspaceFolders();
+      this.nexusExplorerProvider.doRefresh();
+    })
   }
 
   private sortByName() {

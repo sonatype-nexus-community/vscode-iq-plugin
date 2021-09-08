@@ -65,18 +65,7 @@ export class IqMultiProjectComponentModel implements ComponentModel {
     // Set logger first
     this.logger = options.logger;
 
-    // Detect all folders in Workspace and assume each is a separate Application
-    let workspaceRoot = workspace.workspaceFolders
-    if (workspaceRoot === undefined) {
-      this.logger.log(LogLevel.WARN, 'The workspace does not contain any folders.');
-      throw new TypeError("No workspaces opened");
-    }
-
-    workspaceRoot.forEach((workspaceFolder) => {
-      let baseFolderName = workspaceFolder.uri.fsPath.substr(workspaceFolder.uri.fsPath.lastIndexOf('/') + 1);
-      this.applications.push(new Application(baseFolderName, baseFolderName, workspaceFolder.uri.fsPath));
-      this.logger.log(LogLevel.INFO, `Added Workspace Folder ${workspaceFolder.uri.fsPath} as Application '${baseFolderName}'`);
-    })
+    this.evaluateWorkspaceFolders();
 
     /**
      * @todo Deprecate this.applicationPublicId - we're using this for all 'workspace folders' which
@@ -92,8 +81,22 @@ export class IqMultiProjectComponentModel implements ComponentModel {
     const strictSSL = options.configuration.get(NEXUS_IQ_STRICT_SSL) as boolean;
 
     this.requestService = new IqRequestService(this.url, username, token, maximumEvaluationPollAttempts, strictSSL, options.logger);
+  }
 
+  public evaluateWorkspaceFolders() {
+    // Detect all folders in Workspace and assume each is a separate Application
+    let workspaceRoot = workspace.workspaceFolders
+    if (workspaceRoot === undefined) {
+      this.logger.log(LogLevel.WARN, 'The workspace does not contain any folders.');
+      throw new TypeError("No workspaces opened");
+    }
 
+    this.applications = [];
+    workspaceRoot.forEach((workspaceFolder) => {
+      let baseFolderName = workspaceFolder.uri.fsPath.substr(workspaceFolder.uri.fsPath.lastIndexOf('/') + 1);
+      this.applications.push(new Application(baseFolderName, baseFolderName, workspaceFolder.uri.fsPath));
+      this.logger.log(LogLevel.INFO, `Added Workspace Folder ${workspaceFolder.uri.fsPath} as Application '${baseFolderName}'`);
+    })
   }
 
   public evaluateComponents(): Promise<any> {

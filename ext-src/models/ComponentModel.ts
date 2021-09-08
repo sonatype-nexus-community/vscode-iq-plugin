@@ -17,4 +17,5 @@ import { ComponentEntry } from "./ComponentEntry";
 
 export interface ComponentModel {
   components: Array<ComponentEntry>;
+  evaluateWorkspaceFolders(): void;
 }
