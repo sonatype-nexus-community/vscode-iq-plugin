@@ -18,7 +18,6 @@ import * as path from "path";
 import * as temp from 'temp';
 import { Application } from "../../models/Application";
 import { exec } from "../../utils/exec";
-import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { MavenPackage } from "./MavenPackage";
 
 
@@ -41,7 +40,7 @@ export class MavenUtils {
       mvnCommand = `mvn dependency:tree -Dverbose -DappendOutput=true -DoutputFile="${tmpFile.path}" -f "${pomFile}"`;
 
       await exec(mvnCommand, {
-        cwd: PackageDependenciesHelper.getWorkspaceRoot()
+        cwd: application.workspaceFolder
       });
 
       if (!fs.existsSync(tmpFile.path)) {

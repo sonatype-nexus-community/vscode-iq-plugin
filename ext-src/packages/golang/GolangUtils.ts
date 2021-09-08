@@ -21,7 +21,6 @@ import { streamValues } from 'stream-json/streamers/StreamValues';
 import { parse } from 'toml';
 import { Application } from "../../models/Application";
 import { exec } from "../../utils/exec";
-import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { GolangPackage } from "./GolangPackage";
 import { DEP_LOCK, GO_MOD_SUM } from "./GolangScanType";
 
@@ -55,7 +54,7 @@ export class GolangUtils {
       }
 
       if (scanType === DEP_LOCK) {
-        let goPkgLockPath: string = join(PackageDependenciesHelper.getWorkspaceRoot(), DEP_LOCK);
+        let goPkgLockPath: string = join(application.workspaceFolder, DEP_LOCK);
         let goPkgContents: string = readFileSync(goPkgLockPath, "utf8");
         let depList: any = parse(goPkgContents);
 
