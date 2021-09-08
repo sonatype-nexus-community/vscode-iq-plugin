@@ -105,7 +105,7 @@ export class IqMultiProjectComponentModel implements ComponentModel {
   }
 
   private async checkRCFile(): Promise<void> {
-    const doc = LoadSonatypeConfig();
+    const doc = LoadSonatypeConfig(this.applications[0]);
 
     if (doc && doc.iq) {
       this.applicationPublicId = (doc.iq.PublicApplication ? doc.iq.PublicApplication : this.applicationPublicId);
