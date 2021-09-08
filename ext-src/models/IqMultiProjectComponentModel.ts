@@ -37,7 +37,7 @@ import { ComponentModel } from "./ComponentModel";
 import { ComponentModelOptions } from "./ComponentModelOptions";
 
 
-export class IqComponentModel implements ComponentModel {
+export class IqMultiProjectComponentModel implements ComponentModel {
   components = new Array<ComponentEntry>();
   coordsToComponent: Map<string, ComponentEntry> = new Map<
     string,
@@ -45,6 +45,16 @@ export class IqComponentModel implements ComponentModel {
   >();
   requestService: RequestService;
   applicationPublicId: string;
+
+  /**
+   * Array of Applications derived from workspace folders.
+   * 
+   * Each folders currently implies a single distinct Application.
+   * 
+   * @var Array<Application>
+   */
+  private applications = new Array<Application>();
+
   private logger: ILogger;
   private url: string = "";
   private reportUrl: string = "";
@@ -52,6 +62,26 @@ export class IqComponentModel implements ComponentModel {
   constructor(
     options: ComponentModelOptions
   ) {
+    // Set logger first
+    this.logger = options.logger;
+
+    // Detect all folders in Workspace and assume each is a separate Application
+    let workspaceRoot = workspace.workspaceFolders
+    if (workspaceRoot === undefined) {
+      this.logger.log(LogLevel.WARN, 'The workspace does not contain any folders.');
+      throw new TypeError("No workspaces opened");
+    }
+
+    workspaceRoot.forEach((workspaceFolder) => {
+      let baseFolderName = workspaceFolder.uri.fsPath.substr(workspaceFolder.uri.fsPath.lastIndexOf('/') + 1);
+      this.applications.push(new Application(baseFolderName, baseFolderName, workspaceFolder.uri.fsPath));
+      this.logger.log(LogLevel.INFO, `Added Workspace Folder ${workspaceFolder.uri.fsPath} as Application '${baseFolderName}'`);
+    })
+
+    /**
+     * @todo Deprecate this.applicationPublicId - we're using this for all 'workspace folders' which
+     *       might actually be different Applications.
+     */
     this.applicationPublicId = options.configuration.get(NEXUS_IQ_PUBLIC_APPLICATION_ID) as string;
     this.url = (process.env.IQ_SERVER ? process.env.IQ_SERVER : options.configuration.get(NEXUS_IQ_SERVER_URL) as string);
     const username = (process.env.IQ_USERNAME ? process.env.IQ_USERNAME : options.configuration.get(NEXUS_IQ_USERNAME) as string);
@@ -63,7 +93,7 @@ export class IqComponentModel implements ComponentModel {
 
     this.requestService = new IqRequestService(this.url, username, token, maximumEvaluationPollAttempts, strictSSL, options.logger);
 
-    this.logger = options.logger;
+
   }
 
   public evaluateComponents(): Promise<any> {
@@ -86,23 +116,12 @@ export class IqComponentModel implements ComponentModel {
   }
 
   private async performIqScan(): Promise<any> {
-
     this.logger.log(LogLevel.DEBUG, `Checking for existence of ${SONATYPE_CONFIG_FILE_NAME}`);
     await this.checkRCFile();
 
     return new Promise<void>((resolve, reject) => {
       try {
-        /*
-        @todo This will need tidying up.
-        */
-        let workspaceRoot = workspace.workspaceFolders
-        if (workspaceRoot === undefined) {
-          this.logger.log(LogLevel.WARN, 'The workspace does not contain any folders.');
-          throw new TypeError("No workspaces opened");
-        }
-        let application: Application = new Application(this.applicationPublicId, this.applicationPublicId, workspaceRoot[0].uri.fsPath);
-        let applications: Array<Application> = Array(application);
-        let componentContainer = new ComponentContainer(this.logger, applications);
+        let componentContainer = new ComponentContainer(this.logger, this.applications);
 
         window.withProgress(
           {
@@ -118,13 +137,17 @@ export class IqComponentModel implements ComponentModel {
               progress.report({ message: "Starting to package your dependencies for IQ Server", increment: 5 });
               for (let pm of componentContainer.Valid) {
                 try {
-                  this.logger.log(LogLevel.INFO, `Starting to Munch on ${pm.constructor.name} dependencies in '${pm.application.name}'`);
+                  this.logger.log(LogLevel.INFO, `Starting to Munch on ${pm.constructor.name} dependencies`);
                   const deps = await pm.packageForService();
-                  this.logger.log(LogLevel.TRACE, `Obtained Dependencies from Muncher`, deps);
+                  this.logger.log(LogLevel.TRACE, `Obtained ${deps.length} Dependencies from Muncher ${pm.constructor.name}`, deps);
                   dependencies.push(...deps);
                   progress.report({ message: "Reticulating Splines", increment: 25 });
 
-                  this.coordsToComponent = new Map([...this.coordsToComponent, ...pm.toComponentEntries(deps)]);
+                  this.logger.log(LogLevel.TRACE, `Total components was ${this.coordsToComponent.size}`);
+                  let pmCoordsToComponent: Map<string, ComponentEntry> = new Map([...this.coordsToComponent, ...pm.toComponentEntries(deps)]);
+                  this.coordsToComponent = new Map([...this.coordsToComponent.entries(), ...pmCoordsToComponent.entries()]);
+                  this.logger.log(LogLevel.TRACE, `Total components is now ${this.coordsToComponent.size}`);
+
                 } catch (ex) {
                   this.logger.log(LogLevel.ERROR, `Nexus IQ Extension Failure moving forward`, ex);
                   window.showErrorMessage(`Nexus IQ extension failure, moving forward, exception: ${ex}`);

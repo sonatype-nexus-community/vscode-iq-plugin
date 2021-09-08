@@ -13,27 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PackageDependencies } from "./PackageDependencies";
+import { Application } from "../models/Application";
+import { SonatypeConfig } from "../types/SonatypeConfig";
+import { LoadSonatypeConfig } from "../utils/Config";
+import { ILogger, LogLevel } from "../utils/Logger";
+import { CargoDependencies } from "./cargo/CargoDependencies";
+import { ComposerDependencies } from "./composer/ComposerDependencies";
+import { ConanDependencies } from "./conan/ConanDependencies";
+import { GolangDependencies } from "./golang/GolangDependencies";
+import { GradleDependencies } from "./gradle/GradleDependencies";
 import { MavenDependencies } from "./maven/MavenDependencies";
 import { NpmDependencies } from "./npm/NpmDependencies";
-import { GolangDependencies } from "./golang/GolangDependencies";
-import { PyPIDependencies } from "./pypi/PyPIDependencies";
-import { RubyGemsDependencies } from "./rubygems/RubyGemsDependencies"; 
+import { PackageDependencies } from "./PackageDependencies";
 import { PoetryDependencies } from "./poetry/PoetryDependencies";
-import { ComposerDependencies } from './composer/ComposerDependencies';
-import { CargoDependencies } from './cargo/CargoDependencies';
-import { ILogger } from "../utils/Logger";
-import { ConanDependencies } from "./conan/ConanDependencies";
-import { GradleDependencies } from "./gradle/GradleDependencies";
-import { LoadSonatypeConfig } from "../utils/Config";
-import { SonatypeConfig } from "../types/SonatypeConfig";
+import { PyPIDependencies } from "./pypi/PyPIDependencies";
+import { RubyGemsDependencies } from "./rubygems/RubyGemsDependencies";
 
 export class ComponentContainer {
   Possible: Array<PackageDependencies> = [];
   Valid: Array<PackageDependencies> = [];
   PackageMuncher: PackageDependencies | undefined;
+  workspaceFolder: string = 'TBC';
 
-  constructor(readonly logger: ILogger) {
+  constructor(readonly logger: ILogger, private applications: Array<Application>) {
     const doc: SonatypeConfig | undefined = LoadSonatypeConfig();
 
     let includeDev: boolean = true;
@@ -43,26 +45,29 @@ export class ComponentContainer {
     }
 
     // To add a new format, you just need to push another implementation to this list
-    this.Possible.push(new MavenDependencies({logger, includeDev}));
-    this.Possible.push(new NpmDependencies({logger, includeDev}));
-    this.Possible.push(new GolangDependencies({logger, includeDev}));
-    this.Possible.push(new PyPIDependencies({logger, includeDev}));
-    this.Possible.push(new RubyGemsDependencies({logger, includeDev}));
-    this.Possible.push(new PoetryDependencies({logger, includeDev}));
-    this.Possible.push(new ComposerDependencies({logger, includeDev}));
-    this.Possible.push(new CargoDependencies({logger, includeDev}));
-    this.Possible.push(new ConanDependencies({logger, includeDev}));
-    this.Possible.push(new GradleDependencies({logger, includeDev}));
+    this.applications.forEach((app) => {
+      this.Possible.push(new MavenDependencies({ logger, includeDev }, app));
+      this.Possible.push(new NpmDependencies({ logger, includeDev }, app));
+      this.Possible.push(new GolangDependencies({ logger, includeDev }, app));
+      this.Possible.push(new PyPIDependencies({ logger, includeDev }, app));
+      this.Possible.push(new RubyGemsDependencies({ logger, includeDev }, app));
+      this.Possible.push(new PoetryDependencies({ logger, includeDev }, app));
+      this.Possible.push(new ComposerDependencies({ logger, includeDev }, app));
+      this.Possible.push(new CargoDependencies({ logger, includeDev }, app));
+      this.Possible.push(new ConanDependencies({ logger, includeDev }, app));
+      this.Possible.push(new GradleDependencies({ logger, includeDev }, app));
+    })
 
     this.Possible.forEach(i => {
-      if(i.checkIfValid()) {
+      if (i.checkIfValid()) {
         this.Valid.push(i);
       }
     });
 
     if (this.Valid.length != 0) {
-      console.debug("Package Muncher(s) set");
+      logger.log(LogLevel.DEBUG, `${this.Valid.length} package muncher(s) set for the Workspace Folder '${this.workspaceFolder}'`);
     } else {
+      logger.log(LogLevel.WARN, `No package munchers appear valid for the Workspace Folder '${this.workspaceFolder}'`);
       throw new Error("No supported scan type exists for the open workspace");
     }
   }

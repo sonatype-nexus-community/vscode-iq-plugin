@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { NpmPackage } from "./NpmPackage";
 import { listInstalled } from 'list-installed';
 import { PackageJson } from 'type-fest';
+import { Application } from '../../models/Application';
+import { NpmPackage } from "./NpmPackage";
 
 export class NpmUtils {
-  public async getDependencyArray(includeDev: boolean = true): Promise<Array<NpmPackage>> {
+  public async getDependencyArray(application: Application, includeDev: boolean = true): Promise<Array<NpmPackage>> {
     try {
-      let pkgs = await listInstalled(PackageDependenciesHelper.getWorkspaceRoot());
+      let pkgs = await listInstalled(application.workspaceFolder);
 
       if (pkgs.size === 0) {
         return Promise.reject("No npm dependencies installed, make sure to install your dependencies");
@@ -33,7 +33,7 @@ export class NpmUtils {
     }
   }
 
-  private parseListInstalled(pkgs: Map<String, PackageJson>, includeDev: boolean = true): Array<NpmPackage>{
+  private parseListInstalled(pkgs: Map<String, PackageJson>, includeDev: boolean = true): Array<NpmPackage> {
     let res: Array<NpmPackage> = new Array();
     for (let [name, packageJson] of pkgs.entries()) {
       if (!includeDev && packageJson.hasOwnProperty("_development")) {

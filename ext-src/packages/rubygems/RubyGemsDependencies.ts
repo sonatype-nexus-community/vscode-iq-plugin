@@ -13,23 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { RubyGemsPackage } from './RubyGemsPackage';
-import { RubyGemsUtils } from './RubyGemsUtils';
+import { ComponentEntry } from "../../models/ComponentEntry";
+import { ScanType } from "../../types/ScanType";
 import { PackageDependencies } from "../PackageDependencies";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { ScanType } from "../../types/ScanType";
-import { ComponentEntry } from "../../models/ComponentEntry";
-import { PackageDependenciesOptions } from '../PackageDependenciesOptions';
+import { RubyGemsPackage } from './RubyGemsPackage';
+import { RubyGemsUtils } from './RubyGemsUtils';
 
-export class RubyGemsDependencies implements PackageDependencies {
-
-  constructor(private options: PackageDependenciesOptions) {
-  }
+export class RubyGemsDependencies extends PackageDependencies {
 
   public async packageForService(): Promise<any> {
     try {
       const rubyGemsUtils = new RubyGemsUtils();
-      const deps = await rubyGemsUtils.getDependencyArray();
+      const deps = await rubyGemsUtils.getDependencyArray(this.application);
       return Promise.resolve(deps);
     }
     catch (e) {
@@ -38,7 +34,7 @@ export class RubyGemsDependencies implements PackageDependencies {
   }
 
   public checkIfValid(): boolean {
-    return PackageDependenciesHelper.checkIfValid('Gemfile.lock', 'rubygems');
+    return PackageDependenciesHelper.checkIfValid('Gemfile.lock', 'rubygems', this.application);
   }
 
   public toComponentEntries(packages: Array<RubyGemsPackage>): Map<string, ComponentEntry> {
@@ -48,7 +44,8 @@ export class RubyGemsDependencies implements PackageDependencies {
         pkg.Name,
         pkg.Version,
         "gem",
-        ScanType.NexusIq
+        ScanType.NexusIq,
+        this.application
       );
       map.set(
         pkg.toPurl(),

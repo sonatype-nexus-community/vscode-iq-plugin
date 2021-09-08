@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
+import { Application } from "../../models/Application";
 import { exec } from "../../utils/exec";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { RPackage } from './RPackage';
 
 export class RUtils {
-  public async getDependencyArray(): Promise<Array<RPackage>> {
+  public async getDependencyArray(application: Application): Promise<Array<RPackage>> {
     try {
-      let {stdout, stderr } = await exec(`RScript ` + PackageDependenciesHelper.getExtensionPath() + `/scripts/installed.r`
+      let { stdout, stderr } = await exec(`RScript ` + PackageDependenciesHelper.getExtensionPath() + `/scripts/installed.r`
         , {
-        cwd: PackageDependenciesHelper.getWorkspaceRoot()
-      });
+          cwd: application.workspaceFolder
+        });
 
       if (stdout != "" && stderr === "") {
         return Promise.resolve(this.parseRInstall(stdout));
@@ -51,14 +52,14 @@ export class RUtils {
     let dependencyList: RPackage[] = [];
 
     const dependencyLines = dependencies.split("\n");
-    dependencyLines.forEach((dep) => {  
+    dependencyLines.forEach((dep) => {
       console.debug(dep);
       if (dep.trim()) {
         //ignore comments
         if (dep.includes("Package Version")) {
           console.debug("Found headers, skipping");
         } else {
-          let dependencyParts: string[] = dep.replace(/\s{2,}/g,' ').trim().split(" ");
+          let dependencyParts: string[] = dep.replace(/\s{2,}/g, ' ').trim().split(" ");
           const name: string = dependencyParts[0];
           const version: string = dependencyParts[2];
           if (name && version) {
@@ -70,8 +71,8 @@ export class RUtils {
           } else {
             console.warn(
               "Skipping dependency: " +
-                dep +
-                " due to missing data (name, version)"
+              dep +
+              " due to missing data (name, version)"
             );
           }
         }

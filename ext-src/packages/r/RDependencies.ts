@@ -13,23 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ComponentEntry } from "../../models/ComponentEntry";
+import { PackageDependencies } from "../PackageDependencies";
+import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
+import { PackageType } from "../PackageType";
 import { RPackage } from "./RPackage";
 import { RUtils } from './RUtils';
-import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { PackageDependencies } from "../PackageDependencies";
-import { ComponentEntry } from "../../models/ComponentEntry";
-import { PackageType } from "../PackageType";
-import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
 
-export class RDependencies implements PackageDependencies {
-  
-  constructor(private options: PackageDependenciesOptions) {}
+export class RDependencies extends PackageDependencies {
 
   format: string = "r";
   manifestName: string = ".Rbuildignore";
 
   public checkIfValid(): boolean {
-    return PackageDependenciesHelper.checkIfValid(this.manifestName, this.format);
+    return PackageDependenciesHelper.checkIfValid(this.manifestName, this.format, this.application);
   }
 
   toComponentEntries(data: PackageType[]): Map<string, ComponentEntry> {
@@ -39,7 +36,7 @@ export class RDependencies implements PackageDependencies {
   public async packageForService(): Promise<Array<RPackage>> {
     try {
       const rUtils = new RUtils();
-      const deps = await rUtils.getDependencyArray();
+      const deps = await rUtils.getDependencyArray(this.application);
 
       return Promise.resolve(deps);
     }

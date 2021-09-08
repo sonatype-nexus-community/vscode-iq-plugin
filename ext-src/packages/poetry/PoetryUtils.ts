@@ -13,32 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PyPIPackage } from '../pypi/PyPIPackage';
-
-import { parse } from 'toml';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { PackageDependenciesHelper } from '../PackageDependenciesHelper';
+import { parse } from 'toml';
+import { Application } from '../../models/Application';
+import { PyPIPackage } from '../pypi/PyPIPackage';
+
 
 export class PoetryUtils {
-  public async getDependencyArray(): Promise<Array<PyPIPackage>> {
+  public async getDependencyArray(application: Application): Promise<Array<PyPIPackage>> {
     try {
-        const toml = readFileSync(join(PackageDependenciesHelper.getWorkspaceRoot(), "poetry.lock"));
-        const poetry: Poetry = parse(toml.toString());
+      const toml = readFileSync(join(application.workspaceFolder, "poetry.lock"));
+      const poetry: Poetry = parse(toml.toString());
 
-        if (poetry.package && poetry.package.length > 0) {
-          let res: Array<PyPIPackage> = new Array();
+      if (poetry.package && poetry.package.length > 0) {
+        let res: Array<PyPIPackage> = new Array();
 
-          poetry.package.forEach(pkg => {
-            res.push(new PyPIPackage(pkg.name, pkg.version, "tar.gz", ""));
-          });
+        poetry.package.forEach(pkg => {
+          res.push(new PyPIPackage(pkg.name, pkg.version, "tar.gz", ""));
+        });
 
-          return Promise.resolve(res);
-        }
+        return Promise.resolve(res);
+      }
 
-        return Promise.reject("No dependencies found, check your poetry.lock file!");
-    } catch(ex) {
-        return Promise.reject(`Uh oh, spaghetti-o, an exception occurred while parsing poetry dependencies: ${ex}`);
+      return Promise.reject("No dependencies found, check your poetry.lock file!");
+    } catch (ex) {
+      return Promise.reject(`Uh oh, spaghetti-o, an exception occurred while parsing poetry dependencies: ${ex}`);
     }
   }
 }

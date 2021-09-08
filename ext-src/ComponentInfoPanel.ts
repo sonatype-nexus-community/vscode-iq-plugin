@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as vscode from "vscode";
-import * as path from "path";
-import { IqComponentModel } from "./models/IqComponentModel";
-import { ScanType } from "./types/ScanType";
-import { ComponentModel } from "./models/ComponentModel";
-import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
-import { ComponentEntry, NexusIQData } from "./models/ComponentEntry";
-import { ReportComponent } from "./services/ReportResponse";
 import { PackageURL } from 'packageurl-js';
+import * as path from "path";
+import * as vscode from "vscode";
+import { ComponentEntry, NexusIQData } from "./models/ComponentEntry";
+import { ComponentModel } from "./models/ComponentModel";
+import { IqMultiProjectComponentModel } from "./models/IqMultiProjectComponentModel";
+import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
+import { ReportComponent } from "./services/ReportResponse";
+import { ScanType } from "./types/ScanType";
 
 export class ComponentInfoPanel {
   /**
@@ -87,7 +87,7 @@ export class ComponentInfoPanel {
 
   private static getSettings() {
     let iqConfig = vscode.workspace.getConfiguration("nexusiq");
-    ComponentInfoPanel.iqApplicationId =  "";
+    ComponentInfoPanel.iqApplicationId = "";
     ComponentInfoPanel.iqApplicationPublicId =
       iqConfig.get("applicationPublicId") + "";
 
@@ -162,15 +162,15 @@ export class ComponentInfoPanel {
 
   private async showSelectedVersion(message: any) {
     console.log("showSelectedVersion", message);
-    if (this.componentModel instanceof IqComponentModel) {
+    if (this.componentModel instanceof IqMultiProjectComponentModel) {
       let iqData: NexusIQData = message.package.nexusIQData;
       let purl: PackageURL = PackageURL.fromString(iqData.component.packageUrl);
       purl.version = message.version;
 
       let decodedPurl = unescape(purl.toString());
-      var iqComponentModel = this.componentModel as IqComponentModel
+      var iqComponentModel = this.componentModel as IqMultiProjectComponentModel
       let body = await iqComponentModel.requestService.showSelectedVersion(decodedPurl);
-    
+
       // Dirty ugly hack because IQ Server removes + signs from versions for whatever reason
       if (iqData.component.componentIdentifier.format === 'golang') {
         body.componentDetails = this.dealWithGolang(body.componentDetails);
@@ -193,10 +193,10 @@ export class ComponentInfoPanel {
 
   private async showRemediation(purl: string) {
     console.debug("showRemediation", purl);
-    if (this.componentModel instanceof IqComponentModel) {
-      var iqComponentModel = this.componentModel as IqComponentModel
+    if (this.componentModel instanceof IqMultiProjectComponentModel) {
+      var iqComponentModel = this.componentModel as IqMultiProjectComponentModel
       const remediation = await iqComponentModel.requestService.getRemediation(purl);
-      
+
       console.debug("posting message: remediation", remediation);
       this._panel.webview.postMessage({
         command: "remediationDetail",
@@ -207,10 +207,10 @@ export class ComponentInfoPanel {
 
   private async showVulnerability(vulnID: any) {
     console.debug("showVulnerability", vulnID);
-    if (this.componentModel instanceof IqComponentModel) {
-      var iqComponentModel = this.componentModel as IqComponentModel
+    if (this.componentModel instanceof IqMultiProjectComponentModel) {
+      var iqComponentModel = this.componentModel as IqMultiProjectComponentModel
       const vulnDetails = await iqComponentModel.requestService.getVulnerabilityDetails(vulnID);
-      
+
       this._panel.webview.postMessage({
         command: "vulnDetails",
         vulnDetails: vulnDetails
@@ -263,14 +263,14 @@ export class ComponentInfoPanel {
 
   private async showAllVersions() {
     console.debug("showAllVersions", this.component);
-    if (this.componentModel instanceof IqComponentModel) {
-      const iqComponentModel = this.componentModel as IqComponentModel
+    if (this.componentModel instanceof IqMultiProjectComponentModel) {
+      const iqComponentModel = this.componentModel as IqMultiProjectComponentModel
       const component: ReportComponent = this.component!.nexusIQData!.component;
       const purl: PackageURL = PackageURL.fromString(component.packageUrl);
       purl.version = "";
 
       let allVersions = await iqComponentModel.requestService.getAllVersions(purl);
-      
+
       if (!allVersions.includes(component.componentIdentifier.coordinates.version)) {
         allVersions.push(component.componentIdentifier.coordinates.version);
       }
@@ -293,7 +293,7 @@ export class ComponentInfoPanel {
     versions.forEach((version) => {
       version.component.componentIdentifier.coordinates.version = this.convertGolangVersion(
         version.component.componentIdentifier.coordinates.version
-        );
+      );
     });
 
     return versions;
@@ -301,10 +301,10 @@ export class ComponentInfoPanel {
 
   private convertGolangVersion(version: string) {
     if (version.includes("incompatible")) {
-        let pos = version.lastIndexOf("incompatible");
-        let vers = version.substring(0, pos).trimEnd() + "+" + version.substring(pos);
+      let pos = version.lastIndexOf("incompatible");
+      let vers = version.substring(0, pos).trimEnd() + "+" + version.substring(pos);
 
-        return vers;
+      return vers;
     }
     return version;
   }

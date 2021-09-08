@@ -13,16 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Application } from "../models/Application";
-import { ComponentEntry } from "../models/ComponentEntry";
-import { PackageDependenciesOptions } from "./PackageDependenciesOptions";
-import { PackageType } from "./PackageType";
+export class Application {
 
-export abstract class PackageDependencies {
+    constructor(readonly name: string, readonly nexusIqApplicationId: string, readonly workspaceFolder: string) { }
 
-  constructor(protected options: PackageDependenciesOptions, public application: Application) { }
-
-  abstract checkIfValid(): boolean;
-  abstract toComponentEntries(data: Array<PackageType>): Map<string, ComponentEntry>;
-  abstract packageForService(): Promise<Array<PackageType>>;
 }

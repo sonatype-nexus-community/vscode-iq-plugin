@@ -13,23 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ComposerPackage } from "./ComposerPackage";
-import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../models/ComponentEntry";
-import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { ScanType } from "../../types/ScanType";
+import { PackageDependencies } from "../PackageDependencies";
+import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
+import { ComposerPackage } from "./ComposerPackage";
 import { ComposerUtils } from "./ComposerUtils";
-import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
 
 /**
 * @class ComposerDependencies
 */
-export class ComposerDependencies implements PackageDependencies {
-  
-  constructor(private options: PackageDependenciesOptions) {}
+export class ComposerDependencies extends PackageDependencies {
 
   public checkIfValid(): boolean {
-    return PackageDependenciesHelper.checkIfValid("composer.lock", "composer");
+    return PackageDependenciesHelper.checkIfValid("composer.lock", "composer", this.application);
   }
 
   public toComponentEntries(packages: Array<ComposerPackage>): Map<string, ComponentEntry> {
@@ -39,7 +36,8 @@ export class ComposerDependencies implements PackageDependencies {
         pkg.Group + ":" + pkg.Name,
         pkg.Version,
         "composer",
-        ScanType.NexusIq
+        ScanType.NexusIq,
+        this.application
       );
       map.set(
         pkg.toPurl(),
@@ -52,7 +50,7 @@ export class ComposerDependencies implements PackageDependencies {
   public async packageForService(): Promise<Array<ComposerPackage>> {
     try {
       const composerUtils = new ComposerUtils();
-      const deps = await composerUtils.getDependencyArray();
+      const deps = await composerUtils.getDependencyArray(this.application);
 
       return Promise.resolve(deps);
     } catch (ex) {

@@ -16,6 +16,7 @@
 import { ReportComponent } from "../services/ReportResponse";
 import { PolicyViolation } from "../types/PolicyViolation";
 import { ScanType } from "../types/ScanType";
+import { Application } from "./Application";
 
 export class ComponentEntry {
   scope: string = "";
@@ -25,11 +26,10 @@ export class ComponentEntry {
   nexusIQData?: NexusIQData = undefined;
   ossIndexData?: any = undefined;
 
-  constructor(readonly name: string, readonly version: string, readonly format: string, readonly scanType: ScanType) {
-  }
+  constructor(readonly name: string, readonly version: string, readonly format: string, readonly scanType: ScanType, readonly application: Application) { }
 
   public toString(): string {
-    return `${this.format}: ${this.name} @ ${this.version}`;
+    return `${this.application.name}: ${this.format}: ${this.name} @ ${this.version}`;
   }
 
   public maxPolicy(): number {
@@ -64,7 +64,7 @@ export class ComponentEntry {
 
   public iconName(): string {
     if ((this.scanType == ScanType.NexusIq && (!this.policyViolations || !this.nexusIQData)) ||
-      (this.scanType == ScanType.OssIndex && !this.ossIndexData )) {
+      (this.scanType == ScanType.OssIndex && !this.ossIndexData)) {
       return "loading.gif";
     }
     let maxThreatLevel = this.maxPolicy();

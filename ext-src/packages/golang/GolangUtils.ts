@@ -13,27 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { exec } from "../../utils/exec";
-import { join } from 'path';
 import { readFileSync } from 'fs';
-import { parse } from 'toml';
-import parser from 'stream-json';
+import { join } from 'path';
 import { Readable } from 'stream';
+import parser from 'stream-json';
 import { streamValues } from 'stream-json/streamers/StreamValues';
-
-import { GolangPackage } from "./GolangPackage";
+import { parse } from 'toml';
+import { Application } from "../../models/Application";
+import { exec } from "../../utils/exec";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { GO_MOD_SUM, DEP_LOCK } from "./GolangScanType";
+import { GolangPackage } from "./GolangPackage";
+import { DEP_LOCK, GO_MOD_SUM } from "./GolangScanType";
+
 
 export class GolangUtils {
-  public async getDependencyArray(scanType: string): Promise<Array<GolangPackage>> {
+  public async getDependencyArray(application: Application, scanType: string): Promise<Array<GolangPackage>> {
     try {
       if (scanType === GO_MOD_SUM) {
 
         // TODO: When running this command, Golang is now using the workspace root to establish a GOCACHE, 
         // we should use some other temporary area or try and suss out the real one
         let { stdout, stderr } = await exec(`go list -m -json all`, {
-          cwd: PackageDependenciesHelper.getWorkspaceRoot(),
+          cwd: application.workspaceFolder,
           env: {
             "PATH": process.env["PATH"],
             "HOME": this.getGoCacheDirectory()
@@ -65,7 +66,7 @@ export class GolangUtils {
     } catch (e) {
       return Promise.reject(
         "go list -m all failed, please try running locally to see why: " +
-          e.message
+        e.message
       );
     }
   }
@@ -78,11 +79,11 @@ export class GolangUtils {
   private parseGoModDependencies(readable: Readable): Promise<Array<GolangPackage>> {
     return new Promise((resolve, reject) => {
       let golangPackages = new Array<GolangPackage>();
-  
+
       readable
-        .pipe(parser({jsonStreaming: true}))
+        .pipe(parser({ jsonStreaming: true }))
         .pipe(streamValues())
-        .on('data', ({key, value}: any) => {
+        .on('data', ({ key, value }: any) => {
           const dep = value as GoModDependency;
 
           let version = dep.Version;
@@ -119,20 +120,20 @@ export class GolangUtils {
 }
 
 export interface GoModDependency {
-  Path:      string;
-  Version?:   string;
-  Replace?:   Replace;
-  Indirect:  boolean;
-  Dir:       string;
-  GoMod:     string;
+  Path: string;
+  Version?: string;
+  Replace?: Replace;
+  Indirect: boolean;
+  Dir: string;
+  GoMod: string;
   GoVersion: string;
 }
 
 export interface Replace {
-  Path:      string;
-  Version:   string;
-  Time:      Date;
-  Dir:       string;
-  GoMod:     string;
+  Path: string;
+  Version: string;
+  Time: Date;
+  Dir: string;
+  GoMod: string;
   GoVersion: string;
 }

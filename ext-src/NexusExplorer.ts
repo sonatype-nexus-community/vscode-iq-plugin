@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as vscode from "vscode";
 import * as path from "path";
-
+import * as vscode from "vscode";
 import { ComponentInfoPanel } from "./ComponentInfoPanel";
-import { IqComponentModel } from "./models/IqComponentModel";
-import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
-import { ComponentModel } from "./models/ComponentModel";
 import { ComponentEntry } from "./models/ComponentEntry";
+import { ComponentModel } from "./models/ComponentModel";
+import { IqMultiProjectComponentModel } from "./models/IqMultiProjectComponentModel";
+import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
 import { ILogger, Logger, LogLevel } from './utils/Logger';
-import {NEXUS_IQ_SERVER_URL} from "./utils/Config";
+
 
 export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentEntry> {
   private editor?: vscode.TextEditor;
@@ -32,7 +31,7 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
 
   constructor(
     private context: vscode.ExtensionContext,
-    private componentModel: IqComponentModel
+    private componentModel: IqMultiProjectComponentModel
   ) {
     this.checkPassword();
   }
@@ -127,12 +126,12 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
   }
 
   public updateComponentModel(componentModel: ComponentModel) {
-    this.componentModel = componentModel as IqComponentModel;
+    this.componentModel = componentModel as IqMultiProjectComponentModel;
   }
 }
 
 export class NexusExplorer {
-  
+
   private sortPolicyDescending: boolean = true;
   private sortNameAscending: boolean = true;
   private nexusViewer: vscode.TreeView<ComponentEntry>;
@@ -146,21 +145,21 @@ export class NexusExplorer {
     const _channel = vscode.window.createOutputChannel(`Sonatype IQ Extension`);
     context.subscriptions.push(_channel);
 
-    this.logger = new Logger({outputChannel: _channel, logFilePath: context.globalStoragePath});
+    this.logger = new Logger({ outputChannel: _channel, logFilePath: context.globalStoragePath });
     this.logger.setLogLevel(LogLevel[configuration.get("nexusExplorer.loggingLevel", "ERROR")]);
 
     if (
       configuration.get("nexusExplorer.dataSource", "ossindex") + "" ==
       "iqServer"
     ) {
-      this.componentModel = new IqComponentModel({configuration: configuration, logger: this.logger});
+      this.componentModel = new IqMultiProjectComponentModel({ configuration: configuration, logger: this.logger });
     } else {
-      this.componentModel = new OssIndexComponentModel({configuration: configuration, logger: this.logger});
+      this.componentModel = new OssIndexComponentModel({ configuration: configuration, logger: this.logger });
     }
 
     this.nexusExplorerProvider = new NexusExplorerProvider(
       context,
-      this.componentModel as IqComponentModel
+      this.componentModel as IqMultiProjectComponentModel
     );
 
     this.nexusViewer = vscode.window.createTreeView("nexusExplorer", {
@@ -229,9 +228,9 @@ export class NexusExplorer {
     let configuration = vscode.workspace.getConfiguration();
 
     if (scanType == "iqServer") {
-      this.componentModel = new IqComponentModel({configuration: configuration, logger: this.logger});
+      this.componentModel = new IqMultiProjectComponentModel({ configuration: configuration, logger: this.logger });
     } else if (scanType == "ossindex") {
-      this.componentModel = new OssIndexComponentModel({configuration: configuration, logger: this.logger});
+      this.componentModel = new OssIndexComponentModel({ configuration: configuration, logger: this.logger });
     }
 
     this.nexusExplorerProvider.updateComponentModel(this.componentModel);
@@ -240,7 +239,7 @@ export class NexusExplorer {
   }
 
   public updateIQAppID(applicationID: string) {
-    if (this.componentModel instanceof IqComponentModel) {
+    if (this.componentModel instanceof IqMultiProjectComponentModel) {
       this.componentModel.applicationPublicId = applicationID;
 
       this.nexusExplorerProvider.doRefresh();
@@ -248,7 +247,7 @@ export class NexusExplorer {
   }
 
   public refreshIQRequestService(options: RefreshOptions) {
-    if (this.componentModel instanceof IqComponentModel) {
+    if (this.componentModel instanceof IqMultiProjectComponentModel) {
       if (options) {
         this.componentModel.requestService.setOptions(options);
 

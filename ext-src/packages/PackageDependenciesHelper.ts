@@ -15,13 +15,14 @@
  */
 import * as fs from "fs";
 import * as path from "path";
-import { workspace, extensions, Extension } from "vscode";
+import { Extension, extensions, workspace } from "vscode";
+import { Application } from "../models/Application";
 
 export class PackageDependenciesHelper {
   public static doesPathExist(workspaceRoot: string, filename: string): boolean {
     return this.pathExists(path.join(workspaceRoot, filename));
   }
- 
+
   private static pathExists(p: string): boolean {
     try {
       fs.accessSync(p);
@@ -51,20 +52,20 @@ export class PackageDependenciesHelper {
       throw new TypeError("No extension found");
     }
   }
-  
-  public static checkIfValid(manifest: string, format: string): boolean {
-    if (this.doesPathExist(this.getWorkspaceRoot(), manifest)) {
-      console.debug(`Valid for ${format}`);
+
+  public static checkIfValid(manifest: string, format: string, application: Application): boolean {
+    if (this.doesPathExist(application.workspaceFolder, manifest)) {
+      console.debug(`Valid for ${format} - found ${manifest} inside Application Folder ${application.workspaceFolder}`);
       return true;
     }
     return false;
   }
 
-  public static checkIfValidWithArray(manifests: Array<string>, format: string): string {
+  public static checkIfValidWithArray(manifests: Array<string>, format: string, application: Application): string {
     let result: string = "";
     manifests.forEach((element) => {
-      if (this.doesPathExist(this.getWorkspaceRoot(), element)) {
-        console.debug(`Valid for ${format}`);
+      if (this.doesPathExist(application.workspaceFolder, element)) {
+        console.debug(`Valid for ${format} - found ${element} inside Application Folder ${application.workspaceFolder}`);
         result = element;
       }
     })
@@ -72,8 +73,8 @@ export class PackageDependenciesHelper {
     return result;
   }
 
-  public static checkIfValidWithExclusion(extension: string, format: string, exclusions: string[]): boolean {
-    let dirCont = fs.readdirSync(this.getWorkspaceRoot());
+  public static checkIfValidWithExclusion(extension: string, format: string, exclusions: string[], application: Application): boolean {
+    let dirCont = fs.readdirSync(application.workspaceFolder);
 
     let files = dirCont.filter((file) => {
       return !exclusions.includes(file) && file.endsWith(extension);

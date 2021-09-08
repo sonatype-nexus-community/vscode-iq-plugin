@@ -14,27 +14,26 @@
  * limitations under the License.
  */
 
-import { ConanPackage } from "./ConanPackage";
-import { PackageDependencies } from "../PackageDependencies";
-import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { ComponentEntry } from "../../models/ComponentEntry";
 import { ScanType } from "../../types/ScanType";
-import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
+import { PackageDependencies } from "../PackageDependencies";
+import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
+import { ConanPackage } from "./ConanPackage";
 import { ConanUtils } from "./ConanUtils";
 
 /**
 * @class ConanDependencies
 */
-export class ConanDependencies implements PackageDependencies {
+export class ConanDependencies extends PackageDependencies {
   private theseAreTheLockFilesIKnow: Array<string> = ["composer.lock", "Cargo.lock", "Gemfile.lock", "yarn.lock", "renv.lock", "poetry.lock"];
 
-  constructor(private options: PackageDependenciesOptions) {}
 
   public checkIfValid(): boolean {
     return PackageDependenciesHelper.checkIfValidWithExclusion(
-      ".lock", 
-      "conan", 
-      this.theseAreTheLockFilesIKnow
+      ".lock",
+      "conan",
+      this.theseAreTheLockFilesIKnow,
+      this.application
     );
   }
 
@@ -45,9 +44,10 @@ export class ConanDependencies implements PackageDependencies {
         pkg.Name,
         pkg.Version,
         "conan",
-        ScanType.NexusIq
+        ScanType.NexusIq,
+        this.application
       );
-      
+
       map.set(
         pkg.toPurl(),
         componentEntry
@@ -60,7 +60,7 @@ export class ConanDependencies implements PackageDependencies {
     try {
       const conanUtils = new ConanUtils(this.theseAreTheLockFilesIKnow);
 
-      const deps = await conanUtils.getDependencyArray();
+      const deps = await conanUtils.getDependencyArray(this.application);
 
       return Promise.resolve(deps);
     } catch (ex) {

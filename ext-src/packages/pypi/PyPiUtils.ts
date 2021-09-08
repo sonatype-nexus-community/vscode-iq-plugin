@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { PyPIPackage } from './PyPIPackage';
 import { readFileSync } from "fs";
 import { join } from "path";
+import { Application } from "../../models/Application";
+import { PyPIPackage } from './PyPIPackage';
 
 export class PyPiUtils {
-  public async getDependencyArray(): Promise<Array<PyPIPackage>> {
+  public async getDependencyArray(application: Application): Promise<Array<PyPIPackage>> {
     try {
       const requirements = readFileSync(
         join(
-          PackageDependenciesHelper.getWorkspaceRoot(), 
+          application.workspaceFolder,
           "requirements.txt"));
 
       return Promise.resolve(
@@ -33,13 +33,13 @@ export class PyPiUtils {
     } catch (ex) {
       return Promise.reject(
         `Error occurred in generating dependency tree. Check that there is not an issue with your requirements.txt, ex: ${ex}`
-        );
+      );
     }
   }
 
   private parsePyPIDependencyTree(dependencyTree: string): Array<PyPIPackage> {
     let dependencyList: PyPIPackage[] = [];
-    dependencyTree.split("\n").forEach((dep) => {  
+    dependencyTree.split("\n").forEach((dep) => {
       if (dep.trim()) {
         if (dep.startsWith("#")) {
           console.debug("Found comment, skipping");
@@ -65,8 +65,8 @@ export class PyPiUtils {
           } else {
             console.warn(
               "Skipping dependency: " +
-                dep +
-                " due to missing data (name, version)"
+              dep +
+              " due to missing data (name, version)"
             );
           }
         }

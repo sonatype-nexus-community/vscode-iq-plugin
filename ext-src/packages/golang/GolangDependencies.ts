@@ -13,23 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { GolangPackage } from "./GolangPackage";
+import { ComponentEntry } from "../../models/ComponentEntry";
+import { ScanType } from "../../types/ScanType";
 import { PackageDependencies } from "../PackageDependencies";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { GolangUtils } from "./GolangUtils";
-import { ScanType } from "../../types/ScanType";
-import { ComponentEntry } from "../../models/ComponentEntry";
+import { GolangPackage } from "./GolangPackage";
 import { GolangScanType } from "./GolangScanType";
-import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
+import { GolangUtils } from "./GolangUtils";
 
-export class GolangDependencies implements PackageDependencies {
-  
-  constructor(private options: PackageDependenciesOptions) {}
+export class GolangDependencies extends PackageDependencies {
 
   private scanType: string = "";
 
   public checkIfValid(): boolean {
-    this.scanType =  PackageDependenciesHelper.checkIfValidWithArray(GolangScanType, "golang");
+    this.scanType = PackageDependenciesHelper.checkIfValidWithArray(GolangScanType, "golang", this.application);
     return this.scanType === "" ? false : true;
   }
 
@@ -40,7 +37,8 @@ export class GolangDependencies implements PackageDependencies {
         pkg.Name,
         pkg.Version,
         "golang",
-        ScanType.NexusIq
+        ScanType.NexusIq,
+        this.application
       );
       map.set(
         pkg.toPurl(),
@@ -53,7 +51,7 @@ export class GolangDependencies implements PackageDependencies {
   public async packageForService(): Promise<Array<GolangPackage>> {
     try {
       const golangUtils = new GolangUtils();
-      const deps = await golangUtils.getDependencyArray(this.scanType);
+      const deps = await golangUtils.getDependencyArray(this.application, this.scanType);
       return Promise.resolve(deps);
     }
     catch (e) {

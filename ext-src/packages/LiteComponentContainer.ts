@@ -13,27 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { NpmDependencies } from "./npm/NpmDependencies";
-import { PyPIDependencies } from "./pypi/PyPIDependencies";
-import { PoetryDependencies } from "./poetry/PoetryDependencies";
-import { GolangDependencies } from "./golang/GolangDependencies";
-import { MavenDependencies } from "./maven/MavenDependencies";
-import { RubyGemsDependencies } from "./rubygems/RubyGemsDependencies";
-import { RDependencies } from "./r/RDependencies";
-import { ComposerDependencies } from "./composer/ComposerDependencies";
-import { CargoDependencies } from "./cargo/CargoDependencies";
-import { PackageDependencies } from "./PackageDependencies";
-import { ILogger } from "../utils/Logger";
-import { ConanDependencies } from "./conan/ConanDependencies";
-import { GradleDependencies } from "./gradle/GradleDependencies";
+import { Application } from "../models/Application";
 import { SonatypeConfig } from "../types/SonatypeConfig";
 import { LoadSonatypeConfig } from "../utils/Config";
+import { ILogger } from "../utils/Logger";
+import { NpmDependencies } from "./npm/NpmDependencies";
+import { PackageDependencies } from "./PackageDependencies";
 
 export class LiteComponentContainer {
   Possible: Array<PackageDependencies> = [];
   Valid: Array<PackageDependencies> = [];
 
-  constructor(readonly logger: ILogger) {
+  constructor(readonly logger: ILogger, private applications: Array<Application>) {
     const doc: SonatypeConfig | undefined = LoadSonatypeConfig();
 
     let includeDev: boolean = true;
@@ -43,20 +34,25 @@ export class LiteComponentContainer {
     }
 
     // To add a new format, you just need to push another implementation to this list
-    this.Possible.push(new RubyGemsDependencies({logger, includeDev}));
-    this.Possible.push(new NpmDependencies({logger, includeDev}));
-    this.Possible.push(new PyPIDependencies({logger, includeDev}));
-    this.Possible.push(new GolangDependencies({logger, includeDev}));
-    this.Possible.push(new MavenDependencies({logger, includeDev}));
-    this.Possible.push(new RDependencies({logger, includeDev}));
-    this.Possible.push(new PoetryDependencies({logger, includeDev}));
-    this.Possible.push(new ComposerDependencies({logger, includeDev}));
-    this.Possible.push(new CargoDependencies({logger, includeDev}));
-    this.Possible.push(new ConanDependencies({logger, includeDev}));
-    this.Possible.push(new GradleDependencies({logger, includeDev}));
+    this.applications.forEach((app) => {
+      this.Possible.push(new NpmDependencies({ logger, includeDev }, app))
+    })
+    /*
+    this.Possible.push(new RubyGemsDependencies({ logger, includeDev }));
+    this.Possible.push(new NpmDependencies({ logger, includeDev }));
+    this.Possible.push(new PyPIDependencies({ logger, includeDev }));
+    this.Possible.push(new GolangDependencies({ logger, includeDev }));
+    this.Possible.push(new MavenDependencies({ logger, includeDev }));
+    this.Possible.push(new RDependencies({ logger, includeDev }));
+    this.Possible.push(new PoetryDependencies({ logger, includeDev }));
+    this.Possible.push(new ComposerDependencies({ logger, includeDev }));
+    this.Possible.push(new CargoDependencies({ logger, includeDev }));
+    this.Possible.push(new ConanDependencies({ logger, includeDev }));
+    this.Possible.push(new GradleDependencies({ logger, includeDev }));
+    */
 
     this.Possible.forEach(i => {
-      if(i.checkIfValid()) {
+      if (i.checkIfValid()) {
         this.Valid.push(i);
       }
     });
