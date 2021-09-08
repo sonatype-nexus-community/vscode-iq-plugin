@@ -109,7 +109,7 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
       arguments: [entry]
     };
     let maxThreat = entry.maxPolicy();
-    treeItem.tooltip = `Name: ${entry.name}\nVersion: ${entry.version}\nHash: ${entry.hash}\nPolicy: ${maxThreat}`;
+    treeItem.tooltip = `Application: ${entry.application.name}\nName: ${entry.name}\nVersion: ${entry.version}\nHash: ${entry.hash}\nPolicy: ${maxThreat}`;
 
     return treeItem;
   }
