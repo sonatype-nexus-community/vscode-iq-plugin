@@ -15,6 +15,7 @@
  */
 import { LoadSonatypeConfig, NEXUS_IQ_PUBLIC_APPLICATION_ID } from "../utils/Config";
 import { LogLevel } from "../utils/Logger";
+import { ComponentEntry } from "./ComponentEntry";
 import { ComponentModelOptions } from "./ComponentModelOptions";
 import { TreeableModel } from "./TreeableModel";
 
@@ -22,6 +23,10 @@ export class Application implements TreeableModel {
 
     public nexusIqApplicationId: string = 'TBC';
     public latestIqReportUrl: string = 'TBC';
+    public coordsToComponent: Map<string, ComponentEntry> = new Map<
+        string,
+        ComponentEntry
+    >();
 
     constructor(readonly name: string, readonly workspaceFolder: string, options: ComponentModelOptions) {
         const doc = LoadSonatypeConfig(this);
