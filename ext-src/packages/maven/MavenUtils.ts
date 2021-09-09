@@ -71,10 +71,10 @@ export class MavenUtils {
       /[\| ]*[\\+][\\-]/g,
       ""
     ); // cleanup each line to remove the "|", "+-", "\-" tree syntax
-    console.debug(dependencies);
-    console.debug(
-      "------------------------------------------------------------------------------"
-    );
+    // console.debug(dependencies);
+    // console.debug(
+    //   "------------------------------------------------------------------------------"
+    // );
     let dependencyList: MavenPackage[] = [];
     let dependencyListString: Set<string> = new Set<string>();
 
