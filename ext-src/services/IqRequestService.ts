@@ -13,22 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import fetch from 'node-fetch';
-import { Headers } from 'node-fetch';
-import { RequestService } from "./RequestService";
-import { RequestHelpers } from "./RequestHelpers";
-import { Agent as HttpsAgent }  from "https";
 import { Agent } from 'http';
-import { ILogger, LogLevel } from '../utils/Logger';
-import { ThirdPartyAPIResponse } from './ThirdPartyApiResponse';
-import { ComponentDetails } from './ComponentDetails';
-import { ReportResponse } from './ReportResponse';
+import { Agent as HttpsAgent } from "https";
+import fetch, { Headers } from 'node-fetch';
 import { PackageURL } from 'packageurl-js';
-import { VulnerabilityResponse } from './VulnerabilityResponse';
-import { RemediationResponse } from './RemediationResponse';
-import { ApplicationResponse } from './ApplicationReponse';
 import { RefreshOptions } from '../NexusExplorer';
 import { STAGE_ACCEPTABLE_VALUES } from '../types/SonatypeRC';
+import { ILogger, LogLevel } from '../utils/Logger';
+import { ApplicationResponse } from './ApplicationReponse';
+import { ComponentDetails } from './ComponentDetails';
+import { RemediationResponse } from './RemediationResponse';
+import { ReportResponse } from './ReportResponse';
+import { RequestHelpers } from "./RequestHelpers";
+import { RequestService } from "./RequestService";
+import { ThirdPartyAPIResponse } from './ThirdPartyApiResponse';
+import { VulnerabilityResponse } from './VulnerabilityResponse';
 
 export class IqRequestService implements RequestService {
   readonly evaluationPollDelayMs = 2000;
@@ -43,8 +42,7 @@ export class IqRequestService implements RequestService {
     private getmaximumEvaluationPollAttempts: number,
     private strictSSL: boolean = true,
     readonly logger: ILogger
-  ) 
-  {
+  ) {
     this.setURL(url);
 
     this.logger.log(LogLevel.INFO, `Created new IQ Request Service at: `, url);
@@ -57,7 +55,7 @@ export class IqRequestService implements RequestService {
     if (options.username) {
       this.user = (process.env.IQ_USERNAME ? process.env.IQ_USERNAME : options.username);
     }
-    if (options.token) { 
+    if (options.token) {
       this.password = (process.env.IQ_TOKEN ? process.env.IQ_TOKEN : options.token);
     }
   }
@@ -68,7 +66,7 @@ export class IqRequestService implements RequestService {
     this.url = url.replace(/\/$/, "");
 
     this.agent = this.getAgent(
-      this.strictSSL, 
+      this.strictSSL,
       this.url.startsWith('https')
     );
   }
@@ -78,7 +76,7 @@ export class IqRequestService implements RequestService {
   }
 
   public isPasswordSet(): boolean {
-    if(this.password == "") {
+    if (this.password == "") {
       return false;
     }
     return true;
@@ -108,7 +106,7 @@ export class IqRequestService implements RequestService {
     let url = `${this.url}/api/v2/applications?publicId=${applicationPublicId}`;
     return new Promise((resolve, reject) => {
       fetch(
-        url, 
+        url,
         {
           method: 'GET',
           headers: this.getHeaders(),
@@ -123,7 +121,7 @@ export class IqRequestService implements RequestService {
             } else {
               this.logger.log(
                 LogLevel.ERROR,
-                `No valid application found using the public ID: ${applicationPublicId}`, 
+                `No valid application found using the public ID: ${applicationPublicId}`,
                 url,
                 appRep
               );
@@ -134,16 +132,16 @@ export class IqRequestService implements RequestService {
 
           let body = await res.text();
           this.logger.log(
-            LogLevel.TRACE, 
+            LogLevel.TRACE,
             `Non 200 response from getting application ID`, url, body, res.status
-            );
+          );
           reject(res.status);
           return;
         }).catch((ex) => {
           this.logger.log(
-            LogLevel.ERROR, 
+            LogLevel.ERROR,
             `Error getting application ID from public ID`, url, ex
-            );
+          );
           reject(ex);
         });
     });
@@ -171,18 +169,18 @@ export class IqRequestService implements RequestService {
           }
           let body = await res.text();
           this.logger.log(
-            LogLevel.TRACE, 
-            `Non 200 response from IQ Server on submitting to 3rd Party API`, 
-            body, 
+            LogLevel.TRACE,
+            `Non 200 response from IQ Server on submitting to 3rd Party API`,
+            body,
             res.status
-            );
+          );
           reject(res.status);
           return;
         }).catch((ex) => {
           this.logger.log(
-            LogLevel.ERROR, 
+            LogLevel.ERROR,
             `Error submitting to 3rd Party API`, ex
-            );
+          );
           reject(ex);
         });
     });
@@ -211,10 +209,10 @@ export class IqRequestService implements RequestService {
     let _this = this;
     let pollAttempts = 0;
 
-    let successHandler = function(value: ThirdPartyAPIResponse) {
+    let successHandler = function (value: ThirdPartyAPIResponse) {
       success(value);
     };
-    let errorHandler = function(statusCode: number, message: string) {
+    let errorHandler = function (statusCode: number, message: string) {
       if (statusCode === 404) {
         // report still being worked on, continue to poll
         pollAttempts += 1;
@@ -243,7 +241,7 @@ export class IqRequestService implements RequestService {
 
   public getReportResults(reportID: string, applicationPublicId: string): Promise<ReportResponse> {
     let url = `${this.url}/api/v2/applications/${applicationPublicId}/reports/${reportID}/policy`;
-    
+
     return new Promise((resolve, reject) => {
       fetch(
         url,
@@ -273,7 +271,7 @@ export class IqRequestService implements RequestService {
     reject: (statusCode: number, message: string) => any
   ) {
     fetch(
-      `${this.url}/${statusURL}`, 
+      `${this.url}/${statusURL}`,
       {
         method: 'GET',
         headers: this.getHeaders(),
@@ -300,7 +298,7 @@ export class IqRequestService implements RequestService {
       let url = `${this.url}/api/v2/components/remediation/application/${this.applicationId}?stageId=${this.stage}`;
 
       fetch(
-        url, 
+        url,
         {
           method: 'POST',
           headers: this.getHeadersWithApplicationJsonContentType(),
@@ -353,7 +351,7 @@ export class IqRequestService implements RequestService {
           }
           let body = await res.text();
           this.logger.log(
-            LogLevel.ERROR, 
+            LogLevel.ERROR,
             `Non 200 response attempting to get vuln details: ${vulnID}`,
             body,
             url);
@@ -361,7 +359,7 @@ export class IqRequestService implements RequestService {
           return;
         }).catch((ex) => {
           this.logger.log(
-            LogLevel.ERROR, 
+            LogLevel.ERROR,
             `General error attempting to get vuln details: ${vulnID}`,
             ex,
             url);
@@ -372,7 +370,7 @@ export class IqRequestService implements RequestService {
 
   public async getAllVersions(purl: PackageURL): Promise<Array<string>> {
     let url = `${this.url}/api/v2/components/versions`;
-    
+
     let request = {
       packageUrl: purl.toString().replace("%2F", "/")
     };
@@ -393,8 +391,8 @@ export class IqRequestService implements RequestService {
           }
           let body = await res.text();
           this.logger.log(
-            LogLevel.ERROR, 
-            `Non 200 response received getting versions array from IQ Server`, 
+            LogLevel.ERROR,
+            `Non 200 response received getting versions array from IQ Server`,
             request,
             res.status,
             body);
@@ -402,8 +400,8 @@ export class IqRequestService implements RequestService {
           return;
         }).catch((ex) => {
           this.logger.log(
-            LogLevel.ERROR, 
-            `General error getting versions array from IQ Server`, 
+            LogLevel.ERROR,
+            `General error getting versions array from IQ Server`,
             request,
             ex);
           reject(ex);
@@ -412,15 +410,15 @@ export class IqRequestService implements RequestService {
   }
 
   public async getAllVersionDetails(versions: Array<string>, purl: PackageURL): Promise<ComponentDetails> {
-    this.logger.log(LogLevel.TRACE, 
-      `Begin Get All Version Details: ${purl.toString()}`, 
-      purl, 
+    this.logger.log(LogLevel.TRACE,
+      `Begin Get All Version Details: ${purl.toString()}`,
+      purl,
       versions);
 
     let url = `${this.url}/api/v2/components/details`;
 
     return new Promise((resolve, reject) => {
-      let request: ComponentDetailsRequest = { components: []};
+      let request: ComponentDetailsRequest = { components: [] };
       versions.forEach((version) => {
         purl.version = version;
         request.components.push({ packageUrl: purl.toString().replace("%2F", "/") });
@@ -443,8 +441,8 @@ export class IqRequestService implements RequestService {
           }
           let body = await res.text();
           this.logger.log(
-            LogLevel.ERROR, 
-            `Non 200 response received getting component versions details from IQ Server`, 
+            LogLevel.ERROR,
+            `Non 200 response received getting component versions details from IQ Server`,
             request,
             res.status,
             body);
@@ -452,8 +450,8 @@ export class IqRequestService implements RequestService {
           return;
         }).catch((ex) => {
           this.logger.log(
-            LogLevel.ERROR, 
-            `General error getting component versions details from IQ Server`, 
+            LogLevel.ERROR,
+            `General error getting component versions details from IQ Server`,
             request,
             ex);
           reject(ex);
@@ -462,14 +460,14 @@ export class IqRequestService implements RequestService {
   }
 
   public async showSelectedVersion(purl: string): Promise<ComponentDetails> {
-    this.logger.log(LogLevel.TRACE, 
+    this.logger.log(LogLevel.TRACE,
       `Begin Show Selected Version: ${purl}`);
 
     return new Promise((resolve, reject) => {
       let url = `${this.url}/api/v2/components/details`;
 
-      let request: ComponentDetailsRequest = {components: []};
-      request.components.push({packageUrl: purl});
+      let request: ComponentDetailsRequest = { components: [] };
+      request.components.push({ packageUrl: purl });
 
       fetch(
         url,
@@ -486,8 +484,8 @@ export class IqRequestService implements RequestService {
           }
           let body = await res.text();
           this.logger.log(
-            LogLevel.ERROR, 
-            `Non 200 response received getting component version details from IQ Server`, 
+            LogLevel.ERROR,
+            `Non 200 response received getting component version details from IQ Server`,
             request,
             res.status,
             body);
@@ -495,8 +493,8 @@ export class IqRequestService implements RequestService {
           return;
         }).catch((ex) => {
           this.logger.log(
-            LogLevel.ERROR, 
-            `General error getting component version details from IQ Server`, 
+            LogLevel.ERROR,
+            `General error getting component version details from IQ Server`,
             request,
             ex);
           reject(ex);
