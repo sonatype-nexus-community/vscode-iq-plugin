@@ -36,10 +36,10 @@ import { ComponentModelOptions } from "./ComponentModelOptions";
 
 export class IqMultiProjectComponentModel implements ComponentModel {
   components = new Array<ComponentEntry>();
-  coordsToComponent: Map<string, ComponentEntry> = new Map<
-    string,
-    ComponentEntry
-  >();
+  // coordsToComponent: Map<string, ComponentEntry> = new Map<
+  //   string,
+  //   ComponentEntry
+  // >();
   requestService: RequestService;
 
   /**
@@ -107,9 +107,10 @@ export class IqMultiProjectComponentModel implements ComponentModel {
       try {
         // Clear state so that we don't create duplicates
         this.components = [];
-        this.coordsToComponent.clear();
+        // this.coordsToComponent.clear();
 
         this.applications.forEach((application) => {
+          application.coordsToComponent.clear();
           let componentContainer = new ComponentContainer(this.logger, [application]);
 
           window.withProgress(
@@ -128,10 +129,10 @@ export class IqMultiProjectComponentModel implements ComponentModel {
                     dependencies.push(...deps);
                     progress.report({ message: "Reticulating Splines", increment: 25 });
 
-                    this.logger.log(LogLevel.TRACE, `Total components was ${this.coordsToComponent.size}`);
-                    let pmCoordsToComponent: Map<string, ComponentEntry> = new Map([...this.coordsToComponent, ...pm.toComponentEntries(deps)]);
-                    this.coordsToComponent = new Map([...this.coordsToComponent.entries(), ...pmCoordsToComponent.entries()]);
-                    this.logger.log(LogLevel.TRACE, `Total components is now ${this.coordsToComponent.size}`);
+                    this.logger.log(LogLevel.TRACE, `Total components was ${application.coordsToComponent.size}`);
+                    let pmCoordsToComponent: Map<string, ComponentEntry> = new Map([...application.coordsToComponent, ...pm.toComponentEntries(deps)]);
+                    application.coordsToComponent = new Map([...application.coordsToComponent.entries(), ...pmCoordsToComponent.entries()]);
+                    this.logger.log(LogLevel.TRACE, `Total components is now ${application.coordsToComponent.size}`);
 
                   } catch (ex) {
                     this.logger.log(LogLevel.ERROR, `Nexus IQ Extension Failure moving forward`, ex);
@@ -206,7 +207,7 @@ export class IqMultiProjectComponentModel implements ComponentModel {
                     resultEntry.packageUrl = purl;
                   }
 
-                  let componentEntry = this.coordsToComponent.get(purl);
+                  let componentEntry = application.coordsToComponent.get(purl);
 
                   if (componentEntry != undefined) {
                     componentEntry!.policyViolations = resultEntry.violations;
@@ -216,7 +217,7 @@ export class IqMultiProjectComponentModel implements ComponentModel {
                 }
 
                 console.debug(`Components Size before push for ${application.name} is ${this.components.length}`);
-                this.components.push(...Array.from(this.coordsToComponent, ([name, value]) => (value)));
+                this.components.push(...Array.from(application.coordsToComponent, ([name, value]) => (value)));
                 console.debug(`Components Size AFTER push for ${application.name} is ${this.components.length}`);
               }
 
