@@ -13,11 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { LoadSonatypeConfig, NEXUS_IQ_PUBLIC_APPLICATION_ID } from "../utils/Config";
+import { LogLevel } from "../utils/Logger";
+import { ComponentModelOptions } from "./ComponentModelOptions";
 import { TreeableModel } from "./TreeableModel";
 
 export class Application implements TreeableModel {
 
-    constructor(readonly name: string, readonly nexusIqApplicationId: string, readonly workspaceFolder: string) { }
+    public nexusIqApplicationId: string = 'TBC';
+    public latestIqReportUrl: string = 'TBC';
+
+    constructor(readonly name: string, readonly workspaceFolder: string, options: ComponentModelOptions) {
+        const doc = LoadSonatypeConfig(this);
+
+        if (doc && doc.iq) {
+            this.nexusIqApplicationId = (doc.iq.PublicApplication ? doc.iq.PublicApplication : options.configuration.get(NEXUS_IQ_PUBLIC_APPLICATION_ID) as string);
+        } else {
+            options.logger.log(LogLevel.INFO, `Using VS Code User/Workspace Application ID for ${this.name} as no config to override it.`);
+            this.nexusIqApplicationId = options.configuration.get(NEXUS_IQ_PUBLIC_APPLICATION_ID) as string;
+        }
+    }
 
     public getLabel(): string {
         return this.name
@@ -33,5 +48,11 @@ export class Application implements TreeableModel {
 
     public iconName(): string {
         return `policy_badge.png`;
+    }
+
+    public setLatestIqReportUrl(url: string, iqServerUrl: string) {
+        if (!url.startsWith(iqServerUrl)) {
+            this.latestIqReportUrl = new URL(url, iqServerUrl).href;
+        }
     }
 }

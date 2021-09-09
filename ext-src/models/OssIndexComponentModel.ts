@@ -43,7 +43,7 @@ export class OssIndexComponentModel implements ComponentModel {
    */
   applications = new Array<Application>();
 
-  private dummyApplication = new Application('ALL', 'TBC', PackageDependenciesHelper.getWorkspaceRoot())
+  private dummyApplication: Application
 
   constructor(
     options: ComponentModelOptions
@@ -51,6 +51,10 @@ export class OssIndexComponentModel implements ComponentModel {
     const username = (process.env.OSSI_USERNAME ? process.env.OSSI_USERNAME : options.configuration.get(OSS_INDEX_USERNAME) as string);
     const password = (process.env.OSSI_TOKEN ? process.env.OSSI_TOKEN : options.configuration.get(OSS_INDEX_TOKEN) as string);
     this.logger = options.logger;
+
+    // Create Dummy Application
+    this.dummyApplication = new Application('All', PackageDependenciesHelper.getWorkspaceRoot(), options);
+
     this.requestService = new OssIndexRequestService(username, password, options.logger);
 
     // Detect all folders in Workspace and assume each is a separate Application
@@ -62,7 +66,7 @@ export class OssIndexComponentModel implements ComponentModel {
 
     workspaceRoot.forEach((workspaceFolder) => {
       let baseFolderName = workspaceFolder.uri.fsPath.substr(workspaceFolder.uri.fsPath.lastIndexOf('/') + 1);
-      this.applications.push(new Application(baseFolderName, baseFolderName, workspaceFolder.uri.fsPath));
+      this.applications.push(new Application(baseFolderName, workspaceFolder.uri.fsPath, options));
       this.logger.log(LogLevel.INFO, `Added Workspace Folder ${workspaceFolder.uri.fsPath} as Application '${baseFolderName}'`);
     })
   }
