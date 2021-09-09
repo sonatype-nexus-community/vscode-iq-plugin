@@ -252,8 +252,8 @@ export class NexusExplorer {
 
   public updateIQAppID(applicationID: string) {
     if (this.componentModel instanceof IqMultiProjectComponentModel) {
-      this.componentModel.applicationPublicId = applicationID;
-
+      // this.componentModel.applicationPublicId = applicationID;
+      this.componentModel.evaluateWorkspaceFolders();
       this.nexusExplorerProvider.doRefresh();
     }
   }
