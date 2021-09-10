@@ -33,13 +33,8 @@ import { ComponentEntry } from "./ComponentEntry";
 import { ComponentModel } from "./ComponentModel";
 import { ComponentModelOptions } from "./ComponentModelOptions";
 
-
 export class IqMultiProjectComponentModel implements ComponentModel {
   components = new Array<ComponentEntry>();
-  // coordsToComponent: Map<string, ComponentEntry> = new Map<
-  //   string,
-  //   ComponentEntry
-  // >();
   requestService: RequestService;
 
   /**
