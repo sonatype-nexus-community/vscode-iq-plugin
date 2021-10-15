@@ -20,7 +20,7 @@ import { PackageType } from "../packages/PackageType";
 import { IqRequestService } from "../services/IqRequestService";
 import { ReportResponse } from "../services/ReportResponse";
 import { RequestService } from "../services/RequestService";
-import { SONATYPE_CONFIG_FILE_NAME } from "../types/SonatypeConfig";
+import { ScanType } from "../types/ScanType";
 import {
   NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS, NEXUS_IQ_SERVER_URL,
   NEXUS_IQ_STRICT_SSL,
@@ -95,15 +95,12 @@ export class IqMultiProjectComponentModel implements ComponentModel {
   }
 
   private async performIqScan(): Promise<any> {
-    this.logger.log(LogLevel.DEBUG, `Checking for existence of ${SONATYPE_CONFIG_FILE_NAME}`);
-    // await this.checkRCFile();
-
     return new Promise<void>((resolve, reject) => {
       try {
         // Clear state so that we don't create duplicates
         this.components = [];
-        // this.coordsToComponent.clear();
 
+        // Iterate each Application, gather data and perform an IQ scan
         this.applications.forEach((application) => {
           application.coordsToComponent.clear();
           let componentContainer = new ComponentContainer(this.logger, [application]);
@@ -125,7 +122,7 @@ export class IqMultiProjectComponentModel implements ComponentModel {
                     progress.report({ message: "Reticulating Splines", increment: 25 });
 
                     this.logger.log(LogLevel.TRACE, `Total components was ${application.coordsToComponent.size}`);
-                    let pmCoordsToComponent: Map<string, ComponentEntry> = new Map([...application.coordsToComponent, ...pm.toComponentEntries(deps)]);
+                    let pmCoordsToComponent: Map<string, ComponentEntry> = new Map([...application.coordsToComponent, ...pm.toComponentEntries(deps, ScanType.NexusIq)]);
                     application.coordsToComponent = new Map([...application.coordsToComponent.entries(), ...pmCoordsToComponent.entries()]);
                     this.logger.log(LogLevel.TRACE, `Total components is now ${application.coordsToComponent.size}`);
 
@@ -142,7 +139,6 @@ export class IqMultiProjectComponentModel implements ComponentModel {
               this.logger.log(LogLevel.DEBUG, `Getting Internal ID from Public ID: ${application.nexusIqApplicationId}`);
               progress.report({ message: "Getting IQ Server Internal Application ID", increment: 40 });
 
-              // let internalID: string = await this.requestService.getApplicationId(this.applicationPublicId);
               let internalID: string = await this.requestService.getApplicationId(application.nexusIqApplicationId);
               this.logger.log(LogLevel.TRACE, `Obtained internal application ID response: ${internalID}`);
 

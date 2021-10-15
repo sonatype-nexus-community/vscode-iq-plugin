@@ -26,14 +26,14 @@ export class MavenDependencies extends PackageDependencies {
     return PackageDependenciesHelper.checkIfValid("pom.xml", "maven", this.application);
   }
 
-  public toComponentEntries(packages: Array<MavenPackage>): Map<string, ComponentEntry> {
+  public toComponentEntries(packages: Array<MavenPackage>, scanType: ScanType): Map<string, ComponentEntry> {
     let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
         pkg.Group + ":" + pkg.Name,
         pkg.Version,
         "maven",
-        ScanType.NexusIq,
+        scanType,
         this.application
       );
       map.set(

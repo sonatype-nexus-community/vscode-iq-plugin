@@ -37,14 +37,14 @@ export class ConanDependencies extends PackageDependencies {
     );
   }
 
-  public toComponentEntries(packages: Array<ConanPackage>): Map<string, ComponentEntry> {
+  public toComponentEntries(packages: Array<ConanPackage>, scanType: ScanType): Map<string, ComponentEntry> {
     let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
         pkg.Name,
         pkg.Version,
         "conan",
-        ScanType.NexusIq,
+        scanType,
         this.application
       );
 

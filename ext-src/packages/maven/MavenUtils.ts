@@ -81,7 +81,6 @@ export class MavenUtils {
     const dependencyLines = dependencies.split("\n");
     dependencyLines.forEach((dep, index) => {
       if (index > 0) {
-        console.debug(dep);
         if (dep.trim()) {
           if (dep.includes("omitted for duplicate")) {
             return;

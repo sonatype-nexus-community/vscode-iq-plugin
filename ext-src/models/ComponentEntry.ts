@@ -26,7 +26,7 @@ export class ComponentEntry implements TreeableModel {
   policyViolations: Array<PolicyViolation> = [];
   hash: string = "";
   nexusIQData?: NexusIQData = undefined;
-  ossIndexData?: any = undefined;
+  ossIndexData?: OssIndexData = undefined;
 
   constructor(readonly name: string, readonly version: string, readonly format: string, readonly scanType: ScanType, readonly application: Application) { }
 
@@ -60,11 +60,12 @@ export class ComponentEntry implements TreeableModel {
           0
         );
       }
-    } else if (this.scanType == ScanType.OssIndex) {
+    } else if (this.scanType == ScanType.OssIndex && this.ossIndexData) {
       if (!this.ossIndexData.vulnerabilities) {
         return maxThreatLevel;
       }
       if (this.ossIndexData.vulnerabilities.length > 0) {
+        // console.debug(`${this.name}@${this.version} has ${this.ossIndexData.vulnerabilities.length} vulnerabilities`)
         maxThreatLevel = this.ossIndexData.vulnerabilities.reduce(
           (prevMax: number, a: any) => {
             return a.cvssScore > prevMax ? a.cvssScore : prevMax;
@@ -100,4 +101,9 @@ export class ComponentEntry implements TreeableModel {
 
 export interface NexusIQData {
   component: ReportComponent
+}
+
+export interface OssIndexData {
+  reference: string
+  vulnerabilities: Array<object>
 }

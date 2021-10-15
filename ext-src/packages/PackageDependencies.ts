@@ -15,6 +15,7 @@
  */
 import { Application } from "../models/Application";
 import { ComponentEntry } from "../models/ComponentEntry";
+import { ScanType } from "../types/ScanType";
 import { PackageDependenciesOptions } from "./PackageDependenciesOptions";
 import { PackageType } from "./PackageType";
 
@@ -23,6 +24,6 @@ export abstract class PackageDependencies {
   constructor(protected options: PackageDependenciesOptions, public application: Application) { }
 
   abstract checkIfValid(): boolean;
-  abstract toComponentEntries(data: Array<PackageType>): Map<string, ComponentEntry>;
+  abstract toComponentEntries(data: Array<PackageType>, scanType: ScanType): Map<string, ComponentEntry>;
   abstract packageForService(): Promise<Array<PackageType>>;
 }

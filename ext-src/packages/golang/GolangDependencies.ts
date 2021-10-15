@@ -30,14 +30,14 @@ export class GolangDependencies extends PackageDependencies {
     return this.scanType === "" ? false : true;
   }
 
-  public toComponentEntries(packages: Array<GolangPackage>): Map<string, ComponentEntry> {
+  public toComponentEntries(packages: Array<GolangPackage>, scanType: ScanType): Map<string, ComponentEntry> {
     let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
         pkg.Name,
         pkg.Version,
         "golang",
-        ScanType.NexusIq,
+        scanType,
         this.application
       );
       map.set(

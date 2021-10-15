@@ -26,14 +26,14 @@ export class GradleDependencies extends PackageDependencies {
     return PackageDependenciesHelper.checkIfValid("build.gradle", "gradle", this.application);
   }
 
-  public toComponentEntries(packages: Array<MavenPackage>): Map<string, ComponentEntry> {
+  public toComponentEntries(packages: Array<MavenPackage>, scanType: ScanType): Map<string, ComponentEntry> {
     let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
         pkg.Group + ":" + pkg.Name,
         pkg.Version,
         "gradle",
-        ScanType.NexusIq,
+        scanType,
         this.application
       );
       map.set(

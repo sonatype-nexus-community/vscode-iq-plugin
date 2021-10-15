@@ -50,8 +50,10 @@ export class PyPiUtils {
             // Short circuit, we couldn't split, move on to next one
             return;
           }
+
           const name: string = dependencyParts[0];
-          const version: string = dependencyParts[1];
+          // remove any comments at the end of the line
+          const version: string = dependencyParts[1].split('#')[0].trim();
           const extension: string = "tar.gz";
           const qualifier: string = "";
           if (name && version) {

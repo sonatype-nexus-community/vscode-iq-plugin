@@ -27,14 +27,14 @@ export class PoetryDependencies extends PyPIDependencies {
     return PackageDependenciesHelper.doesPathExist(this.application.workspaceFolder, "poetry.lock");
   }
 
-  public toComponentEntries(packages: Array<PyPIPackage>): Map<string, ComponentEntry> {
+  public toComponentEntries(packages: Array<PyPIPackage>, scanType: ScanType): Map<string, ComponentEntry> {
     let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
         pkg.Name,
         pkg.Version,
         "pypi",
-        ScanType.NexusIq,
+        scanType,
         this.application
       );
       map.set(
@@ -46,6 +46,7 @@ export class PoetryDependencies extends PyPIDependencies {
   }
 
   public async packageForService(): Promise<Array<PyPIPackage>> {
+    console.debug(`Grabbing Poetry dependencies from Application ${this.application.name}...`)
     try {
       const poetryUtils = new PoetryUtils();
       const deps = await poetryUtils.getDependencyArray(this.application);

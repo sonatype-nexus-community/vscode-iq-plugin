@@ -29,14 +29,14 @@ export class ComposerDependencies extends PackageDependencies {
     return PackageDependenciesHelper.checkIfValid("composer.lock", "composer", this.application);
   }
 
-  public toComponentEntries(packages: Array<ComposerPackage>): Map<string, ComponentEntry> {
+  public toComponentEntries(packages: Array<ComposerPackage>, scanType: ScanType): Map<string, ComponentEntry> {
     let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
         pkg.Group + ":" + pkg.Name,
         pkg.Version,
         "composer",
-        ScanType.NexusIq,
+        scanType,
         this.application
       );
       map.set(

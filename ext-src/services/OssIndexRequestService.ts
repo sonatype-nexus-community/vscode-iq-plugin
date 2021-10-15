@@ -16,6 +16,7 @@
 import fetch, { Headers } from 'node-fetch';
 import { ILogger, LogLevel } from '../utils/Logger';
 import { LiteRequestService } from "./LiteRequestService";
+import { OssIndexResponse } from './ReportResponse';
 import { RequestHelpers } from "./RequestHelpers";
 
 const MAX_COORDS: number = 128;
@@ -40,7 +41,7 @@ export class OssIndexRequestService implements LiteRequestService {
     this.password = password;
   }
 
-  public async getResultsFromPurls(purls: Array<String>): Promise<any> {
+  public async getResultsFromPurls(purls: Array<String>): Promise<OssIndexResponse> {
     return new Promise(async (resolve, reject) => {
       let newPurls = this.chunkPurls(purls);
       let response = new Array();
@@ -56,7 +57,8 @@ export class OssIndexRequestService implements LiteRequestService {
       }
 
       if (response.length > 0) {
-        resolve(response);
+        let thisResponse: OssIndexResponse = { components: response }
+        resolve(thisResponse);
         return;
       } else {
         reject("Something has gone wrong, check Debug Console/logs.");
@@ -64,8 +66,6 @@ export class OssIndexRequestService implements LiteRequestService {
       }
     })
   }
-
-
 
   private async callOssIndex(purls: String[]): Promise<any> {
     const headers = new Headers(RequestHelpers.getUserAgentHeader());

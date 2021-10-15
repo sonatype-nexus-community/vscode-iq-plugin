@@ -33,7 +33,7 @@ export class ComponentContainer {
   Possible: Array<PackageDependencies> = [];
   Valid: Array<PackageDependencies> = [];
   PackageMuncher: PackageDependencies | undefined;
-  workspaceFolder: string = 'TBC';
+  // workspaceFolder: string = 'TBC';
 
   constructor(readonly logger: ILogger, private applications: Array<Application>) {
     const doc: SonatypeConfig | undefined = LoadSonatypeConfig(this.applications[0]);
@@ -65,9 +65,9 @@ export class ComponentContainer {
     });
 
     if (this.Valid.length != 0) {
-      logger.log(LogLevel.DEBUG, `${this.Valid.length} package muncher(s) set for the Workspace Folder '${this.workspaceFolder}'`);
+      logger.log(LogLevel.DEBUG, `${this.Valid.length} package muncher(s) set`);
     } else {
-      logger.log(LogLevel.WARN, `No package munchers appear valid for the Workspace Folder '${this.workspaceFolder}'`);
+      logger.log(LogLevel.WARN, `No package munchers appear valid`);
       throw new Error("No supported scan type exists for the open workspace");
     }
   }

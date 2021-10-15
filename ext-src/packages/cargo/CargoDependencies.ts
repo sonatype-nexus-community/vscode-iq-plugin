@@ -29,14 +29,14 @@ export class CargoDependencies extends PackageDependencies {
     return PackageDependenciesHelper.checkIfValid("Cargo.lock", "cargo", this.application);
   }
 
-  public toComponentEntries(packages: Array<CargoPackage>): Map<string, ComponentEntry> {
+  public toComponentEntries(packages: Array<CargoPackage>, scanType: ScanType): Map<string, ComponentEntry> {
     let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
         pkg.Name,
         pkg.Version,
         "cargo",
-        ScanType.NexusIq,
+        scanType,
         this.application
       );
       map.set(

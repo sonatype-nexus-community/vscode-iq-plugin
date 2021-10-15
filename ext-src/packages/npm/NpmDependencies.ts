@@ -41,7 +41,7 @@ export class NpmDependencies extends PackageDependencies {
     return this.scanType === "" ? false : true;
   }
 
-  public toComponentEntries(packages: Array<NpmPackage>): Map<string, ComponentEntry> {
+  public toComponentEntries(packages: Array<NpmPackage>, scanType: ScanType): Map<string, ComponentEntry> {
     let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       const name = (pkg.Group != "") ? `${pkg.Group}/${pkg.Name}` : pkg.Name;
@@ -49,7 +49,7 @@ export class NpmDependencies extends PackageDependencies {
         name,
         pkg.Version,
         "npm",
-        ScanType.NexusIq,
+        scanType,
         this.application
       );
       map.set(

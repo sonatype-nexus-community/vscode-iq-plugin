@@ -26,14 +26,14 @@ export class PyPIDependencies extends PackageDependencies {
     return PackageDependenciesHelper.doesPathExist(this.application.workspaceFolder, "requirements.txt");
   }
 
-  public toComponentEntries(packages: Array<PyPIPackage>): Map<string, ComponentEntry> {
+  public toComponentEntries(packages: Array<PyPIPackage>, scanType: ScanType): Map<string, ComponentEntry> {
     let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
         pkg.Name,
         pkg.Version,
         "pypi",
-        ScanType.NexusIq,
+        scanType,
         this.application
       );
       map.set(

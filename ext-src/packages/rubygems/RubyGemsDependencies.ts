@@ -37,14 +37,14 @@ export class RubyGemsDependencies extends PackageDependencies {
     return PackageDependenciesHelper.checkIfValid('Gemfile.lock', 'rubygems', this.application);
   }
 
-  public toComponentEntries(packages: Array<RubyGemsPackage>): Map<string, ComponentEntry> {
+  public toComponentEntries(packages: Array<RubyGemsPackage>, scanType: ScanType): Map<string, ComponentEntry> {
     let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
         pkg.Name,
         pkg.Version,
         "gem",
-        ScanType.NexusIq,
+        scanType,
         this.application
       );
       map.set(
