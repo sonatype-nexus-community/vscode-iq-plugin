@@ -1,42 +1,42 @@
-version: 2.1 
-jobs: 
-  build: 
-    working_directory: ~/vscode-iq-plugin 
-    docker: 
-      - image: circleci/node:12.20.1
-    steps: 
+version: 2.1
+jobs:
+  build:
+    working_directory: ~/vscode-iq-plugin
+    docker:
+      - image: circleci/node:14.17.6
+    steps:
       - checkout
-      - restore_cache: 
+      - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Install npm dependencies...weeeeee
           command: npm i
-      - save_cache: 
+      - save_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
             - ./node_modules
-      - run: 
+      - run:
           name: build
           command: npm run webpack
   release:
-    working_directory: ~/vscode-iq-plugin 
-    docker: 
-      - image: circleci/node:12.20.1
+    working_directory: ~/vscode-iq-plugin
+    docker:
+      - image: circleci/node:14.17.6
     steps:
       - checkout
-      - run: 
+      - run:
           name: Allow global installs of npm packages
           command: sudo chown -R circleci:circleci /usr/local/lib && sudo chown -R circleci:circleci /usr/local/bin
       - run:
           name: Install dependencies
           command: npm i
-      - run: 
-          name: Install publishing packages 
+      - run:
+          name: Install publishing packages
           command: npm i -g vsce semantic-release @semantic-release/changelog @semantic-release/git@7.1.0-beta.11 @semantic-release/npm
-      - run: 
+      - run:
           name: Attempt publish to GitHub
           command: npx semantic-release -b main
-      - run: 
+      - run:
           name: Publish to Visual Studio Code Extension Marketplace
           command: vsce publish -p $VSCODE_TOKEN
       - run:
@@ -44,7 +44,6 @@ jobs:
           command: npx ovsx publish -p $VSX_TOKEN
 
 workflows:
-  version: 2.1
   build_and_release:
     jobs:
       - build
