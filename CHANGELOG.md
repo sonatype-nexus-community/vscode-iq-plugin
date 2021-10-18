@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.29...v1.1.0) (2021-10-18)
+
+
+### Features
+
+* attempt to force v1.1.0 ([ace5cf5](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/ace5cf58cc9e37836acdeddbba604f37f6b650e2))
+
 ## [1.0.29](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.0.28...v1.0.29) (2021-04-16)
 
 
