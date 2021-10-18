@@ -79,12 +79,11 @@ export class GradleUtils {
 
       return Promise.resolve(this.parseGradleDependencyTree(stdout));
     } catch (e) {
-      return Promise.reject(
-        `${gradleCommand} command failed, try running it manually to see what went wrong:` +
-        gradleCommand +
-        ", " +
-        e.error
-      );
+      let errorMessage = `${gradleCommand} command failed - try running it mannually to see what went wrong`
+      if (e instanceof Error) {
+        errorMessage += `. Error is ${e.message}`
+      }
+      return Promise.reject(errorMessage);
     }
   }
 

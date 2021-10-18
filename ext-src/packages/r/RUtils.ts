@@ -37,9 +37,11 @@ export class RUtils {
         );
       }
     } catch (e) {
-      return Promise.reject(
-        `R script failed, try running it manually to see what went wrong: ${e.error}`
-      );
+      let errorMessage = 'R script failed, try running it manually to see what went wrong'
+      if (e instanceof Error) {
+        errorMessage += `. Error is ${e.message}`
+      }
+      return Promise.reject(errorMessage);
     }
   }
 

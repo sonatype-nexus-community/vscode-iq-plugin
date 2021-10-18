@@ -63,10 +63,16 @@ export class GolangUtils {
         return Promise.reject("Type not implemented");
       }
     } catch (e) {
-      return Promise.reject(
-        "go list -m all failed, please try running locally to see why: " +
-        e.message
-      );
+      if (e instanceof Error) {
+        return Promise.reject(
+          "go list -m all failed, please try running locally to see why: " +
+          e.message
+        );
+      } else {
+        return Promise.reject(
+          "go list -m failed with an unknown error"
+        )
+      }
     }
   }
 
