@@ -13,25 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { NpmPackage } from "./NpmPackage";
+import { ComponentEntry } from "../../models/ComponentEntry";
+import { ScanType } from "../../types/ScanType";
 import { PackageDependencies } from "../PackageDependencies";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { NpmUtils } from './NpmUtils';
-import { ScanType } from "../../types/ScanType";
-import { ComponentEntry } from "../../models/ComponentEntry";
+import { NpmPackage } from "./NpmPackage";
 import { NpmScanType } from "./NpmScanType";
-import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
+import { NpmUtils } from './NpmUtils';
 
-export class NpmDependencies implements PackageDependencies {
-
-  constructor(private options: PackageDependenciesOptions) {}
+export class NpmDependencies extends PackageDependencies {
 
   private scanType: string = "";
 
   public async packageForService(): Promise<Array<NpmPackage>> {
     try {
       const npmUtils = new NpmUtils();
-      const deps = await npmUtils.getDependencyArray(this.options.includeDev);
+      const deps = await npmUtils.getDependencyArray(this.application, this.options.includeDev);
       return Promise.resolve(deps);
     }
     catch (e) {
@@ -40,11 +37,11 @@ export class NpmDependencies implements PackageDependencies {
   }
 
   public checkIfValid(): boolean {
-    this.scanType = PackageDependenciesHelper.checkIfValidWithArray(NpmScanType, "npm");
+    this.scanType = PackageDependenciesHelper.checkIfValidWithArray(NpmScanType, "npm", this.application);
     return this.scanType === "" ? false : true;
   }
 
-  public toComponentEntries(packages: Array<NpmPackage>): Map<string, ComponentEntry> {
+  public toComponentEntries(packages: Array<NpmPackage>, scanType: ScanType): Map<string, ComponentEntry> {
     let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       const name = (pkg.Group != "") ? `${pkg.Group}/${pkg.Name}` : pkg.Name;
@@ -52,7 +49,8 @@ export class NpmDependencies implements PackageDependencies {
         name,
         pkg.Version,
         "npm",
-        ScanType.NexusIq
+        scanType,
+        this.application
       );
       map.set(
         pkg.toPurl(),

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import fetch from 'node-fetch';
-import { Headers } from 'node-fetch';
+import fetch, { Headers } from 'node-fetch';
 import { ILogger, LogLevel } from '../utils/Logger';
 import { LiteRequestService } from "./LiteRequestService";
+import { OssIndexResponse } from './ReportResponse';
 import { RequestHelpers } from "./RequestHelpers";
 
 const MAX_COORDS: number = 128;
@@ -26,12 +26,12 @@ const URL = `https://ossindex.sonatype.org/api/v3/component-report`;
 export class OssIndexRequestService implements LiteRequestService {
 
   constructor(
-    readonly username: string, 
+    readonly username: string,
     private password: string,
-    readonly logger: ILogger) {}
+    readonly logger: ILogger) { }
 
-  public isPasswordSet():boolean {
-    if(this.password == "") {
+  public isPasswordSet(): boolean {
+    if (this.password == "") {
       return false;
     }
     return true;
@@ -41,7 +41,7 @@ export class OssIndexRequestService implements LiteRequestService {
     this.password = password;
   }
 
-  public async getResultsFromPurls(purls: Array<String>): Promise<any> {
+  public async getResultsFromPurls(purls: Array<String>): Promise<OssIndexResponse> {
     return new Promise(async (resolve, reject) => {
       let newPurls = this.chunkPurls(purls);
       let response = new Array();
@@ -49,7 +49,7 @@ export class OssIndexRequestService implements LiteRequestService {
       for (var purlList of newPurls) {
         let err, res = await this.callOssIndex(purlList);
         if (err != null) {
-          this.logger.log(LogLevel.ERROR, 'Uh oh');
+          this.logger.log(LogLevel.ERROR, 'Uh oh calling OSS Index');
           reject(err);
         } else {
           response = response.concat(res);
@@ -57,7 +57,8 @@ export class OssIndexRequestService implements LiteRequestService {
       }
 
       if (response.length > 0) {
-        resolve(response);
+        let thisResponse: OssIndexResponse = { components: response }
+        resolve(thisResponse);
         return;
       } else {
         reject("Something has gone wrong, check Debug Console/logs.");
@@ -66,8 +67,6 @@ export class OssIndexRequestService implements LiteRequestService {
     })
   }
 
-  
-
   private async callOssIndex(purls: String[]): Promise<any> {
     const headers = new Headers(RequestHelpers.getUserAgentHeader());
     headers.append('Content-Type', 'application/json');
@@ -75,7 +74,7 @@ export class OssIndexRequestService implements LiteRequestService {
     if (this.username != "" && this.password != "") {
       headers.append('Authorization', RequestHelpers.getBasicAuth(this.username, this.password));
     }
-    
+
     this.logger.log(LogLevel.TRACE, "Got User Agent");
 
     return new Promise((resolve, reject) => {
@@ -96,7 +95,7 @@ export class OssIndexRequestService implements LiteRequestService {
   }
 
   private turnPurlsIntoOssIndexRequestObject(purls: String[]): any {
-    return { 
+    return {
       coordinates: purls
     };
   }
@@ -113,7 +112,7 @@ export class OssIndexRequestService implements LiteRequestService {
 
     let j: number;
 
-    for(i = 0, j = purls.length; i < j; i = i + MAX_COORDS) {
+    for (i = 0, j = purls.length; i < j; i = i + MAX_COORDS) {
       chunkedArray.push(purls.slice(i, i + MAX_COORDS));
     }
 

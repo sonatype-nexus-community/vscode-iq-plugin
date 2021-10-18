@@ -14,33 +14,28 @@
  * limitations under the License.
  */
 
-import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../models/ComponentEntry";
+import { ScanType } from "../../types/ScanType";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { PyPIDependencies } from '../pypi/PyPIDependencies';
-import { ScanType } from "../../types/ScanType";
-import { PoetryUtils } from "./PoetryUtils";
 import { PyPIPackage } from '../pypi/PyPIPackage';
-import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
+import { PoetryUtils } from "./PoetryUtils";
 
-export class PoetryDependencies extends PyPIDependencies implements PackageDependencies {
-
-  constructor(options: PackageDependenciesOptions) {
-    super(options);
-  }
+export class PoetryDependencies extends PyPIDependencies {
 
   public checkIfValid(): boolean {
-    return PackageDependenciesHelper.doesPathExist(PackageDependenciesHelper.getWorkspaceRoot(), "poetry.lock");
+    return PackageDependenciesHelper.doesPathExist(this.application.workspaceFolder, "poetry.lock");
   }
 
-  public toComponentEntries(packages: Array<PyPIPackage>): Map<string, ComponentEntry> {
+  public toComponentEntries(packages: Array<PyPIPackage>, scanType: ScanType): Map<string, ComponentEntry> {
     let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
         pkg.Name,
         pkg.Version,
         "pypi",
-        ScanType.NexusIq
+        scanType,
+        this.application
       );
       map.set(
         pkg.toPurl(),
@@ -51,9 +46,10 @@ export class PoetryDependencies extends PyPIDependencies implements PackageDepen
   }
 
   public async packageForService(): Promise<Array<PyPIPackage>> {
+    console.debug(`Grabbing Poetry dependencies from Application ${this.application.name}...`)
     try {
       const poetryUtils = new PoetryUtils();
-      const deps = await poetryUtils.getDependencyArray();
+      const deps = await poetryUtils.getDependencyArray(this.application);
       return Promise.resolve(deps);
     }
     catch (e) {

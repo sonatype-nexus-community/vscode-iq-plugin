@@ -13,30 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PyPIPackage } from "./PyPIPackage";
-import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../models/ComponentEntry";
-import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { PyPiUtils } from "./PyPiUtils";
 import { ScanType } from "../../types/ScanType";
-import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
+import { PackageDependencies } from "../PackageDependencies";
+import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
+import { PyPIPackage } from "./PyPIPackage";
+import { PyPiUtils } from "./PyPiUtils";
 
-export class PyPIDependencies implements PackageDependencies {
-
-  constructor(private options: PackageDependenciesOptions) {}
+export class PyPIDependencies extends PackageDependencies {
 
   public checkIfValid(): boolean {
-    return PackageDependenciesHelper.doesPathExist(PackageDependenciesHelper.getWorkspaceRoot(), "requirements.txt");
+    return PackageDependenciesHelper.doesPathExist(this.application.workspaceFolder, "requirements.txt");
   }
 
-  public toComponentEntries(packages: Array<PyPIPackage>): Map<string, ComponentEntry> {
+  public toComponentEntries(packages: Array<PyPIPackage>, scanType: ScanType): Map<string, ComponentEntry> {
     let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
         pkg.Name,
         pkg.Version,
         "pypi",
-        ScanType.NexusIq
+        scanType,
+        this.application
       );
       map.set(
         pkg.toPurl(),
@@ -47,9 +45,10 @@ export class PyPIDependencies implements PackageDependencies {
   }
 
   public async packageForService(): Promise<Array<PyPIPackage>> {
+    console.debug(`Grabbing PyPi dependencies from Application ${this.application.name}...`)
     try {
       let pypiUtils = new PyPiUtils();
-      let deps = await pypiUtils.getDependencyArray();
+      let deps = await pypiUtils.getDependencyArray(this.application);
       return Promise.resolve(deps);
     }
     catch (e) {

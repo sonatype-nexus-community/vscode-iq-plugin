@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as vscode from "vscode";
 import * as path from "path";
-
+import * as vscode from "vscode";
+import { WorkspaceFoldersChangeEvent } from "vscode";
 import { ComponentInfoPanel } from "./ComponentInfoPanel";
-import { IqComponentModel } from "./models/IqComponentModel";
-import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
-import { ComponentModel } from "./models/ComponentModel";
 import { ComponentEntry } from "./models/ComponentEntry";
+import { ComponentModel } from "./models/ComponentModel";
+import { IqMultiProjectComponentModel } from "./models/IqMultiProjectComponentModel";
+import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
+import { TreeableModel } from "./models/TreeableModel";
 import { ILogger, Logger, LogLevel } from './utils/Logger';
-import {NEXUS_IQ_SERVER_URL} from "./utils/Config";
 
-export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentEntry> {
+
+export class NexusExplorerProvider implements vscode.TreeDataProvider<TreeableModel> {
   private editor?: vscode.TextEditor;
 
   private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
@@ -32,7 +33,7 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
 
   constructor(
     private context: vscode.ExtensionContext,
-    private componentModel: IqComponentModel
+    private componentModel: IqMultiProjectComponentModel
   ) {
     this.checkPassword();
   }
@@ -95,30 +96,34 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
     return this.componentModel.evaluateComponents();
   }
 
-  getTreeItem(entry: ComponentEntry): vscode.TreeItem {
+  getTreeItem(entry: TreeableModel): vscode.TreeItem {
     let treeItem: vscode.TreeItem = new vscode.TreeItem(
-      entry.toString(),
-      vscode.TreeItemCollapsibleState.None
+      entry.getLabel(),
+      (entry.hasChildren() ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None)
     );
     treeItem.iconPath = this.context.asAbsolutePath(
       path.join("resources", entry.iconName())
     );
-    treeItem.command = {
-      command: "nexusExplorer.viewNode",
-      title: "Select Node",
-      arguments: [entry]
-    };
-    let maxThreat = entry.maxPolicy();
-    treeItem.tooltip = `Name: ${entry.name}\nVersion: ${entry.version}\nHash: ${entry.hash}\nPolicy: ${maxThreat}`;
+    if (!entry.hasChildren()) {
+      treeItem.command = {
+        command: "nexusExplorer.viewNode",
+        title: "Select Node",
+        arguments: [entry]
+      };
+    }
+    treeItem.tooltip = entry.getTooltip();
 
     return treeItem;
   }
 
-  getChildren(entry?: ComponentEntry): ComponentEntry[] | null {
+  getChildren(entry?: TreeableModel): TreeableModel[] | null {
     if (entry === undefined) {
-      return this.componentModel.components;
+      return this.componentModel.applications;
     } else {
-      return null;
+      let childComponents = this.componentModel.components.filter(function (item: ComponentEntry) {
+        return item.application.name == entry.getLabel()
+      });
+      return childComponents;
     }
   }
 
@@ -127,15 +132,15 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<ComponentE
   }
 
   public updateComponentModel(componentModel: ComponentModel) {
-    this.componentModel = componentModel as IqComponentModel;
+    this.componentModel = componentModel as IqMultiProjectComponentModel;
   }
 }
 
 export class NexusExplorer {
-  
+
   private sortPolicyDescending: boolean = true;
   private sortNameAscending: boolean = true;
-  private nexusViewer: vscode.TreeView<ComponentEntry>;
+  private nexusViewer: vscode.TreeView<TreeableModel>;
   private componentModel: ComponentModel;
   private nexusExplorerProvider: NexusExplorerProvider;
   private logger: ILogger;
@@ -146,21 +151,21 @@ export class NexusExplorer {
     const _channel = vscode.window.createOutputChannel(`Sonatype IQ Extension`);
     context.subscriptions.push(_channel);
 
-    this.logger = new Logger({outputChannel: _channel, logFilePath: context.globalStoragePath});
+    this.logger = new Logger({ outputChannel: _channel, logFilePath: context.globalStoragePath });
     this.logger.setLogLevel(LogLevel[configuration.get("nexusExplorer.loggingLevel", "ERROR")]);
 
     if (
       configuration.get("nexusExplorer.dataSource", "ossindex") + "" ==
       "iqServer"
     ) {
-      this.componentModel = new IqComponentModel({configuration: configuration, logger: this.logger});
+      this.componentModel = new IqMultiProjectComponentModel({ configuration: configuration, logger: this.logger });
     } else {
-      this.componentModel = new OssIndexComponentModel({configuration: configuration, logger: this.logger});
+      this.componentModel = new OssIndexComponentModel({ configuration: configuration, logger: this.logger });
     }
 
     this.nexusExplorerProvider = new NexusExplorerProvider(
       context,
-      this.componentModel as IqComponentModel
+      this.componentModel as IqMultiProjectComponentModel
     );
 
     this.nexusViewer = vscode.window.createTreeView("nexusExplorer", {
@@ -188,6 +193,12 @@ export class NexusExplorer {
       "nexusExplorer.viewNode",
       (node: ComponentEntry) => this.viewNode(node)
     );
+
+    vscode.workspace.onDidChangeWorkspaceFolders((e: WorkspaceFoldersChangeEvent) => {
+      this.logger.log(LogLevel.DEBUG, `Workspace folders have been changed (${e.added.length} added, ${e.removed.length} removed)!`);
+      this.componentModel.evaluateWorkspaceFolders();
+      this.nexusExplorerProvider.doRefresh();
+    })
   }
 
   private sortByName() {
@@ -229,9 +240,9 @@ export class NexusExplorer {
     let configuration = vscode.workspace.getConfiguration();
 
     if (scanType == "iqServer") {
-      this.componentModel = new IqComponentModel({configuration: configuration, logger: this.logger});
+      this.componentModel = new IqMultiProjectComponentModel({ configuration: configuration, logger: this.logger });
     } else if (scanType == "ossindex") {
-      this.componentModel = new OssIndexComponentModel({configuration: configuration, logger: this.logger});
+      this.componentModel = new OssIndexComponentModel({ configuration: configuration, logger: this.logger });
     }
 
     this.nexusExplorerProvider.updateComponentModel(this.componentModel);
@@ -240,15 +251,15 @@ export class NexusExplorer {
   }
 
   public updateIQAppID(applicationID: string) {
-    if (this.componentModel instanceof IqComponentModel) {
-      this.componentModel.applicationPublicId = applicationID;
-
+    if (this.componentModel instanceof IqMultiProjectComponentModel) {
+      // this.componentModel.applicationPublicId = applicationID;
+      this.componentModel.evaluateWorkspaceFolders();
       this.nexusExplorerProvider.doRefresh();
     }
   }
 
   public refreshIQRequestService(options: RefreshOptions) {
-    if (this.componentModel instanceof IqComponentModel) {
+    if (this.componentModel instanceof IqMultiProjectComponentModel) {
       if (options) {
         this.componentModel.requestService.setOptions(options);
 

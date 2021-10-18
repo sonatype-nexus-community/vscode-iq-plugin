@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as path from "path";
 import * as fs from "fs";
-
+import * as path from "path";
 import * as temp from 'temp';
-
+import { Application } from "../../models/Application";
 import { exec } from "../../utils/exec";
-import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { MavenPackage } from "./MavenPackage";
 
+
+
 export class MavenUtils {
-  public async getDependencyArray(): Promise<any> {
+  public async getDependencyArray(application: Application): Promise<any> {
     let mvnCommand;
     try {
-      const pomFile = path.join(PackageDependenciesHelper.getWorkspaceRoot(), "pom.xml");
+      const pomFile = path.join(application.workspaceFolder, "pom.xml");
 
       /*
        * Need to use dependency tree operation because:
@@ -40,7 +40,7 @@ export class MavenUtils {
       mvnCommand = `mvn dependency:tree -Dverbose -DappendOutput=true -DoutputFile="${tmpFile.path}" -f "${pomFile}"`;
 
       await exec(mvnCommand, {
-        cwd: PackageDependenciesHelper.getWorkspaceRoot()
+        cwd: application.workspaceFolder
       });
 
       if (!fs.existsSync(tmpFile.path)) {
@@ -58,9 +58,9 @@ export class MavenUtils {
     } catch (e) {
       return Promise.reject(
         "mvn dependency:tree failed, try running it manually to see what went wrong:" +
-          mvnCommand +
-          ", " +
-          e.error
+        mvnCommand +
+        ", " +
+        e.error
       );
     }
   }
@@ -71,19 +71,18 @@ export class MavenUtils {
       /[\| ]*[\\+][\\-]/g,
       ""
     ); // cleanup each line to remove the "|", "+-", "\-" tree syntax
-    console.debug(dependencies);
-    console.debug(
-      "------------------------------------------------------------------------------"
-    );
+    // console.debug(dependencies);
+    // console.debug(
+    //   "------------------------------------------------------------------------------"
+    // );
     let dependencyList: MavenPackage[] = [];
     let dependencyListString: Set<string> = new Set<string>();
 
     const dependencyLines = dependencies.split("\n");
     dependencyLines.forEach((dep, index) => {
       if (index > 0) {
-        console.debug(dep);
         if (dep.trim()) {
-          if(dep.includes("omitted for duplicate")) {
+          if (dep.includes("omitted for duplicate")) {
             return;
           }
           const dependencyParts: string[] = dep.trim().split(":");
@@ -101,16 +100,15 @@ export class MavenUtils {
                 version,
                 extension
               );
-              if (!dependencyListString.has(dependencyObject.toPurl()))
-              {
+              if (!dependencyListString.has(dependencyObject.toPurl())) {
                 dependencyListString.add(dependencyObject.toPurl())
                 dependencyList.push(dependencyObject);
               }
             } else {
               console.warn(
                 "Skipping dependency: " +
-                  dep +
-                  " due to missing data (artifact, version, and/or extension)"
+                dep +
+                " due to missing data (artifact, version, and/or extension)"
               );
             }
           }

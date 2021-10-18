@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { exec } from "../../utils/exec";
-import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { MavenPackage } from "../maven/MavenPackage";
 import commandExists from "command-exists";
-import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
+import { Application } from "../../models/Application";
+import { exec } from "../../utils/exec";
 import { ILogger, LogLevel } from "../../utils/Logger";
+import { MavenPackage } from "../maven/MavenPackage";
+import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
 
 export class GradleUtils {
   private logger: ILogger;
@@ -32,7 +32,7 @@ export class GradleUtils {
   private readonly GRADLEW_BAT = `gradlew.bat`;
   private readonly gradleArguments = `dependencies --configuration runtimeClasspath`;
 
-  public async getDependencyArray(): Promise<any> {
+  public async getDependencyArray(application: Application): Promise<any> {
     this.logger.log(LogLevel.DEBUG, `Starting to attempt to get gradle dependencies`);
 
     let gradleCommandBaseCommand: string = "";
@@ -48,7 +48,7 @@ export class GradleUtils {
         this.logger.log(LogLevel.INFO, `Set gradle Command Base Command`, gradleCommandBaseCommand);
       } else {
         this.logger.log(LogLevel.INFO, `Operating system determination`, process.platform);
-        
+
         gradleCommandBaseCommand = (process.platform === 'win32') ? this.GRADLEW_BAT : this.GRADLEW;
 
         this.logger.log(LogLevel.INFO, `Set gradle Command Base Command`, gradleCommandBaseCommand);
@@ -60,7 +60,7 @@ export class GradleUtils {
 
       this.logger.log(LogLevel.DEBUG, `Attempting to run gradle command`, gradleCommand);
       const { stdout, stderr } = await exec(gradleCommand, {
-        cwd: PackageDependenciesHelper.getWorkspaceRoot(),
+        cwd: application.workspaceFolder,
         env: {
           PATH: process.env.PATH
         }
@@ -81,9 +81,9 @@ export class GradleUtils {
     } catch (e) {
       return Promise.reject(
         `${gradleCommand} command failed, try running it manually to see what went wrong:` +
-          gradleCommand +
-          ", " +
-          e.error
+        gradleCommand +
+        ", " +
+        e.error
       );
     }
   }
@@ -132,8 +132,8 @@ export class GradleUtils {
         } else {
           console.warn(
             "Skipping dependency: " +
-              dep +
-              " due to missing data (artifact, group, and/or version)"
+            dep +
+            " due to missing data (artifact, group, and/or version)"
           );
         }
       }

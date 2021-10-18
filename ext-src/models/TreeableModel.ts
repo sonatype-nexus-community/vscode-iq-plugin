@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ComponentEntry } from "./ComponentEntry";
-
-export interface ComponentModel {
-  components: Array<ComponentEntry>;
-  evaluateWorkspaceFolders(): void;
+export interface TreeableModel {
+    getLabel(): string;
+    hasChildren(): boolean;
+    getTooltip(): string;
+    iconName(): string;
 }

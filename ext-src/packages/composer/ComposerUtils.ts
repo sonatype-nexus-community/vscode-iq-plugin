@@ -13,42 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ComposerPackage } from './ComposerPackage';
-
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { PackageDependenciesHelper } from '../PackageDependenciesHelper';
+import { Application } from '../../models/Application';
+import { ComposerPackage } from './ComposerPackage';
+
 
 export class ComposerUtils {
-  public async getDependencyArray(): Promise<Array<ComposerPackage>> {
+  public async getDependencyArray(application: Application): Promise<Array<ComposerPackage>> {
     try {
-        const composerLockFile = readFileSync(join(PackageDependenciesHelper.getWorkspaceRoot(), "composer.lock"));
-        const composerLock: ComposerLock = JSON.parse(composerLockFile.toString());
-  
-        if (composerLock.packages && composerLock.packages.length > 0) {
-          let res: Array<ComposerPackage> = new Array();
-          composerLock.packages.forEach((pkg) => {
-            let namespaceName: string[] = pkg.name.split("/");
-            let name: string = namespaceName[1];
-            let namespace: string = namespaceName[0];
-            res.push(new ComposerPackage(name, namespace, pkg.version, ""));
-          });
-  
-          return Promise.resolve(res);
-        }
+      const composerLockFile = readFileSync(join(application.workspaceFolder, "composer.lock"));
+      const composerLock: ComposerLock = JSON.parse(composerLockFile.toString());
 
-        return Promise.reject("No dependencies found, check your poetry.lock file!");
-    } catch(ex) {
-        return Promise.reject(`Uh oh, spaghetti-o, an exception occurred while parsing poetry dependencies: ${ex}`);
+      if (composerLock.packages && composerLock.packages.length > 0) {
+        let res: Array<ComposerPackage> = new Array();
+        composerLock.packages.forEach((pkg) => {
+          let namespaceName: string[] = pkg.name.split("/");
+          let name: string = namespaceName[1];
+          let namespace: string = namespaceName[0];
+          res.push(new ComposerPackage(name, namespace, pkg.version, ""));
+        });
+
+        return Promise.resolve(res);
+      }
+
+      return Promise.reject("No dependencies found, check your poetry.lock file!");
+    } catch (ex) {
+      return Promise.reject(`Uh oh, spaghetti-o, an exception occurred while parsing poetry dependencies: ${ex}`);
     }
   }
 }
 
 interface ComposerLock {
-    packages: ComposerLockPackage[];
+  packages: ComposerLockPackage[];
 }
 
 interface ComposerLockPackage {
-    name: string;
-    version: string;
+  name: string;
+  version: string;
 }

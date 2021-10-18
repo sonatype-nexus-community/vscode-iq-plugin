@@ -13,33 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { CargoPackage } from "./CargoPackage";
-import { PackageDependencies } from "../PackageDependencies";
 import { ComponentEntry } from "../../models/ComponentEntry";
-import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { ScanType } from "../../types/ScanType";
+import { PackageDependencies } from "../PackageDependencies";
+import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
+import { CargoPackage } from "./CargoPackage";
 import { CargoUtils } from "./CargoUtils";
-import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
 
 /**
 * @class CargoDependencies
 */
-export class CargoDependencies implements PackageDependencies {
-
-  constructor(private options: PackageDependenciesOptions) {}
+export class CargoDependencies extends PackageDependencies {
 
   public checkIfValid(): boolean {
-    return PackageDependenciesHelper.checkIfValid("Cargo.lock", "cargo");
+    return PackageDependenciesHelper.checkIfValid("Cargo.lock", "cargo", this.application);
   }
 
-  public toComponentEntries(packages: Array<CargoPackage>): Map<string, ComponentEntry> {
+  public toComponentEntries(packages: Array<CargoPackage>, scanType: ScanType): Map<string, ComponentEntry> {
     let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
         pkg.Name,
         pkg.Version,
         "cargo",
-        ScanType.NexusIq
+        scanType,
+        this.application
       );
       map.set(
         pkg.toPurl(),
@@ -52,7 +50,7 @@ export class CargoDependencies implements PackageDependencies {
   public async packageForService(): Promise<Array<CargoPackage>> {
     try {
       const composerUtils = new CargoUtils();
-      const deps = await composerUtils.getDependencyArray();
+      const deps = await composerUtils.getDependencyArray(this.application);
 
       return Promise.resolve(deps);
     } catch (ex) {

@@ -13,28 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { NpmDependencies } from "./npm/NpmDependencies";
-import { PyPIDependencies } from "./pypi/PyPIDependencies";
-import { PoetryDependencies } from "./poetry/PoetryDependencies";
-import { GolangDependencies } from "./golang/GolangDependencies";
-import { MavenDependencies } from "./maven/MavenDependencies";
-import { RubyGemsDependencies } from "./rubygems/RubyGemsDependencies";
-import { RDependencies } from "./r/RDependencies";
-import { ComposerDependencies } from "./composer/ComposerDependencies";
-import { CargoDependencies } from "./cargo/CargoDependencies";
-import { PackageDependencies } from "./PackageDependencies";
-import { ILogger } from "../utils/Logger";
-import { ConanDependencies } from "./conan/ConanDependencies";
-import { GradleDependencies } from "./gradle/GradleDependencies";
+import { Application } from "../models/Application";
 import { SonatypeConfig } from "../types/SonatypeConfig";
 import { LoadSonatypeConfig } from "../utils/Config";
+import { ILogger, LogLevel } from "../utils/Logger";
+import { CargoDependencies } from "./cargo/CargoDependencies";
+import { ComposerDependencies } from "./composer/ComposerDependencies";
+import { ConanDependencies } from "./conan/ConanDependencies";
+import { GolangDependencies } from "./golang/GolangDependencies";
+import { GradleDependencies } from "./gradle/GradleDependencies";
+import { MavenDependencies } from "./maven/MavenDependencies";
+import { NpmDependencies } from "./npm/NpmDependencies";
+import { PackageDependencies } from "./PackageDependencies";
+import { PoetryDependencies } from "./poetry/PoetryDependencies";
+import { PyPIDependencies } from "./pypi/PyPIDependencies";
+import { RubyGemsDependencies } from "./rubygems/RubyGemsDependencies";
+
 
 export class LiteComponentContainer {
   Possible: Array<PackageDependencies> = [];
   Valid: Array<PackageDependencies> = [];
+  PackageMuncher: PackageDependencies | undefined;
+  // workspaceFolder: string = 'TBC';
 
-  constructor(readonly logger: ILogger) {
-    const doc: SonatypeConfig | undefined = LoadSonatypeConfig();
+  constructor(readonly logger: ILogger, private applications: Array<Application>) {
+    const doc: SonatypeConfig | undefined = LoadSonatypeConfig(this.applications[0]);
 
     let includeDev: boolean = true;
 
@@ -43,28 +46,30 @@ export class LiteComponentContainer {
     }
 
     // To add a new format, you just need to push another implementation to this list
-    this.Possible.push(new RubyGemsDependencies({logger, includeDev}));
-    this.Possible.push(new NpmDependencies({logger, includeDev}));
-    this.Possible.push(new PyPIDependencies({logger, includeDev}));
-    this.Possible.push(new GolangDependencies({logger, includeDev}));
-    this.Possible.push(new MavenDependencies({logger, includeDev}));
-    this.Possible.push(new RDependencies({logger, includeDev}));
-    this.Possible.push(new PoetryDependencies({logger, includeDev}));
-    this.Possible.push(new ComposerDependencies({logger, includeDev}));
-    this.Possible.push(new CargoDependencies({logger, includeDev}));
-    this.Possible.push(new ConanDependencies({logger, includeDev}));
-    this.Possible.push(new GradleDependencies({logger, includeDev}));
+    this.applications.forEach((app) => {
+      this.Possible.push(new MavenDependencies({ logger, includeDev }, app));
+      this.Possible.push(new NpmDependencies({ logger, includeDev }, app));
+      this.Possible.push(new GolangDependencies({ logger, includeDev }, app));
+      this.Possible.push(new PyPIDependencies({ logger, includeDev }, app));
+      this.Possible.push(new RubyGemsDependencies({ logger, includeDev }, app));
+      this.Possible.push(new PoetryDependencies({ logger, includeDev }, app));
+      this.Possible.push(new ComposerDependencies({ logger, includeDev }, app));
+      this.Possible.push(new CargoDependencies({ logger, includeDev }, app));
+      this.Possible.push(new ConanDependencies({ logger, includeDev }, app));
+      this.Possible.push(new GradleDependencies({ logger, includeDev }, app));
+    })
 
     this.Possible.forEach(i => {
-      if(i.checkIfValid()) {
+      if (i.checkIfValid()) {
         this.Valid.push(i);
       }
     });
 
     if (this.Valid.length != 0) {
-      console.debug("Package Muncher(s) set");
+      logger.log(LogLevel.DEBUG, `${this.Valid.length} package muncher(s) set`);
     } else {
-      throw new TypeError("No valid implementation exists for workspace");
+      logger.log(LogLevel.WARN, `No package munchers appear valid`);
+      throw new Error(`No supported scan type exists`);
     }
   }
 }

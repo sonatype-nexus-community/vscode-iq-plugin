@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
-import { RubyGemsPackage } from './RubyGemsPackage';
 import * as gem from 'gemfile';
 import * as path from "path";
+import { Application } from "../../models/Application";
+import { RubyGemsPackage } from './RubyGemsPackage';
 
 export class RubyGemsUtils {
-  public async getDependencyArray(): Promise<Array<RubyGemsPackage>> {
+  public async getDependencyArray(application: Application): Promise<Array<RubyGemsPackage>> {
     try {
-      let gems = gem.parseSync(path.join(PackageDependenciesHelper.getWorkspaceRoot(), 'Gemfile.lock'));
+      let gems = gem.parseSync(path.join(application.workspaceFolder, 'Gemfile.lock'));
 
       if (gems.GEM && gems.GEM.specs) {
         let res: Array<RubyGemsPackage> = new Array();
@@ -34,7 +34,7 @@ export class RubyGemsUtils {
         });
         return Promise.resolve(res);
       }
-  
+
       return Promise.reject("No dependencies found, your Gemfile.lock may have no specs in it");
     } catch (ex) {
       return Promise.reject(`Uh oh, spaghetti-o, an exception occurred while getting RubyGems dependencies, exception: ${ex}`);

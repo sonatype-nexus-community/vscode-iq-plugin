@@ -16,20 +16,34 @@
 import { ReportComponent } from "../services/ReportResponse";
 import { PolicyViolation } from "../types/PolicyViolation";
 import { ScanType } from "../types/ScanType";
+import { Application } from "./Application";
+import { TreeableModel } from "./TreeableModel";
 
-export class ComponentEntry {
+
+export class ComponentEntry implements TreeableModel {
   scope: string = "";
   failure: string = "";
   policyViolations: Array<PolicyViolation> = [];
   hash: string = "";
   nexusIQData?: NexusIQData = undefined;
-  ossIndexData?: any = undefined;
+  ossIndexData?: OssIndexData = undefined;
 
-  constructor(readonly name: string, readonly version: string, readonly format: string, readonly scanType: ScanType) {
+  constructor(readonly name: string, readonly version: string, readonly format: string, readonly scanType: ScanType, readonly application: Application) { }
+
+  public getLabel(): string {
+    return this.toString();
+  }
+
+  public hasChildren(): boolean {
+    return false;
+  }
+
+  public getTooltip(): string {
+    return `Name: ${this.name}\nVersion: ${this.version}\nHash: ${this.hash}\nPolicy: ${this.maxPolicy()}`;
   }
 
   public toString(): string {
-    return `${this.format}: ${this.name} @ ${this.version}`;
+    return `${this.application.name}: ${this.format}: ${this.name} @ ${this.version}`;
   }
 
   public maxPolicy(): number {
@@ -46,11 +60,12 @@ export class ComponentEntry {
           0
         );
       }
-    } else if (this.scanType == ScanType.OssIndex) {
+    } else if (this.scanType == ScanType.OssIndex && this.ossIndexData) {
       if (!this.ossIndexData.vulnerabilities) {
         return maxThreatLevel;
       }
       if (this.ossIndexData.vulnerabilities.length > 0) {
+        // console.debug(`${this.name}@${this.version} has ${this.ossIndexData.vulnerabilities.length} vulnerabilities`)
         maxThreatLevel = this.ossIndexData.vulnerabilities.reduce(
           (prevMax: number, a: any) => {
             return a.cvssScore > prevMax ? a.cvssScore : prevMax;
@@ -64,7 +79,7 @@ export class ComponentEntry {
 
   public iconName(): string {
     if ((this.scanType == ScanType.NexusIq && (!this.policyViolations || !this.nexusIQData)) ||
-      (this.scanType == ScanType.OssIndex && !this.ossIndexData )) {
+      (this.scanType == ScanType.OssIndex && !this.ossIndexData)) {
       return "loading.gif";
     }
     let maxThreatLevel = this.maxPolicy();
@@ -86,4 +101,9 @@ export class ComponentEntry {
 
 export interface NexusIQData {
   component: ReportComponent
+}
+
+export interface OssIndexData {
+  reference: string
+  vulnerabilities: Array<object>
 }

@@ -13,11 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { PackageType } from "./PackageType";
+import { Application } from "../models/Application";
 import { ComponentEntry } from "../models/ComponentEntry";
+import { ScanType } from "../types/ScanType";
+import { PackageDependenciesOptions } from "./PackageDependenciesOptions";
+import { PackageType } from "./PackageType";
 
-export interface PackageDependencies {
-  checkIfValid(): boolean;
-  toComponentEntries(data: Array<PackageType>): Map<string, ComponentEntry>;
-  packageForService(): Promise<Array<PackageType>>;
+export abstract class PackageDependencies {
+
+  constructor(protected options: PackageDependenciesOptions, public application: Application) { }
+
+  abstract checkIfValid(): boolean;
+  abstract toComponentEntries(data: Array<PackageType>, scanType: ScanType): Map<string, ComponentEntry>;
+  abstract packageForService(): Promise<Array<PackageType>>;
 }

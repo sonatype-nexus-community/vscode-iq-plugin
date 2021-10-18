@@ -13,30 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { MavenPackage } from "./MavenPackage";
+import { ComponentEntry } from "../../models/ComponentEntry";
+import { ScanType } from "../../types/ScanType";
 import { PackageDependencies } from "../PackageDependencies";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
+import { MavenPackage } from "./MavenPackage";
 import { MavenUtils } from "./MavenUtils";
-import { ScanType } from "../../types/ScanType";
-import { ComponentEntry } from "../../models/ComponentEntry";
-import { PackageDependenciesOptions } from '../PackageDependenciesOptions'; 
 
-export class MavenDependencies implements PackageDependencies {
-
-  constructor(private options: PackageDependenciesOptions) {}
+export class MavenDependencies extends PackageDependencies {
 
   public checkIfValid(): boolean {
-    return PackageDependenciesHelper.checkIfValid("pom.xml", "maven");
+    return PackageDependenciesHelper.checkIfValid("pom.xml", "maven", this.application);
   }
 
-  public toComponentEntries(packages: Array<MavenPackage>): Map<string, ComponentEntry> {
+  public toComponentEntries(packages: Array<MavenPackage>, scanType: ScanType): Map<string, ComponentEntry> {
     let map = new Map<string, ComponentEntry>();
     for (let pkg of packages) {
       let componentEntry = new ComponentEntry(
         pkg.Group + ":" + pkg.Name,
         pkg.Version,
         "maven",
-        ScanType.NexusIq
+        scanType,
+        this.application
       );
       map.set(
         pkg.toPurl(),
@@ -49,7 +47,7 @@ export class MavenDependencies implements PackageDependencies {
   public async packageForService(): Promise<Array<MavenPackage>> {
     try {
       const mavenUtils = new MavenUtils();
-      const deps = await mavenUtils.getDependencyArray();
+      const deps = await mavenUtils.getDependencyArray(this.application);
       return Promise.resolve(deps);
     }
     catch (e) {
