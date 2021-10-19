@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.1.2...v1.1.3) (2021-10-19)
+
+
+### Bug Fixes
+
+* bump @sonatype/react-shared-components which includes removal of node-sass ([#216](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/216)) ([eb44f3c](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/eb44f3cacf2ca099db1d1c2d28ce3b99fdb2cf24))
+
 ## [1.1.2](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.1.1...v1.1.2) (2021-10-18)
 
 
