@@ -1,3 +1,10 @@
+## [1.1.4](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.1.3...v1.1.4) (2021-10-19)
+
+
+### Bug Fixes
+
+* removed reference to undefined Command to solve [#203](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/203) ([#217](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/217)) ([bf5610a](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/bf5610a99bc896634ab0a06743f1409c0aecd41b))
+
 ## [1.1.3](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.1.2...v1.1.3) (2021-10-19)
 
 
