@@ -1,3 +1,10 @@
+## [1.1.5](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.1.4...v1.1.5) (2021-10-19)
+
+
+### Bug Fixes
+
+* updated parsing logic for `mvn dependency:tree` output to exclude items reported as " ommitted for " ([#218](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/218)) ([ed96b91](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/ed96b91edb0c3d101ecbe556e151610be3e2fd6d))
+
 ## [1.1.4](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.1.3...v1.1.4) (2021-10-19)
 
 
