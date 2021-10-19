@@ -73,14 +73,6 @@
         }
       },
       {
-        "command": "nexusExplorer.refreshNode",
-        "title": "Nexus Refresh",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
-      },
-      {
         "command": "nexusExplorer.viewNode",
         "title": "View Details",
         "icon": {
