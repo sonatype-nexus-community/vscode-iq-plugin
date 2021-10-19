@@ -56,12 +56,11 @@ export class MavenUtils {
 
       return Promise.resolve(this.parseMavenDependencyTree(dependencyTree));
     } catch (e) {
-      return Promise.reject(
-        "mvn dependency:tree failed, try running it manually to see what went wrong:" +
-        mvnCommand +
-        ", " +
-        e.error
-      );
+      let errorMessage = `${mvnCommand} command failed - try running it mannually to see what went wrong`
+      if (e instanceof Error) {
+        errorMessage += `. Error is ${e.message}`
+      }
+      return Promise.reject(errorMessage);
     }
   }
 
