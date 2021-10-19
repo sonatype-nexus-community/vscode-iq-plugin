@@ -74,6 +74,7 @@ export class MavenUtils {
     // console.debug(
     //   "------------------------------------------------------------------------------"
     // );
+
     let dependencyList: MavenPackage[] = [];
     let dependencyListString: Set<string> = new Set<string>();
 
@@ -81,7 +82,9 @@ export class MavenUtils {
     dependencyLines.forEach((dep, index) => {
       if (index > 0) {
         if (dep.trim()) {
-          if (dep.includes("omitted for duplicate")) {
+          console.log(`Parsing dep: ${dep}`)
+          if (dep.includes(" omitted for ")) {
+            console.log(`Skipping dep: ${dep}`)
             return;
           }
           const dependencyParts: string[] = dep.trim().split(":");
