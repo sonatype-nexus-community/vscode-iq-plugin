@@ -1,3 +1,10 @@
+## [1.1.6](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.1.5...v1.1.6) (2021-10-19)
+
+
+### Bug Fixes
+
+* bump hosted-git-info and path-parse dependency versions to mitigate known vulnerabilities ([#219](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/219)) ([6129fc1](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/6129fc10ed72bfc54804f07890c60ab65f134f45))
+
 ## [1.1.5](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.1.4...v1.1.5) (2021-10-19)
 
 
