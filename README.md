@@ -19,11 +19,11 @@ Good news for polyglots -- the extension allows you to view violations across mu
 
 - Conan (any conan formatted `*.lock` files)
 - Golang (`dep` or `go mod`)
-- Gradle (`build.gradle` and gradle required)
-- Maven (`pom.xml` and maven required)
-- NPM/Yarn (`npm install` or `yarn install` required)
+- Gradle (`build.gradle` and gradle required) *Supports development dependency exclusion*
+- Maven (`pom.xml` and maven required) *Supports development dependency exclusion*
+- NPM/Yarn (`npm install` or `yarn install` required) *Supports development dependency exclusion*
 - Python:
-  - Poetry `poetry.lock`
+  - Poetry `poetry.lock` *Supports development dependency exclusion*
   - pip `requirements.txt`
 - RubyGems (`Gemfile.lock`)
 - PHP (`composer.lock`)
@@ -79,6 +79,10 @@ You can add a `.sonatype-config` file (`.sonatype-config.yaml` and `.sonatype-co
         # possible stages [develop, build, stage-release, release, operate]
         Stage: develop
         Server: https://your.iq-server.com
+
+    application:
+        # Override VS Code User / Workspace setting for excluding development dependencies for this Application
+        IncludeDev: false
 ```
 
 `PublicApplication` can be found here on your IQ Server if you don't know it: `https://your.iq-server.com/assets/index.html#/reports/violations`
