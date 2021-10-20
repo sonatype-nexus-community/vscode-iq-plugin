@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.1.6...v1.2.0) (2021-10-20)
+
+
+### Features
+
+* add ability to exlude Development Dependencies for supported ecosystems (Gradle, Maven, NPM, Poetry) ([61a95f5](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/61a95f5a9b1583356850690c61da476bee5605df))
+
 ## [1.1.6](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.1.5...v1.1.6) (2021-10-19)
 
 
