@@ -28,7 +28,7 @@ Good news for polyglots -- the extension allows you to view violations across mu
 - RubyGems (`Gemfile.lock`)
 - PHP (`composer.lock`)
 - Rust/Cargo (`Cargo.lock`)
-- R/CRAN (see known quirks)
+- R/CRAN (see known quirks) 
 
 ### Sonatype Nexus IQ Scan
 
