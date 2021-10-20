@@ -33,19 +33,15 @@ export class ComponentContainer {
   Possible: Array<PackageDependencies> = [];
   Valid: Array<PackageDependencies> = [];
   PackageMuncher: PackageDependencies | undefined;
-  // workspaceFolder: string = 'TBC';
 
   constructor(readonly logger: ILogger, private applications: Array<Application>) {
     const doc: SonatypeConfig | undefined = LoadSonatypeConfig(this.applications[0]);
 
-    let includeDev: boolean = true;
-
-    if (doc && doc.application && doc.application.IncludeDev !== undefined) {
-      includeDev = doc.application.IncludeDev;
-    }
-
     // To add a new format, you just need to push another implementation to this list
     this.applications.forEach((app) => {
+      let includeDev: boolean = app.includeDev;
+      console.debug(`includeDev set to ${includeDev} for Application ${app.name}`)
+
       this.Possible.push(new MavenDependencies({ logger, includeDev }, app));
       this.Possible.push(new NpmDependencies({ logger, includeDev }, app));
       this.Possible.push(new GolangDependencies({ logger, includeDev }, app));

@@ -32,7 +32,7 @@ export class GradleUtils {
   private readonly GRADLEW_BAT = `gradlew.bat`;
   private readonly gradleArguments = `dependencies --configuration runtimeClasspath`;
 
-  public async getDependencyArray(application: Application): Promise<any> {
+  public async getDependencyArray(application: Application, includeDev: boolean = true): Promise<any> {
     this.logger.log(LogLevel.DEBUG, `Starting to attempt to get gradle dependencies`);
 
     let gradleCommandBaseCommand: string = "";
@@ -77,7 +77,7 @@ export class GradleUtils {
         );
       }
 
-      return Promise.resolve(this.parseGradleDependencyTree(stdout));
+      return Promise.resolve(this.parseGradleDependencyTree(stdout, includeDev));
     } catch (e) {
       let errorMessage = `${gradleCommand} command failed - try running it mannually to see what went wrong`
       if (e instanceof Error) {
@@ -87,15 +87,15 @@ export class GradleUtils {
     }
   }
 
-  private parseGradleDependencyTree(output: string): Array<MavenPackage> {
-
+  private parseGradleDependencyTree(output: string, includeDev: boolean): Array<MavenPackage> {
     let dependencyList: MavenPackage[] = [];
+    const configuration: string = (includeDev) ? 'testRuntimeClasspath' : 'runtimeClasspath';
 
     let start: boolean = false;
     const regexReplace: RegExp = /[| ]*[\\+]*[---]{3}/;
     const dependencyLines = output.split("\n");
     dependencyLines.forEach((dep) => {
-      if (dep.includes('runtimeClasspath')) {
+      if (dep.includes(configuration)) {
         start = true;
         return;
       }

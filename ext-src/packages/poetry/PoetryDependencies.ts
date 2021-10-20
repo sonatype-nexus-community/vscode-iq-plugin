@@ -49,7 +49,7 @@ export class PoetryDependencies extends PyPIDependencies {
     console.debug(`Grabbing Poetry dependencies from Application ${this.application.name}...`)
     try {
       const poetryUtils = new PoetryUtils();
-      const deps = await poetryUtils.getDependencyArray(this.application);
+      const deps = await poetryUtils.getDependencyArray(this.application, this.options.includeDev);
       return Promise.resolve(deps);
     }
     catch (e) {

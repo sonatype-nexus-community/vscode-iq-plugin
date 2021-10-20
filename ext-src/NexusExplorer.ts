@@ -146,7 +146,6 @@ export class NexusExplorer {
   private logger: ILogger;
 
   constructor(readonly context: vscode.ExtensionContext) {
-
     let configuration = vscode.workspace.getConfiguration();
     const _channel = vscode.window.createOutputChannel(`Sonatype IQ Extension`);
     context.subscriptions.push(_channel);
@@ -236,6 +235,12 @@ export class NexusExplorer {
     );
   }
 
+  public rescanWorkspace() {
+    this.componentModel.updateConfiguration({ configuration: vscode.workspace.getConfiguration(), logger: this.logger });
+    this.componentModel.evaluateWorkspaceFolders();
+    this.nexusExplorerProvider.doRefresh();
+  }
+
   public switchComponentModel(scanType: string) {
     let configuration = vscode.workspace.getConfiguration();
 
@@ -252,7 +257,6 @@ export class NexusExplorer {
 
   public updateIQAppID(applicationID: string) {
     if (this.componentModel instanceof IqMultiProjectComponentModel) {
-      // this.componentModel.applicationPublicId = applicationID;
       this.componentModel.evaluateWorkspaceFolders();
       this.nexusExplorerProvider.doRefresh();
     }

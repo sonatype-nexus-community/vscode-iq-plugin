@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 import { ComponentEntry } from "./ComponentEntry";
+import { ComponentModelOptions } from "./ComponentModelOptions";
 
 export interface ComponentModel {
   components: Array<ComponentEntry>;
   evaluateWorkspaceFolders(): void;
+  updateConfiguration(options: ComponentModelOptions): void;
 }

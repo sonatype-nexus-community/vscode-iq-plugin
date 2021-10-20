@@ -73,6 +73,10 @@ export class OssIndexComponentModel implements ComponentModel {
     })
   }
 
+  public updateConfiguration(options: ComponentModelOptions) {
+    this.options = options;
+  }
+
   public evaluateComponents(): Promise<any> {
     console.debug("evaluateComponents");
     return this.performOssIndexScan();
