@@ -43,10 +43,16 @@ export class Application implements TreeableModel {
             this.nexusIqApplicationId = this.options.configuration.get(NEXUS_IQ_PUBLIC_APPLICATION_ID) as string;
         }
 
-        if (doc && doc.application && doc.application.IncludeDev) {
-            this.includeDev = (doc.application.IncludeDev ? doc.application.IncludeDev : this.options.configuration.get(NEXUS_EXPLORER_INCLUDE_DEV) as boolean);
+        if (doc && doc.application) {
+            this.options.logger.log(LogLevel.INFO, `Trying to use IncludeDev from .sonatye-config for ${this.name}`)
+            if (doc.application.IncludeDev === undefined) {
+                this.options.logger.log(LogLevel.INFO, `   No 'IncludeDev' in SonatypeConfig for ${this.name}`)
+                this.includeDev = this.options.configuration.get(NEXUS_EXPLORER_INCLUDE_DEV) as boolean
+            } else {
+                this.includeDev = doc.application.IncludeDev
+            }
         } else {
-            this.options.logger.log(LogLevel.INFO, `Using VS Code User/Workspace configuration for IncludeDev`)
+            this.options.logger.log(LogLevel.INFO, `Falling back to VS Code User/Workspace configuration for IncludeDev`)
             this.includeDev = this.options.configuration.get(NEXUS_EXPLORER_INCLUDE_DEV) as boolean
         }
     }
