@@ -23,6 +23,7 @@ const NEXUS_EXPLORER_BASE = "nexusExplorer";
 const NEXUS_IQ_BASE = "nexusIQ";
 
 const NEXUS_EXPLORER_DATA_SOURCE = NEXUS_EXPLORER_BASE.concat(".", "dataSource");
+const NEXUS_EXPLORER_INCLUDE_DEV = NEXUS_EXPLORER_BASE.concat(".", "includeDev")
 const NEXUS_IQ_SERVER_URL = NEXUS_IQ_BASE.concat(".", "serverUrl");
 const NEXUS_IQ_USERNAME = NEXUS_IQ_BASE.concat(".", "username");
 const NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS = NEXUS_IQ_BASE.concat(".", "maximumEvaluationPollAttempts");
@@ -79,6 +80,7 @@ export {
   OSS_INDEX_USERNAME,
   OSS_INDEX_TOKEN,
   NEXUS_EXPLORER_DATA_SOURCE,
+  NEXUS_EXPLORER_INCLUDE_DEV,
   NEXUS_IQ_SERVER_URL,
   NEXUS_IQ_USERNAME,
   NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS,

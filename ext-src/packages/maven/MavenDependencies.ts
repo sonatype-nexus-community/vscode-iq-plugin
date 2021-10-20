@@ -47,7 +47,7 @@ export class MavenDependencies extends PackageDependencies {
   public async packageForService(): Promise<Array<MavenPackage>> {
     try {
       const mavenUtils = new MavenUtils();
-      const deps = await mavenUtils.getDependencyArray(this.application);
+      const deps = await mavenUtils.getDependencyArray(this.application, this.options.includeDev);
       return Promise.resolve(deps);
     }
     catch (e) {

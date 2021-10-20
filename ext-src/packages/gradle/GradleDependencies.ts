@@ -47,7 +47,7 @@ export class GradleDependencies extends PackageDependencies {
   public async packageForService(): Promise<Array<MavenPackage>> {
     try {
       const gradleUtils = new GradleUtils(this.options);
-      const deps = await gradleUtils.getDependencyArray(this.application);
+      const deps = await gradleUtils.getDependencyArray(this.application, this.options.includeDev);
       return Promise.resolve(deps);
     }
     catch (e) {

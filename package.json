@@ -120,6 +120,11 @@
               "Use commercial Sonatype IQ Server data"
             ]
           },
+          "nexusExplorer.includeDev": {
+            "type": "boolean",
+            "default": true,
+            "description": "You can disable this to exclude dependencies that are used in the development or testing process only. Supported for Gradle, Maven, NPM and Poetry."
+          },
           "nexusExplorer.loggingLevel": {
             "type": "string",
             "default": "ERROR",

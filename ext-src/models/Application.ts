@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { LoadSonatypeConfig, NEXUS_IQ_PUBLIC_APPLICATION_ID } from "../utils/Config";
+import { LoadSonatypeConfig, NEXUS_EXPLORER_INCLUDE_DEV, NEXUS_IQ_PUBLIC_APPLICATION_ID } from "../utils/Config";
 import { LogLevel } from "../utils/Logger";
 import { ComponentEntry } from "./ComponentEntry";
 import { ComponentModelOptions } from "./ComponentModelOptions";
@@ -22,20 +22,32 @@ import { TreeableModel } from "./TreeableModel";
 export class Application implements TreeableModel {
 
     public nexusIqApplicationId: string = 'TBC';
+    public includeDev: boolean = true;
     public latestIqReportUrl: string = 'TBC';
     public coordsToComponent: Map<string, ComponentEntry> = new Map<
         string,
         ComponentEntry
     >();
 
-    constructor(readonly name: string, readonly workspaceFolder: string, options: ComponentModelOptions) {
+    constructor(readonly name: string, readonly workspaceFolder: string, readonly options: ComponentModelOptions) {
+        this.reloadConfig();
+    }
+
+    public reloadConfig(): void {
         const doc = LoadSonatypeConfig(this);
 
         if (doc && doc.iq) {
-            this.nexusIqApplicationId = (doc.iq.PublicApplication ? doc.iq.PublicApplication : options.configuration.get(NEXUS_IQ_PUBLIC_APPLICATION_ID) as string);
+            this.nexusIqApplicationId = (doc.iq.PublicApplication ? doc.iq.PublicApplication : this.options.configuration.get(NEXUS_IQ_PUBLIC_APPLICATION_ID) as string);
         } else {
-            options.logger.log(LogLevel.INFO, `Using VS Code User/Workspace Application ID for ${this.name} as no config to override it.`);
-            this.nexusIqApplicationId = options.configuration.get(NEXUS_IQ_PUBLIC_APPLICATION_ID) as string;
+            this.options.logger.log(LogLevel.INFO, `Using VS Code User/Workspace Application ID for ${this.name} as no config to override it.`);
+            this.nexusIqApplicationId = this.options.configuration.get(NEXUS_IQ_PUBLIC_APPLICATION_ID) as string;
+        }
+
+        if (doc && doc.application && doc.application.IncludeDev) {
+            this.includeDev = (doc.application.IncludeDev ? doc.application.IncludeDev : this.options.configuration.get(NEXUS_EXPLORER_INCLUDE_DEV) as boolean);
+        } else {
+            this.options.logger.log(LogLevel.INFO, `Using VS Code User/Workspace configuration for IncludeDev`)
+            this.includeDev = this.options.configuration.get(NEXUS_EXPLORER_INCLUDE_DEV) as boolean
         }
     }
 

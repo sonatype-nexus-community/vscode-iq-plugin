@@ -23,8 +23,8 @@ import { MavenPackage } from "./MavenPackage";
 
 
 export class MavenUtils {
-  public async getDependencyArray(application: Application): Promise<any> {
-    let mvnCommand;
+  public async getDependencyArray(application: Application, includeDev: boolean = true): Promise<any> {
+    let mvnCommand: string = 'TBC';
     try {
       const pomFile = path.join(application.workspaceFolder, "pom.xml");
 
@@ -54,7 +54,7 @@ export class MavenUtils {
 
       temp.cleanupSync();
 
-      return Promise.resolve(this.parseMavenDependencyTree(dependencyTree));
+      return Promise.resolve(this.parseMavenDependencyTree(dependencyTree, includeDev));
     } catch (e) {
       let errorMessage = `${mvnCommand} command failed - try running it mannually to see what went wrong`
       if (e instanceof Error) {
@@ -64,16 +64,12 @@ export class MavenUtils {
     }
   }
 
-  private parseMavenDependencyTree(dependencyTree: string): Array<MavenPackage> {
+  private parseMavenDependencyTree(dependencyTree: string, includeDev: boolean): Array<MavenPackage> {
     // For example output, see: https://maven.apache.org/plugins/maven-dependency-plugin/examples/resolving-conflicts-using-the-dependency-tree.html
     const dependencies: string = dependencyTree.replace(
       /[\| ]*[\\+][\\-]/g,
       ""
     ); // cleanup each line to remove the "|", "+-", "\-" tree syntax
-    // console.debug(dependencies);
-    // console.debug(
-    //   "------------------------------------------------------------------------------"
-    // );
 
     let dependencyList: MavenPackage[] = [];
     let dependencyListString: Set<string> = new Set<string>();
@@ -82,9 +78,7 @@ export class MavenUtils {
     dependencyLines.forEach((dep, index) => {
       if (index > 0) {
         if (dep.trim()) {
-          console.log(`Parsing dep: ${dep}`)
           if (dep.includes(" omitted for ")) {
-            console.log(`Skipping dep: ${dep}`)
             return;
           }
           const dependencyParts: string[] = dep.trim().split(":");
@@ -94,25 +88,26 @@ export class MavenUtils {
           const version: string = dependencyParts[3];
           const scope: string = dependencyParts[4];
 
-          if ("test" != scope) {
-            if (artifact && extension && version) {
-              const dependencyObject: MavenPackage = new MavenPackage(
-                artifact,
-                group,
-                version,
-                extension
-              );
-              if (!dependencyListString.has(dependencyObject.toPurl())) {
-                dependencyListString.add(dependencyObject.toPurl())
-                dependencyList.push(dependencyObject);
-              }
-            } else {
-              console.warn(
-                "Skipping dependency: " +
-                dep +
-                " due to missing data (artifact, version, and/or extension)"
-              );
+          if (artifact && extension && version) {
+            if (!includeDev && scope === "test") {
+              return;
             }
+            const dependencyObject: MavenPackage = new MavenPackage(
+              artifact,
+              group,
+              version,
+              extension
+            );
+            if (!dependencyListString.has(dependencyObject.toPurl())) {
+              dependencyListString.add(dependencyObject.toPurl())
+              dependencyList.push(dependencyObject);
+            }
+          } else {
+            console.warn(
+              "Skipping dependency: " +
+              dep +
+              " due to missing data (artifact, version, and/or extension)"
+            );
           }
         }
       }

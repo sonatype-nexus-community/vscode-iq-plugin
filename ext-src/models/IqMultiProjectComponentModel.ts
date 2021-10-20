@@ -57,11 +57,6 @@ export class IqMultiProjectComponentModel implements ComponentModel {
 
     this.evaluateWorkspaceFolders();
 
-    /**
-     * @todo Deprecate this.applicationPublicId - we're using this for all 'workspace folders' which
-     *       might actually be different Applications.
-     */
-    // this.fallbackApplicationPublicId = this.applicationPublicId = options.configuration.get(NEXUS_IQ_PUBLIC_APPLICATION_ID) as string;
     this.url = (process.env.IQ_SERVER ? process.env.IQ_SERVER : options.configuration.get(NEXUS_IQ_SERVER_URL) as string);
     const username = (process.env.IQ_USERNAME ? process.env.IQ_USERNAME : options.configuration.get(NEXUS_IQ_USERNAME) as string);
     const token = (process.env.IQ_TOKEN ? process.env.IQ_TOKEN : options.configuration.get(NEXUS_IQ_USER_PASSWORD) as string);
@@ -87,6 +82,10 @@ export class IqMultiProjectComponentModel implements ComponentModel {
       this.applications.push(new Application(baseFolderName, workspaceFolder.uri.fsPath, this.options));
       this.logger.log(LogLevel.INFO, `Added Workspace Folder ${workspaceFolder.uri.fsPath} as Application '${baseFolderName}'`);
     })
+  }
+
+  public updateConfiguration(options: ComponentModelOptions) {
+    this.options = options;
   }
 
   public evaluateComponents(): Promise<any> {
