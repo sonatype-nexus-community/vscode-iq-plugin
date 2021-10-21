@@ -39,15 +39,20 @@ export class NpmDependencies extends PackageDependencies {
   public checkIfValid(): boolean {
     // This is a pseudo hack for the time being, it populates a lockFile list which we will use in another
     // effort with Progressive to iterate over any lock files we find
-    let workspaceRoot = PackageDependenciesHelper.getWorkspaceRoot();
-    if (PackageDependenciesHelper.doesPathExist(workspaceRoot, "yarn.lock")) {
-      this.lockFiles.push(join(workspaceRoot, "yarn.lock"));
+    try {
+      let workspaceRoot = PackageDependenciesHelper.getWorkspaceRoot();
+      if (PackageDependenciesHelper.doesPathExist(workspaceRoot, "yarn.lock")) {
+        this.lockFiles.push(join(workspaceRoot, "yarn.lock"));
+      }
+      if (PackageDependenciesHelper.doesPathExist(workspaceRoot, "package-lock.json")) {
+        this.lockFiles.push(join(workspaceRoot, "package-lock.json"));
+      }
+  
+      return this.lockFiles.length > 0 ? false : true;
+    } catch (e) {
+      // Ignore the error for now, thrown by getWorkspaceRoot
+      return false;
     }
-    if (PackageDependenciesHelper.doesPathExist(workspaceRoot, "package-lock.json")) {
-      this.lockFiles.push(join(workspaceRoot, "package-lock.json"));
-    }
-
-    return this.lockFiles.length > 0 ? false : true;
   }
 
   public toComponentEntries(packages: Array<NpmPackage>, scanType: ScanType): Map<string, ComponentEntry> {
