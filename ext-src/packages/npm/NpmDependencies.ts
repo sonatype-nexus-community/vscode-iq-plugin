@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { join } from "path";
 import { ComponentEntry } from "../../models/ComponentEntry";
 import { ScanType } from "../../types/ScanType";
 import { PackageDependencies } from "../PackageDependencies";
 import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { NpmPackage } from "./NpmPackage";
-import { NpmScanType } from "./NpmScanType";
 import { NpmUtils } from './NpmUtils';
 
 export class NpmDependencies extends PackageDependencies {
 
-  private scanType: string = "";
+  private lockFiles: string[] = [];
 
   public async packageForService(): Promise<Array<NpmPackage>> {
     try {
@@ -37,8 +37,17 @@ export class NpmDependencies extends PackageDependencies {
   }
 
   public checkIfValid(): boolean {
-    this.scanType = PackageDependenciesHelper.checkIfValidWithArray(NpmScanType, "npm", this.application);
-    return this.scanType === "" ? false : true;
+    // This is a pseudo hack for the time being, it populates a lockFile list which we will use in another
+    // effort with Progressive to iterate over any lock files we find
+    let workspaceRoot = PackageDependenciesHelper.getWorkspaceRoot();
+    if (PackageDependenciesHelper.doesPathExist(workspaceRoot, "yarn.lock")) {
+      this.lockFiles.push(join(workspaceRoot, "yarn.lock"));
+    }
+    if (PackageDependenciesHelper.doesPathExist(workspaceRoot, "package-lock.json")) {
+      this.lockFiles.push(join(workspaceRoot, "package-lock.json"));
+    }
+
+    return this.lockFiles.length > 0 ? false : true;
   }
 
   public toComponentEntries(packages: Array<NpmPackage>, scanType: ScanType): Map<string, ComponentEntry> {
