@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.2.0...v1.2.1) (2022-01-13)
+
+
+### Bug Fixes
+
+* add missing support for testRuntimeClasspath ([#225](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/225)) ([28d4b67](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/28d4b67edb9118220c96825a664052db09a00a64))
+
 # [1.2.0](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.1.6...v1.2.0) (2021-10-20)
 
 
