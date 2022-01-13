@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.2.1...v1.2.2) (2022-01-13)
+
+
+### Bug Fixes
+
+* redeploy with new token, tweak badge ([275882e](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/275882e347198de764907e6f923fa3c0097317f7))
+
 ## [1.2.1](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.2.0...v1.2.1) (2022-01-13)
 
 
