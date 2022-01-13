@@ -31,6 +31,7 @@ export class GradleUtils {
   private readonly GRADLEW = `./gradlew`;
   private readonly GRADLEW_BAT = `gradlew.bat`;
   private readonly gradleArguments = `dependencies --configuration runtimeClasspath`;
+  private readonly gradleArgumentsTest = `dependencies --configuration testRuntimeClasspath`;
 
   public async getDependencyArray(application: Application, includeDev: boolean = true): Promise<any> {
     this.logger.log(LogLevel.DEBUG, `Starting to attempt to get gradle dependencies`);
@@ -53,7 +54,12 @@ export class GradleUtils {
 
         this.logger.log(LogLevel.INFO, `Set gradle Command Base Command`, gradleCommandBaseCommand);
       }
-      gradleCommand = `${gradleCommandBaseCommand} ${this.gradleArguments}`;
+
+      if (includeDev) {
+        gradleCommand = `${gradleCommandBaseCommand} ${this.gradleArgumentsTest}`;
+      } else {
+        gradleCommand = `${gradleCommandBaseCommand} ${this.gradleArguments}`;
+      }
 
       this.logger.log(LogLevel.INFO, `Full gradle command constructed`, gradleCommand);
 
