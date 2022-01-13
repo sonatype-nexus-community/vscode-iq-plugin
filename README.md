@@ -1,7 +1,7 @@
 # Sonatype Nexus IQ Plugin for VS Code
 
 [![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/sonatypecommunity.vscode-iq-plugin?color=blue&label=VS%20Marketplace&logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SonatypeCommunity.vscode-iq-plugin)
-[![CircleCI](https://circleci.com/gh/sonatype-nexus-community/vscode-iq-plugin/tree/main.svg?style=svg)](https://circleci.com/gh/sonatype-nexus-community/vscode-iq-plugin/tree/main)
+[![CircleCI](https://circleci.com/gh/sonatype-nexus-community/vscode-iq-plugin/tree/main.svg?style=shield)](https://circleci.com/gh/sonatype-nexus-community/vscode-iq-plugin/tree/main)
 [![GitHub license](https://img.shields.io/github/license/sonatype-nexus-community/vscode-iq-plugin)](https://github.com/sonatype-nexus-community/vscode-iq-plugin/blob/main/LICENSE.txt)
 [![GitHub issues](https://img.shields.io/github/issues/sonatype-nexus-community/vscode-iq-plugin)](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues)
 [![GitHub forks](https://img.shields.io/github/forks/sonatype-nexus-community/vscode-iq-plugin)](https://github.com/sonatype-nexus-community/vscode-iq-plugin/network)
