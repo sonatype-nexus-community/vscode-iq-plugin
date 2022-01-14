@@ -43,7 +43,7 @@ export class ComponentEntry implements TreeableModel {
   }
 
   public toString(): string {
-    return `${this.application.name}: ${this.format}: ${this.name} @ ${this.version}`;
+    return `${this.format}: ${this.name} @ ${this.version}`;
   }
 
   public maxPolicy(): number {
