@@ -20,6 +20,8 @@ Good news for polyglots -- the extension allows you to view violations across mu
 - Conan (any conan formatted `*.lock` files)
 - Golang (`dep` or `go mod`)
 - Gradle (`build.gradle` and gradle required) *Supports development dependency exclusion*
+  - Note: `./gradlew` or `./gradlew.bat` will take precedence over system `gradle`
+  - Note: Android projects are not currently supported
 - Maven (`pom.xml` and maven required) *Supports development dependency exclusion*
 - NPM/Yarn (`npm install` or `yarn install` required) *Supports development dependency exclusion*
 - Python:
