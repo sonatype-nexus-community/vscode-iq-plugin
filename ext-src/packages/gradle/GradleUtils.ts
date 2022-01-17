@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 import commandExists from "command-exists";
+import * as path from "path";
 import { Application } from "../../models/Application";
 import { exec } from "../../utils/exec";
 import { ILogger, LogLevel } from "../../utils/Logger";
 import { MavenPackage } from "../maven/MavenPackage";
+import { PackageDependenciesHelper } from "../PackageDependenciesHelper";
 import { PackageDependenciesOptions } from "../PackageDependenciesOptions";
 
 export class GradleUtils {
@@ -40,19 +42,25 @@ export class GradleUtils {
     let gradleCommand: string = "";
 
     try {
-      const gradleExists = commandExists.sync(this.GRADLE);
-      this.logger.log(LogLevel.DEBUG, `Does gradle exist as a command?`, gradleExists);
+      let gradewBatExists = PackageDependenciesHelper.doesPathExist(application.workspaceFolder, this.GRADLEW_BAT)
+      this.logger.log(LogLevel.DEBUG, `Does ${application.workspaceFolder} / ${this.GRADLEW_BAT} exist? ${gradewBatExists}`)
 
-      if (gradleExists) {
-        gradleCommandBaseCommand = this.GRADLE;
-
-        this.logger.log(LogLevel.INFO, `Set gradle Command Base Command`, gradleCommandBaseCommand);
+      // Favour any gradlew in the project over gradle on the PATH
+      if (process.platform === 'win32' && PackageDependenciesHelper.doesPathExist(application.workspaceFolder, this.GRADLEW_BAT)) {
+        this.logger.log(LogLevel.INFO, `Using ${this.GRADLEW_BAT}`)
+        gradleCommandBaseCommand = path.join(application.workspaceFolder, this.GRADLEW_BAT)
+      } else if (PackageDependenciesHelper.doesPathExist(application.workspaceFolder, this.GRADLEW)) {
+        this.logger.log(LogLevel.INFO, `Using ${this.GRADLEW}`)
+        gradleCommandBaseCommand = path.join(application.workspaceFolder, this.GRADLEW)
+      } else if (commandExists.sync(this.GRADLE)) {
+        this.logger.log(LogLevel.INFO, `Using ${this.GRADLE}`)
+        gradleCommandBaseCommand = this.GRADLE
       } else {
-        this.logger.log(LogLevel.INFO, `Operating system determination`, process.platform);
-
-        gradleCommandBaseCommand = (process.platform === 'win32') ? this.GRADLEW_BAT : this.GRADLEW;
-
-        this.logger.log(LogLevel.INFO, `Set gradle Command Base Command`, gradleCommandBaseCommand);
+        return Promise.reject(
+          new Error(
+            `Could not find a Gradle executable. Please check that ${gradleCommandBaseCommand} exists or is on your PATH.`
+          )
+        );
       }
 
       if (includeDev) {
@@ -62,7 +70,6 @@ export class GradleUtils {
       }
 
       this.logger.log(LogLevel.INFO, `Full gradle command constructed`, gradleCommand);
-
 
       this.logger.log(LogLevel.DEBUG, `Attempting to run gradle command`, gradleCommand);
       const { stdout, stderr } = await exec(gradleCommand, {
@@ -118,7 +125,7 @@ export class GradleUtils {
         let version: string = coords[2];
 
         if (artifact && group && version) {
-          if (version.includes("(*")) {
+          if (version.includes("(*") || version.includes("(c")) {
             console.warn("Omitted version");
             return;
           }
