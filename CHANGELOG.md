@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.2.2...v1.2.3) (2022-01-17)
+
+
+### Bug Fixes
+
+* change so that `gradlew` has priority over `gradle` ([#228](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/228)) ([8f6fea2](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/8f6fea238e90e9224238ba4313177390c75d7cbb)), closes [#227](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/227)
+
 ## [1.2.2](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.2.1...v1.2.2) (2022-01-13)
 
 
