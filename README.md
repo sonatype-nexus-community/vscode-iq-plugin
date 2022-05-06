@@ -9,7 +9,7 @@
 
 ----
 
-Sonatype's VSCode extension allows you to surface and remediate issues in your project's dependencies without ever leaving your development environment.
+Sonatype's VSCode extension allows you to surface and remediate issues in your [Workspace](https://code.visualstudio.com/docs/editor/workspaces) dependencies without ever leaving your development environment.
 
 Any developer can use the extension for free against our publicly available [OSS Index](https://ossindex.sonatype.org/) vulnerability database while our commercial users can connect to [Sonatype's Nexus IQ Server](https://www.sonatype.com/nexus-iq-server) to evaluate against organizational policy. Drill down into all of your dependencies to examine each package version for violations to determine whether you should upgrade or move to a different version at a glance.
 
@@ -95,7 +95,7 @@ You can add a `.sonatype-config` file (`.sonatype-config.yaml` and `.sonatype-co
 
 ## Workspace Support with Multiple Projects
 
-Starting in version 1.1.0, we now support a VS Code Workspaces that contain multiple Applications. Specifcally, this allows a Workspace to contain mulitple folders, where each folder is an Application (in Nexus IQ parlance).
+Starting in version 1.1.0, we now support [VS Code multi-root Workspaces](https://code.visualstudio.com/docs/editor/workspaces) that contain multiple Applications. Specifcally, this allows a Workspace to contain mulitple folders, where each folder is an Application (in Nexus IQ parlance).
 
 If you place a `.sonatype-config` file in each Application's directory, then each Application will benefit from results that reflect the policies specific to that Application as defined in Nexus IQ Server. If an Application in the Workspace does not have a `.sonatype-config` file, the Application ID defined in the plugin settings will prevail.
 
