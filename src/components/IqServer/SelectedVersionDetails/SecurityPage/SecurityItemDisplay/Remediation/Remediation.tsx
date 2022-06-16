@@ -22,11 +22,11 @@ const Remediation = () => {
 
   const renderRemediation = (versionsContext: VersionsContextInterface | undefined) => {
     if (versionsContext && versionsContext.remediation && versionsContext.remediation.versionChanges) {
-      console.log(versionsContext.remediation);
+      // console.log(versionsContext.remediation);
       return versionsContext.remediation.versionChanges.map((version: any) => {
         <React.Fragment>
-          <h2>Remediation Type: { version.type }</h2>
-          Upgrade to this version: { version.data.component.componentIdentifier.coordinates.version }
+          <h2>Remediation Type: {version.type}</h2>
+          Upgrade to this version: {version.data.component.componentIdentifier.coordinates.version}
         </React.Fragment>
       })
     }

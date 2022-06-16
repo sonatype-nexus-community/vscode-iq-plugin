@@ -25,3 +25,6 @@ yarn-error.log*
 .circleci/local-config.yml
 
 *.vsix
+
+# VSCode
+*.code-workspace
