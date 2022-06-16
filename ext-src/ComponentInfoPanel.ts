@@ -133,7 +133,7 @@ export class ComponentInfoPanel {
     // Handle messages from the webview
     this._panel.webview.onDidReceiveMessage(
       message => {
-        console.log("onDidReceiveMessage", message);
+        // console.log("onDidReceiveMessage", message);
         switch (message.command) {
           case "selectVersion":
             console.debug("selectVersion received, message:", message);
@@ -161,7 +161,7 @@ export class ComponentInfoPanel {
   }
 
   private async showSelectedVersion(message: any) {
-    console.log("showSelectedVersion", message);
+    // console.log("showSelectedVersion", message);
     if (this.componentModel instanceof IqMultiProjectComponentModel) {
       let iqData: NexusIQData = message.package.nexusIQData;
       let purl: PackageURL = PackageURL.fromString(iqData.component.packageUrl);
@@ -250,7 +250,7 @@ export class ComponentInfoPanel {
     if (this.component) {
       var scanTitle = (this.componentModel instanceof OssIndexComponentModel) ? "OSS Index" : "IQ"
       this._panel.title = `${scanTitle} Scan: ${this.component.name}@${this.component.version}`;
-      console.log("posting message: artifact", this.component);
+      // console.log("posting message: artifact", this.component);
 
       this.showAllVersions();
 
