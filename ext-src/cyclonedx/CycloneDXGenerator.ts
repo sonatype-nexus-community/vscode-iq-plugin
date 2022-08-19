@@ -31,7 +31,9 @@ export class CycloneDXSbomCreator {
     const componentsNode = bom.ele('components');
     let components: Array<any> = new Array();
 
-    pkgInfo.forEach((pkg) => {
+    const pkgs = this.dedupeArray(pkgInfo);
+
+    pkgs.forEach((pkg) => {
         components.push(
           {
             component: this.getComponent(pkg)
@@ -61,6 +63,17 @@ export class CycloneDXSbomCreator {
         purl: pkg.toPurl(),
       };
     return component;
+  }
+
+  private dedupeArray(pkgs: Array<PackageType>): Array<PackageType> {
+    const uniqueArray = pkgs.filter((val, index) => {
+      const value = JSON.stringify(val);
+      return index === pkgs.findIndex((obj) => {
+        return JSON.stringify(obj) === value;
+      })
+    })
+    
+    return uniqueArray;
   }
 }
 
