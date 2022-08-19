@@ -1,3 +1,10 @@
+## [1.2.5](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.2.4...v1.2.5) (2022-08-19)
+
+
+### Bug Fixes
+
+* Deduplicate components when building SBOM ([#237](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/237)) ([80d35d4](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/80d35d442cb85772ef46f731d825cab8d92b3647))
+
 ## [1.2.4](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.2.3...v1.2.4) (2022-06-16)
 
 
