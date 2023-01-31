@@ -42,7 +42,7 @@ const ComponentInfoPage = () => {
       <NxTableHead>
         <NxTableRow>
           <NxTableCell colSpan={2}>
-            <h2>{ versionsContext.component.displayName }</h2>
+            <h2>{ versionsContext.component.name }</h2>
           </NxTableCell>
         </NxTableRow>
       </NxTableHead>
