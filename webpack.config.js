@@ -10,6 +10,7 @@
 const path = require('path');
 
 const extensionConfig = {
+    watch: true,
     target: 'node',
     entry: './ext-src/extension.ts',
     output: {
