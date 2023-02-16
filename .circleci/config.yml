@@ -33,7 +33,7 @@ jobs:
           command: npm i
       - run:
           name: Install publishing packages
-          command: npm i -g vsce semantic-release @semantic-release/changelog @semantic-release/git@7.1.0-beta.11 @semantic-release/npm
+          command: npm i -g vsce semantic-release@19.0.5 @semantic-release/changelog @semantic-release/git@7.1.0-beta.11 @semantic-release/npm
       - run:
           name: Attempt publish to GitHub
           command: npx semantic-release -b main
