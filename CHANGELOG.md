@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.2.5...v1.3.0) (2023-02-16)
+
+
+### Features
+
+* Simple color change for readability ([#240](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/240)) ([26f590a](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/26f590a0d8c5c60074d1353dfdd78d30e5b5dc4e))
+
 ## [1.2.5](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.2.4...v1.2.5) (2022-08-19)
 
 
