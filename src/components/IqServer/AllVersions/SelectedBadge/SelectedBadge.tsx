@@ -16,6 +16,7 @@
 import * as React from 'react';
 import { NxFontAwesomeIcon } from '@sonatype/react-shared-components';
 import { faChevronRight, faCheckSquare, faSquare } from '@fortawesome/free-solid-svg-icons';
+import {IconDefinition} from '@fortawesome/fontawesome-svg-core';
 
 type SelectedBadgeProps = {
   selectedVersion: string,
@@ -28,15 +29,15 @@ const SelectedBadge = (props: SelectedBadgeProps) => {
   const renderBadge = (props: SelectedBadgeProps) => {
     if (props.selectedVersion == props.version) {
       return (
-        <NxFontAwesomeIcon icon={faChevronRight} />
+        <NxFontAwesomeIcon icon={faChevronRight as IconDefinition} />
       )
     } else if (props.initialVersion == props.version) {
       return (
-        <NxFontAwesomeIcon icon={faCheckSquare} />
+        <NxFontAwesomeIcon icon={faCheckSquare as IconDefinition} />
       )
     }
     return (
-      <NxFontAwesomeIcon icon={faSquare} />
+      <NxFontAwesomeIcon icon={faSquare as IconDefinition} />
     )
   }
 

@@ -31,7 +31,7 @@ const SelectedVersionDetails = () => {
     <NxTabs activeTab={activeTabId} onTabSelect={setActiveTabId}>
       <NxTabList>
         <NxTab>
-          Component Info
+          Info
         </NxTab>
         <NxTab>
           Policy
@@ -40,7 +40,7 @@ const SelectedVersionDetails = () => {
           Security
         </NxTab>
         <NxTab>
-          Licensing
+          Legal
         </NxTab>
       </NxTabList>
       <NxTabPanel>

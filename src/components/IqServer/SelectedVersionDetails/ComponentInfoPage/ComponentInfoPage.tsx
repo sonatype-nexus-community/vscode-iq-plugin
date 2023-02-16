@@ -22,6 +22,7 @@ import {
   NxTableCell, 
   NxTableBody } 
   from '@sonatype/react-shared-components';
+import './ComponentInfoPage.css'
 
 const ComponentInfoPage = () => {
 
@@ -90,7 +91,8 @@ const ComponentInfoPage = () => {
             </span>
           </NxTableCell>
         </NxTableRow>
-        <NxTableRow>
+        { versionsContext.selectedVersionDetails.relativePopularity && (
+          <NxTableRow>
           <NxTableCell>
             Relative Popularity
           </NxTableCell>
@@ -100,6 +102,8 @@ const ComponentInfoPage = () => {
             </span>
           </NxTableCell>
         </NxTableRow>
+        )}
+        
       </NxTableBody>
     </NxTable>
     }
