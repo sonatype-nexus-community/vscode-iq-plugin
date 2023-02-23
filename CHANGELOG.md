@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.3.1...v1.3.2) (2023-02-23)
+
+
+### Bug Fixes
+
+* improved handling when the User you are connecting to Nexus Lifecycle does not have enough permissions + updated docs ([#243](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/243)) ([9cb94a5](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/9cb94a5b022c30543681223ae5dee374dd6287c1))
+
 ## [1.3.1](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.3.0...v1.3.1) (2023-02-23)
 
 
