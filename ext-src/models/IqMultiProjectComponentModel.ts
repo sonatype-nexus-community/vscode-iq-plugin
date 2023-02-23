@@ -60,12 +60,10 @@ export class IqMultiProjectComponentModel implements ComponentModel {
     this.url = (process.env.IQ_SERVER ? process.env.IQ_SERVER : options.configuration.get(NEXUS_IQ_SERVER_URL) as string);
     const username = (process.env.IQ_USERNAME ? process.env.IQ_USERNAME : options.configuration.get(NEXUS_IQ_USERNAME) as string);
     const token = (process.env.IQ_TOKEN ? process.env.IQ_TOKEN : options.configuration.get(NEXUS_IQ_USER_PASSWORD) as string);
-
-    const maximumEvaluationPollAttempts = parseInt(
-      String(options.configuration.get(NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS)), 10);
+    const maximumEvaluationPollAttempts = parseInt(String(options.configuration.get(NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS)), 10);
     const strictSSL = options.configuration.get(NEXUS_IQ_STRICT_SSL) as boolean;
 
-    this.requestService = new IqRequestService(this.url, username, token, maximumEvaluationPollAttempts, strictSSL, options.logger);
+    this.requestService = new IqRequestService(this.url, username, token, maximumEvaluationPollAttempts, strictSSL, this.logger);
   }
 
   public evaluateWorkspaceFolders() {

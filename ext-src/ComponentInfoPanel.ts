@@ -22,6 +22,7 @@ import { IqMultiProjectComponentModel } from "./models/IqMultiProjectComponentMo
 import { OssIndexComponentModel } from "./models/OssIndexComponentModel";
 import { ReportComponent } from "./services/ReportResponse";
 import { ScanType } from "./types/ScanType";
+import { ILogger, LogLevel } from './utils/Logger';
 
 export class ComponentInfoPanel {
   /**
@@ -46,7 +47,8 @@ export class ComponentInfoPanel {
   public static createOrShow(
     extensionPath: string,
     newComponent: ComponentEntry,
-    componenentModel: ComponentModel
+    componenentModel: ComponentModel,
+    logger: ILogger
   ) {
 
     const column = vscode.window.activeTextEditor
@@ -76,11 +78,13 @@ export class ComponentInfoPanel {
         ]
       }
     );
+    logger.log(LogLevel.TRACE, `IQ Component Info Panel created`, panel.options)
 
     ComponentInfoPanel.currentPanel = new ComponentInfoPanel(
       panel,
       extensionPath,
-      componenentModel
+      componenentModel,
+      logger
     );
     ComponentInfoPanel.currentPanel.showComponent(newComponent);
   }
@@ -97,7 +101,7 @@ export class ComponentInfoPanel {
     };
   }
 
-  private constructor(panel: vscode.WebviewPanel, extensionPath: string, componentModel: ComponentModel) {
+  private constructor(panel: vscode.WebviewPanel, extensionPath: string, componentModel: ComponentModel, readonly logger: ILogger) {
     this._panel = panel;
     this._extensionPath = extensionPath;
     ComponentInfoPanel.getSettings();
@@ -134,6 +138,7 @@ export class ComponentInfoPanel {
     this._panel.webview.onDidReceiveMessage(
       message => {
         // console.log("onDidReceiveMessage", message);
+        this.logger.log(LogLevel.TRACE, `WebView received message with command: ${message.command}`)
         switch (message.command) {
           case "selectVersion":
             console.debug("selectVersion received, message:", message);
@@ -263,6 +268,7 @@ export class ComponentInfoPanel {
 
   private async showAllVersions() {
     console.debug("showAllVersions", this.component);
+    this.logger.log(LogLevel.TRACE, 'showAllVersions')
     if (this.componentModel instanceof IqMultiProjectComponentModel) {
       const iqComponentModel = this.componentModel as IqMultiProjectComponentModel
       const component: ReportComponent = this.component!.nexusIQData!.component;
@@ -270,22 +276,27 @@ export class ComponentInfoPanel {
       purl.version = "";
 
       let allVersions = await iqComponentModel.requestService.getAllVersions(purl);
+      this.logger.log(LogLevel.TRACE, 'showAllVersions after getAllVersions()', purl)
 
       if (!allVersions.includes(component.componentIdentifier.coordinates.version)) {
         allVersions.push(component.componentIdentifier.coordinates.version);
       }
 
       let versionsDetails = await iqComponentModel.requestService.getAllVersionDetails(allVersions, purl);
+      this.logger.log(LogLevel.TRACE, 'showAllVersions after getAllVersionDetails()', allVersions, purl)
 
       if (component.componentIdentifier.format === 'golang') {
         versionsDetails.componentDetails = this.dealWithGolang(versionsDetails.componentDetails);
       }
 
-      console.debug("posting message: allversions", versionsDetails.componentDetails);
+      console.debug("showAllVersions: PostMessage: allversions", versionsDetails.componentDetails);
+      this.logger.log(LogLevel.TRACE, 'showAllVersions PostMessage: allversions', versionsDetails.componentDetails)
       this._panel.webview.postMessage({
         command: "allversions",
         allversions: versionsDetails.componentDetails
       });
+    } else {
+      this.logger.log(LogLevel.ERROR, 'ComponentModel is not a IqMultiProjectComponentModel')
     }
   }
 
@@ -311,6 +322,7 @@ export class ComponentInfoPanel {
 
   private loadHtmlForWebview() {
     console.debug("loadHtmlForWebview", this.component);
+    this.logger.log(LogLevel.TRACE, "loadHtmlForWebview called")
     const settingsString = JSON.stringify(ComponentInfoPanel._settings);
 
     const onDiskPath = vscode.Uri.file(
