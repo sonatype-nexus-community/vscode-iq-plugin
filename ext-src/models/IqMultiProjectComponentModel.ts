@@ -216,7 +216,11 @@ export class IqMultiProjectComponentModel implements ComponentModel {
             },
               (failure) => {
                 this.logger.log(LogLevel.ERROR, `Nexus IQ extension failure`, failure);
-                window.showErrorMessage(`Nexus IQ extension failure: ${failure}`);
+                if (failure == 403) {
+                  window.showErrorMessage('Nexus IQ extension: Insufficient Permissions (403) - do you hold the Application Evaluator role for your Application?')
+                } else {
+                  window.showErrorMessage(`Nexus IQ extension failure: ${failure}`);
+                }
               });
         })
 
