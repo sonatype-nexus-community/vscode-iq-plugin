@@ -28,3 +28,4 @@ yarn-error.log*
 
 # VSCode
 *.code-workspace
+.vscode/*
