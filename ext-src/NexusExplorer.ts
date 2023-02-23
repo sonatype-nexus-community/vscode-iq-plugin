@@ -231,7 +231,8 @@ export class NexusExplorer {
     ComponentInfoPanel.createOrShow(
       this.context.extensionPath,
       entry,
-      this.componentModel
+      this.componentModel,
+      this.logger
     );
   }
 

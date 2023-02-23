@@ -410,10 +410,7 @@ export class IqRequestService implements RequestService {
   }
 
   public async getAllVersionDetails(versions: Array<string>, purl: PackageURL): Promise<ComponentDetails> {
-    this.logger.log(LogLevel.TRACE,
-      `Begin Get All Version Details: ${purl.toString()}`,
-      purl,
-      versions);
+    this.logger.log(LogLevel.TRACE, `Begin Get All Version Details: ${purl.toString()}`, purl, versions);
 
     let url = `${this.url}/api/v2/components/details`;
 
@@ -436,6 +433,7 @@ export class IqRequestService implements RequestService {
         }).then(async (res) => {
           if (res.ok) {
             let comps: ComponentDetails = await res.json();
+            this.logger.log(LogLevel.TRACE, `   Got Component Details OK`);
             resolve(comps);
             return;
           }
