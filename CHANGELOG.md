@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.3.0...v1.3.1) (2023-02-23)
+
+
+### Bug Fixes
+
+* increase in logging to diagnose [#241](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/241) ([#242](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/242)) ([3e36d61](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/3e36d61e981de61f492dc3d22be9868151b1fe4e))
+
 # [1.3.0](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.2.5...v1.3.0) (2023-02-16)
 
 
