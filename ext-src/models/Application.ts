@@ -28,6 +28,7 @@ export class Application implements TreeableModel {
         string,
         ComponentEntry
     >();
+    public scannable: boolean = true;
 
     constructor(readonly name: string, readonly workspaceFolder: string, readonly options: ComponentModelOptions) {
         this.reloadConfig();
@@ -66,10 +67,16 @@ export class Application implements TreeableModel {
     }
 
     public getTooltip(): string {
+        if (!this.scannable) {
+            return `${this.name} is not scannable - no recognised manifest files found!`
+        }
         return `Application: ${this.name}\nNexus IQ ID: ${this.nexusIqApplicationId}\nLocation: ${this.workspaceFolder}`;
     }
 
     public iconName(): string {
+        if (!this.scannable) {
+            return 'pink-icon-fix-issues.png'
+        }
         return `policy_badge.png`;
     }
 

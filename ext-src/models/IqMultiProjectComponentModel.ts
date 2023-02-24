@@ -126,11 +126,14 @@ export class IqMultiProjectComponentModel implements ComponentModel {
                   } catch (ex) {
                     this.logger.log(LogLevel.ERROR, `Nexus IQ Extension Failure moving forward`, ex);
                     window.showErrorMessage(`Nexus IQ extension failure, moving forward, exception: ${ex}`);
+                    return
                   }
                 }
                 progress.report({ message: "Packaging ready", increment: 35 });
               } else {
-                throw new TypeError("No valid formats available to scan for this project.");
+                this.logger.log(LogLevel.WARN, `No known manifests found for application ${application.name} - skipping`)
+                application.scannable = false
+                throw new Error(`Unable to scan "${application.name}" - no known manifests found!`);
               }
 
               this.logger.log(LogLevel.DEBUG, `Getting Internal ID from Public ID: ${application.nexusIqApplicationId}`);
