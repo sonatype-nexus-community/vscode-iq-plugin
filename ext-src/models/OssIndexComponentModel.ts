@@ -19,6 +19,7 @@ import { PackageType } from '../packages/PackageType';
 import { LiteRequestService } from "../services/LiteRequestService";
 import { OssIndexRequestService } from '../services/OssIndexRequestService';
 import { OssIndexResponse } from "../services/ReportResponse";
+import { ScanStatus } from "../types/ScanStatus";
 import { ScanType } from "../types/ScanType";
 import { OSS_INDEX_TOKEN, OSS_INDEX_USERNAME } from "../utils/Config";
 import { ILogger, LogLevel } from "../utils/Logger";
@@ -101,6 +102,8 @@ export class OssIndexComponentModel implements ComponentModel {
               const dependencies: Array<PackageType> = new Array();
               const purls: Array<string> = new Array();
 
+              application.scanStatus = ScanStatus.Scanning
+
               if (componentContainer.Valid && componentContainer.Valid.length > 0) {
                 progress.report({ message: "Starting to package your dependencies for OSS Index", increment: 10 });
                 const regex: RegExp = /^(.*):(.*)@(.*)$/;
@@ -127,8 +130,9 @@ export class OssIndexComponentModel implements ComponentModel {
                       return "";
                     }));
                   } catch (ex) {
-                    this.logger.log(LogLevel.ERROR, `Nexus IQ Extension Failure moving forward`, ex);
-                    window.showErrorMessage(`Nexus OSS Index extension failure, moving forward, exception: ${ex}`);
+                    this.logger.log(LogLevel.WARN, `No known manifests found for application ${application.name} - skipping`)
+                    application.scanStatus = ScanStatus.ScanFailure
+                    throw new Error(`Unable to scan "${application.name}" - no known manifests found!`);
                   }
                 }
                 progress.report({ message: "Packaging ready", increment: 35 });
@@ -178,13 +182,13 @@ export class OssIndexComponentModel implements ComponentModel {
               window.setStatusBarMessage(`Oss Index Results in, build with confidence!`, 5000);
             },
               (failure) => {
-                this.logger.log(LogLevel.ERROR, `Nexus IQ extension failure`, failure);
-                window.showErrorMessage(`Nexus IQ extension failure: ${failure}`);
+                this.logger.log(LogLevel.ERROR, `Sonatype Lifecycle extension failure`, failure);
+                window.showErrorMessage(`Sonatype Lifecycle extension failure: ${failure}`);
               });
         })
 
       } catch (e) {
-        this.logger.log(LogLevel.ERROR, `Nexus IQ Extension failure: ${e}`, e);
+        this.logger.log(LogLevel.ERROR, `Sonatype Lifecycle Extension failure: ${e}`, e);
         reject(e);
       }
     });

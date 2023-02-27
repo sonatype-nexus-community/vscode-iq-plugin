@@ -20,6 +20,7 @@ import { PackageType } from "../packages/PackageType";
 import { IqRequestService } from "../services/IqRequestService";
 import { ReportResponse } from "../services/ReportResponse";
 import { RequestService } from "../services/RequestService";
+import { ScanStatus } from "../types/ScanStatus";
 import { ScanType } from "../types/ScanType";
 import {
   NEXUS_IQ_MAX_EVAL_POLL_ATTEMPTS, NEXUS_IQ_SERVER_URL,
@@ -105,9 +106,11 @@ export class IqMultiProjectComponentModel implements ComponentModel {
           window.withProgress(
             {
               location: ProgressLocation.Notification,
-              title: `Running Nexus IQ Scan for ${application.name}`
+              title: `Running Sonatype Lifecycle Scan for ${application.name}`
             }, async (progress, token) => {
               const dependencies: Array<PackageType> = new Array();
+              application.scanStatus = ScanStatus.Scanning
+
               if (componentContainer.Valid && componentContainer.Valid.length > 0) {
                 progress.report({ message: "Starting to package your dependencies for IQ Server", increment: 5 });
                 for (let pm of componentContainer.Valid) {
@@ -124,15 +127,15 @@ export class IqMultiProjectComponentModel implements ComponentModel {
                     this.logger.log(LogLevel.TRACE, `Total components is now ${application.coordsToComponent.size}`);
 
                   } catch (ex) {
-                    this.logger.log(LogLevel.ERROR, `Nexus IQ Extension Failure moving forward`, ex);
-                    window.showErrorMessage(`Nexus IQ extension failure, moving forward, exception: ${ex}`);
+                    this.logger.log(LogLevel.ERROR, `Sonatype Lifecycle Extension Failure moving forward`, ex);
+                    window.showErrorMessage(`Sonatype Lifecycle extension failure, moving forward, exception: ${ex}`);
                     return
                   }
                 }
                 progress.report({ message: "Packaging ready", increment: 35 });
               } else {
                 this.logger.log(LogLevel.WARN, `No known manifests found for application ${application.name} - skipping`)
-                application.scannable = false
+                application.scanStatus = ScanStatus.ScanFailure
                 throw new Error(`Unable to scan "${application.name}" - no known manifests found!`);
               }
 
@@ -214,21 +217,23 @@ export class IqMultiProjectComponentModel implements ComponentModel {
 
               resolve();
             }).then(() => {
-              window.showInformationMessage(`Nexus IQ Server Results in, build with confidence!\n Report for ${application.name} available at: ${application.latestIqReportUrl}`);
-              window.setStatusBarMessage(`Nexus IQ Server Results in, build with confidence!`, 5000);
+              application.scanStatus = ScanStatus.ScanSuccess
+              window.showInformationMessage(`Sonatype Lifecycle Results in, build with confidence!\n Report for ${application.name} available at: ${application.latestIqReportUrl}`);
+              window.setStatusBarMessage(`Sonatype Lifecycle Results in, build with confidence!`, 5000);
             },
               (failure) => {
-                this.logger.log(LogLevel.ERROR, `Nexus IQ extension failure`, failure);
+                this.logger.log(LogLevel.ERROR, `Sonatype Lifecycle extension failure`, failure);
+                application.scanStatus = ScanStatus.ScanFailure
                 if (failure == 403) {
-                  window.showErrorMessage('Nexus IQ extension: Insufficient Permissions (403) - do you hold the Application Evaluator role for your Application?')
+                  window.showErrorMessage('Sonatype Lifecycle extension: Insufficient Permissions (403) - do you hold the Application Evaluator role for your Application?')
                 } else {
-                  window.showErrorMessage(`Nexus IQ extension failure: ${failure}`);
+                  window.showErrorMessage(`Sonatype Lifecycle extension failure: ${failure}`);
                 }
               });
         })
 
       } catch (e) {
-        this.logger.log(LogLevel.ERROR, `Nexus IQ Extension failure: ${e}`, e);
+        this.logger.log(LogLevel.ERROR, `Sonatype Lifecycle Extension failure: ${e}`, e);
         reject(e);
       }
     });

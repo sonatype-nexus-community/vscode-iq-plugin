@@ -45,7 +45,7 @@ export class NexusExplorerProvider implements vscode.TreeDataProvider<TreeableMo
       this.doRefresh();
     } else {
       let options: vscode.InputBoxOptions = {
-        prompt: "Nexus IQ Password: ",
+        prompt: "Sonatype Lifecycle Password: ",
         placeHolder: "password",
         password: true
       };
@@ -147,7 +147,7 @@ export class NexusExplorer {
 
   constructor(readonly context: vscode.ExtensionContext) {
     let configuration = vscode.workspace.getConfiguration();
-    const _channel = vscode.window.createOutputChannel(`Sonatype IQ Extension`);
+    const _channel = vscode.window.createOutputChannel(`Sonatype Lifecycle Extension`);
     context.subscriptions.push(_channel);
 
     this.logger = new Logger({ outputChannel: _channel, logFilePath: context.globalStoragePath });
