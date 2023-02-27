@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ScanStatus } from "../types/ScanStatus";
 import { LoadSonatypeConfig, NEXUS_EXPLORER_INCLUDE_DEV, NEXUS_IQ_PUBLIC_APPLICATION_ID } from "../utils/Config";
 import { LogLevel } from "../utils/Logger";
 import { ComponentEntry } from "./ComponentEntry";
@@ -28,7 +29,7 @@ export class Application implements TreeableModel {
         string,
         ComponentEntry
     >();
-    public scannable: boolean = true;
+    public scanStatus: ScanStatus = ScanStatus.NotScanned;
 
     constructor(readonly name: string, readonly workspaceFolder: string, readonly options: ComponentModelOptions) {
         this.reloadConfig();
@@ -67,17 +68,31 @@ export class Application implements TreeableModel {
     }
 
     public getTooltip(): string {
-        if (!this.scannable) {
-            return `${this.name} is not scannable - no recognised manifest files found!`
+        switch (this.scanStatus) {
+            case ScanStatus.Scanning:
+                return `Application: ${this.name}\nScanning - please wait...`
+            case ScanStatus.ScanSuccess:
+                return `Application: ${this.name}\nSonatpe Lifecycle Application ID: ${this.nexusIqApplicationId}\nLocation: ${this.workspaceFolder}`
+            case ScanStatus.ScanFailure:
+                return `Application: ${this.name}\nScan failed!`
+            case ScanStatus.NotScanned:
+            default:
+                return `Application: ${this.name}\nSonatpe Lifecycle Application ID: ${this.nexusIqApplicationId}\nLocation: ${this.workspaceFolder}`
         }
-        return `Application: ${this.name}\nNexus IQ ID: ${this.nexusIqApplicationId}\nLocation: ${this.workspaceFolder}`;
     }
 
     public iconName(): string {
-        if (!this.scannable) {
-            return 'pink-icon-fix-issues.png'
+        switch (this.scanStatus) {
+            case ScanStatus.Scanning:
+                return 'yellow-icon-scanning.png'
+            case ScanStatus.ScanSuccess:
+                return 'blue-icon-organization.png'
+            case ScanStatus.ScanFailure:
+                return 'pink-icon-alert.png'
+            case ScanStatus.NotScanned:
+            default:
+                return 'grey-icon-organization.png'
         }
-        return `policy_badge.png`;
     }
 
     public setLatestIqReportUrl(url: string, iqServerUrl: string) {

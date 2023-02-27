@@ -1,4 +1,4 @@
-# Sonatype Nexus IQ Plugin for VS Code
+# Sonatype Lifecycle Extension for Visual Studio Code
 
 [![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/sonatypecommunity.vscode-iq-plugin?color=blue&label=VS%20Marketplace&logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SonatypeCommunity.vscode-iq-plugin)
 [![CircleCI](https://circleci.com/gh/sonatype-nexus-community/vscode-iq-plugin/tree/main.svg?style=shield)](https://circleci.com/gh/sonatype-nexus-community/vscode-iq-plugin/tree/main)
@@ -9,9 +9,9 @@
 
 ----
 
-Sonatype's VSCode extension allows you to surface and remediate issues in your [Workspace](https://code.visualstudio.com/docs/editor/workspaces) dependencies without ever leaving your development environment.
+Sonatype's Lifecycle extension for VSCode allows you to surface and remediate issues in your [Workspace](https://code.visualstudio.com/docs/editor/workspaces) dependencies without ever leaving your development environment - shifting security left in the [SDLC](https://www.sonatype.com/launchpad/guide-to-software-development-life-cycle).
 
-Any developer can use the extension for free against our publicly available [OSS Index](https://ossindex.sonatype.org/) vulnerability database while our commercial users can connect to [Sonatype's Nexus IQ Server](https://www.sonatype.com/nexus-iq-server) to evaluate against organizational policy. Drill down into all of your dependencies to examine each package version for violations to determine whether you should upgrade or move to a different version at a glance.
+Any developer can use the extension for free against our publicly available [OSS Index](https://ossindex.sonatype.org/) vulnerability database while our commercial users can connect to their [Sonatype Lifecycle](https://www.sonatype.com/products/open-source-security-dependency-management) installation to evaluate against their organizational policy. Drill down into all of your dependencies to examine each package version for violations to determine whether you should upgrade or move to a different version at a glance.
 
 ## Supported Formats
 
@@ -32,7 +32,7 @@ Good news for polyglots -- the extension allows you to view violations across mu
 - Rust/Cargo (`Cargo.lock`)
 - R/CRAN (see known quirks) 
 
-### Sonatype Nexus IQ Scan
+### Sonatype Lifecycle Scan
 
 ![IQ Screenshot](https://github.com/sonatype-nexus-community/vscode-iq-plugin/raw/main/media/iq-screenshot.png)
 
@@ -42,7 +42,7 @@ Good news for polyglots -- the extension allows you to view violations across mu
 
 ## Installation
 
-- Install from the [marketplace link](https://marketplace.visualstudio.com/items?itemName=SonatypeCommunity.vscode-iq-plugin)
+- Install from the [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=SonatypeCommunity.vscode-iq-plugin)
 - Install directly from the VSCode extension interface:
 
 ![Install Screenshot](https://github.com/sonatype-nexus-community/vscode-iq-plugin/raw/main/media/install-screenshot.png)
@@ -57,7 +57,7 @@ Configuration can be done in VSCode's extension settings: `Preferences > Setting
 
 ### AdHoc Commercial Settings
 
-If you are a commercial Sonatype Nexus Lifecycle user, switch the data source to `iqServer` and enter your IQ endpoint and credentials.  You can enter your password which will be stored in cleartext, or you can leave this blank and be prompted for a password on start-up:
+If you are a commercial Sonatype Lifecycle user, switch the data source to `iqServer` and enter your Sonatype Lifecycle endpoint and credentials. You can enter your password which will be stored in cleartext, or you can leave this blank and be prompted for a password on start-up:
 
 ![VSCode Settings](https://github.com/sonatype-nexus-community/vscode-iq-plugin/raw/main/media/iqserver-passwordprompt-dark.png)
 
@@ -65,9 +65,9 @@ If you are a commercial Sonatype Nexus Lifecycle user, switch the data source to
 
 It's preferable to set your environment variables for authentication, and use a `.sonatype-config` file for the rest.
 
-The `IQ_USERNAME` and `IQ_TOKEN` environment variables will be used for authentication.  If your org uses a secrets manager these may already be set for you. It is also possible to set the `IQ_SERVER` environment variable if that is required by your organisation.
+The `IQ_USERNAME` and `IQ_TOKEN` environment variables will be used for authentication. If your org uses a secrets manager these may already be set for you. It is also possible to set the `IQ_SERVER` environment variable if that is required by your organisation.
 
-If you are able to login to IQ but don't have tokens, you can create a [user/pass token pair](https://help.sonatype.com/iqserver/automating/rest-apis/user-token-rest-api---v2) and set those values to `IQ_USERNAME` and `IQ_TOKEN`.
+If you are able to login to Sonatype Lifecycle but don't have tokens, you can create a [User Token](https://help.sonatype.com/iqserver/managing/user-management/user-tokens) and set those values to `IQ_USERNAME` and `IQ_TOKEN`.
 
 The rest of the configuration is handled in the `.sonatype-config` file.  Some of your projects may already have this file, in which case you can immediately run an evaluation.
 
@@ -87,25 +87,25 @@ You can add a `.sonatype-config` file (`.sonatype-config.yaml` and `.sonatype-co
         IncludeDev: false
 ```
 
-`PublicApplication` can be found here on your IQ Server if you don't know it: `https://your.iq-server.com/assets/index.html#/reports/violations`
+`PublicApplication` can be found here on your Sonatype Lifecycle instance if you don't know it.
 
-`Stage` will default to `develop` which generates a report accessible only through the link generated by the evaluation dialog box.  The other stages represent state and are reachable through IQ reports page.
+`Stage` will default to `develop` which generates a report accessible only through the link generated by the evaluation dialog box. The other stages represent state and are reachable through Sonatype Lifecycle reports page.
 
 `IncludeDev` can be set to `false` to exclude dependencies declared as Developement-only dependencies - note that not all ecosystems have this distinction.
 
-## Nexus Lifecycle Permissions
+## Sonatype Lifecycle Permissions
 
-The user you use to connect to your Nexus Lifecycle server must hold at least the Application Evaluator role for the Application in question. If not, you will see a warning letting you know you don't have the right permissions.
+The user you use to connect to your Sonatype Lifecycle instance must hold at least the Application Evaluator role for the Application in question. If not, you will see a warning letting you know you don't have the right permissions.
 
 ![Nexus IQ Insufficient Permissions Screenshot](https://github.com/sonatype-nexus-community/vscode-iq-plugin/raw/main/media/iq-insufficient-permissions.png)
 
 ## Workspace Support with Multiple Projects
 
-Starting in version 1.1.0, we now support [VS Code multi-root Workspaces](https://code.visualstudio.com/docs/editor/workspaces) that contain multiple Applications. Specifcally, this allows a Workspace to contain mulitple folders, where each folder is an Application (in Nexus IQ parlance).
+Starting in version 1.1.0, we now support [VS Code multi-root Workspaces](https://code.visualstudio.com/docs/editor/workspaces) that contain multiple Applications. Specifcally, this allows a Workspace to contain mulitple folders, where each folder is an Application (in Sonatype Lifecycle parlance).
 
-If you place a `.sonatype-config` file in each Application's directory, then each Application will benefit from results that reflect the policies specific to that Application as defined in Nexus IQ Server. If an Application in the Workspace does not have a `.sonatype-config` file, the Application ID defined in the plugin settings will prevail.
+If you place a `.sonatype-config` file in each Application's directory, then each Application will benefit from results that reflect the policies specific to that Application as defined in your Sonatype Lifecycle instance. If an Application in the Workspace does not have a `.sonatype-config` file, the Application ID defined in the plugin settings will prevail.
 
-This provides flexibility for users - you can either target per-Application policies in IQ through the use of `.sonatype-config` files, or just get an *Organization* policy view through the use of a dummy/common Application configured in Nexus IQ and set in the plugins settings (by default, the plugin's default Application ID is `sandbox-application`).
+This provides flexibility for users - you can either target per-Application policies in Sonatype Lifecycle through the use of `.sonatype-config` files, or just get an *Organization* policy view through the use of a dummy/common Application configured in Sonatype Lifecycle and set in the plugins settings (by default, the plugin's default Application ID is `sandbox-application`).
 
 ## Themes
 
@@ -115,7 +115,7 @@ The extension supports color theme changes dynamically.
 
 ### Known Quirks
 
-We try to use other tooling whenever possible, to avoid reinventing the wheel (that's what Open Source is about anyways, right!). However, due to using this tooling, we are at the mercy of it, sometimes, so here's a list of quirks we've ran into while developing/using this extension ourself.
+We try to use other tooling whenever possible, to avoid reinventing the wheel (that's what Open Source is about anyways, right!). However, due to using this tooling, we are at the mercy of it, sometimes, so here's a list of quirks we've ran into while developing/using this extension ourselves.
 
 #### npm/yarn
 
@@ -149,7 +149,7 @@ We try to use other tooling whenever possible, to avoid reinventing the wheel (t
 
 #### Various and Sundry
 
-- "My project has 3,000 dependencies, why is this so slow?!?". We chunk up requests to OSS Index (free solution) in sections of 128 dependencies, so for 3,000 dependencies, you are making 24 https POST requests for information, and then it's merging those results, etc... We'd love to know your feedback on the tool, so if you do run into this, open up an issue and let us know! Same goes for IQ Server, there could be quite a bit to process.
+- "My project has 3,000 dependencies, why is this so slow?!?". We chunk up requests to OSS Index (free solution) in sections of 128 dependencies, so for 3,000 dependencies, you are making 24 HTTPS POST requests for information, and then we then merge those results, etc... We'd love to know your feedback on the tool, so if you do run into this, open up an issue and let us know! Same goes for Sonatype Lifecycle, there could be quite a bit to process.
 
 ## Development
 
@@ -167,17 +167,16 @@ Then:
 
 `Debug > Start Debugging`
 
-More information is written to a log file. You can find the log file by looking in the `Sonatype IQ Extension` channel of the 
-`Output` of the vscode instance you launched for debugging. 
+More information is written to a log file. You can find the log file by looking in the `Sonatype Lifecycle Extension` channel of the  `Output` of the vscode instance you launched for debugging. 
 ![log-file-location](https://github.com/sonatype-nexus-community/vscode-iq-plugin/raw/main/media/log-file-location.png)
  
-If you are working on functionality that requires IQ Server, you'll need an instance running, and configured in the settings for the project. OSS Index should work right out of the box.
+If you are working on functionality that requires Sonatype Lifecycle, you'll need an instance running, and configured in the settings for the project. OSS Index should work right out of the box.
 
-All of the React specific code can be found in `src`. The rest of the code is contained within `ext-src` and this is what communicates with either OSS Index or IQ Server.
+All of the React specific code can be found in `src`. The rest of the code is contained within `ext-src` and this is what communicates with either OSS Index or Sonatype Lifecycle.
 
 We highly suggest installing "Webview Developer Tools" for this project, as the front end is written in React, and it's nice to have that to see what's going on.
 
-### Contributing to Nexus IQ Plugin for VS Code
+### Contributing to Sonatype Lifecycle Extension for Visual Studio Code
 
 #### Adding a format
 
@@ -204,8 +203,7 @@ To avoid such build failures without performing a release, be sure your commit m
 
 ## The Fine Print
 
-It is worth noting that this is **NOT SUPPORTED** by Sonatype, and is a contribution of ours
-to the open source community (read: you!)
+It is worth noting that this is **NOT SUPPORTED** by Sonatype, and is a contribution of ours to the open source community (read: you!)
 
 Remember:
 
