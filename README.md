@@ -31,6 +31,7 @@ Good news for polyglots -- the extension allows you to view violations across mu
 - PHP (`composer.lock`)
 - Rust/Cargo (`Cargo.lock`)
 - R/CRAN (see known quirks) 
+- Nuget (all `project.assets.json` in obj folders)
 
 ### Sonatype Nexus IQ Scan
 
