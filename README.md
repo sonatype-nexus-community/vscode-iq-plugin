@@ -148,6 +148,10 @@ We try to use other tooling whenever possible, to avoid reinventing the wheel (t
 - This extension also runs an R script to get your installed packages (currently the best way we know of to do this), the way we get these can be seen at `scripts/installed.r` in our GitHub repo
 - The way the R script runs, it finds all of the packages you've installed in the R environment, so not just for your project. This is because there is really no way to query for project specific packages, and appears to be a limitation of R.
 
+#### nuget
+- We analyse all `project.assets.json` files in `\obj` folders
+- It can be slow if you have a lot of `\obj` folders and duplications
+
 #### Various and Sundry
 
 - "My project has 3,000 dependencies, why is this so slow?!?". We chunk up requests to OSS Index (free solution) in sections of 128 dependencies, so for 3,000 dependencies, you are making 24 https POST requests for information, and then it's merging those results, etc... We'd love to know your feedback on the tool, so if you do run into this, open up an issue and let us know! Same goes for IQ Server, there could be quite a bit to process.
