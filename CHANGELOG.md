@@ -1,3 +1,10 @@
+## [1.3.3](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.3.2...v1.3.3) (2023-02-24)
+
+
+### Bug Fixes
+
+* support for workspaces with directory(s) that do not contain known manifests [#244](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/244) ([#245](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/245)) ([315b08b](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/315b08b88ad24dd2d7bfb99010840ba4281af89c))
+
 ## [1.3.2](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.3.1...v1.3.2) (2023-02-23)
 
 

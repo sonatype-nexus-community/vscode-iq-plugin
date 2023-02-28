@@ -66,7 +66,6 @@ export class ComponentContainer {
       logger.log(LogLevel.DEBUG, `${this.Valid.length} package muncher(s) set`);
     } else {
       logger.log(LogLevel.WARN, `No package munchers appear valid`);
-      throw new Error("No supported scan type exists for the open workspace");
     }
   }
 }
