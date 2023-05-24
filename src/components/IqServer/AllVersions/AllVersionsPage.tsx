@@ -15,8 +15,7 @@
  */
 import React, { 
   useContext, 
-  useEffect, 
-  useState } from "react";
+  useEffect } from "react";
 import { 
   VersionsContext, 
   VersionsContextInterface } from "../../../context/versions-context";
@@ -27,8 +26,6 @@ import {
   ThreatLevelNumber } from '@sonatype/react-shared-components';
 
 const AllVersionsPage = (props: any) => {
-
-  const [selectedVersion, setSelectedVersion] = useState("");
 
   const versionsContext = useContext(VersionsContext);
 
@@ -44,8 +41,6 @@ const AllVersionsPage = (props: any) => {
   });
 
   const handleClick = (version: string) => {
-    setSelectedVersion(version);
-
     props.versionChangeHandler(version);
   }
 
@@ -73,11 +68,10 @@ const AllVersionsPage = (props: any) => {
     );
   }
 
-  const getClassName = (initialVersion: string, version: string, className: string):string => {
-    console.debug(selectedVersion);
-    if (selectedVersion == version) {
+  const getClassName = (initialVersion: string, selectedVersion: string, version: string, className: string):string => {
+    if (selectedVersion === version) {
       return className += " selected";
-    } else if (initialVersion == version) {
+    } else if (initialVersion === version) {
       return className += " selected";
     }
     return className;
@@ -96,6 +90,7 @@ const AllVersionsPage = (props: any) => {
               className={
                 getClassName(
                   versionsContext.initialVersion,
+                  versionsContext.selectedVersion,
                   version.component.componentIdentifier.coordinates.version,
                   "nx-list__item")
               }
