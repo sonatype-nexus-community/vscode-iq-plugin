@@ -68,7 +68,7 @@ const AllVersionsPage = (props: any) => {
     );
   }
 
-  const getClassName = (initialVersion: string, selectedVersion: string, version: string, className: string):string => {
+  const getClassName = (initialVersion: string, selectedVersion: string, version: string, className: string): string => {
     if (selectedVersion === version) {
       return className += " selected";
     } else if (initialVersion === version) {
