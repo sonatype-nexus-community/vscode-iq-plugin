@@ -36,7 +36,7 @@ export class GradleUtils {
   private readonly gradleArgumentsTest = `dependencies --configuration testRuntimeClasspath`;
 
   public async getDependencyArray(application: Application, includeDev: boolean = true): Promise<any> {
-    this.logger.log(LogLevel.DEBUG, `Starting to attempt to get gradle dependencies`);
+    this.logger.log(LogLevel.DEBUG, `Starting to attempt to get Gradle dependencies`);
 
     let gradleCommandBaseCommand: string = "";
     let gradleCommand: string = "";
