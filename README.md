@@ -19,10 +19,10 @@ Good news for polyglots -- the extension allows you to view violations across mu
 
 - Conan (any conan formatted `*.lock` files)
 - Golang (`dep` or `go mod`)
-- Gradle (`build.gradle` and gradle required) *Supports development dependency exclusion*
+- Gradle (`build.gradle` and Gradle required) *Supports development dependency exclusion*
   - Note: `./gradlew` or `./gradlew.bat` will take precedence over system `gradle`
   - Note: Android projects are not currently supported
-- Maven (`pom.xml` and maven required) *Supports development dependency exclusion*
+- Maven (`pom.xml` and Maven required) *Supports development dependency exclusion*
 - NPM/Yarn (`npm install` or `yarn install` required) *Supports development dependency exclusion*
 - Python:
   - Poetry `poetry.lock` *Supports development dependency exclusion*
@@ -149,7 +149,12 @@ We try to use other tooling whenever possible, to avoid reinventing the wheel (t
 
 #### Various and Sundry
 
-- "My project has 3,000 dependencies, why is this so slow?!?". We chunk up requests to OSS Index (free solution) in sections of 128 dependencies, so for 3,000 dependencies, you are making 24 https POST requests for information, and then it's merging those results, etc... We'd love to know your feedback on the tool, so if you do run into this, open up an issue and let us know! Same goes for IQ Server, there could be quite a bit to process.
+- "My project has 3,000 dependencies, why is this so slow?!?"\
+  We chunk up requests to OSS Index (free solution) in sections of 128 dependencies, so for 3,000 dependencies, you are making 24 https POST requests for information, and then it's merging those results, etc... We'd love to know your feedback on the tool, so if you do run into this, open up an issue and let us know! Same goes for IQ Server, there could be quite a bit to process.
+
+- If something unexpectedly fails, you can have more information by looking into extension's output, and even more in its log file. You can find the log file by looking in the `Sonatype IQ Extension` channel of the `Output` tab:
+![log-file-location](https://github.com/sonatype-nexus-community/vscode-iq-plugin/raw/main/media/log-file-location.png)
+
 
 ## Development
 
@@ -167,8 +172,7 @@ Then:
 
 `Debug > Start Debugging`
 
-More information is written to a log file. You can find the log file by looking in the `Sonatype IQ Extension` channel of the 
-`Output` of the vscode instance you launched for debugging. 
+More information is written to a log file. You can find the log file by looking in the `Sonatype IQ Extension` channel of the `Output` of the vscode instance you launched for debugging.
 ![log-file-location](https://github.com/sonatype-nexus-community/vscode-iq-plugin/raw/main/media/log-file-location.png)
  
 If you are working on functionality that requires IQ Server, you'll need an instance running, and configured in the settings for the project. OSS Index should work right out of the box.
