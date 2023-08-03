@@ -45,7 +45,7 @@ export class IqRequestService implements RequestService {
   ) {
     this.setURL(url);
 
-    this.logger.log(LogLevel.INFO, `Created new IQ Request Service at: `, url);
+    this.logger.log(LogLevel.INFO, `Created new IQ Request Service at: ${url}`);
   }
 
   public setOptions(options: RefreshOptions) {
@@ -61,7 +61,7 @@ export class IqRequestService implements RequestService {
   }
 
   public setURL(url: string) {
-    this.logger.log(LogLevel.TRACE, `Setting IQ url to: `, this.url);
+    this.logger.log(LogLevel.TRACE, `Setting IQ url to: ${this.url}`);
 
     this.url = url.replace(/\/$/, "");
 
@@ -133,15 +133,15 @@ export class IqRequestService implements RequestService {
           let body = await res.text();
           this.logger.log(
             LogLevel.TRACE,
-            `Non 200 response from getting application ID`, url, body, res.status
-          );
+            `Non 200 response from getting application ID: ${res.status}`, url, body, res.status
+            );
           reject(res.status);
           return;
         }).catch((ex) => {
           this.logger.log(
             LogLevel.ERROR,
-            `Error getting application ID from public ID`, url, ex
-          );
+            `Error getting application ID from public ID: ${ex}`, url, ex
+            );
           reject(ex);
         });
     });
@@ -170,7 +170,7 @@ export class IqRequestService implements RequestService {
           let body = await res.text();
           this.logger.log(
             LogLevel.TRACE,
-            `Non 200 response from IQ Server on submitting to 3rd Party API`,
+            `Non 200 response from IQ Server on submitting to 3rd Party API: ${res.status}`,
             body,
             res.status
           );
@@ -179,8 +179,8 @@ export class IqRequestService implements RequestService {
         }).catch((ex) => {
           this.logger.log(
             LogLevel.ERROR,
-            `Error submitting to 3rd Party API`, ex
-          );
+            `Error submitting to 3rd Party API: ${ex}`, ex
+            );
           reject(ex);
         });
     });
@@ -256,7 +256,7 @@ export class IqRequestService implements RequestService {
             return;
           }
           let body = await res.text();
-          this.logger.log(LogLevel.ERROR, `Issue getting report result`, url, body);
+          this.logger.log(LogLevel.ERROR, `Issue getting report result: ${res.status}`, url, body);
           reject(res.status);
           return;
         }).catch((ex) => {
@@ -313,7 +313,7 @@ export class IqRequestService implements RequestService {
           let body = await res.text();
           this.logger.log(
             LogLevel.ERROR,
-            `Non 200 response attempting to get remediation details: ${purl}`,
+            `Non 200 response attempting to get remediation details: : ${res.status} for ${purl}`,
             request,
             body,
             url
@@ -323,7 +323,7 @@ export class IqRequestService implements RequestService {
         }).catch((ex) => {
           this.logger.log(
             LogLevel.ERROR,
-            `General error attempting to get remediation details: ${purl}`,
+            `General error attempting to get remediation details: ${purl} resulted in ${ex}`,
             request,
             ex,
             url
@@ -352,7 +352,7 @@ export class IqRequestService implements RequestService {
           let body = await res.text();
           this.logger.log(
             LogLevel.ERROR,
-            `Non 200 response attempting to get vuln details: ${vulnID}`,
+            `Non 200 response attempting to get vuln details: : ${res.status} for ${vulnID}`,
             body,
             url);
           reject(res.status);
@@ -360,7 +360,7 @@ export class IqRequestService implements RequestService {
         }).catch((ex) => {
           this.logger.log(
             LogLevel.ERROR,
-            `General error attempting to get vuln details: ${vulnID}`,
+            `General error attempting to get vuln details: ${vulnID} resulted in ${ex}`,
             ex,
             url);
           reject(ex);
@@ -392,7 +392,7 @@ export class IqRequestService implements RequestService {
           let body = await res.text();
           this.logger.log(
             LogLevel.ERROR,
-            `Non 200 response received getting versions array from IQ Server`,
+            `Non 200 response received getting versions array from IQ Server: ${res.status}`,
             request,
             res.status,
             body);
@@ -401,7 +401,7 @@ export class IqRequestService implements RequestService {
         }).catch((ex) => {
           this.logger.log(
             LogLevel.ERROR,
-            `General error getting versions array from IQ Server`,
+            `General error getting versions array from IQ Server: ${ex}`,
             request,
             ex);
           reject(ex);
@@ -440,7 +440,7 @@ export class IqRequestService implements RequestService {
           let body = await res.text();
           this.logger.log(
             LogLevel.ERROR,
-            `Non 200 response received getting component versions details from IQ Server`,
+            `Non 200 response received getting component versions details from IQ Server: ${res.status}`,
             request,
             res.status,
             body);
@@ -449,7 +449,7 @@ export class IqRequestService implements RequestService {
         }).catch((ex) => {
           this.logger.log(
             LogLevel.ERROR,
-            `General error getting component versions details from IQ Server`,
+            `General error getting component versions details from IQ Server: ${ex}`,
             request,
             ex);
           reject(ex);
@@ -483,7 +483,7 @@ export class IqRequestService implements RequestService {
           let body = await res.text();
           this.logger.log(
             LogLevel.ERROR,
-            `Non 200 response received getting component version details from IQ Server`,
+            `Non 200 response received getting component version details from IQ Server: ${res.status}`,
             request,
             res.status,
             body);
@@ -492,7 +492,7 @@ export class IqRequestService implements RequestService {
         }).catch((ex) => {
           this.logger.log(
             LogLevel.ERROR,
-            `General error getting component version details from IQ Server`,
+            `General error getting component version details from IQ Server: ${ex}`,
             request,
             ex);
           reject(ex);

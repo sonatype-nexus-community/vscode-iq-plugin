@@ -81,6 +81,7 @@ export class Logger implements ILogger {
         this._writeToOutputChannel(LogLevel.INFO, `Log Level set to: ${LogLevel[logLevel]}`);
     }
 
+    // ignore meta information in output channel, keep them only in log file
     public log(level: LogLevel, message: string, ...meta: any): void {
         if (this._logLevel >= level) {
             this._writeToOutputChannel(level, message);

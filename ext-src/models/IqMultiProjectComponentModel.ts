@@ -112,9 +112,9 @@ export class IqMultiProjectComponentModel implements ComponentModel {
                 progress.report({ message: "Starting to package your dependencies for IQ Server", increment: 5 });
                 for (let pm of componentContainer.Valid) {
                   try {
-                    this.logger.log(LogLevel.INFO, `Starting to Munch on ${pm.constructor.name} dependencies`);
+                    this.logger.log(LogLevel.INFO, `Starting to munch on ${pm.constructor.name} dependencies`);
                     const deps = await pm.packageForService();
-                    this.logger.log(LogLevel.TRACE, `Obtained ${deps.length} Dependencies from Muncher ${pm.constructor.name}`, deps);
+                    this.logger.log(LogLevel.TRACE, `Obtained ${deps.length} dependencies from Muncher ${pm.constructor.name}`, deps);
                     dependencies.push(...deps);
                     progress.report({ message: "Reticulating Splines", increment: 25 });
 
@@ -124,7 +124,7 @@ export class IqMultiProjectComponentModel implements ComponentModel {
                     this.logger.log(LogLevel.TRACE, `Total components is now ${application.coordsToComponent.size}`);
 
                   } catch (ex) {
-                    this.logger.log(LogLevel.ERROR, `Nexus IQ Extension Failure moving forward`, ex);
+                    this.logger.log(LogLevel.ERROR, `Nexus IQ extension failure, moving forward, exception: ${ex}`, ex);
                     window.showErrorMessage(`Nexus IQ extension failure, moving forward, exception: ${ex}`);
                     return
                   }
@@ -218,7 +218,7 @@ export class IqMultiProjectComponentModel implements ComponentModel {
               window.setStatusBarMessage(`Nexus IQ Server Results in, build with confidence!`, 5000);
             },
               (failure) => {
-                this.logger.log(LogLevel.ERROR, `Nexus IQ extension failure`, failure);
+                this.logger.log(LogLevel.ERROR, `Nexus IQ extension failure: ${failure}`, failure);
                 if (failure == 403) {
                   window.showErrorMessage('Nexus IQ extension: Insufficient Permissions (403) - do you hold the Application Evaluator role for your Application?')
                 } else {
