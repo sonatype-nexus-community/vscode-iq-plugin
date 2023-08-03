@@ -1,3 +1,10 @@
+## [1.3.4](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.3.3...v1.3.4) (2023-08-03)
+
+
+### Bug Fixes
+
+* improve message to output: meta not displayed ([#250](https://github.com/sonatype-nexus-community/vscode-iq-plugin/issues/250)) ([ed58962](https://github.com/sonatype-nexus-community/vscode-iq-plugin/commit/ed589629542b3d9f5d196f6cd1973d8804dfb956))
+
 ## [1.3.3](https://github.com/sonatype-nexus-community/vscode-iq-plugin/compare/v1.3.2...v1.3.3) (2023-02-24)
 
 
