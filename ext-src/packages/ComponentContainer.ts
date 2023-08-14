@@ -28,6 +28,7 @@ import { PackageDependencies } from "./PackageDependencies";
 import { PoetryDependencies } from "./poetry/PoetryDependencies";
 import { PyPIDependencies } from "./pypi/PyPIDependencies";
 import { RubyGemsDependencies } from "./rubygems/RubyGemsDependencies";
+import { NugetDependencies } from "./nuget/NugetDependencies";
 
 export class ComponentContainer {
   Possible: Array<PackageDependencies> = [];
@@ -52,6 +53,7 @@ export class ComponentContainer {
       this.Possible.push(new CargoDependencies({ logger, includeDev }, app));
       this.Possible.push(new ConanDependencies({ logger, includeDev }, app));
       this.Possible.push(new GradleDependencies({ logger, includeDev }, app));
+      this.Possible.push(new NugetDependencies({ logger, includeDev}, app));
     })
 
     this.Possible.forEach(i => {
