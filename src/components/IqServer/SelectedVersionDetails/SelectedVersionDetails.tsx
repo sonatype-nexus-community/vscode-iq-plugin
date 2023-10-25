@@ -24,7 +24,12 @@ import {
   NxTabList, 
   NxTabPanel } from '@sonatype/react-shared-components';
 
-const SelectedVersionDetails = () => {
+type SelectedVersionProps = {
+  selectedVersion: string,
+  currentVersion: string
+}
+
+const SelectedVersionDetails = (props: SelectedVersionProps) => {
   const [activeTabId, setActiveTabId] = useState(0);
 
   return (
@@ -33,9 +38,11 @@ const SelectedVersionDetails = () => {
         <NxTab>
           Info
         </NxTab>
-        <NxTab>
-          Policy
-        </NxTab>
+        { props.currentVersion === props.selectedVersion && (
+          <NxTab>
+            Policy
+          </NxTab>
+        )}
         <NxTab>
           Security
         </NxTab>
@@ -46,9 +53,11 @@ const SelectedVersionDetails = () => {
       <NxTabPanel>
         <ComponentInfoPage></ComponentInfoPage>
       </NxTabPanel>
-      <NxTabPanel>
-        <PolicyPage></PolicyPage>
-      </NxTabPanel>
+      { props.currentVersion === props.selectedVersion && (
+        <NxTabPanel>
+          <PolicyPage></PolicyPage>
+        </NxTabPanel>
+      )}
       <NxTabPanel>
         <SecurityPage></SecurityPage>
       </NxTabPanel>
