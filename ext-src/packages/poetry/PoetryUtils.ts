@@ -33,7 +33,7 @@ export class PoetryUtils {
       }
       catch (ignored) {}
 
-      let productionDependencies: Set<string> = undefined;
+      let productionDependencies: Set<string> = null;
       if (pyprojectToml && !includeDev) {
         // if pyprojecttoml exists, derive !dev dependencies from this file
         productionDependencies = this.extracted(pyprojectToml, poetry);
@@ -47,7 +47,7 @@ export class PoetryUtils {
             if (pkg.category == 'dev') {
               return;
             }
-            if (productionDependencies !== undefined
+            if (productionDependencies !== null
                 && !productionDependencies.has(pkg.name.toLowerCase())) {
               return;
             }
