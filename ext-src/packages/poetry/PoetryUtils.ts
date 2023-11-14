@@ -26,12 +26,31 @@ export class PoetryUtils {
       const toml = readFileSync(join(application.workspaceFolder, "poetry.lock"));
       const poetry: Poetry = parse(toml.toString());
 
+      let pyprojectToml;
+
+      try {
+        pyprojectToml = readFileSync(join(application.workspaceFolder, "pyproject.toml"));
+      }
+      catch (ignored) {}
+
+      let productionDependencies: Set<string> = undefined;
+      if (pyprojectToml && !includeDev) {
+        // if pyprojecttoml exists, derive !dev dependencies from this file
+        productionDependencies = this.extracted(pyprojectToml, poetry);
+      }
+
       if (poetry.package && poetry.package.length > 0) {
         let res: Array<PyPIPackage> = new Array();
 
         poetry.package.forEach(pkg => {
-          if (!includeDev && pkg.category == 'dev') {
-            return;
+          if (!includeDev) {
+            if (pkg.category == 'dev') {
+              return;
+            }
+            if (productionDependencies !== undefined
+                && !productionDependencies.has(pkg.name.toLowerCase())) {
+              return;
+            }
           }
           res.push(new PyPIPackage(pkg.name, pkg.version, "tar.gz", ""));
         });
@@ -42,6 +61,42 @@ export class PoetryUtils {
       return Promise.reject("No dependencies found, check your poetry.lock file!");
     } catch (ex) {
       return Promise.reject(`Uh oh, spaghetti-o, an exception occurred while parsing poetry dependencies: ${ex}`);
+    }
+  }
+
+  private extracted(pyprojectToml: Buffer, poetry: Poetry): Set<string> {
+    const pyProject = parse(pyprojectToml.toString());
+
+    let productionDirectDependencies = Object.keys(pyProject?.tool?.poetry?.dependencies);
+    productionDirectDependencies = productionDirectDependencies.filter(value => value !== 'python');
+
+    // Resolve dependency for all components found in the poetry.lock file
+    let packageDependencyMap = new Map();
+    for (let poetryPackage of poetry.package) {
+      let poetryPackageDependencies = poetryPackage.dependencies;
+      packageDependencyMap.set(poetryPackage.name.toLowerCase(),
+        poetryPackageDependencies ? Object.keys(poetryPackageDependencies) : [])
+    }
+
+    let productionDependencies = new Set<string>();
+    for (let productionDirectDependency of productionDirectDependencies) {
+      this.resolveRecursively(productionDependencies, productionDirectDependency, packageDependencyMap);
+    }
+
+    return productionDependencies;
+  }
+
+  private resolveRecursively(productionDependencies: Set<any>, packageName: string, packageDependencyMap: Map<any, any>) {
+    productionDependencies.add(packageName.toLowerCase());
+    let dependencies = packageDependencyMap.get(packageName.toLowerCase());
+    if (!dependencies) {
+      return;
+    }
+
+    for (let dependency of dependencies) {
+      if (!productionDependencies.has(dependency)) {
+        this.resolveRecursively(productionDependencies, dependency, packageDependencyMap);
+      }
     }
   }
 }
@@ -58,4 +113,5 @@ interface Package {
   version: string;
   optional: boolean;
   "python-versions": string;
+  dependencies: Object[];
 }
