@@ -38,7 +38,7 @@ export class PoetryUtils {
       let productionDependencies: Set<string> = new Set<string>();
       if (isPyprojectTomlExists && !includeDev) {
         // if pyprojecttoml exists, derive !dev dependencies from this file
-        productionDependencies = this.extracted(pyprojectToml, poetry);
+        productionDependencies = this.resolveProductionDependencies(pyprojectToml, poetry);
       }
 
       if (poetry.package && poetry.package.length > 0) {
@@ -65,7 +65,7 @@ export class PoetryUtils {
     }
   }
 
-  private extracted(pyprojectToml: Buffer, poetry: Poetry): Set<string> {
+  private resolveProductionDependencies(pyprojectToml: Buffer, poetry: Poetry): Set<string> {
     const pyProject = parse(pyprojectToml.toString());
 
     let productionDirectDependencies = Object.keys(pyProject?.tool?.poetry?.dependencies);
