@@ -26,19 +26,15 @@ export class PoetryUtils {
       const toml = readFileSync(join(application.workspaceFolder, "poetry.lock"));
       const poetry: Poetry = parse(toml.toString());
 
-      let pyprojectToml;
       let isPyprojectTomlExists = false;
-
-      try {
-        pyprojectToml = readFileSync(join(application.workspaceFolder, "pyproject.toml"));
-        isPyprojectTomlExists = true;
-      }
-      catch (ignored) {}
-
       let productionDependencies: Set<string> = new Set<string>();
-      if (isPyprojectTomlExists && !includeDev) {
-        // if pyprojecttoml exists, derive !dev dependencies from this file
-        productionDependencies = this.resolveProductionDependencies(pyprojectToml, poetry);
+
+      if (!includeDev) {
+        try {
+          let pyprojectToml = readFileSync(join(application.workspaceFolder, "pyproject.toml"));
+          isPyprojectTomlExists = true;
+          productionDependencies = this.resolveProductionDependencies(pyprojectToml, poetry);
+        } catch (ignored) {}
       }
 
       if (poetry.package && poetry.package.length > 0) {
