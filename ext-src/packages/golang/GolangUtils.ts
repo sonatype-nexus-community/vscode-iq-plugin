@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import * as vscode from "vscode";
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { Readable } from 'stream';
@@ -29,10 +30,11 @@ export class GolangUtils {
   public async getDependencyArray(application: Application, scanType: string): Promise<Array<GolangPackage>> {
     try {
       if (scanType === GO_MOD_SUM) {
+        let listCommand = vscode.workspace.getConfiguration().get("nexusExplorer.goListCommand", "go list -m -json all");
 
         // TODO: When running this command, Golang is now using the workspace root to establish a GOCACHE, 
         // we should use some other temporary area or try and suss out the real one
-        let { stdout, stderr } = await exec(`go list -m -json all`, {
+        let { stdout, stderr } = await exec(listCommand, {
           cwd: application.workspaceFolder,
           env: {
             "PATH": process.env["PATH"],
