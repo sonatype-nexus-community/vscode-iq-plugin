@@ -1,4 +1,4 @@
-# Sonatype Nexus IQ Plugin for VS Code
+# Sonatype Community IQ Server Extension for VSCode
 
 [![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/sonatypecommunity.vscode-iq-plugin?color=blue&label=VS%20Marketplace&logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SonatypeCommunity.vscode-iq-plugin)
 [![CircleCI](https://circleci.com/gh/sonatype-nexus-community/vscode-iq-plugin/tree/main.svg?style=shield)](https://circleci.com/gh/sonatype-nexus-community/vscode-iq-plugin/tree/main)
@@ -9,9 +9,9 @@
 
 ----
 
-Sonatype's VSCode extension allows you to surface and remediate issues in your [Workspace](https://code.visualstudio.com/docs/editor/workspaces) dependencies without ever leaving your development environment.
+Sonatype Community's VSCode extension allows you to surface and remediate issues in your [Workspace](https://code.visualstudio.com/docs/editor/workspaces) dependencies without ever leaving your development environment.
 
-Any developer can use the extension for free against our publicly available [OSS Index](https://ossindex.sonatype.org/) vulnerability database while our commercial users can connect to [Sonatype's Nexus IQ Server](https://www.sonatype.com/nexus-iq-server) to evaluate against organizational policy. Drill down into all of your dependencies to examine each package version for violations to determine whether you should upgrade or move to a different version at a glance.
+Any developer can use the extension for free against our publicly available [Sonatype OSS Index](https://ossindex.sonatype.org/) vulnerability database, while our commercial users can connect to [Sonatype IQ Server](https://www.sonatype.com/products/open-source-security-dependency-management) to evaluate against organizational policy. Drill down into all of your dependencies to examine each package version for violations to determine whether you should upgrade or move to a different version at a glance.
 
 ## Supported Formats
 
@@ -32,11 +32,11 @@ Good news for polyglots -- the extension allows you to view violations across mu
 - Rust/Cargo (`Cargo.lock`)
 - R/CRAN (see known quirks) 
 
-### Sonatype Nexus IQ Scan
+### Sonatype IQ Server Scan
 
 ![IQ Screenshot](https://github.com/sonatype-nexus-community/vscode-iq-plugin/raw/main/media/iq-screenshot.png)
 
-### OSS Index Scan
+### Sonatype OSS Index Scan
 
 ![OSSI Screenshot](https://github.com/sonatype-nexus-community/vscode-iq-plugin/raw/main/media/ossi-screenshot.png)
 
@@ -57,7 +57,7 @@ Configuration can be done in VSCode's extension settings: `Preferences > Setting
 
 ### AdHoc Commercial Settings
 
-If you are a commercial Sonatype Nexus Lifecycle user, switch the data source to `iqServer` and enter your IQ endpoint and credentials.  You can enter your password which will be stored in cleartext, or you can leave this blank and be prompted for a password on start-up:
+If you are a commercial Sonatype Lifecycle user, switch the data source to `iqServer` and enter your IQ Server endpoint and credentials.  You can enter your password which will be stored in cleartext, or you can leave this blank and be prompted for a password on start-up:
 
 ![VSCode Settings](https://github.com/sonatype-nexus-community/vscode-iq-plugin/raw/main/media/iqserver-passwordprompt-dark.png)
 
@@ -67,7 +67,7 @@ It's preferable to set your environment variables for authentication, and use a 
 
 The `IQ_USERNAME` and `IQ_TOKEN` environment variables will be used for authentication.  If your org uses a secrets manager these may already be set for you. It is also possible to set the `IQ_SERVER` environment variable if that is required by your organisation.
 
-If you are able to login to IQ but don't have tokens, you can create a [user/pass token pair](https://help.sonatype.com/iqserver/automating/rest-apis/user-token-rest-api---v2) and set those values to `IQ_USERNAME` and `IQ_TOKEN`.
+If you are able to login to IQ Server but don't have tokens, you can create a [user/pass token pair](https://help.sonatype.com/iqserver/automating/rest-apis/user-token-rest-api---v2) and set those values to `IQ_USERNAME` and `IQ_TOKEN`.
 
 The rest of the configuration is handled in the `.sonatype-config` file.  Some of your projects may already have this file, in which case you can immediately run an evaluation.
 
@@ -93,19 +93,19 @@ You can add a `.sonatype-config` file (`.sonatype-config.yaml` and `.sonatype-co
 
 `IncludeDev` can be set to `false` to exclude dependencies declared as Developement-only dependencies - note that not all ecosystems have this distinction.
 
-## Nexus Lifecycle Permissions
+## Sonatype Lifecycle Permissions
 
-The user you use to connect to your Nexus Lifecycle server must hold at least the Application Evaluator role for the Application in question. If not, you will see a warning letting you know you don't have the right permissions.
+The user you use to connect to your Sonatype Lifecycle server must hold at least the Application Evaluator role for the Application in question. If not, you will see a warning letting you know you don't have the right permissions.
 
-![Nexus IQ Insufficient Permissions Screenshot](https://github.com/sonatype-nexus-community/vscode-iq-plugin/raw/main/media/iq-insufficient-permissions.png)
+![IQ Server Insufficient Permissions Screenshot](https://github.com/sonatype-nexus-community/vscode-iq-plugin/raw/main/media/iq-insufficient-permissions.png)
 
 ## Workspace Support with Multiple Projects
 
-Starting in version 1.1.0, we now support [VS Code multi-root Workspaces](https://code.visualstudio.com/docs/editor/workspaces) that contain multiple Applications. Specifcally, this allows a Workspace to contain mulitple folders, where each folder is an Application (in Nexus IQ parlance).
+Starting in version 1.1.0, we now support [VS Code multi-root Workspaces](https://code.visualstudio.com/docs/editor/workspaces) that contain multiple Applications. Specifcally, this allows a Workspace to contain mulitple folders, where each folder is an Application (in IQ Server parlance).
 
-If you place a `.sonatype-config` file in each Application's directory, then each Application will benefit from results that reflect the policies specific to that Application as defined in Nexus IQ Server. If an Application in the Workspace does not have a `.sonatype-config` file, the Application ID defined in the plugin settings will prevail.
+If you place a `.sonatype-config` file in each Application's directory, then each Application will benefit from results that reflect the policies specific to that Application as defined in Sonatype IQ Server. If an Application in the Workspace does not have a `.sonatype-config` file, the Application ID defined in the plugin settings will prevail.
 
-This provides flexibility for users - you can either target per-Application policies in IQ through the use of `.sonatype-config` files, or just get an *Organization* policy view through the use of a dummy/common Application configured in Nexus IQ and set in the plugins settings (by default, the plugin's default Application ID is `sandbox-application`).
+This provides flexibility for users - you can either target per-Application policies in IQ Server through the use of `.sonatype-config` files, or just get an *Organization* policy view through the use of a dummy/common Application configured in IQ Server and set in the plugins settings (by default, the plugin's default Application ID is `sandbox-application`).
 
 ## Themes
 
@@ -119,7 +119,7 @@ We try to use other tooling whenever possible, to avoid reinventing the wheel (t
 
 #### npm/yarn
 
-- We read the actual dependencies you have installed, which means we parse your node_modules folder. If this folder doesn't exist, we won't find any dependencies! Make sure to run `npm i` or `yarn` on your project if you haven't done so already.
+- We read the actual dependencies you have installed, which means we parse your `node_modules` folder. If this folder doesn't exist, we won't find any dependencies! Make sure to run `npm i` or `yarn` on your project if you haven't done so already.
 
 #### RubyGems
 
@@ -181,7 +181,7 @@ All of the React specific code can be found in `src`. The rest of the code is co
 
 We highly suggest installing "Webview Developer Tools" for this project, as the front end is written in React, and it's nice to have that to see what's going on.
 
-### Contributing to Nexus IQ Plugin for VS Code
+### Contributing to Sonatype Community IQ Server Extension for VS Code
 
 #### Adding a format
 
