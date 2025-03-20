@@ -128,14 +128,14 @@
           "nexusExplorer.goListCommand": {
             "type": "string",
             "description": "Command to detect dependencies in a Go project",
-            "default": "go list -m -json all",
+            "default": "go list -m -json ./...",
             "enum": [
-              "go list -m -json all",
-              "go list -m -json ./..."
+              "go list -m -json ./...",
+              "go list -m -json all"
             ],
             "enumDescriptions": [
-              "Finds all modules in a Go environment",
-              "Finds modules used in the current workspace"
+              "Finds modules used in the current workspace",
+              "Finds all modules in a Go environment"
             ]
           },
           "nexusExplorer.loggingLevel": {
