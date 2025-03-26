@@ -125,6 +125,19 @@
             "default": true,
             "description": "You can disable this to exclude dependencies that are used in the development or testing process only. Supported for Gradle, Maven, NPM and Poetry."
           },
+          "nexusExplorer.goListCommand": {
+            "type": "string",
+            "description": "Command to detect dependencies in a Go project",
+            "default": "go list -m -json ./...",
+            "enum": [
+              "go list -m -json ./...",
+              "go list -m -json all"
+            ],
+            "enumDescriptions": [
+              "Finds modules used in the current workspace",
+              "Finds all modules in a Go environment"
+            ]
+          },
           "nexusExplorer.loggingLevel": {
             "type": "string",
             "default": "ERROR",
