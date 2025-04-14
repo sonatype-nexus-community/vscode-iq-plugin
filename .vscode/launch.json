@@ -16,7 +16,7 @@
         ],
         "skipFiles": [
             "<node_internals>/**/*.js",
-            "vs/**/**/*.ts",            
+            "vs/**/**/*.ts",
             "vs/**/**/*.js"
         ]
     }]
